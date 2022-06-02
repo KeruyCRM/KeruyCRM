@@ -1740,7 +1740,6 @@ class items
             $processes->run_after_insert($item_id);
         }
 
-        return true;
+        return $item_id;
     }
-
 }

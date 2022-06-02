@@ -367,7 +367,7 @@ class listing_highlight
                 if (strlen($value)) {
                     $items_info_sql = "select e.* from app_entity_" . $cfg->get(
                             'entity_id'
-                        ) . " e where e.id in (" . $value . ")";
+                        ) . " e where e.id in (" . db_input_in($value) . ")";
                     $items_query = db_query($items_info_sql);
                     while ($item = db_fetch_array($items_query)) {
                         $html .= items::get_heading_field($cfg->get('entity_id'), $item['id']) . '<br>';

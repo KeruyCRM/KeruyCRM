@@ -55,21 +55,25 @@ echo form_tag(
                     echo select_tag(
                         'column' . $i . '_width',
                         [
-                            '1' => '10%',
-                            '2' => '15%',
-                            '3' => '25%',
-                            '4' => '30%',
-                            '6' => '50%',
-                            '8' => '70%',
-                            '9' => '75%',
-                            '12' => '100%'
+                            '1' => '1/12',
+                            '2' => '2/12',
+                            '3' => '3/12',
+                            '4' => '4/12',
+                            '5' => '5/12',
+                            '6' => '6/12',
+                            '7' => '7/12',
+                            '8' => '8/12',
+                            '9' => '9/12',
+                            '10' => '10/12',
+                            '11' => '11/12',
+                            '12' => '12/12'
                         ],
                         $obj['column' . $i . '_width'],
                         ['class' => 'form-control input-small column-width', 'column_num' => $i]
                     ) ?>
                 </div>
             </div>
-        <?php
+            <?php
         } ?>
 
         <div class="form-group">
@@ -143,7 +147,7 @@ echo ajax_modal_template_footer() ?>
         $('.column-width').change(function () {
             column_num = $(this).attr('column_num')
             width = $(this).val();
-            $('#preview_column' + column_num).removeClass("col-md-12 col-md-6 col-md-4 col-md-3 col-md-2 col-md-1").addClass('col-md-' + width)
+            $('#preview_column' + column_num).removeClass("col-md-12 col-md-11 col-md-10 col-md-9 col-md-8 col-md-7 col-md-6 col-md-5 col-md-4 col-md-3 col-md-2 col-md-1").addClass('col-md-' + width)
         })
 
     });

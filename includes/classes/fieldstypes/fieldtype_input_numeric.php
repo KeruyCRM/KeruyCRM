@@ -14,6 +14,13 @@ class fieldtype_input_numeric
         $cfg = [];
 
         $cfg[TEXT_SETTINGS][] = [
+            'title' => TEXT_NOTIFY_WHEN_CHANGED,
+            'name' => 'notify_when_changed',
+            'type' => 'checkbox',
+            'tooltip_icon' => TEXT_NOTIFY_WHEN_CHANGED_TIP
+        ];
+
+        $cfg[TEXT_SETTINGS][] = [
             'title' => TEXT_WIDHT,
             'name' => 'width',
             'type' => 'dropdown',
@@ -258,6 +265,25 @@ class fieldtype_input_numeric
 
     function process($options)
     {
+        global $app_changed_fields;
+
+        if (!$options['is_new_item']) {
+            $cfg = new fields_types_cfg($options['field']['configuration']);
+
+            if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
+                $app_changed_fields[] = [
+                    'name' => $options['field']['name'],
+                    'value' => str_replace([',', ' '], ['.', ''], db_prepare_input($options['value'])),
+                    'fields_id' => $options['field']['id'],
+                    'fields_value' => $options['value'],
+                    'current_field_value' => $options['current_field_value'],
+                    'current_value' => str_replace([',', ' '],
+                        ['.', ''],
+                        db_prepare_input($options['current_field_value'])),
+                ];
+            }
+        }
+
         return str_replace([',', ' '], ['.', ''], db_prepare_input($options['value']));
     }
 

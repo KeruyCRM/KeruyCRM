@@ -671,7 +671,9 @@ class subentity_form
                     'path_info' => []
                 ];
 
-                $html .= '<td>' . fields_types::output($output_options) . '</td>';
+                $html .= '<td id="subentity-form-cell-' . $field['id'] . '">' . fields_types::output(
+                        $output_options
+                    ) . '</td>';
             }
 
             $url_params = 'is_submodal=true&redirect_to=subentity_form_' . $this->entities_id . '_' . $this->field_id . '_' . $row . '&entities_id=' . $this->entities_id . '&fields_id=' . $this->field_id . '&current_entity_id=' . $this->cfg->get(
