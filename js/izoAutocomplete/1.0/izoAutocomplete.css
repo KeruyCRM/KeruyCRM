@@ -1,0 +1,40 @@
+.izo-autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+
+.izo-autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-left: 15px;
+  max-height: 250px;
+  overflow-y: auto;
+   -webkit-box-shadow: 0 4px 5px rgb(0 0 0 / 15%);
+  box-shadow: 0 4px 5px rgb(0 0 0 / 15%);
+}
+
+.izo-autocomplete-items div {
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.izo-autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+
+.izo-autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
