@@ -67,9 +67,9 @@ $entities_cfg = new entities_cfg($reports_info['entities_id']);
 
     <div><?php
         echo TEXT_LISTING_SORTING_CFG_INFO ?></div>
-    <div><img src="images/arrow_down.png"> <?php
+    <div><img src="images/sort-asc.png"> <?php
         echo TEXT_ASCENDING_ORDER ?></div>
-    <div><img src="images/arrow_up.png"> <?php
+    <div><img src="images/sort-desc.png"> <?php
         echo TEXT_DESCENDING_ORDER ?></div>
 
     <table width="100%">
@@ -87,7 +87,7 @@ $entities_cfg = new entities_cfg($reports_info['entities_id']);
                             if (count($sorting_fields) > 0) {
                                 if (($key = array_search('lastcommentdate', $sorting_fields)) !== false) {
                                     if ($entities_cfg->get('use_comments') == 1) {
-                                        echo '<li id="form_fields_lastcommentdate_' . $sorting_fields_info['lastcommentdate'] . '"><div><img rel="' . $sorting_fields_info['lastcommentdate'] . '" src="images/' . ($sorting_fields_info['lastcommentdate'] == 'asc' ? 'arrow_down.png' : 'arrow_up.png') . '" class="condition_icon" id="condition_icon_lastcommentdate"> ' . TEXT_LAST_COMMENT_DATE . '</div></li>';
+                                        echo '<li id="form_fields_lastcommentdate_' . $sorting_fields_info['lastcommentdate'] . '"><div><img rel="' . $sorting_fields_info['lastcommentdate'] . '" src="images/' . ($sorting_fields_info['lastcommentdate'] == 'asc' ? 'sort-asc.png' : 'sort-desc.png') . '" class="condition_icon" id="condition_icon_lastcommentdate"> ' . TEXT_LAST_COMMENT_DATE . '</div></li>';
                                     }
 
                                     unset($sorting_fields[$key]);
@@ -120,7 +120,7 @@ $entities_cfg = new entities_cfg($reports_info['entities_id']);
                                         }
 
 
-                                        echo '<li id="form_fields_' . $v['id'] . '_' . $sorting_fields_info[$v['id']] . '"><div><img rel="' . $sorting_fields_info[$v['id']] . '" src="images/' . ($sorting_fields_info[$v['id']] == 'asc' ? 'arrow_down.png' : 'arrow_up.png') . '" class="condition_icon" id="condition_icon_' . $v['id'] . '"> ' . fields_types::get_option(
+                                        echo '<li id="form_fields_' . $v['id'] . '_' . $sorting_fields_info[$v['id']] . '"><div><img rel="' . $sorting_fields_info[$v['id']] . '" src="images/' . ($sorting_fields_info[$v['id']] == 'asc' ? 'sort-asc.png' : 'sort-desc.png') . '" class="condition_icon" id="condition_icon_' . $v['id'] . '"> ' . fields_types::get_option(
                                                 $v['type'],
                                                 'name',
                                                 $v['name']
@@ -143,7 +143,7 @@ $entities_cfg = new entities_cfg($reports_info['entities_id']);
                             <?php
 
                             if (!$has_sort_by_lastcommentdate and $entities_cfg->get('use_comments') == 1) {
-                                echo '<li id="form_fields_lastcommentdate_asc"><div><img rel="asc" src="images/arrow_down.png" class="condition_icon" id="condition_icon_lastcommentdate" > ' . TEXT_LAST_COMMENT_DATE . '</div></li>';
+                                echo '<li id="form_fields_lastcommentdate_asc"><div><img rel="asc" src="images/sort-asc.png" class="condition_icon" id="condition_icon_lastcommentdate" > ' . TEXT_LAST_COMMENT_DATE . '</div></li>';
                             }
 
                             if (strlen($reports_info['fields_in_listing'])) {
@@ -176,7 +176,7 @@ $entities_cfg = new entities_cfg($reports_info['entities_id']);
                                     continue;
                                 }
 
-                                echo '<li id="form_fields_' . $v['id'] . '_asc"><div><img rel="asc" src="images/arrow_down.png" class="condition_icon" id="condition_icon_' . $v['id'] . '" > ' . fields_types::get_option(
+                                echo '<li id="form_fields_' . $v['id'] . '_asc"><div><img rel="asc" src="images/sort-asc.png" class="condition_icon" id="condition_icon_' . $v['id'] . '" > ' . fields_types::get_option(
                                         $v['type'],
                                         'name',
                                         $v['name']
@@ -221,7 +221,7 @@ $entities_cfg = new entities_cfg($reports_info['entities_id']);
                         });
 
                         $(this).attr('rel', 'desc')
-                        $(this).attr('src', 'images/arrow_up.png');
+                        $(this).attr('src', 'images/sort-desc.png');
 
                     } else {
                         $.ajax({
@@ -233,7 +233,7 @@ $entities_cfg = new entities_cfg($reports_info['entities_id']);
                             data: {field_id: id, condition: 'asc'}
                         });
                         $(this).attr('rel', 'asc')
-                        $(this).attr('src', 'images/arrow_down.png');
+                        $(this).attr('src', 'images/sort-asc.png');
                     }
                 })
             }
