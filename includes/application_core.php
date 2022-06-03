@@ -1,6 +1,6 @@
 <?php
 
-define('PROJECT_VERSION', '3.1');
+define('PROJECT_VERSION', '1.0.1');
 define('PROJECT_VERSION_DEV', '');
 
 //is HTTPS
@@ -642,6 +642,3 @@ $app_num2str = new num2str();
 
 //include custom PHP code
 custom_php::include();
-	
-	
-	

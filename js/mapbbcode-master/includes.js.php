@@ -1,6 +1,5 @@
 <script src="js/mapbbcode-master/dist/lib/leaflet.js"></script>
 <script src="js/mapbbcode-master/dist/lib/leaflet.draw.js"></script>
-
 <script src="js/mapbbcode-master/src/MapBBCode.js"></script>
 <script src="js/mapbbcode-master/src/MapBBCodeUI.js"></script>
 <script src="js/mapbbcode-master/src/MapBBCodeUI.Editor.js"></script>

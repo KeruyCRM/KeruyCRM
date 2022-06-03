@@ -1,6 +1,6 @@
 <?php
 
-define('TEXT_INSTALLATION_HEADING', 'Установка KeruyCRM %s');
+define('TEXT_INSTALLATION_HEADING', 'Встановлення KeruyCRM %s');
 
 define('TEXT_CHECKING_ENVIRONMENT', 'Перевірка середовища...');
 define('TEXT_CHECKING_ENVIRONMENT_SUCCESS', 'Сервер перевірено. Помилок не знайдено. Ви можете встановити KeruyCRM.');
@@ -31,7 +31,7 @@ define(
     'TEXT_DB_PASSWORD_INFO',
     'Пароль, який використовується разом із ім`ям користувача для підключення до сервера бази даних.'
 );
-define('TEXT_BUTTON_INSTALL_DATABASE', 'Встановіть базу даних');
+define('TEXT_BUTTON_INSTALL_DATABASE', 'Встановити базу даних');
 define('TEXT_FIELD_IS_REQURED', 'Заповнення цього поля обов`язково!');
 define('TEXT_FIELD_IS_REQURED_EMAIL', 'Будь ласка, введіть правильну адресу електронної пошти.');
 

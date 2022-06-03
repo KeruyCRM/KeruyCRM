@@ -22,8 +22,13 @@ if (isset($_GET['step']) and !isset($_GET['lng'])) {
 
 if (isset($_GET['lng'])) {
     switch ($_GET['lng']) {
+        case 'ukrainian':
+            include('languages/ukrainian.php');
+            break;
+    }
+    switch ($_GET['lng']) {
         case 'english':
-            include('languages/english.php');
+            //include('languages/english.php');
             break;
     }
 } else {
