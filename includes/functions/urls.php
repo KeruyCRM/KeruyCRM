@@ -3,10 +3,6 @@
 function redirect_to($module, $prams = '')
 {
     if (IS_AJAX) {
-        if ($module == 'ext/license/key') {
-            exit();
-        }
-
         echo '<script>window.top.location.href="' . url_for($module, $prams) . '"</script>';
         exit();
     }
@@ -157,4 +153,3 @@ function callback_prepare_link_in_text($matches)
 
     return $matches[1] . '<a target="_blank" href="' . $href . '" title="' . $href . '">' . $url . '</a>';
 }
-

@@ -35,8 +35,6 @@ if ($app_user['group_id'] == 0) {
         'submenu' => $s
     ];
 
-    //$app_plugin_menu['extension'][] = array('title'=>TEXT_EXT_REPORT_DESIGNER,'url'=>url_for('ext/report_page/reports'));
-
     $s = [];
     $s[] = ['title' => TEXT_EXT_СALENDAR_PERSONAL, 'url' => url_for('ext/calendar/configuration_personal')];
     $s[] = ['title' => TEXT_EXT_СALENDAR_PUBLIC, 'url' => url_for('ext/calendar/configuration_public')];
@@ -155,56 +153,26 @@ if ($app_user['group_id'] == 0) {
         'url' => url_for('ext/mail_integration/settings'),
         'submenu' => $s
     ];
-
-    $app_plugin_menu['extension'][] = ['title' => TEXT_EXT_LICENSE, 'url' => url_for('ext/license/key')];
 }
 
 require(component_path('ext/ganttchart/menu'));
-
 require(component_path('ext/graphicreport/menu'));
-
 require(component_path('ext/pivotreports/menu'));
-
 require(component_path('ext/calendar/menu'));
-
 require(component_path('ext/app_chat/menu'));
-
 require(component_path('ext/ipages/menu'));
-
 require(component_path('ext/with_selected/menu'));
-
 require(component_path('ext/timeline_reports/menu'));
-
 require(component_path('ext/track_changes/menu'));
-
 require(component_path('ext/funnelchart/menu'));
-
 require(component_path('ext/kanban/menu'));
-
 require(component_path('ext/recurring_tasks/menu'));
-
 require(component_path('ext/image_map/menu'));
-
 require(component_path('ext/map_reports/menu'));
-
 require(component_path('ext/mind_map_reports/menu'));
-
 require(component_path('ext/pivot_calendars/menu'));
-
 require(component_path('ext/xml_export/menu'));
-
 require(component_path('ext/pivot_map_reports/menu'));
-
 require(component_path('ext/pivot_tables/menu'));
-
 require(component_path('ext/resource_timeline/menu'));
-
 require(component_path('ext/rss_feed/menu'));
-
-
-
-
-
-
-
-
