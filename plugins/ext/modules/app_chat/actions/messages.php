@@ -10,13 +10,13 @@ $chat_user_query = db_query(
     ) . "'"
 );
 if (!$chat_user = db_fetch_array($chat_user_query)) {
-    echo '<div class="alert alert-warning">' . TEXT_USER_IS_NOT_FOUD . '</div>';
+    echo '<div class="alert alert-warning">' . TEXT_USER_IS_NOT_FOUND . '</div>';
     exit();
 }
 
 //check access
 if (!$app_chat->has_access_by_group($chat_user['group_id'])) {
-    echo '<div class="alert alert-warning">' . TEXT_USER_IS_NOT_FOUD . '</div>';
+    echo '<div class="alert alert-warning">' . TEXT_USER_IS_NOT_FOUND . '</div>';
     exit();
 }
 

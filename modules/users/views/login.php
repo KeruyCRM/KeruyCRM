@@ -67,7 +67,7 @@ if (CFG_ENABLE_SOCIAL_LOGIN != 2) {
                 'users/registration'
             ) . '">' . (strlen(
                 CFG_REGISTRATION_BUTTON_TITLE
-            ) ? CFG_REGISTRATION_BUTTON_TITLE : TEXT_BUTTON_REGISTRATCION) . '</a>' ?>
+            ) ? CFG_REGISTRATION_BUTTON_TITLE : TEXT_BUTTON_REGISTRATION) . '</a>' ?>
         <p><a href="<?php
             echo url_for('users/restore_password') ?>"><?php
                 echo TEXT_PASSWORD_FORGOTTEN ?></a></p>

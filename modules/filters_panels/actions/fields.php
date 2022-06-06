@@ -276,7 +276,7 @@ switch ($app_module_action) {
             if ($panels_info['position'] == 'horizontal') {
                 $html .= '
 				<div class="form-group">
-					<label class="col-md-3 control-label" for="width">' . TEXT_WIDHT . '</label>
+					<label class="col-md-3 control-label" for="width">' . TEXT_WIDTH . '</label>
 				    <div class="col-md-9">	
 				  	  ' . select_tag(
                         'width',
@@ -311,7 +311,7 @@ switch ($app_module_action) {
 			    </div>
 			  </div>
 			  <div class="form-group">
-				<label class="col-md-3 control-label" for="width">' . TEXT_WIDHT . '</label>
+				<label class="col-md-3 control-label" for="width">' . TEXT_WIDTH . '</label>
 			    <div class="col-md-9">	
 			  	  ' . select_tag(
                     'width',

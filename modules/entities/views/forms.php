@@ -47,7 +47,7 @@ echo button_tag(
     ) . '&nbsp;' ?>
 <?php
 echo button_tag(
-    TEXT_HIDEN_FIELDS . " ({$count_hidden_form_fields})",
+    TEXT_HIDDEN_FIELDS . " ({$count_hidden_form_fields})",
     url_for('entities/forms_hidden_fields', 'entities_id=' . $_GET['entities_id']),
     true,
     ['class' => 'btn btn-default']

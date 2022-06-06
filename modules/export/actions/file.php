@@ -57,6 +57,6 @@ if (isset($_GET['id']) and isset($_GET['file']) and isset($_GET['path']) and str
 }
 
 header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found");
-echo TEXT_FILE_NOT_FOUD;
+echo TEXT_FILE_NOT_FOUND;
 
 exit();

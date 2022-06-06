@@ -30,7 +30,7 @@ switch ($app_module_action) {
             );
             $check = db_fetch_array($check_query);
             if ($check['total'] > 0) {
-                $alerts->add(TEXT_ERROR_USEREMAL_EXIST, 'warning');
+                $alerts->add(TEXT_ERROR_USEREMAIL_EXIST, 'warning');
             } elseif ($app_user['email'] != $_POST['email']) {
                 //update account
                 db_query(

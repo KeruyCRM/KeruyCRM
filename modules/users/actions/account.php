@@ -33,7 +33,7 @@ switch ($app_module_action) {
         //check POST data for user form
         if (isset($_POST['fields'][9])) {
             if (strlen($_POST['fields'][9]) == 0) {
-                $msg[] = TEXT_ERROR_USEREMAL_EMPTY;
+                $msg[] = TEXT_ERROR_USEREMAIL_EMPTY;
             }
         }
 
@@ -54,7 +54,7 @@ switch ($app_module_action) {
                 );
                 $check = db_fetch_array($check_query);
                 if ($check['total'] > 0) {
-                    $msg[] = TEXT_ERROR_USEREMAL_EXIST;
+                    $msg[] = TEXT_ERROR_USEREMAIL_EXIST;
                 }
             }
         }

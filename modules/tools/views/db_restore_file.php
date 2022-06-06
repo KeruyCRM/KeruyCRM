@@ -1,5 +1,5 @@
 <?php
-echo ajax_modal_template_header(TEXT_BUTTON_DB_RESOTRE_FROM_FILE) ?>
+echo ajax_modal_template_header(TEXT_BUTTON_DB_RESTORE_FROM_FILE) ?>
 
 <?php
 echo form_tag(

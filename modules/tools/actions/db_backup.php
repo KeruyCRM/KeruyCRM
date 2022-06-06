@@ -20,7 +20,7 @@ switch ($app_module_action) {
 
                 exit();
             } else {
-                $alerts->add(TEXT_FILE_NOT_FOUD, 'error');
+                $alerts->add(TEXT_FILE_NOT_FOUND, 'error');
 
                 redirect_to('tools/db_backup');
             }
@@ -38,7 +38,7 @@ switch ($app_module_action) {
 
                 $alerts->add(TEXT_BACKUP_DELETED, 'success');
             } else {
-                $alerts->add(TEXT_FILE_NOT_FOUD, 'error');
+                $alerts->add(TEXT_FILE_NOT_FOUND, 'error');
             }
 
             db_delete_row('app_backups', $info['id']);

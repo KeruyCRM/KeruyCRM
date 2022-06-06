@@ -3,7 +3,7 @@
 $msg = [];
 
 if (strlen($_POST['fields'][9]) == 0) {
-    $msg[] = TEXT_ERROR_USEREMAL_EMPTY;
+    $msg[] = TEXT_ERROR_USEREMAIL_EMPTY;
 }
 
 if (strlen($_POST['fields'][12]) == 0) {
@@ -18,7 +18,7 @@ if (strlen($_POST['fields'][9]) > 0 and CFG_ALLOW_REGISTRATION_WITH_THE_SAME_EMA
     );
     $check = db_fetch_array($check_query);
     if ($check['total'] > 0) {
-        $msg[] = TEXT_ERROR_USEREMAL_EXIST;
+        $msg[] = TEXT_ERROR_USEREMAIL_EXIST;
     }
 }
 

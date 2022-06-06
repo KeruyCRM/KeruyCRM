@@ -20,11 +20,11 @@ class fieldtype_todo_list
             'tooltip_icon' => TEXT_ALLOW_SEARCH_TIP
         ];
         $cfg[] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => TEXT_INPTUT_SMALL,
+                'input-small' => TEXT_INPUT_SMALL,
                 'input-medium' => TEXT_INPUT_MEDIUM,
                 'input-large' => TEXT_INPUT_LARGE,
                 'input-xlarge' => TEXT_INPUT_XLARGE

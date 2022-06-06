@@ -16,8 +16,8 @@ class fieldtype_mysql_query
 
         $cfg[] = [
             'title' => tooltip_icon(
-                    TEXT_FIELDTYPE_MYSQL_QUERY_DINAMIC_QUERY_INFO
-                ) . TEXT_FIELDTYPE_MYSQL_QUERY_DINAMIC_QUERY,
+                    TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY_INFO
+                ) . TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
             'name' => 'dinamic_query',
             'type' => 'checkbox'
         ];

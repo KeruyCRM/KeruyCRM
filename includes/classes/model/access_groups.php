@@ -58,7 +58,7 @@ class access_groups
             '' => TEXT_NO,
             'view' => TEXT_VIEW_ACCESS,
             'view_assigned' => TEXT_VIEW_ASSIGNED_ACCESS,
-            'action_with_assigned' => TEXT_VIEW_ALL_ACTION_WIDHT_ASSIGNED_ACCESS,
+            'action_with_assigned' => TEXT_VIEW_ALL_ACTION_WIDTH_ASSIGNED_ACCESS,
         ];
 
         return $choices;

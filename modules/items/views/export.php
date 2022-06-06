@@ -220,7 +220,7 @@ if (count($app_selected_items[$_GET['reports_id']]) == 0) {
                 </div>
                 </form>
                 <p><?php
-                    echo tooltip_text(TEXT_SAVE_TAMPLATE_NOTE) ?></p>
+                    echo tooltip_text(TEXT_SAVE_TEMPLATE_NOTE) ?></p>
                 <div id="action_response_msg"></div>
                 <br>
 

@@ -1,5 +1,5 @@
 <?php
-echo ajax_modal_template_header(TEXT_HEADING_REPORTS_IFNO) ?>
+echo ajax_modal_template_header(TEXT_HEADING_REPORTS_INFO) ?>
 
 <?php
 echo form_tag(

@@ -23,11 +23,11 @@ class fieldtype_image_map
         ];
 
         $cfg[] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => TEXT_INPTUT_SMALL,
+                'input-small' => TEXT_INPUT_SMALL,
                 'input-medium' => TEXT_INPUT_MEDIUM,
                 'input-large' => TEXT_INPUT_LARGE,
                 'input-xlarge' => TEXT_INPUT_XLARGE
@@ -57,7 +57,7 @@ class fieldtype_image_map
             'params' => ['class' => 'form-control input-small']
         ];
         $cfg[] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'map_width',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']

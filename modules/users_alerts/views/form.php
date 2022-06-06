@@ -129,7 +129,7 @@ echo form_tag(
 
                 $assigned_to = (strlen($obj['assigned_to']) > 0 ? explode(',', $obj['assigned_to']) : '');
                 echo select_tag('assigned_to[]', users::get_choices(), $assigned_to, $attributes);
-                echo tooltip_text(TEXT_IF_NOT_ASSIGNED_DISPLY_EVERYONE);
+                echo tooltip_text(TEXT_IF_NOT_ASSIGNED_DISPLAY_EVERYONE);
                 ?>
             </div>
         </div>

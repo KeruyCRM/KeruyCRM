@@ -32,7 +32,7 @@ class fieldtype_input_datetime
             'title' => TEXT_DATE_FORMAT,
             'name' => 'date_format',
             'type' => 'input',
-            'tooltip' => TEXT_DEFAULT . ': ' . CFG_APP_DATETIME_FORMAT . ', ' . TEXT_DATE_FORMAT_IFNO,
+            'tooltip' => TEXT_DEFAULT . ': ' . CFG_APP_DATETIME_FORMAT . ', ' . TEXT_DATE_FORMAT_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 

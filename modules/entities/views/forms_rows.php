@@ -49,7 +49,7 @@ echo form_tag(
             <div class="form-group form-group-column-<?php
             echo $i ?>">
                 <label class="col-md-3 control-label" for="columns"><?php
-                    echo TEXT_COLUMN_WIDHT . " {$i}:" ?></label>
+                    echo TEXT_COLUMN_WIDTH . " {$i}:" ?></label>
                 <div class="col-md-9">
                     <?php
                     echo select_tag(

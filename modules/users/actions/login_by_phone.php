@@ -31,7 +31,7 @@ switch ($app_module_action) {
 
         //check phone
         if (!strlen(preg_replace('/\D/', '', $_POST['phone']))) {
-            $alerts->add(TEXT_USER_IS_NOT_FOUD, 'error');
+            $alerts->add(TEXT_USER_IS_NOT_FOUND, 'error');
             redirect_to('users/login_by_phone');
         }
 
@@ -46,7 +46,7 @@ switch ($app_module_action) {
 
             redirect_to('users/2step_verification');
         } else {
-            $alerts->add(TEXT_USER_IS_NOT_FOUD, 'error');
+            $alerts->add(TEXT_USER_IS_NOT_FOUND, 'error');
             redirect_to('users/login_by_phone');
         }
 

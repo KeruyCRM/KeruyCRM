@@ -19,7 +19,7 @@ echo form_tag(
         <li><a href="#comments_configuration" data-toggle="tab"><?php
                 echo TEXT_COMMENTS_TITLE ?></a></li>
         <li><a href="#redirects_configuration" data-toggle="tab"><?php
-                echo TEXT_REDIRRECTS ?></a></li>
+                echo TEXT_REDIRECTS ?></a></li>
     </ul>
 
     <div class="tab-content">
@@ -206,7 +206,7 @@ echo form_tag(
 
             <div class="form-group">
                 <label class="col-md-3 control-label" for="cfg_disable_highlight_unread"><?php
-                    echo tooltip_icon(TEXT_DISABLE_HIGHLIGH_UNREAD_INFO) . TEXT_DISABLE_HIGHLIGH_UNREAD ?></label>
+                    echo tooltip_icon(TEXT_DISABLE_HIGHLIGHT_UNREAD_INFO) . TEXT_DISABLE_HIGHLIGHT_UNREAD ?></label>
                 <div class="col-md-9">
                     <?php
                     echo select_tag(

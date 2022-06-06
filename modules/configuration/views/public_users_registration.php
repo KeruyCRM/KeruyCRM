@@ -114,7 +114,7 @@ echo form_tag(
                             ['class' => 'form-control input-medium']
                         ); ?>
                         <?php
-                        echo tooltip_text(TEXT_DEFAULT . ': ' . TEXT_BUTTON_REGISTRATCION) ?>
+                        echo tooltip_text(TEXT_DEFAULT . ': ' . TEXT_BUTTON_REGISTRATION) ?>
                     </div>
                 </div>
                 <?php
@@ -139,8 +139,8 @@ echo form_tag(
   					
   			<div class="form-group">
 			  	<label class="col-md-3 control-label" for="hidden_fields">' . tooltip_icon(
-                        TEXT_HIDEN_FIELDS_IN_FORM
-                    ) . TEXT_HIDEN_FIELDS . '</label>
+                        TEXT_HIDDEN_FIELDS_IN_FORM
+                    ) . TEXT_HIDDEN_FIELDS . '</label>
 			    <div class="col-md-9">' . select_tag(
                         'CFG[PUBLIC_REGISTRATION_HIDDEN_FIELDS][]',
                         $choices,

@@ -41,7 +41,7 @@ switch ($field_info['type']) {
                 $settings->get('date_format'),
                 ['class' => 'form-control input-small']
             ) . '
-                    ' . tooltip_text(TEXT_DEFAULT . ': ' . CFG_APP_DATE_FORMAT . ', ' . TEXT_DATE_FORMAT_IFNO) . '    
+                    ' . tooltip_text(TEXT_DEFAULT . ': ' . CFG_APP_DATE_FORMAT . ', ' . TEXT_DATE_FORMAT_INFO) . '    
                 </div>			
             </div>';
 

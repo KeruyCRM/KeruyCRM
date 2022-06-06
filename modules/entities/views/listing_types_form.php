@@ -48,12 +48,12 @@ echo form_tag(
 
             <div class="form-group">
                 <label class="col-md-3 control-label" for="sort_order"><?php
-                    echo TEXT_WIDHT ?> (px)</label>
+                    echo TEXT_WIDTH ?> (px)</label>
                 <div class="col-md-9">
                     <?php
                     echo input_tag('width', $obj['width'], ['class' => 'form-control input-small']) ?>
                     <?php
-                    echo tooltip_text(TEXT_GRID_WIDHT_INFO) ?>
+                    echo tooltip_text(TEXT_GRID_WIDTH_INFO) ?>
                 </div>
             </div>
 
@@ -123,7 +123,7 @@ echo form_tag(
 
             <div class="form-group">
                 <label class="col-md-3 control-label"><?php
-                    echo TEXT_CHANGE_COL_WIDTH_IN_LISTIN ?></label>
+                    echo TEXT_CHANGE_COL_WIDTH_IN_LISTING ?></label>
                 <div class="col-md-9">
                     <?php
                     echo select_tag(

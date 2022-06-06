@@ -5,7 +5,7 @@ require(component_path('entities/navigation')) ?>
     echo TEXT_NAV_LISTING_CONFIG ?></h3>
 
 <p><?php
-    echo TEXT_LISGIN_CONFIGURATION_INFO; ?></p>
+    echo TEXT_LISTING_CONFIGURATION_INFO; ?></p>
 
 <div class="table-scrollable">
     <table class="table table-striped table-bordered table-hover">
@@ -76,7 +76,7 @@ require(component_path('entities/navigation')) ?>
     echo TEXT_HIGHLIGHT_ROW ?></h3>
 
 <p><?php
-    echo TEXT_LISGIN_HIGHLIGHT_ROW_INFO; ?></p>
+    echo TEXT_LISTING_HIGHLIGHT_ROW_INFO; ?></p>
 
 <?php
 echo button_tag(TEXT_BUTTON_ADD, url_for('entities/listing_highlight_form', 'entities_id=' . $_GET['entities_id'])) ?>

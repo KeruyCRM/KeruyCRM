@@ -39,10 +39,10 @@ $check_folders = [
 foreach ($check_folders as $v) {
     if (is_dir($v)) {
         if (!is_writable($v)) {
-            $error_list[] = sprintf(TEXT_ERRRO_FOLDER_NOT_WRITABLE, str_replace('..', '', $v));
+            $error_list[] = sprintf(TEXT_ERROR_FOLDER_NOT_WRITABLE, str_replace('..', '', $v));
         }
     } else {
-        $error_list[] = sprintf(TEXT_ERRRO_FOLDER_NOT_EXIST, str_replace('..', '', $v));
+        $error_list[] = sprintf(TEXT_ERROR_FOLDER_NOT_EXIST, str_replace('..', '', $v));
     }
 }
 
@@ -51,7 +51,7 @@ if (count($error_list)) {
         echo '<div class="alert alert-danger">' . $v . '</div>';
     }
 
-    echo '<br><p>' . TEXT_CHECK_ERROS_ABOVE . '</p>';
+    echo '<br><p>' . TEXT_CHECK_ERRORS_ABOVE . '</p>';
 
     echo '<p><input type="button" value="' . TEXT_BUTTON_CHECK_ENVIRONMENT . '"  class="btn btn-default"  onClick="location.href=\'index.php?step=checking_environment&lng=' . $_GET['lng'] . '\'"></p>';
 } else {

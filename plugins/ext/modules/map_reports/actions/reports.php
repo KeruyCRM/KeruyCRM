@@ -89,7 +89,7 @@ switch ($app_module_action) {
                 ['class' => 'form-control input-large required', 'onChange' => 'check_field_type()']
             ) . '
                ' . tooltip_text(
-                TEXT_AVAILABLE_FIELS . ': ' . TEXT_FIELDTYPE_MAPBBCODE_TITLE . ', ' . TEXT_FIELDTYPE_GOOGLE_MAP_TITLE
+                TEXT_AVAILABLE_FIELDS . ': ' . TEXT_FIELDTYPE_MAPBBCODE_TITLE . ', ' . TEXT_FIELDTYPE_GOOGLE_MAP_TITLE
             ) . '
             </div>			
           </div>

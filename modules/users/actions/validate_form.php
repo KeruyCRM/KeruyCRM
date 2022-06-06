@@ -10,7 +10,7 @@ if (CFG_ALLOW_REGISTRATION_WITH_THE_SAME_EMAIL == 0 and isset($_POST['useremail'
     );
     $check = db_fetch_array($check_query);
     if ($check['total'] > 0) {
-        $msg[] = TEXT_ERROR_USEREMAL_EXIST;
+        $msg[] = TEXT_ERROR_USEREMAIL_EXIST;
     }
 }
 
@@ -28,7 +28,7 @@ if (isset($_POST['username'])) {
 
 if (isset($_POST['password']) and strlen($_POST['password'])) {
     if (strlen($_POST['password']) < CFG_PASSWORD_MIN_LENGTH) {
-        $msg[] = sprintf(TEXT_ERROR_PASSOWRD_LENGTH, CFG_PASSWORD_MIN_LENGTH);
+        $msg[] = sprintf(TEXT_ERROR_PASSWORD_LENGTH, CFG_PASSWORD_MIN_LENGTH);
     }
 
     if (CFG_IS_STRONG_PASSWORD) {

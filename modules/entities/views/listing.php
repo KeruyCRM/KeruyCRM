@@ -155,7 +155,7 @@ require(component_path('entities/navigation')) ?>
 
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="number_fixed_field_in_listing"><?php
-                        echo TEXT_CHANGE_COL_WIDTH_IN_LISTIN ?></label>
+                        echo TEXT_CHANGE_COL_WIDTH_IN_LISTING ?></label>
                     <div class="col-md-9">
                         <?php
                         echo select_tag(
@@ -192,10 +192,10 @@ require(component_path('entities/navigation')) ?>
         <div class="row">
             <div class="col-md-8">
                 <legend><?php
-                    echo TEXT_LISTING_HORISONTAL_SCROLL ?></legend>
+                    echo TEXT_LISTING_HORIZONTAL_SCROLL ?></legend>
 
                 <div><?php
-                    echo TEXT_LISTING_HORISONTAL_SCROLL_INFO ?></div>
+                    echo TEXT_LISTING_HORIZONTAL_SCROLL_INFO ?></div>
 
                 <div>
                     <form class="form-inline" role="form">

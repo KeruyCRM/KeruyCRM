@@ -120,7 +120,7 @@ switch ($app_module_action) {
                     '',
                     ['class' => 'form-control input-xlarge chosen-select required']
                 ) . '
-				  	  ' . tooltip_text(TEXT_MOVE_TO_PARETN_ITEM_INFO) . '
+				  	  ' . tooltip_text(TEXT_MOVE_TO_PARENT_ITEM_INFO) . '
 				    </div>			
 				  </div>';
         }

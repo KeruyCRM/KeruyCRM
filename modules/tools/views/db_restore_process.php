@@ -43,7 +43,7 @@ switch ($app_module_action) {
         }
 
         if (!$is_file) {
-            $html = '<div class="alert alert-danger">' . TEXT_FILE_NOT_FOUD . '</div>';
+            $html = '<div class="alert alert-danger">' . TEXT_FILE_NOT_FOUND . '</div>';
         }
 
         break;

@@ -98,7 +98,7 @@ echo button_tag(TEXT_BUTTON_CREATE, url_for('filters_panels/form', 'entities_id=
             <th><?php
                 echo TEXT_ACTIVE_FILTERS ?></th>
             <th><?php
-                echo TEXT_WIDHT ?></th>
+                echo TEXT_WIDTH ?></th>
             <th><?php
                 echo TEXT_USERS_GROUPS ?></th>
             <th><?php

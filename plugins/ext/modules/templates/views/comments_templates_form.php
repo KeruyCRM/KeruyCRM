@@ -15,7 +15,7 @@ echo form_tag(
             <li class="active"><a href="#general_info" data-toggle="tab"><?php
                     echo TEXT_GENERAL_INFO ?></a></li>
             <li><a href="#comment_info" data-toggle="tab"><?php
-                    echo TEXT_COMMENT_IFNO ?></a></li>
+                    echo TEXT_COMMENT_INFO ?></a></li>
         </ul>
 
         <div class="tab-content">

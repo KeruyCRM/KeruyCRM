@@ -103,8 +103,8 @@ if ($action == 'keruycrm_install') {
 
     <script type="text/javascript">
         $.extend($.validator.messages, {
-            required: '<?php echo TEXT_FIELD_IS_REQURED ?>',
-            email: '<?php echo TEXT_FIELD_IS_REQURED_EMAIL ?>'
+            required: '<?php echo TEXT_FIELD_IS_REQUIRED ?>',
+            email: '<?php echo TEXT_FIELD_IS_REQUIRED_EMAIL ?>'
         });
     </script>
 

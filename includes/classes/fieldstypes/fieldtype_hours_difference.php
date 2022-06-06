@@ -16,8 +16,8 @@ class fieldtype_hours_difference
 
         $cfg[] = [
             'title' => tooltip_icon(
-                    TEXT_FIELDTYPE_DAYS_DIFFERENCE_DINAMIC_INFO
-                ) . TEXT_FIELDTYPE_MYSQL_QUERY_DINAMIC_QUERY,
+                    TEXT_FIELDTYPE_DAYS_DIFFERENCE_DYNAMIC_INFO
+                ) . TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
             'name' => 'dinamic_query',
             'type' => 'dropdown',
             'choices' => ['0' => TEXT_NO, '1' => TEXT_YES],

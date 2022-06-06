@@ -7,7 +7,7 @@ class fieldtype_google_map_directions
 
     function __construct()
     {
-        $this->options = ['title' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRETIONS_TITLE];
+        $this->options = ['title' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_TITLE];
     }
 
     function get_configuration()
@@ -39,12 +39,12 @@ class fieldtype_google_map_directions
                 ),
             'name' => 'address_pattern',
             'type' => 'textarea',
-            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRETIONS_ADDRESS_TIP . '<br>' . TEXT_ADDRESS_PATTERN_INOF,
+            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_ADDRESS_TIP . '<br>' . TEXT_ADDRESS_PATTERN_INFO,
             'params' => ['class' => 'form-control input-xlarge required']
         ];
 
         $cfg[TEXT_SETTINGS][] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'map_width',
             'type' => 'input',
             'tooltip_icon' => TEXT_WIDTH_INPUT_TIP,
@@ -77,7 +77,7 @@ class fieldtype_google_map_directions
             'title' => TEXT_LABEL,
             'name' => 'labels',
             'type' => 'textarea',
-            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRETIONS_LABEL_TIP,
+            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_LABEL_TIP,
             'params' => ['class' => 'form-control input-xlarge']
         ];
         $cfg[TEXT_MARKER][] = ['title' => TEXT_LABEL_COLOR, 'name' => 'label_color', 'type' => 'colorpicker'];
@@ -85,14 +85,14 @@ class fieldtype_google_map_directions
             'title' => TEXT_ICONS,
             'name' => 'icons',
             'type' => 'textarea',
-            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRETIONS_ICONS_TIP,
+            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_ICONS_TIP,
             'params' => ['class' => 'form-control input-xlarge']
         ];
         $cfg[TEXT_MARKER][] = [
             'title' => TEXT_FIELDS_IN_POPUP,
             'name' => 'fields_in_popup',
             'type' => 'textarea',
-            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRETIONS_FIELDS_IN_POPUP_TIP,
+            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_FIELDS_IN_POPUP_TIP,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
@@ -108,7 +108,7 @@ class fieldtype_google_map_directions
                 'TRANSIT' => 'TRANSIT',
                 'WALKING' => 'WALKING'
             ],
-            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRETIONS_MODE_TIP,
+            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_MODE_TIP,
             'params' => ['class' => 'form-control input-medium']
         ];
 

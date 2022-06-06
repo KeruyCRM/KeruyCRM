@@ -41,7 +41,7 @@ echo button_tag(
             <th><?php
                 echo TEXT_HEADING ?></th>
             <th><?php
-                echo TEXT_WIDHT ?></th>
+                echo TEXT_WIDTH ?></th>
             <th><?php
                 echo TEXT_SORT_ORDER ?></th>
         </tr>

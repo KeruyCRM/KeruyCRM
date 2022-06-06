@@ -36,7 +36,7 @@ switch ($field['type']) {
                 'settings[date_format]',
                 $settings->get('date_format'),
                 ['class' => 'form-control input-small']
-            ) . tooltip_text(TEXT_DEFAULT . ': ' . CFG_APP_DATE_FORMAT . ', ' . TEXT_DATE_FORMAT_IFNO) . '</div>
+            ) . tooltip_text(TEXT_DEFAULT . ': ' . CFG_APP_DATE_FORMAT . ', ' . TEXT_DATE_FORMAT_INFO) . '</div>
             </div>';
 
         break;
@@ -51,7 +51,7 @@ switch ($field['type']) {
                 'settings[date_format]',
                 $settings->get('date_format'),
                 ['class' => 'form-control input-small']
-            ) . tooltip_text(TEXT_DEFAULT . ': ' . CFG_APP_DATETIME_FORMAT . ', ' . TEXT_DATE_FORMAT_IFNO) . '</div>
+            ) . tooltip_text(TEXT_DEFAULT . ': ' . CFG_APP_DATETIME_FORMAT . ', ' . TEXT_DATE_FORMAT_INFO) . '</div>
             </div>';
 
         break;
@@ -60,7 +60,7 @@ switch ($field['type']) {
     case 'fieldtype_image_ajax':
         $html = '
             <div class="form-group">
-                <label class="col-md-3 control-label" for="fields_id">' . TEXT_WIDHT . '</label>
+                <label class="col-md-3 control-label" for="fields_id">' . TEXT_WIDTH . '</label>
                 <div class="col-md-9">' . input_tag(
                 'settings[width]',
                 $settings->get('width'),

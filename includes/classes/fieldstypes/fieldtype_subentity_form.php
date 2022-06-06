@@ -73,8 +73,8 @@ class fieldtype_subentity_form
                 <div class="form-group">
                     <label class="col-md-3 control-label"></label>
                     <div class="col-md-9">
-                        <div class="help-block" id="help_blcok_row">' . TEXT_FIELS_DISPLAY_IN_FOR_TYPE_ROW . '</div>
-                        <div class="help-block" id="help_blcok_windows">' . TEXT_FIELS_DISPLAY_IN_FOR_TYPE_NEW_WINDOW . '</div>
+                        <div class="help-block" id="help_blcok_row">' . TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_ROW . '</div>
+                        <div class="help-block" id="help_blcok_windows">' . TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_NEW_WINDOW . '</div>
                     </div>			
 	        </div>
                 
@@ -289,11 +289,11 @@ class fieldtype_subentity_form
                 ];
 
                 $cfg[] = [
-                    'title' => TEXT_COLUMN_WIDHT,
+                    'title' => TEXT_COLUMN_WIDTH,
                     'name' => 'column_width',
                     'type' => 'input',
                     'params' => ['class' => 'form-control input-large'],
-                    'tooltip' => TEXT_ENTER_COLUMN_WIDHT_BY_COMMA
+                    'tooltip' => TEXT_ENTER_COLUMN_WIDTH_BY_COMMA
                 ];
 
                 $cfg[] = [

@@ -123,7 +123,7 @@ require(component_path('entities/navigation')) ?>
 
             <fieldset>
                 <legend><?php
-                    echo TEXT_AVAILABLE_FIELS ?></legend>
+                    echo TEXT_AVAILABLE_FIELDS ?></legend>
                 <div class="cfg_listing">
                     <ul id="available_fields" class="sortable">
                         <?php

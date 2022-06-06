@@ -39,12 +39,12 @@ class fieldtype_yandex_map
                 ),
             'name' => 'address_pattern',
             'type' => 'input',
-            'tooltip' => TEXT_ADDRESS_PATTERN_INOF,
+            'tooltip' => TEXT_ADDRESS_PATTERN_INFO,
             'params' => ['class' => 'form-control input-xlarge required']
         ];
 
         $cfg[] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'map_width',
             'type' => 'input',
             'tooltip_icon' => TEXT_WIDTH_INPUT_TIP,

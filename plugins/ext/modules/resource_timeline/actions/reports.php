@@ -134,8 +134,8 @@ switch ($app_module_action) {
              
           <div class="form-group">
           	<label class="col-md-3 control-label" for="allowed_groups">' . tooltip_icon(
-                TEXT_EXTNER_VALUE_IN_PERCENT_OR_PIXELS
-            ) . TEXT_WIDHT . '</label>
+                TEXT_ENTER_VALUE_IN_PERCENT_OR_PIXELS
+            ) . TEXT_WIDTH . '</label>
             <div class="col-md-9">
           	   ' . input_tag('listing_width', $obj['listing_width'], ['class' => 'form-control input-small']) . '                    
             </div>
@@ -161,7 +161,7 @@ switch ($app_module_action) {
 
         $html .= '
          <div class="form-group">
-          	<label class="col-md-3 control-label" for="allowed_groups">' . TEXT_COLUMN_WIDHT . '</label>
+          	<label class="col-md-3 control-label" for="allowed_groups">' . TEXT_COLUMN_WIDTH . '</label>
             <div class="col-md-9">
           	   ' . input_tag('column_width', $obj['column_width'], ['class' => 'form-control input-large']) . '
                     ' . tooltip_text(

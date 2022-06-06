@@ -6,15 +6,15 @@ define('TEXT_CHECKING_ENVIRONMENT', 'Перевірка середовища...'
 define('TEXT_CHECKING_ENVIRONMENT_SUCCESS', 'Сервер перевірено. Помилок не знайдено. Ви можете встановити KeruyCRM.');
 define('TEXT_BUTTON_DATABASE_CONFIG', 'Налаштування бази даних');
 define('TEXT_BUTTON_CHECK_ENVIRONMENT', 'Перевірити сервер');
-define('TEXT_CHECK_ERROS_ABOVE', 'Неможливо встановити. Будь ласка, перевірте помилки вище.');
+define('TEXT_CHECK_ERRORS_ABOVE', 'Неможливо встановити. Будь ласка, перевірте помилки вище.');
 define('TEXT_ERROR_PHP_VERSION', 'Помилка: потрібна PHP>=7.2, Поточна версія %s');
 
 define('TEXT_ERROR_LIB', 'Бібліотека PHP <b>%s</b> не встановлена на вашому веб-сервері');
 
-define('TEXT_ERRRO_FOLDER_NOT_WRITABLE', 'Помилка: папка "%s" недоступна для запису!');
-define('TEXT_ERRRO_FOLDER_NOT_EXIST', 'Помилка: папка "%s" не існує');
+define('TEXT_ERROR_FOLDER_NOT_WRITABLE', 'Помилка: папка "%s" недоступна для запису!');
+define('TEXT_ERROR_FOLDER_NOT_EXIST', 'Помилка: папка "%s" не існує');
 
-define('TEXT_DATABASE_CONFIGURAITON', 'Конфігурація бази даних');
+define('TEXT_DATABASE_CONFIGURATION', 'Конфігурація бази даних');
 define('TEXT_DATABASE_HOST', 'Ім`я хосту:');
 define('TEXT_DATABASE_HOST_INFO', 'Адреса сервера бази даних у вигляді імені хоста або IP-адреси.');
 define('TEXT_DATABASE_PORT', 'Порт бази даних:');
@@ -32,8 +32,8 @@ define(
     'Пароль, який використовується разом із ім`ям користувача для підключення до сервера бази даних.'
 );
 define('TEXT_BUTTON_INSTALL_DATABASE', 'Встановити базу даних');
-define('TEXT_FIELD_IS_REQURED', 'Заповнення цього поля обов`язково!');
-define('TEXT_FIELD_IS_REQURED_EMAIL', 'Будь ласка, введіть правильну адресу електронної пошти.');
+define('TEXT_FIELD_IS_REQUIRED', 'Заповнення цього поля обов`язково!');
+define('TEXT_FIELD_IS_REQUIRED_EMAIL', 'Будь ласка, введіть правильну адресу електронної пошти.');
 
 define('TEXT_GENERAL_CONFIGURATION', 'Загальна конфігурація');
 define('TEXT_APP_NAME', 'Назва додатка');

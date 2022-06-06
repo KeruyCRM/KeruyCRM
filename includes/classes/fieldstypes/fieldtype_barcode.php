@@ -64,11 +64,11 @@ class fieldtype_barcode
         ];
 
         $cfg[TEXT_SETTINGS][] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => TEXT_INPTUT_SMALL,
+                'input-small' => TEXT_INPUT_SMALL,
                 'input-medium' => TEXT_INPUT_MEDIUM,
                 'input-large' => TEXT_INPUT_LARGE,
                 'input-xlarge' => TEXT_INPUT_XLARGE
@@ -170,7 +170,7 @@ class fieldtype_barcode
             'title' => TEXT_DISPLAY_FIELD_VALUE,
             'name' => 'display_field_value',
             'type' => 'checkbox',
-            'tooltip_icon' => TEXT_FIELDTYPE_BARCODE_DSIPLAY_TIP
+            'tooltip_icon' => TEXT_FIELDTYPE_BARCODE_DISPLAY_TIP
         ];
 
 

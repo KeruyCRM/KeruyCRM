@@ -27,7 +27,7 @@ class fieldtype_entity_ajax
         ];
 
         $cfg[TEXT_SETTINGS][] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [

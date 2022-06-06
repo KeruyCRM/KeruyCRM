@@ -49,7 +49,7 @@ class xml_import
     {
         //check file
         if (!is_file(DIR_FS_TMP . $this->filename)) {
-            return alert_error(TEXT_FILE_NOT_FOUD);
+            return alert_error(TEXT_FILE_NOT_FOUND);
         }
 
         //validate xml

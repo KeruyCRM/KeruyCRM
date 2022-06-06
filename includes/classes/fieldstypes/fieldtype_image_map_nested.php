@@ -65,7 +65,7 @@ class fieldtype_image_map_nested
             'params' => ['class' => 'form-control input-small']
         ];
         $cfg[TEXT_MAP_SETTINGS][] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'map_width',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']

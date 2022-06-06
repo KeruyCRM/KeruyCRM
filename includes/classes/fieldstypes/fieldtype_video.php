@@ -15,7 +15,7 @@ class fieldtype_video
 
 
         $cfg[TEXT_SETTINGS][] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => ['input-large' => TEXT_INPUT_LARGE, 'input-xlarge' => TEXT_INPUT_XLARGE],
@@ -33,7 +33,7 @@ class fieldtype_video
         $cfg[TEXT_SETTINGS][] = ['title' => TEXT_HIDE_FIELD_NAME, 'name' => 'hide_field_name', 'type' => 'checkbox'];
 
         $cfg[TEXT_VIDEO_PLAYER][] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'video_width',
             'type' => 'input',
             'tooltip_icon' => TEXT_DEFAULT . ': 300',

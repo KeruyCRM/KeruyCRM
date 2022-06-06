@@ -6,7 +6,7 @@
     echo button_tag(TEXT_BUTTON_CREATE_BACKUP, url_for('tools/db_backup_form')) . ' ' .
         button_tag(TEXT_MENU_DATABASE_EXPORT, url_for('tools/db_export'), true, ['class' => 'btn btn-default']) . ' ' .
         button_tag(
-            '<i class="fa fa-repeat" aria-hidden="true"></i> ' . TEXT_BUTTON_DB_RESOTRE_FROM_FILE,
+            '<i class="fa fa-repeat" aria-hidden="true"></i> ' . TEXT_BUTTON_DB_RESTORE_FROM_FILE,
             url_for('tools/db_restore_file'),
             true,
             ['class' => 'btn btn-default']

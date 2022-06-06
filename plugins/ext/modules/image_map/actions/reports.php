@@ -73,7 +73,7 @@ switch ($app_module_action) {
                 $obj['fields_id'],
                 ['class' => 'form-control input-large required']
             ) . '
-               ' . tooltip_text(TEXT_AVAILABLE_FIELS . ': ' . TEXT_FIELDTYPE_IMAGE_MAP_TITLE) . '
+               ' . tooltip_text(TEXT_AVAILABLE_FIELDS . ': ' . TEXT_FIELDTYPE_IMAGE_MAP_TITLE) . '
             </div>			
           </div>
         ';

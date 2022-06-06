@@ -63,8 +63,8 @@
        </div>
        <div class="form-group">
         	<label class="col-md-3 control-label" for="cfg_disable_highlight_unread">' . tooltip_icon(
-                    TEXT_DISABLE_HIGHLIGH_UNREAD_INFO
-                ) . TEXT_DISABLE_HIGHLIGH_UNREAD . '</label>
+                    TEXT_DISABLE_HIGHLIGHT_UNREAD_INFO
+                ) . TEXT_DISABLE_HIGHLIGHT_UNREAD . '</label>
           <div class="col-md-9">	
         	  <p class="form-control-static">' . input_checkbox_tag(
                     'cfg[disable_highlight_unread]',

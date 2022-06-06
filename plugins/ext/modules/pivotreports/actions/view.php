@@ -75,7 +75,7 @@ switch ($app_module_action) {
 				        computeError: "' . addslashes(TEXT_EXT_PIVOTREPORTS_COMPUTE_ERROR) . '",
 				        uiRenderError: "' . addslashes(TEXT_EXT_PIVOTREPORTS_UIRENDER_ERROR) . '",
 				        selectAll: "' . addslashes(TEXT_SELECT_ALL) . '",
-				        selectNone: "' . addslashes(TEXT_SELECT_NONOE) . '",
+				        selectNone: "' . addslashes(TEXT_DESELECT) . '",
 				        tooMany: "' . addslashes(TEXT_EXT_PIVOTREPORTS_TOO_MANY) . '",
 				        filterResults: "' . addslashes(TEXT_EXT_PIVOTREPORTS_FILTER_RESULTS) . '",
 				        totals: "' . addslashes(TEXT_EXT_PIVOTREPORTS_TOTALS) . '",

@@ -14,7 +14,7 @@ class fieldtype_tags
         $cfg = [];
 
         $cfg[] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [

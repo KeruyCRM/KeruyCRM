@@ -1,6 +1,6 @@
 <?php
 echo ajax_modal_template_header(
-    TEXT_HEADING_REPORTS_FILTER_IFNO . ' (' . entities::get_name_by_id($reports_info['entities_id']) . ')'
+    TEXT_HEADING_REPORTS_FILTER_INFO . ' (' . entities::get_name_by_id($reports_info['entities_id']) . ')'
 ) ?>
 
 <?php

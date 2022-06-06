@@ -326,7 +326,7 @@ $fields_where_sql = (strlen(
 
     $forms_wizard = new forms_wizard($app_items_form_name, $current_entity_id, $entity_cfg);
 
-    $button_title = (strlen(CFG_REGISTRATION_BUTTON_TITLE) ? CFG_REGISTRATION_BUTTON_TITLE : TEXT_BUTTON_REGISTRATCION);
+    $button_title = (strlen(CFG_REGISTRATION_BUTTON_TITLE) ? CFG_REGISTRATION_BUTTON_TITLE : TEXT_BUTTON_REGISTRATION);
 
     if ($forms_wizard->is_active()) {
         $html = $forms_wizard->ajax_modal_template_footer($button_title);

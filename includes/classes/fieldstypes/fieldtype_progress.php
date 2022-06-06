@@ -13,7 +13,7 @@ class fieldtype_progress
     {
         $cfg = [];
         $cfg[TEXT_SETTINGS][] = [
-            'title' => TEXT_SETP,
+            'title' => TEXT_STEP,
             'name' => 'step',
             'type' => 'dropdown',
             'choices' => ['5' => 5, '10' => 10, '1' => 1],
@@ -27,7 +27,7 @@ class fieldtype_progress
         ];
         $cfg[TEXT_PROGRESS_BAR][] = [
             'title' => TEXT_MIN_WIDTH,
-            'tooltip_icon' => TEXT_ENTER_VALUES_IN_PIXELS_OR_LEAVE_LBANK,
+            'tooltip_icon' => TEXT_ENTER_VALUES_IN_PIXELS_OR_LEAVE_BLANK,
             'name' => 'bar_min_width',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']

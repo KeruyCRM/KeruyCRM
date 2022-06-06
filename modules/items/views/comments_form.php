@@ -7,7 +7,7 @@ if (class_exists('comments_templates')) {
     $header_menu_button = comments_templates::render_modal_header_menu($current_entity_id);
 }
 
-echo ajax_modal_template_header($header_menu_button . TEXT_COMMENT_IFNO)
+echo ajax_modal_template_header($header_menu_button . TEXT_COMMENT_INFO)
 ?>
 
 <?php

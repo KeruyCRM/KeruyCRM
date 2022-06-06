@@ -19,12 +19,12 @@ switch ($app_module_action) {
 
         if ($password != $password_confirm) {
             $error = true;
-            $alerts->add(TEXT_ERROR_PASSOWRD_CONFIRMATION, 'error');
+            $alerts->add(TEXT_ERROR_PASSWORD_CONFIRMATION, 'error');
         }
 
         if (strlen($password) < CFG_PASSWORD_MIN_LENGTH) {
             $error = true;
-            $alerts->add(TEXT_ERROR_PASSOWRD_LENGTH, 'error');
+            $alerts->add(TEXT_ERROR_PASSWORD_LENGTH, 'error');
         }
 
         if (CFG_IS_STRONG_PASSWORD) {

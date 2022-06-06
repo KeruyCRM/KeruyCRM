@@ -219,7 +219,7 @@ echo form_tag(
                             ['class' => 'form-control input-small required']
                         ) ?>
                         <?php
-                        echo '<span class="help-block">' . TEXT_DATE_FORMAT_IFNO . '</span>'; ?>
+                        echo '<span class="help-block">' . TEXT_DATE_FORMAT_INFO . '</span>'; ?>
                     </div>
                 </div>
 

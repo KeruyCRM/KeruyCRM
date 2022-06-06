@@ -59,7 +59,7 @@ echo form_tag(
 
         <div class="form-group panel-with-option">
             <label class="col-md-4 control-label" for="width"><?php
-                echo TEXT_WIDHT ?></label>
+                echo TEXT_WIDTH ?></label>
             <div class="col-md-8">
                 <?php
                 echo select_tag(

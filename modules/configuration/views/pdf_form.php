@@ -14,13 +14,13 @@ echo form_tag(
         $has_errors = false;
 
         if (!is_writable(CFG_PATH_TO_DOMPDF_FONTS)) {
-            echo alert_error(sprintf(TEXT_ERRRO_FOLDER_NOT_WRITABLE, CFG_PATH_TO_DOMPDF_FONTS));
+            echo alert_error(sprintf(TEXT_ERROR_FOLDER_NOT_WRITABLE, CFG_PATH_TO_DOMPDF_FONTS));
             $has_errors = true;
         }
 
         if (!is_writable(CFG_PATH_TO_DOMPDF_FONTS . '/dompdf_font_family_cache.php')) {
             echo alert_error(
-                sprintf(TEXT_ERRROR_FILE_NOT_WRITABLE, CFG_PATH_TO_DOMPDF_FONTS . '/dompdf_font_family_cache.php')
+                sprintf(TEXT_ERROR_FILE_NOT_WRITABLE, CFG_PATH_TO_DOMPDF_FONTS . '/dompdf_font_family_cache.php')
             );
             $has_errors = true;
         }

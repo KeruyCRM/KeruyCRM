@@ -169,7 +169,7 @@ echo ajax_modal_template_header(TEXT_HEADING_EXPORT) ?>
             </div>
             </form>
             <p><?php
-                echo tooltip_text(TEXT_SAVE_TAMPLATE_NOTE) ?></p>
+                echo tooltip_text(TEXT_SAVE_TEMPLATE_NOTE) ?></p>
             <div id="action_response_msg"></div>
             <br>
 

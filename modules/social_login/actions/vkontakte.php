@@ -17,7 +17,7 @@ if (isset($_GET['code'])) {
 
     //check if there is accass to email
     if (!$email) {
-        $alerts->add(TEXT_ERROR_USEREMAL_EMPTY, 'error');
+        $alerts->add(TEXT_ERROR_USEREMAIL_EMPTY, 'error');
         redirect_to('users/login');
     }
 

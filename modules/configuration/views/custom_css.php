@@ -8,7 +8,7 @@
 $css_folder = DIR_FS_CATALOG . 'css';
 
 if (!is_writable($css_folder)) {
-    echo alert_error(sprintf(TEXT_ERRRO_FOLDER_NOT_WRITABLE, $css_folder));
+    echo alert_error(sprintf(TEXT_ERROR_FOLDER_NOT_WRITABLE, $css_folder));
 } else {
     $custom_css = '';
 

@@ -255,7 +255,7 @@ class fieldtype_attachments
         $("button[type=submit]").bind("click",function(){                                                 
             if(is_file_uploading)
             {
-              alert("' . TEXT_PLEASE_WAYIT_FILES_LOADING . '"); return false;
+              alert("' . TEXT_PLEASE_WAIT_FILES_LOADING . '"); return false;
             }                           
           });
         

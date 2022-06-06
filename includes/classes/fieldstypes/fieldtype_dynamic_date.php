@@ -30,7 +30,7 @@ class fieldtype_dynamic_date
             'title' => TEXT_DATE_FORMAT,
             'name' => 'date_format',
             'type' => 'input',
-            'tooltip' => TEXT_DEFAULT . ': ' . CFG_APP_DATE_FORMAT . ', ' . TEXT_DATE_FORMAT_IFNO,
+            'tooltip' => TEXT_DEFAULT . ': ' . CFG_APP_DATE_FORMAT . ', ' . TEXT_DATE_FORMAT_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 

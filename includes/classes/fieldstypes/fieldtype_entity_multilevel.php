@@ -33,7 +33,7 @@ class fieldtype_entity_multilevel
         ];
 
         $cfg[TEXT_SETTINGS][] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [

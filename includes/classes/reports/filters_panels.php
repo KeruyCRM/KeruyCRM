@@ -1030,7 +1030,7 @@ class filters_panels
     static function get_field_width_choices()
     {
         return [
-            'input-small' => TEXT_INPTUT_SMALL,
+            'input-small' => TEXT_INPUT_SMALL,
             'input-medium' => TEXT_INPUT_MEDIUM,
             'input-large' => TEXT_INPUT_LARGE,
             'input-xlarge' => TEXT_INPUT_XLARGE

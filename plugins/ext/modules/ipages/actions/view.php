@@ -63,7 +63,7 @@ switch ($app_module_action) {
                 readfile($file['file_path']);
             }
         } else {
-            echo TEXT_FILE_NOT_FOUD;
+            echo TEXT_FILE_NOT_FOUND;
         }
 
         exit();

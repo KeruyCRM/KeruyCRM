@@ -116,7 +116,7 @@ echo form_tag(
         if ($listing_types_info['type'] == 'list'): ?>
             <div class="form-group">
                 <label class="col-md-3 control-label" for="sort_order"><?php
-                    echo tooltip_icon(TEXT_SECTION_WIDHT_TIP) . TEXT_WIDHT ?></label>
+                    echo tooltip_icon(TEXT_SECTION_WIDTH_TIP) . TEXT_WIDTH ?></label>
                 <div class="col-md-9">
                     <?php
                     echo input_tag('width', $obj['width'], ['class' => 'form-control input-small']) ?>

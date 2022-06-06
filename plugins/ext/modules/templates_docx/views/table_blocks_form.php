@@ -108,7 +108,7 @@ echo form_tag(
 
                 <div class="form-group settings-list">
                     <label class="col-md-3 control-label" for="fields_id"><?php
-                        echo TEXT_WIDHT ?></label>
+                        echo TEXT_WIDTH ?></label>
                     <div class="col-md-9"><?php
                         echo input_tag(
                             'settings[cell_width]',

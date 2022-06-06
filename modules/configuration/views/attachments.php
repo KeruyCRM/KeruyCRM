@@ -1,5 +1,5 @@
 <h3 class="page-title"><?php
-    echo TEXT_HEADING_ATTACHMENTS_CONFIGURAITON ?></h3>
+    echo TEXT_HEADING_ATTACHMENTS_CONFIGURATION ?></h3>
 
 <?php
 echo form_tag('cfg', url_for('configuration/save'), ['class' => 'form-horizontal']) ?>
@@ -111,7 +111,7 @@ echo input_hidden_tag('redirect_to', 'configuration/attachments') ?>
                 ['class' => 'form-control input-small number', 'type' => 'number']
             ); ?>
             <?php
-            echo tooltip_text(TEXT_ENTER_VALUES_IN_PIXELS_OR_LEAVE_LBANK) ?>
+            echo tooltip_text(TEXT_ENTER_VALUES_IN_PIXELS_OR_LEAVE_BLANK) ?>
         </div>
     </div>
 
@@ -126,7 +126,7 @@ echo input_hidden_tag('redirect_to', 'configuration/attachments') ?>
                 ['class' => 'form-control input-small number', 'type' => 'number']
             ); ?>
             <?php
-            echo tooltip_text(TEXT_ENTER_VALUES_IN_PIXELS_OR_LEAVE_LBANK) ?>
+            echo tooltip_text(TEXT_ENTER_VALUES_IN_PIXELS_OR_LEAVE_BLANK) ?>
         </div>
     </div>
 

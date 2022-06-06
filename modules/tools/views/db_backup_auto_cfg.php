@@ -37,7 +37,7 @@ echo form_tag(
     </div>
     <div class="form-group">
         <label class="col-md-3 control-label"><?php
-            echo TEXT_KEEP_FIELS ?></label>
+            echo TEXT_KEEP_FIELDS ?></label>
         <div class="col-md-9">
             <?php
             echo input_tag(

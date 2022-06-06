@@ -442,7 +442,7 @@ class fields_types
                 $tooltip = TEXT_FIELDTYPE_USERS_APPROVE_TOOLTIP;
                 break;
             case 'fieldtype_google_map_directions':
-                $tooltip = TEXT_FIELDTYPE_GOOGLE_MAP_DIRETIONS_TOOLTIP;
+                $tooltip = TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_TOOLTIP;
                 break;
             case 'fieldtype_dynamic_date':
                 $tooltip = TEXT_FIELDTYPE_DYNAMIC_DATE_TOOLTIP;
@@ -618,7 +618,7 @@ class fields_types
             'fieldtype_mind_map',
         ];
 
-        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_SPCEIAL_FIELDS] = [
+        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_SPECIAL_FIELDS] = [
             'fieldtype_section',
             'fieldtype_random_value',
             'fieldtype_auto_increment',

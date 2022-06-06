@@ -1,5 +1,5 @@
 <h3 class="page-title"><?php
-    echo TEXT_DATABASE_CONFIGURAITON ?></h3>
+    echo TEXT_DATABASE_CONFIGURATION ?></h3>
 
 <?php
 if (isset($_GET['db_error'])) {

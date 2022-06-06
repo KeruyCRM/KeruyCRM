@@ -15,7 +15,7 @@ class fieldtype_iframe
 
 
         $cfg[TEXT_SETTINGS][] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'input_width',
             'type' => 'dropdown',
             'choices' => [
@@ -35,7 +35,7 @@ class fieldtype_iframe
         ];
 
         $cfg['Iframe'][] = [
-            'title' => TEXT_WIDHT,
+            'title' => TEXT_WIDTH,
             'name' => 'width',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']

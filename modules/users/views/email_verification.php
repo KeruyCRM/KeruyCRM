@@ -43,14 +43,14 @@
 
     <div class="create-account">
         <p><a href="#" onClick="show_change_email_form()"><?php
-                echo TEXT_CHNAGE_EMAIL ?></a></p>
+                echo TEXT_CHANGE_EMAIL ?></a></p>
     </div>
 
 </div>
 
 <div id="update_email_secion" style="display:none;">
     <h3 class="form-title"><?php
-        echo TEXT_CHNAGE_EMAIL ?></h3>
+        echo TEXT_CHANGE_EMAIL ?></h3>
 
 
     <?php
