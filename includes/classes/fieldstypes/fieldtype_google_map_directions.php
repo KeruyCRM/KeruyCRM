@@ -155,7 +155,7 @@ class fieldtype_google_map_directions
             'name' => 'save_value_in',
             'type' => 'dropdown',
             'choices' => $choices,
-            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRETIONS_SAVE_VALUE_TIP,
+            'tooltip' => TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_SAVE_VALUE_TIP,
             'params' => ['class' => 'form-control input-medium']
         ];
 
