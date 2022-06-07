@@ -557,8 +557,8 @@
         form_vlidator_<?php echo $app_items_form_name ?> = $('#process').validate({
             ignore: '.ignore-validation',
             rules: {
-                <?php echo fields::render_required_ckeditor_ruels($current_entity_id); ?>
-                <?php echo fields::render_unique_fields_ruels($current_entity_id, $current_item_id); ?>
+                <?php echo fields::render_required_ckeditor_rules($current_entity_id); ?>
+                <?php echo fields::render_unique_fields_rules($current_entity_id, $current_item_id); ?>
             },
             submitHandler: function (form) {
 
