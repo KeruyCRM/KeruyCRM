@@ -17,8 +17,8 @@
 
     //rules for ckeditor
     rules:{
-    <?php echo fields::render_required_ckeditor_ruels($current_entity_id); ?>
-    <?php echo fields::render_unique_fields_ruels($current_entity_id, $current_item_id ?? 0); ?>
+    <?php echo fields::render_required_ckeditor_rules($current_entity_id); ?>
+    <?php echo fields::render_unique_fields_rules($current_entity_id, $current_item_id ?? 0); ?>
 },
 
     //custom error messages

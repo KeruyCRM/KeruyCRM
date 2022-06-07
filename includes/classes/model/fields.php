@@ -293,7 +293,7 @@ class fields
         return $html;
     }
 
-    public static function render_required_ckeditor_ruels($entities_id)
+    public static function render_required_ckeditor_rules($entities_id)
     {
         $html = '';
 
@@ -315,7 +315,7 @@ class fields
         return $html;
     }
 
-    public static function render_unique_fields_ruels($entities_id, $item_id = false)
+    public static function render_unique_fields_rules($entities_id, $item_id = false)
     {
         global $app_items_form_name, $public_form, $app_session_token, $app_path;
 
