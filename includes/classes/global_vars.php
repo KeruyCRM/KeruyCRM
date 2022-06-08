@@ -36,9 +36,17 @@ class global_vars
         $this->vars['[current_user_id]'] = $app_user['id'];
         $this->vars['[current_user_group_id]'] = $app_user['group_id'];
 
-        foreach ($this->vars as $name => $value) {
-            $text = str_replace($name, $value, $text);
-        }
+        //foreach ($this->vars as $name => $value) {
+        $name = array_keys($this->vars);
+        $value = array_values($this->vars);
+
+        //BOOST!
+        /*
+         * f_str_foreach    0.02364397ms      38.8kb
+         * f_str_array      0.00800300ms      37.6kb
+         */
+        $text = str_replace($name, $value, $text);
+        //}
 
         return $text;
     }

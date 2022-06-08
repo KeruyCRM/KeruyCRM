@@ -200,5 +200,3 @@ function app_session_recreate()
         unset($session_backup);
     }
 }
-
-?>
