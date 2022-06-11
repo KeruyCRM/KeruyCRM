@@ -625,8 +625,10 @@ date_default_timezone_set(CFG_APP_TIMEZONE);
 db_query("SET time_zone = '" . date('P') . "'");
 
 //cache vars
-$app_heading_fields_cache = fields::get_heading_fields_cache();
-$app_heading_fields_id_cache = fields::get_heading_fields_id_cache_by_entity();
+$get_heading_fields = fields::get_heading_fields();
+$app_heading_fields_cache = $get_heading_fields['id'];
+$app_heading_fields_id_cache = $get_heading_fields['entities_id'];
+
 $app_not_formula_fields_cache = fields::not_formula_fields_cache();
 $app_formula_fields_cache = fields::formula_fields_cache();
 $app_fields_cache = fields::get_cache();

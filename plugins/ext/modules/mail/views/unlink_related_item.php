@@ -61,7 +61,7 @@ echo form_tag(
             ) . ' <a href="' . url_for(
                 'items/info',
                 'path=' . $path_info['full_path']
-            ) . '" target="_blnak">' . items::get_heading_field($related_entities_id, $items['id']) . '</a></div>';
+            ) . '" target="_blank">' . items::get_heading_field($related_entities_id, $items['id']) . '</a></div>';
     }
 
     echo input_hidden_tag('related_entities_id', $related_entities_id);

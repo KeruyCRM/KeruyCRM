@@ -4,23 +4,13 @@ class fields
 {
 
     //get heading fields chace for all entities 
-    public static function get_heading_fields_cache()
+    public static function get_heading_fields()
     {
         $cache = [];
         $fields_query = db_query("select * from app_fields where is_heading=1");
         while ($fields = db_fetch_array($fields_query)) {
-            $cache[$fields['id']] = $fields;
-        }
-
-        return $cache;
-    }
-
-    public static function get_heading_fields_id_cache_by_entity()
-    {
-        $cache = [];
-        $fields_query = db_query("select * from app_fields where is_heading=1");
-        while ($fields = db_fetch_array($fields_query)) {
-            $cache[$fields['entities_id']] = $fields['id'];
+            $cache['id'][$fields['id']] = $fields;
+            $cache['entities_id'][$fields['entities_id']] = $fields['id'];
         }
 
         return $cache;
@@ -506,8 +496,6 @@ class fields
         $entities_id = 0,
         $fields_access_schema = []
     ) {
-        global $app_choices_cache, $app_users_cache;
-
         $data = [];
 
         if (strlen($fields_list) > 0) {
@@ -560,8 +548,6 @@ class fields
         $entities_id = 0,
         $fields_access_schema = []
     ) {
-        global $app_choices_cache, $app_users_cache;
-
         $data = [];
 
         if (strlen($fields_list) > 0) {
@@ -892,5 +878,4 @@ class fields
 
         return $fields_query;
     }
-
 }

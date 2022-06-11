@@ -60,7 +60,7 @@ echo form_tag(
             ) . ' <a href="' . url_for(
                 'items/info',
                 'path=' . $path_info['full_path']
-            ) . '" target="_blnak">' . $item_name . '</a></div>';
+            ) . '" target="_blank">' . $item_name . '</a></div>';
     }
 
     echo input_hidden_tag('related_entities_id', $related_entities_id);

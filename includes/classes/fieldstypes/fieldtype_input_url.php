@@ -18,7 +18,7 @@ class fieldtype_input_url
             'title' => TEXT_TARGET,
             'name' => 'target',
             'type' => 'dropdown',
-            'choices' => ['_blnak' => TEXT_TARGET_BLANK, '_self' => TEXT_TARGET_SELF],
+            'choices' => ['_blank' => TEXT_TARGET_BLANK, '_self' => TEXT_TARGET_SELF],
             'params' => ['class' => 'form-control input-medium']
         ];
         $cfg[] = ['title' => TEXT_VALIDATE_URL, 'name' => 'validate_url', 'type' => 'checkbox'];
@@ -115,7 +115,7 @@ class fieldtype_input_url
             if (isset($options['is_export'])) {
                 return $url;
             } else {
-                return '<a href="' . $url . '" target="' . $cfg->get('target', '_blnak') . '">' . $url_text . '</a>';
+                return '<a href="' . $url . '" target="' . $cfg->get('target', '_blank') . '">' . $url_text . '</a>';
             }
         } else {
             return '';

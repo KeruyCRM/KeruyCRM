@@ -58,5 +58,4 @@ class custom_php
 
         return $choices;
     }
-
 }
