@@ -2,7 +2,6 @@
 
 class entities
 {
-
     public static function get_cache()
     {
         $cache = [];
@@ -60,7 +59,7 @@ class entities
         }
     }
 
-    public static function get_flowchart_shcema($parent_id = 0, $tree = [], $level = 0, $x = 0, $y = 0)
+    /*public static function get_flowchart_shcema($parent_id = 0, $tree = [], $level = 0, $x = 0, $y = 0)
     {
         $entities_query = db_query(
             "select * from app_entities where parent_id='" . $parent_id . "' order by sort_order, name"
@@ -104,7 +103,7 @@ class entities
         }
 
         return $tree;
-    }
+    }*/
 
     public static function insert_default_form_tab($id)
     {
@@ -134,7 +133,7 @@ class entities
         }
     }
 
-    public static function get_listing_heading($entities_id)
+    /*public static function get_listing_heading($entities_id)
     {
         $cfg = entities::get_cfg($entities_id);
 
@@ -143,7 +142,7 @@ class entities
         } else {
             return entities::get_name_by_id($entities_id);
         }
-    }
+    }*/
 
     public static function set_cfg($k, $v, $entities_id)
     {
@@ -630,5 +629,4 @@ class entities
 
         return $html;
     }
-
 }

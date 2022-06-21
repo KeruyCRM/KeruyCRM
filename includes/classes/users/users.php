@@ -2,7 +2,6 @@
 
 class users
 {
-
     static public function output_heading_from_item($item)
     {
         return (CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? $item['field_7'] . ' ' . $item['field_8'] : $item['field_8'] . ' ' . $item['field_7']);
@@ -10,8 +9,6 @@ class users
 
     static public function get_cache()
     {
-        global $app_choices_cache, $app_users_cache, $app_fields_cache;
-
         $include_public_profile = false;
 
         //include public profile for page where it needs only
@@ -153,7 +150,7 @@ class users
         }
     }
 
-    static public function render_publi_profile($users_cache, $is_photo_display = false)
+    static public function render_public_profile($users_cache, $is_photo_display = false)
     {
         global $app_module_action;
 
@@ -330,7 +327,6 @@ class users
                         'attachments' => $attachments,
                     ];
 
-
                     users::send_email($options);
                 }
             }
@@ -422,7 +418,6 @@ class users
 
             $mail->isHTML(true);  // Set email format to HTML
 
-
             //use custom html layout
             $options['html_layout'] = $options['html_layout'] ?? 1;
 
@@ -497,11 +492,11 @@ class users
 
     static public function get_fields_access_schema($entities_id, $access_groups_id)
     {
-        global $roles_fields_acccess_schema;
+        global $roles_fields_access_schema;
 
-        if (isset($roles_fields_acccess_schema)) {
-            if ($roles_fields_acccess_schema) {
-                return $roles_fields_acccess_schema;
+        if (isset($roles_fields_access_schema)) {
+            if ($roles_fields_access_schema) {
+                return $roles_fields_access_schema;
             }
         }
 
@@ -813,7 +808,7 @@ class users
         }
     }
 
-    static function set_clietnt_id()
+    static function set_client_id()
     {
         global $app_user;
 
@@ -837,7 +832,6 @@ class users
         if ($user = db_fetch_array($user_query)) {
             if ($user['field_5'] == 1) {
                 $hasher = new PasswordHash(11, false);
-
 
                 if (isset($password_hashed)) {
                     app_session_register('app_logged_users_id', $user['id']);
@@ -919,5 +913,4 @@ class users
             redirect_to('users/login');
         }
     }
-
 }

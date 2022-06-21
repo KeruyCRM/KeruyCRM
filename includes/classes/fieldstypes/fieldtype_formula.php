@@ -2,7 +2,6 @@
 
 class fieldtype_formula
 {
-
     public $options;
 
     function __construct()
@@ -670,5 +669,4 @@ class fieldtype_formula
 
         return $formula;
     }
-
 }

@@ -135,7 +135,7 @@ $current_comments_access_schema = (isset($user_roles_info['current_comments_acce
 ));
 
 //set roles fields access if exist
-$roles_fields_acccess_schema = (isset($user_roles_info['fields_access_schema']) ? $user_roles_info['fields_access_schema'] : false);
+$roles_fields_access_schema = (isset($user_roles_info['fields_access_schema']) ? $user_roles_info['fields_access_schema'] : false);
 
 //print_r($roles_fields_acccess_schema);
 //exit();

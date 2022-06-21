@@ -312,7 +312,7 @@ class fieldtype_user_roles
                             $is_photo_display = false;
                         }
 
-                        $users_list[] = $photo . ' <div class="user-name" ' . users::render_publi_profile(
+                        $users_list[] = $photo . ' <div class="user-name" ' . users::render_public_profile(
                                 $app_users_cache[$id],
                                 $is_photo_display
                             ) . '>' . $app_users_cache[$id]['name'] . '</div> <div style="clear:both"></div>';

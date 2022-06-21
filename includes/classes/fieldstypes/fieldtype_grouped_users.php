@@ -272,7 +272,7 @@ class fieldtype_grouped_users
                         $html .= '<span class="grouped_users_group_name">' . $current_group_name . '</span><br>';
                     }
 
-                    $html .= '<span ' . users::render_publi_profile(
+                    $html .= '<span ' . users::render_public_profile(
                             $app_users_cache[$users_id],
                             true
                         ) . '> - ' . $app_users_cache[$users_id]['name'] . '</span><br>';

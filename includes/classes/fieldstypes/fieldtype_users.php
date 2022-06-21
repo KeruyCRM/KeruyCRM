@@ -278,7 +278,7 @@ class fieldtype_users
                         $is_photo_display = false;
                     }
 
-                    $users_list[] = $photo . ' <span class="user-name" ' . users::render_publi_profile(
+                    $users_list[] = $photo . ' <span class="user-name" ' . users::render_public_profile(
                             $app_users_cache[$id],
                             $is_photo_display
                         ) . '>' . $app_users_cache[$id]['name'] . '</span> <div style="clear:both"></div>';

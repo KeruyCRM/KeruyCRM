@@ -423,7 +423,7 @@ class fieldtype_users_approve
                     $html .= '
         			<tr>
         				<td style="padding-right: 5px;">' . $icon . '</td>
-        				<td><span class="user-name" ' . users::render_publi_profile(
+        				<td><span class="user-name" ' . users::render_public_profile(
                             $app_users_cache[$id],
                             true
                         ) . '>' . $app_users_cache[$id]['name'] . '</span></td>

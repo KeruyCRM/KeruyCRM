@@ -27,7 +27,7 @@ class fieldtype_created_by
         } elseif (isset($options['is_export']) and isset($app_users_cache[$options['value']])) {
             return $app_users_cache[$options['value']]['name'];
         } elseif (isset($app_users_cache[$options['value']])) {
-            return '<span ' . users::render_publi_profile(
+            return '<span ' . users::render_public_profile(
                     $app_users_cache[$options['value']]
                 ) . '>' . $app_users_cache[$options['value']]['name'] . '</span>';
         } else {

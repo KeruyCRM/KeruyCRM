@@ -163,7 +163,7 @@ while ($item = db_fetch_array($items_query)) {
         '</td>
       <td class="nowrap">' .
         format_date_time($item['date_added']) .
-        ($item['created_by'] > 0 ? '<br><span ' . users::render_publi_profile(
+        ($item['created_by'] > 0 ? '<br><span ' . users::render_public_profile(
                 $app_users_cache[$item['created_by']],
                 true
             ) . '>' . $app_users_cache[$item['created_by']]['name'] . '</span><br>' . $photo : '') . '</td>

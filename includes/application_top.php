@@ -281,7 +281,7 @@ if (!app_session_is_registered('app_logged_users_id') and !in_array($_GET['modul
         }
 
         //set unique cliet id for rss or ical
-        users::set_clietnt_id();
+        users::set_client_id();
     } else {
         app_session_unregister('app_logged_users_id');
         redirect_to('users/login');
