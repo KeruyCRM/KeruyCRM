@@ -3,7 +3,7 @@
 class Controller
 {
     public $allowed_modules = [
-        'users/login',
+        '/users/login',
         'users/guest_login',
         'users/restore_password',
         'users/ldap_login',
@@ -100,9 +100,12 @@ class Controller
         }
 
         $this->_setPlugin();//TODO include plugin
+        $this->_userLogin();
 
+        \K::f3()->app_users_cfg = new \Models\Users\Users_cfg();
 
-        //$this->_userLogin();
+        $this->_setCfgSession2();
+        $this->_check();
     }
 
     public function beforeroute()
@@ -310,6 +313,37 @@ class Controller
         }
     }
 
+    private function _setCfgSession2()
+    {
+        if (!\K::f3()->exists('SESSION.app_current_version')) {
+            \K::f3()->set('SESSION.app_current_version', '');
+        }
+
+        if (\K::f3()->CFG_DISABLE_CHECK_FOR_UPDATES == 1) {
+            \K::f3()->app_current_version = '';
+        }
+
+        if (!\K::f3()->exists('SESSION.app_selected_items')) {
+            \K::f3()->set('SESSION.app_selected_items', []);
+        }
+
+        if (!\K::f3()->exists('SESSION.listing_page_keeper')) {
+            \K::f3()->set('SESSION.listing_page_keeper', []);
+        }
+
+        if (!\K::f3()->exists('SESSION.user_roles_dropdown_change_holder')) {
+            \K::f3()->set('SESSION.user_roles_dropdown_change_holder', []);
+        }
+
+        if (!\K::f3()->exists('SESSION.app_subentity_form_items')) {
+            \K::f3()->set('SESSION.app_subentity_form_items', []);
+        }
+
+        if (!\K::f3()->exists('SESSION.app_subentity_form_items_deleted')) {
+            \K::f3()->set('SESSION.app_subentity_form_items_deleted', []);
+        }
+    }
+
     private function _setCfgIni()
     {
         if (function_exists('ini_set')) {
@@ -321,6 +355,58 @@ class Controller
 
     private function _setPlugin()
     {
+    }
+
+    private function _check()
+    {
+        $error_list = [];
+
+        //check required libs
+        $required_php_extensions = [
+            'gd',
+            'mbstring',
+            'xmlwriter',
+            'curl',
+            'zip',
+            'xml',
+            'fileinfo',
+        ];
+
+        foreach ($required_php_extensions as $ext) {
+            if (!extension_loaded($ext)) {
+                $error_list[] = sprintf(\K::f3()->TEXT_ERROR_LIB, strtoupper($ext));
+            }
+        }
+
+        //check folder
+        $check_folders = [
+            \K::f3()->DIR_FS_UPLOADS,
+            \K::f3()->DIR_FS_ATTACHMENTS,
+            \K::f3()->DIR_FS_ATTACHMENTS_PREVIEW,
+            \K::f3()->DIR_FS_IMAGES,
+            \K::f3()->DIR_FS_USERS,
+            \K::f3()->DIR_FS_BACKUPS,
+            \K::f3()->DIR_FS_TMP,
+            \K::f3()->DIR_FS_CACHE,
+            \K::f3()->DIR_FS_CATALOG . 'log/'
+        ];
+
+        foreach ($check_folders as $v) {
+            if (is_dir($v)) {
+                if (!is_writable($v)) {
+                    $error_list[] = sprintf('Error: folder "%s" is not writable!', str_replace(\K::f3()->DIR_FS_CATALOG, '', $v));
+                }
+            } else {
+                $error_list[] = sprintf('Error: folder "%s" does not exist', str_replace(\K::f3()->DIR_FS_CATALOG, '', $v));
+            }
+        }
+
+        //display errors if exist
+        if (count($error_list)) {
+            foreach ($error_list as $v) {
+                \K::flash()->addMessage($v, 'error');
+            }
+        }
     }
 
     private function _userLogin()
@@ -363,7 +449,7 @@ class Controller
                     $photo = '';
                 }
 
-                $app_user = [
+                \K::f3()->app_user = [
                     'id' => $user['id'],
                     'group_id' => (int)$user['field_6'],
                     'group_name' => $user['group_name'],
@@ -380,10 +466,12 @@ class Controller
                 ];
 
                 //generate users access to entities schema
-                if ($app_user['group_id'] > 0) {
-                    $app_users_access = \Models\Users\Users::get_users_access_schema($app_user['group_id']);
+                if (\K::f3()->app_user['group_id'] > 0) {
+                    \K::f3()->app_users_access = \Models\Users\Users::get_users_access_schema(
+                        \K::f3()->app_user['group_id']
+                    );
                 } else {
-                    $app_users_access = [];
+                    \K::f3()->app_users_access = [];
                 }
 
                 //set unique client id for rss or ical

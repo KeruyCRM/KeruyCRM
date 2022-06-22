@@ -8,16 +8,16 @@ class Users_cfg
 
     public function __construct()
     {
-        global $app_user;
-
-        if (!isset($app_user['id'])) {
+        if (!isset(\K::f3()->app_user['id'])) {
             return false;
         }
 
-        $cfg_query = db_query(
-            "select * from app_users_configuration where users_id='" . db_input($app_user['id']) . "'"
-        );
-        while ($v = db_fetch_array($cfg_query)) {
+        $cfg_query = \K::model()->db_fetch('app_users_configuration', ['users_id = ?', \K::f3()->app_user['id']]);
+
+        //while ($v = db_fetch_array($cfg_query)) {
+        foreach ($cfg_query as $v) {
+            $v = $v->cast();
+
             $this->cfg[$v['configuration_name']] = $v['configuration_value'];
         }
     }
@@ -33,39 +33,27 @@ class Users_cfg
 
     public function set($key, $value)
     {
-        global $app_user;
-
         if (strlen($key) > 0) {
-            $cfg_query = db_query(
-                "select * from app_users_configuration where users_id='" . db_input(
-                    $app_user['id']
-                ) . "' and configuration_name='" . db_input($key) . "'"
+            \K::model()->db_perform(
+                'app_users_configuration',
+                [
+                    'configuration_name' => $key,
+                    'configuration_value' => trim($value),
+                    'users_id' => \K::f3()->app_user['id']
+                ], '',
+                ['users_id = ? and configuration_name = ?', \K::f3()->app_user['id'], $key]
             );
-            if ($cfg = db_fetch_array($cfg_query)) {
-                db_query(
-                    "update app_users_configuration set configuration_value='" . db_input(
-                        $value
-                    ) . "' where users_id='" . db_input($app_user['id']) . "' and configuration_name='" . db_input(
-                        $key
-                    ) . "'"
-                );
-            } else {
-                db_perform(
-                    'app_users_configuration',
-                    ['configuration_name' => $key, 'configuration_value' => trim($value), 'users_id' => $app_user['id']]
-                );
-            }
         }
     }
 
     public static function get_value_by_users_id($users_id, $key, $default = '')
     {
-        $cfg_query = db_query(
-            "select * from app_users_configuration where users_id='" . db_input(
-                $users_id
-            ) . "' and configuration_name='" . db_input($key) . "'"
+        $cfg_query = \K::model()->db_fetch_one(
+            'app_users_configuration',
+            ['users_id = ? and configuration_name = ?', $users_id, $key]
         );
-        if ($cfg = db_fetch_array($cfg_query)) {
+
+        if ($cfg = $cfg_query->cast()) {
             return $cfg['configuration_value'];
         } else {
             return $default;

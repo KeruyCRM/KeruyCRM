@@ -40,7 +40,7 @@ $f3->route(
     '\Controllers\Module\Dashboard->index'
 );
 $f3->route(
-    'GET|POST @Login: /' . $f3->FOLDER_ADMIN,
+    'GET|POST @Login: /users/login',
     '\Controllers\Module\Users->login'
 );
 

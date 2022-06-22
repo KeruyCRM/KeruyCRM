@@ -497,31 +497,24 @@ class Users
         $chars = "abcdefghijkmnopqrstuvwxyz0123456789ABCDEFGHIJKMNOPQRSTUVWXYZ" . ($has_symbols ? '~!@#$%^&*()_+' : '');
 
         return substr(str_shuffle(str_repeat($chars, $length)), 0, $length);
-
-        /*for ($i = 0; $i < $length; $i++) {
-            $password .= $chars[rand(0, strlen($chars) - 1)];
-        }*/
-
-        //return $password;
     }
 
     static public function get_fields_access_schema($entities_id, $access_groups_id)
     {
-        global $roles_fields_access_schema;
-
-        if (isset($roles_fields_access_schema)) {
-            if ($roles_fields_access_schema) {
-                return $roles_fields_access_schema;
-            }
+        if (isset(\K::f3()->roles_fields_access_schema) and \K::f3()->roles_fields_access_schema) {
+            return \K::f3()->roles_fields_access_schema;
         }
 
         $access_schema = [];
-        $access_info_query = db_query(
-            "select * from app_fields_access where entities_id='" . db_input(
-                $entities_id
-            ) . "' and access_groups_id='" . db_input($access_groups_id) . "'"
+
+        $access_info_query = \K::model()->db_fetch(
+            'app_fields_access',
+            ['entities_id = ? and access_groups_id = ?', $entities_id, $access_groups_id]
         );
-        while ($access_info = db_fetch_array($access_info_query)) {
+
+        foreach ($access_info_query as $access_info) {
+            $access_info = $access_info->cast();
+
             $access_schema[$access_info['fields_id']] = $access_info['access_schema'];
         }
 
@@ -532,13 +525,13 @@ class Users
     {
         $access_schema = [];
 
-        $acess_info_query = db_query(
+        $access_info_query = db_query(
             "select access_schema from app_entities_access where entities_id='" . db_input(
                 $entities_id
             ) . "' and access_groups_id='" . db_input($access_groups_id) . "'"
         );
-        if ($acess_info = db_fetch_array($acess_info_query)) {
-            $access_schema = explode(',', $acess_info['access_schema']);
+        if ($access_info = db_fetch_array($access_info_query)) {
+            $access_schema = explode(',', $access_info['access_schema']);
         }
 
         return $access_schema;
@@ -552,7 +545,11 @@ class Users
             "select * from app_entities_access where access_groups_id='" . db_input($access_groups_id) . "'"
         );*/
 
-        $access_info_query = \K::model()->db_fetch('app_entities_access', ['access_groups_id = ?', $access_groups_id]);
+        $access_info_query = \K::model()->db_fetch(
+            'app_entities_access', ['access_groups_id = ?', $access_groups_id],
+            [], [],
+            [\K::f3()->TTL_APP, 'app_entities_access']
+        );
 
         //while ($access_info = db_fetch_array($access_info_query)) {
         foreach ($access_info_query as $access_info) {
@@ -778,13 +775,13 @@ class Users
     {
         $access_schema = [];
 
-        $acess_info_query = db_query(
+        $access_info_query = db_query(
             "select access_schema from app_comments_access where entities_id='" . db_input(
                 $entities_id
             ) . "' and access_groups_id='" . db_input($access_groups_id) . "'"
         );
-        if ($acess_info = db_fetch_array($acess_info_query)) {
-            $access_schema = explode(',', $acess_info['access_schema']);
+        if ($access_info = db_fetch_array($access_info_query)) {
+            $access_schema = explode(',', $access_info['access_schema']);
         }
 
         return $access_schema;
@@ -816,12 +813,12 @@ class Users
         if ($app_user['group_id'] == 0) {
             return true;
         } else {
-            $acccess_query = db_query(
+            $access_query = db_query(
                 "select * from app_entities_access where access_groups_id='" . db_input(
                     $app_user['group_id']
                 ) . "' and find_in_set('reports',access_schema)"
             );
-            if ($acccess = db_fetch_array($acccess_query)) {
+            if ($access = db_fetch_array($access_query)) {
                 return true;
             } else {
                 return false;
