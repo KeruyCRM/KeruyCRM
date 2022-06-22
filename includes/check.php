@@ -2,8 +2,8 @@
 
 $error_list = [];
 
-//check reuired libs
-$requried_php_extensions = [
+//check required libs
+$required_php_extensions = [
     'gd',
     'mbstring',
     'xmlwriter',
@@ -13,7 +13,7 @@ $requried_php_extensions = [
     'fileinfo',
 ];
 
-foreach ($requried_php_extensions as $ext) {
+foreach ($required_php_extensions as $ext) {
     if (!extension_loaded($ext)) {
         $error_list[] = sprintf(TEXT_ERROR_LIB, strtoupper($ext));
     }
@@ -42,7 +42,7 @@ foreach ($check_folders as $v) {
     }
 }
 
-//dispaly errors if exist  
+//display errors if exist
 if (count($error_list)) {
     foreach ($error_list as $v) {
         $alerts->add($v, 'error');
