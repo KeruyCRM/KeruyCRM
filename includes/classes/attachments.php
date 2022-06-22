@@ -287,7 +287,7 @@ class attachments
         $filename_array = explode('_', $filename);
         $filetime = (int)$filename_array[0];
 
-        //get foler
+        //get folder
         $folder = date('Y', $filetime) . '/' . date('m', $filetime) . '/' . date('d', $filetime);
 
         //get filename
@@ -320,7 +320,7 @@ class attachments
             'file' => $filename,
             'file_sha1' => (CFG_ENCRYPT_FILE_NAME == 1 ? sha1($filename) : $filename),
             'file_path' => $file_path,
-            'folder' => DIR_WS_ATTACHMENTS . $folder . '/',
+            //'folder' => DIR_WS_ATTACHMENTS . $folder . '/',
             'mime_type' => ($size ? mime_content_type($file_path) : ''),
             'is_image' => is_image($file_path),
             'is_pdf' => is_pdf($filename),
