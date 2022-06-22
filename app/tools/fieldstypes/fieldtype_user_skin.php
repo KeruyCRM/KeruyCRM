@@ -1,0 +1,44 @@
+<?php
+
+namespace Tools\FieldsTypes;
+
+class Fieldtype_user_skin
+{
+    public $options;
+
+    public function __construct()
+    {
+        $this->options = [
+            'name' => \K::f3()->TEXT_FIELDTYPE_USER_SKIN_TITLE,
+            'title' => \K::f3()->TEXT_FIELDTYPE_USER_SKIN_TITLE
+        ];
+    }
+
+    public function render($field, $obj, $params = [])
+    {
+        if (strlen(\K::f3()->CFG_APP_SKIN)) {
+            return '<p class="form-control-static">' . \K::f3()->CFG_APP_SKIN . '</p>';
+        } else {
+            if (!strlen($obj['field_' . $field['id']])) {
+                $obj['field_' . $field['id']] = 'default';
+            }
+
+            return select_tag(
+                'fields[' . $field['id'] . ']',
+                app_get_skins_choices(false),
+                $obj['field_' . $field['id']],
+                ['class' => 'form-control input-medium']
+            );
+        }
+    }
+
+    public function process($options)
+    {
+        return $options['value'];
+    }
+
+    public function output($options)
+    {
+        return $options['value'];
+    }
+}

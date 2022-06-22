@@ -1,0 +1,47 @@
+.tt-table div.tt {
+    display:inline-block;
+    position:relative;
+}
+
+.tt-table div.tt div.content {
+    border:1px gray solid;
+    border-radius: 6px;
+    z-index: 10;
+    padding:0;
+    position:relative;
+    background-color: #cccccc;
+    width:12px;
+    height: 12px;
+    margin-left: 6px;
+    top:2px;
+}
+
+.tt-table div.tt div.tail {
+    border:2px gray solid;
+    border-right: 0;
+    border-top: 0;
+    position:absolute;
+    border-radius: 2px;
+    bottom: 3px;
+    left: -10px;
+    z-index: 0;
+}
+
+html[dir='rtl'] .tt-table div.tt div.tail {
+   border-right: 2px gray solid;
+   border-left:0;
+}
+
+.tt-table div.tt-parent div.content {    
+    background-color: gray;
+    cursor: pointer;
+}
+
+.tt-table tr.tt-hide {
+    
+}
+
+.tt-content-padding{
+    display:inline-block;
+    margin-right: 2px;
+}
