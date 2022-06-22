@@ -101,6 +101,7 @@ class Controller
 
         $this->_setPlugin();//TODO include plugin
 
+
         //$this->_userLogin();
     }
 

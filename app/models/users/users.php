@@ -496,13 +496,13 @@ class Users
         }
         $chars = "abcdefghijkmnopqrstuvwxyz0123456789ABCDEFGHIJKMNOPQRSTUVWXYZ" . ($has_symbols ? '~!@#$%^&*()_+' : '');
 
-        $password = '';
+        return substr(str_shuffle(str_repeat($chars, $length)), 0, $length);
 
-        for ($i = 0; $i < $length; $i++) {
+        /*for ($i = 0; $i < $length; $i++) {
             $password .= $chars[rand(0, strlen($chars) - 1)];
-        }
+        }*/
 
-        return $password;
+        //return $password;
     }
 
     static public function get_fields_access_schema($entities_id, $access_groups_id)
@@ -521,8 +521,8 @@ class Users
                 $entities_id
             ) . "' and access_groups_id='" . db_input($access_groups_id) . "'"
         );
-        while ($acess_info = db_fetch_array($access_info_query)) {
-            $access_schema[$acess_info['fields_id']] = $acess_info['access_schema'];
+        while ($access_info = db_fetch_array($access_info_query)) {
+            $access_schema[$access_info['fields_id']] = $access_info['access_schema'];
         }
 
         return $access_schema;
