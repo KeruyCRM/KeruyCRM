@@ -81,4 +81,9 @@ class K
     {
         self::f3()->clear('COOKIE.' . $key);
     }
+
+    public static function reroute($url, $module = 'module/', $permanent = false, $die = true)
+    {
+        return self::f3()->reroute('/' . $module . $url, $permanent, $die);
+    }
 }

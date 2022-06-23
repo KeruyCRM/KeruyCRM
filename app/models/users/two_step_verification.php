@@ -6,30 +6,29 @@ class Two_step_verification
 {
     public static function check()
     {
-        global $app_module_path, $two_step_verification_info, $app_user;
-
         if (\K::f3()->CFG_2STEP_VERIFICATION_ENABLED != 1) {
             return true;
         }
 
-        if (!app_session_is_registered('app_logged_users_id')) {
+        if (!\K::sessionExists('app_logged_users_id')) {
             return true;
         }
 
-        if ($app_module_path == 'users/2step_verification') {
+        if (\K::f3()->app_module_path == 'users/2step_verification') {
             return true;
         }
 
         //skip for guest user
-        if (\K::f3()->CFG_ENABLE_GUEST_LOGIN == 1 and \K::f3()->CFG_GUEST_LOGIN_USER == $app_user['id']) {
+        if (\K::f3()->CFG_ENABLE_GUEST_LOGIN == 1 and \K::f3()->CFG_GUEST_LOGIN_USER == \K::f3()->app_user['id']) {
             return true;
         }
 
-        if (!isset($two_step_verification_info['is_checked']) and !in_array(
-                $app_module_path,
+        if (!isset(\K::f3()->two_step_verification_info['is_checked']) and !in_array(
+                \K::f3()->app_module_path,
                 ['users/2step_verification', 'users/login']
             )) {
-            redirect_to('users/2step_verification');
+            //redirect_to('users/2step_verification');
+            \K::reroute('users/2step_verification');
         }
     }
 
@@ -37,7 +36,7 @@ class Two_step_verification
     {
         global $app_user, $app_users_cache, $two_step_verification_info;
 
-        $code = $two_step_verification_info['code'] = two_step_verification . phprand(0, 9) . rand(0, 9) . rand(0, 9);
+        $code = $two_step_verification_info['code'] = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
 
         switch (\K::f3()->CFG_2STEP_VERIFICATION_TYPE) {
             case 'email':

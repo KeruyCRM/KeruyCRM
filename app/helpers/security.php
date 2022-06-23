@@ -25,7 +25,7 @@ class Security extends \Prefab
                 or !$this->validateToken($postToken)) {
                 \K::f3()->error(400, 'Invalid CSRF token');
             } else {
-                \K::f3()->error(200, 'TRUE');
+                //\K::f3()->error(200, 'TRUE');
             }
         }
     }
