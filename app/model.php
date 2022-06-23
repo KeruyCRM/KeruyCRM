@@ -13,10 +13,12 @@ class Model extends \Prefab
             $name = \K::f3()->DB_name;
             if (\K::f3()->TYPE_DATABASE == 'mysql') {
                 $this->db = new \DB\SQL(
-                    "mysql:host={$host};port={$port};dbname={$name}",
+                    "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4",
                     \K::f3()->DB_username,
                     \K::f3()->DB_password
-                //[\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4;']
+                /*,[
+                    \PDO::ATTR_TIMEOUT => 5
+                ]*/
                 );
             } elseif (\K::f3()->TYPE_DATABASE == 'sqlite') {
                 $this->db = new \DB\SQL("db/{$name}.sqlite");

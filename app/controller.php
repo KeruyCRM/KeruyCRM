@@ -34,6 +34,116 @@ class Controller
         'feeders/rss',
         'feeders/ical',
     ];
+    private $defaultCfg = [
+        'CFG_APP_FIRST_DAY_OF_WEEK' => 0,
+        'CFG_APP_LOGIN_PAGE_BACKGROUND' => '',
+        'CFG_APP_DISPLAY_USER_NAME_ORDER' => 'firstname_lastname',
+        'CFG_APP_COPYRIGHT_NAME' => '',
+        'CFG_APP_NUMBER_FORMAT' => '2/./*',
+        'CFG_APP_LOGO_URL' => '',
+        'CFG_ALLOW_CHANGE_USERNAME' => 0,
+        'CFG_ALLOW_REGISTRATION_WITH_THE_SAME_EMAIL' => 0,
+        'CFG_MAINTENANCE_MODE' => 0,
+        'CFG_MAINTENANCE_MESSAGE_HEADING' => '',
+        'CFG_MAINTENANCE_MESSAGE_CONTENT' => '',
+        'CFG_APP_LOGIN_MAINTENANCE_BACKGROUND' => '',
+        'CFG_RESIZE_IMAGES' => 0,
+        'CFG_MAX_IMAGE_WIDTH' => 1600,
+        'CFG_MAX_IMAGE_HEIGHT' => 900,
+        'CFG_RESIZE_IMAGES_TYPES' => '2',
+        'CFG_SKIP_IMAGE_RESIZE' => '5000',
+        'CFG_NOTIFICATIONS_SCHEDULE' => 0,
+        'CFG_SEND_EMAILS_ON_SCHEDULE' => 0,
+        'CFG_MAXIMUM_NUMBER_EMAILS' => 3,
+        'CFG_USE_PUBLIC_REGISTRATION' => 0,
+        'CFG_PUBLIC_REGISTRATION_USER_GROUP' => '',
+        'CFG_PUBLIC_REGISTRATION_PAGE_HEADING' => '',
+        'CFG_PUBLIC_REGISTRATION_PAGE_CONTENT' => '',
+        'CFG_REGISTRATION_BUTTON_TITLE' => '',
+        'CFG_APP_DISABLE_CHANGE_PWD' => '',
+        'CFG_LOGIN_PAGE_HIDE_REMEMBER_ME' => 0,
+        'CFG_PUBLIC_REGISTRATION_HIDDEN_FIELDS' => '',
+        'CFG_USE_API' => 0,
+        'CFG_API_KEY' => '',
+        'CFG_DISABLE_CHECK_FOR_UPDATES' => 0,
+        'CFG_REGISTRATION_NOTIFICATION_USERS' => '',
+        'CFG_USE_CACHE_REPORTS_IN_HEADER' => 0,
+        'CFG_CACHE_REPORTS_IN_HEADER_LIFETIME' => 300,
+        'CFG_LDAP_FIRSTNAME_ATTRIBUTE' => '',
+        'CFG_LDAP_LASTNAME_ATTRIBUTE' => '',
+        'CFG_PUBLIC_REGISTRATION_USER_AGREEMENT' => '',
+        'CFG_ENCRYPT_FILE_NAME' => 1,
+        'CFG_MAINTENANCE_ALLOW_LOGIN_FOR_USERS' => '',
+        'CFG_USE_GLOBAL_SEARCH' => 0,
+        'CFG_GLOBAL_SEARCH_ALLOWED_GROUPS' => '',
+        'CFG_GLOBAL_SEARCH_INPUT_MIN' => 3,
+        'CFG_GLOBAL_SEARCH_INPUT_MAX' => 40,
+        'CFG_GLOBAL_SEARCH_DISPLAY_IN_HEADER' => 0,
+        'CFG_GLOBAL_SEARCH_DISPLAY_IN_MENU' => 0,
+        'CFG_PUBLIC_ATTACHMENTS' => '',
+        'CFG_LOGIN_DIGITAL_SIGNATURE_MODULE' => '',
+        'CFG_2STEP_VERIFICATION_ENABLED' => 0,
+        'CFG_2STEP_VERIFICATION_TYPE' => 'email',
+        'CFG_2STEP_VERIFICATION_SMS_MODULE' => '',
+        'CFG_2STEP_VERIFICATION_USER_PHONE' => '',
+        'CFG_LOGIN_BY_PHONE_NUMBER' => 0,
+        'CFG_PUBLIC_REGISTRATION_USER_ACTIVATION' => 'automatic',
+        'CFG_REGISTRATION_SUCCESS_PAGE_HEADING' => '',
+        'CFG_REGISTRATION_SUCCESS_PAGE_DESCRIPTION' => '',
+        'CFG_USER_ACTIVATION_EMAIL_SUBJECT' => '',
+        'CFG_USER_ACTIVATION_EMAIL_BODY' => '',
+        'CFG_HIDE_POWERED_BY_TEXT' => 0,
+        'CFG_APP_FAVICON' => '',
+        'CFG_CREATE_ATTACHMENTS_PREVIEW' => 0,
+        'CFG_DISPLAY_USER_GROUP_IN_MENU' => 0,
+        'CFG_DISPLAY_USER_GROUP_ID_IN_MENU' => '',
+        'CFG_ENABLE_MULTIPLE_ACCESS_GROUPS' => 0,
+        'CFG_USE_PUBLIC_REGISTRATION_MULTIPLE_USER_GROUPS' => 0,
+        'CFG_ENABLE_SOCIAL_LOGIN' => 0,
+        'CFG_ENABLE_VKONTAKTE_LOGIN' => 0,
+        'CFG_VKONTAKTE_APP_ID' => '',
+        'CFG_VKONTAKTE_SECRET_KEY' => '',
+        'CFG_VKONTAKTE_BUTTON_TITLE' => '',
+        'CFG_SOCAL_LOGIN_CREATE_USER' => 'autocreate',
+        'CFG_SOCAL_LOGIN_USER_GROUP' => '',
+        'CFG_ENABLE_GOOGLE_LOGIN' => 0,
+        'CFG_GOOGLE_APP_ID' => '',
+        'CFG_GOOGLE_SECRET_KEY' => '',
+        'CFG_GOOGLE_BUTTON_TITLE' => '',
+        'CFG_ENABLE_FACEBOOK_LOGIN' => 0,
+        'CFG_FACEBOOK_APP_ID' => '',
+        'CFG_FACEBOOK_SECRET_KEY' => '',
+        'CFG_FACEBOOK_BUTTON_TITLE' => '',
+        'CFG_ENABLE_LINKEDIN_LOGIN' => 0,
+        'CFG_LINKEDIN_APP_ID' => '',
+        'CFG_LINKEDIN_SECRET_KEY' => '',
+        'CFG_LINKEDIN_BUTTON_TITLE' => '',
+        'CFG_ENABLE_TWITTER_LOGIN' => 0,
+        'CFG_TWITTER_APP_ID' => '',
+        'CFG_TWITTER_SECRET_KEY' => '',
+        'CFG_TWITTER_BUTTON_TITLE' => '',
+        'CFG_ENABLE_GUEST_LOGIN' => 0,
+        'CFG_GUEST_LOGIN_USER' => '',
+        'CFG_GUEST_LOGIN_BUTTON_TITLE' => '',
+        'CFG_PUBLIC_CALENDAR_ICAL' => 0,
+        'CFG_PERSONAL_CALENDAR_ICAL' => 0,
+        'CFG_IS_STRONG_PASSWORD' => 0,
+        'CFG_EMAIL_SMTP_DEBUG' => 0,
+        'CFG_DROP_DOWN_MENU_ON_HOVER' => 0,
+        'CFG_CUSTOM_HTML_HEAD' => '',
+        'CFG_CUSTOM_HTML_BODY' => '',
+        'CFG_AUTOBACKUP_KEEP_FILES_DAYS' => 30,
+        'CFG_EMAIL_HTML_LAYOUT' => '',
+        'CFG_USE_EMAIL_HTML_LAYOUT' => 0,
+        'CFG_ENABLE_STEAM_LOGIN' => 0,
+        'CFG_STEAM_API_KEY' => '',
+        'CFG_STEAM_DOMAIN' => '',
+        'CFG_STEAM_BUTTON_TITLE' => '',
+        'CFG_ENABLE_YANDEX_LOGIN' => 0,
+        'CFG_YANDEX_APP_ID' => '',
+        'CFG_YANDEX_SECRET_KEY' => '',
+        'CFG_YANDEX_BUTTON_TITLE' => '',
+    ];
 
     public function __construct()
     {
@@ -47,9 +157,11 @@ class Controller
         \K::security()->initCsrfToken();
 
         $this->_setCfgIni();
-        $this->_setCfgDefault();
+
+        \K::f3()->mset($this->defaultCfg);
+
         $this->_setCfgFromDB();
-        $this->_setCfgOther();
+        $this->_setCfg();
 
         \K::f3()->app_global_vars = \Tools\GlobalVars::instance();
 
@@ -118,7 +230,7 @@ class Controller
         \K::f3()->app_users_cfg = new \Models\Users\Users_cfg();
 
         $this->_setCfgSession2();
-        $this->_check();
+        $this->_checkEnvironment();
 
         \Models\Users\Two_step_verification::check();
 
@@ -162,123 +274,7 @@ class Controller
         }
     }
 
-    private function _setCfgDefault()
-    {
-        $defaultCfg = [
-            'CFG_APP_FIRST_DAY_OF_WEEK' => 0,
-            'CFG_APP_LOGIN_PAGE_BACKGROUND' => '',
-            'CFG_APP_DISPLAY_USER_NAME_ORDER' => 'firstname_lastname',
-            'CFG_APP_COPYRIGHT_NAME' => '',
-            'CFG_APP_NUMBER_FORMAT' => '2/./*',
-            'CFG_APP_LOGO_URL' => '',
-            'CFG_ALLOW_CHANGE_USERNAME' => 0,
-            'CFG_ALLOW_REGISTRATION_WITH_THE_SAME_EMAIL' => 0,
-            'CFG_MAINTENANCE_MODE' => 0,
-            'CFG_MAINTENANCE_MESSAGE_HEADING' => '',
-            'CFG_MAINTENANCE_MESSAGE_CONTENT' => '',
-            'CFG_APP_LOGIN_MAINTENANCE_BACKGROUND' => '',
-            'CFG_RESIZE_IMAGES' => 0,
-            'CFG_MAX_IMAGE_WIDTH' => 1600,
-            'CFG_MAX_IMAGE_HEIGHT' => 900,
-            'CFG_RESIZE_IMAGES_TYPES' => '2',
-            'CFG_SKIP_IMAGE_RESIZE' => '5000',
-            'CFG_NOTIFICATIONS_SCHEDULE' => 0,
-            'CFG_SEND_EMAILS_ON_SCHEDULE' => 0,
-            'CFG_MAXIMUM_NUMBER_EMAILS' => 3,
-            'CFG_USE_PUBLIC_REGISTRATION' => 0,
-            'CFG_PUBLIC_REGISTRATION_USER_GROUP' => '',
-            'CFG_PUBLIC_REGISTRATION_PAGE_HEADING' => '',
-            'CFG_PUBLIC_REGISTRATION_PAGE_CONTENT' => '',
-            'CFG_REGISTRATION_BUTTON_TITLE' => '',
-            'CFG_APP_DISABLE_CHANGE_PWD' => '',
-            'CFG_LOGIN_PAGE_HIDE_REMEMBER_ME' => 0,
-            'CFG_PUBLIC_REGISTRATION_HIDDEN_FIELDS' => '',
-            'CFG_USE_API' => 0,
-            'CFG_API_KEY' => '',
-            'CFG_DISABLE_CHECK_FOR_UPDATES' => 0,
-            'CFG_REGISTRATION_NOTIFICATION_USERS' => '',
-            'CFG_USE_CACHE_REPORTS_IN_HEADER' => 0,
-            'CFG_CACHE_REPORTS_IN_HEADER_LIFETIME' => 300,
-            'CFG_LDAP_FIRSTNAME_ATTRIBUTE' => '',
-            'CFG_LDAP_LASTNAME_ATTRIBUTE' => '',
-            'CFG_PUBLIC_REGISTRATION_USER_AGREEMENT' => '',
-            'CFG_ENCRYPT_FILE_NAME' => 1,
-            'CFG_MAINTENANCE_ALLOW_LOGIN_FOR_USERS' => '',
-            'CFG_USE_GLOBAL_SEARCH' => 0,
-            'CFG_GLOBAL_SEARCH_ALLOWED_GROUPS' => '',
-            'CFG_GLOBAL_SEARCH_INPUT_MIN' => 3,
-            'CFG_GLOBAL_SEARCH_INPUT_MAX' => 40,
-            'CFG_GLOBAL_SEARCH_DISPLAY_IN_HEADER' => 0,
-            'CFG_GLOBAL_SEARCH_DISPLAY_IN_MENU' => 0,
-            'CFG_PUBLIC_ATTACHMENTS' => '',
-            'CFG_LOGIN_DIGITAL_SIGNATURE_MODULE' => '',
-            'CFG_2STEP_VERIFICATION_ENABLED' => 0,
-            'CFG_2STEP_VERIFICATION_TYPE' => 'email',
-            'CFG_2STEP_VERIFICATION_SMS_MODULE' => '',
-            'CFG_2STEP_VERIFICATION_USER_PHONE' => '',
-            'CFG_LOGIN_BY_PHONE_NUMBER' => 0,
-            'CFG_PUBLIC_REGISTRATION_USER_ACTIVATION' => 'automatic',
-            'CFG_REGISTRATION_SUCCESS_PAGE_HEADING' => '',
-            'CFG_REGISTRATION_SUCCESS_PAGE_DESCRIPTION' => '',
-            'CFG_USER_ACTIVATION_EMAIL_SUBJECT' => '',
-            'CFG_USER_ACTIVATION_EMAIL_BODY' => '',
-            'CFG_HIDE_POWERED_BY_TEXT' => 0,
-            'CFG_APP_FAVICON' => '',
-            'CFG_CREATE_ATTACHMENTS_PREVIEW' => 0,
-            'CFG_DISPLAY_USER_GROUP_IN_MENU' => 0,
-            'CFG_DISPLAY_USER_GROUP_ID_IN_MENU' => '',
-            'CFG_ENABLE_MULTIPLE_ACCESS_GROUPS' => 0,
-            'CFG_USE_PUBLIC_REGISTRATION_MULTIPLE_USER_GROUPS' => 0,
-            'CFG_ENABLE_SOCIAL_LOGIN' => 0,
-            'CFG_ENABLE_VKONTAKTE_LOGIN' => 0,
-            'CFG_VKONTAKTE_APP_ID' => '',
-            'CFG_VKONTAKTE_SECRET_KEY' => '',
-            'CFG_VKONTAKTE_BUTTON_TITLE' => '',
-            'CFG_SOCAL_LOGIN_CREATE_USER' => 'autocreate',
-            'CFG_SOCAL_LOGIN_USER_GROUP' => '',
-            'CFG_ENABLE_GOOGLE_LOGIN' => 0,
-            'CFG_GOOGLE_APP_ID' => '',
-            'CFG_GOOGLE_SECRET_KEY' => '',
-            'CFG_GOOGLE_BUTTON_TITLE' => '',
-            'CFG_ENABLE_FACEBOOK_LOGIN' => 0,
-            'CFG_FACEBOOK_APP_ID' => '',
-            'CFG_FACEBOOK_SECRET_KEY' => '',
-            'CFG_FACEBOOK_BUTTON_TITLE' => '',
-            'CFG_ENABLE_LINKEDIN_LOGIN' => 0,
-            'CFG_LINKEDIN_APP_ID' => '',
-            'CFG_LINKEDIN_SECRET_KEY' => '',
-            'CFG_LINKEDIN_BUTTON_TITLE' => '',
-            'CFG_ENABLE_TWITTER_LOGIN' => 0,
-            'CFG_TWITTER_APP_ID' => '',
-            'CFG_TWITTER_SECRET_KEY' => '',
-            'CFG_TWITTER_BUTTON_TITLE' => '',
-            'CFG_ENABLE_GUEST_LOGIN' => 0,
-            'CFG_GUEST_LOGIN_USER' => '',
-            'CFG_GUEST_LOGIN_BUTTON_TITLE' => '',
-            'CFG_PUBLIC_CALENDAR_ICAL' => 0,
-            'CFG_PERSONAL_CALENDAR_ICAL' => 0,
-            'CFG_IS_STRONG_PASSWORD' => 0,
-            'CFG_EMAIL_SMTP_DEBUG' => 0,
-            'CFG_DROP_DOWN_MENU_ON_HOVER' => 0,
-            'CFG_CUSTOM_HTML_HEAD' => '',
-            'CFG_CUSTOM_HTML_BODY' => '',
-            'CFG_AUTOBACKUP_KEEP_FILES_DAYS' => 30,
-            'CFG_EMAIL_HTML_LAYOUT' => '',
-            'CFG_USE_EMAIL_HTML_LAYOUT' => 0,
-            'CFG_ENABLE_STEAM_LOGIN' => 0,
-            'CFG_STEAM_API_KEY' => '',
-            'CFG_STEAM_DOMAIN' => '',
-            'CFG_STEAM_BUTTON_TITLE' => '',
-            'CFG_ENABLE_YANDEX_LOGIN' => 0,
-            'CFG_YANDEX_APP_ID' => '',
-            'CFG_YANDEX_SECRET_KEY' => '',
-            'CFG_YANDEX_BUTTON_TITLE' => '',
-        ];
-
-        \K::f3()->mset($defaultCfg);
-    }
-
-    private function _setCfgOther()
+    private function _setCfg()
     {
         \K::f3()->mset(
             [
@@ -378,7 +374,7 @@ class Controller
     {
     }
 
-    private function _check()
+    private function _checkEnvironment()
     {
         $error_list = [];
 
