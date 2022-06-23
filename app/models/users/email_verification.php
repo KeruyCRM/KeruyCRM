@@ -6,26 +6,26 @@ class Email_verification
 {
     public static function check()
     {
-        global $app_module_path, $app_user;
-
         if (\K::f3()->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION != 'email' or \K::f3(
             )->CFG_USE_PUBLIC_REGISTRATION != 1) {
             return true;
         }
 
-        if (!app_session_is_registered('app_logged_users_id')) {
+        //if (!app_session_is_registered('app_logged_users_id')) {
+        if (!\K::f3()->exists('SESSION.app_logged_users_id')) {
             return true;
         }
 
-        if ($app_module_path == 'users/email_verification') {
+        if (\K::f3()->app_module_path == 'users/email_verification') {
             return true;
         }
 
-        if ($app_user['is_email_verified'] == 0 and !in_array(
-                $app_module_path,
+        if (\K::f3()->app_user['is_email_verified'] == 0 and !in_array(
+                \K::f3()->app_module_path,
                 ['users/email_verification', 'users/login']
             )) {
-            redirect_to('users/email_verification');
+            //redirect_to('users/email_verification');
+            \K::f3()->reroute('/users/email_verification');
         }
     }
 
@@ -47,7 +47,7 @@ class Email_verification
     {
         global $app_user, $app_users_cache, $app_email_verification_code;
 
-        $code = $app_email_verification_code = email_verification . phprand(0, 9) . rand(0, 9) . rand(0, 9);
+        $code = $app_email_verification_code = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
 
         $users_info_query = db_query(
             "select * from app_entity_1 where id='" . db_input($app_user['id']) . "' and field_5=1"

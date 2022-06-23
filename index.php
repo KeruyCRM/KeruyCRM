@@ -36,18 +36,15 @@ if (file_exists('config/database.php')) {
 }
 
 $f3->route(
-    'GET|POST @Dashboard: /' . $f3->FOLDER_ADMIN,
-    '\Controllers\Module\Dashboard->index'
-);
-$f3->route(
-    'GET|POST @Login: /users/login',
-    '\Controllers\Module\Users->login'
+    'GET|POST @mainRouterAction: /@moduleName/@controllerName/@actionName',
+    '\Controllers\@moduleName\@controllerName->@actionName'
 );
 
 $f3->route(
-    'GET|POST @mainRouter: /' . $f3->FOLDER_ADMIN . '/@modules/@controllers/@action',
-    '\Controllers\@modules\@controllers->@action'
+    'GET|POST @mainRouter: /@moduleName/@controllerName',
+    '\Controllers\@moduleName\@controllerName->@controllerName'
 );
+
 
 $f3->route(
     'GET|POST /set/install/@action/@lang',
@@ -59,7 +56,8 @@ $f3->route(
 );
 
 $f3->redirect('GET /install', '/set/install/index');
-$f3->redirect('GET /', '/public/index/index');
+$f3->redirect('GET /', '/module/dashboard');
+
 
 //$f3->route('GET /example [ajax]','Page->getFragment');
 //$f3->route('GET /example [sync]','Page->getFull');

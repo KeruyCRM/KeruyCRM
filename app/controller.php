@@ -3,7 +3,7 @@
 class Controller
 {
     public $allowed_modules = [
-        '/users/login',
+        'users/login',
         'users/guest_login',
         'users/restore_password',
         'users/ldap_login',
@@ -82,6 +82,19 @@ class Controller
         \Models\Custom_php::include();
 
         $this->_setCfgSession();
+
+        \K::f3()->app_plugin_path = '';
+        \K::f3()->app_module = \K::f3()->get('PARAMS.controllerName');
+        \K::f3()->app_action = (\K::f3()->exists('PARAMS.actionName') ? \K::f3()->get('PARAMS.actionName') : \K::f3(
+        )->get(
+            'PARAMS.controllerName'
+        ));
+        if (\K::f3()->get('PARAMS.moduleName') == 'module') {
+            \K::f3()->app_module_path = \K::f3()->app_module . '/' . \K::f3()->app_action;
+        } else {
+            \K::f3()->app_module_path = \K::f3()->get('PARAMS.moduleName') . '/' . \K::f3()->app_module . '/' . \K::f3(
+                )->app_action;
+        }
 
         \K::f3()->app_title = (strlen(\K::f3()->CFG_APP_SHORT_NAME) > 0 ? \K::f3()->CFG_APP_SHORT_NAME : \K::f3(
         )->CFG_APP_NAME);
@@ -426,9 +439,8 @@ class Controller
     private function _userLogin()
     {
         //TODO AUTOlogin https://github.com/symfony/symfony/blob/4.4/src/Symfony/Component/Security/Http/RememberMe/TokenBasedRememberMeServices.php#L101
-        $module = \K::f3()->URI;
 
-        if (!\K::f3()->exists('SESSION.app_logged_users_id') and !in_array($module, $this->allowed_modules)) {
+        if (!\K::f3()->exists('SESSION.app_logged_users_id') and !in_array(!\K::f3()->module, $this->allowed_modules)) {
             //allows redirect user to current page after login if there is no any actions
 
             if (!\K::f3()->exists('GET.action') and !\K::f3()->exists('POST.action') and !\K::f3()->AJAX) {
