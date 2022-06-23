@@ -106,6 +106,14 @@ class Controller
 
         $this->_setCfgSession2();
         $this->_check();
+
+        \Models\Users\Two_step_verification::check();
+
+        //email confirmation check
+        \Models\Users\Email_verification::check();
+
+        //check if maintenance mode enabled
+        \Tools\Maintenance_mode::check();
     }
 
     public function beforeroute()
@@ -394,10 +402,16 @@ class Controller
         foreach ($check_folders as $v) {
             if (is_dir($v)) {
                 if (!is_writable($v)) {
-                    $error_list[] = sprintf('Error: folder "%s" is not writable!', str_replace(\K::f3()->DIR_FS_CATALOG, '', $v));
+                    $error_list[] = sprintf(
+                        'Error: folder "%s" is not writable!',
+                        str_replace(\K::f3()->DIR_FS_CATALOG, '', $v)
+                    );
                 }
             } else {
-                $error_list[] = sprintf('Error: folder "%s" does not exist', str_replace(\K::f3()->DIR_FS_CATALOG, '', $v));
+                $error_list[] = sprintf(
+                    'Error: folder "%s" does not exist',
+                    str_replace(\K::f3()->DIR_FS_CATALOG, '', $v)
+                );
             }
         }
 
