@@ -42,9 +42,8 @@ $f3->route(
 
 $f3->route(
     'GET|POST @mainRouter: /@moduleName/@controllerName',
-    '\Controllers\@moduleName\@controllerName->@controllerName'
+    '\Controllers\@moduleName\@controllerName->index'
 );
-
 
 $f3->route(
     'GET|POST /set/install/@action/@lang',
@@ -57,7 +56,6 @@ $f3->route(
 
 $f3->redirect('GET /install', '/set/install/index');
 $f3->redirect('GET /', '/module/dashboard');
-
 
 //$f3->route('GET /example [ajax]','Page->getFragment');
 //$f3->route('GET /example [sync]','Page->getFull');

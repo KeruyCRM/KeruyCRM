@@ -197,10 +197,8 @@ class Controller
 
         \K::f3()->app_plugin_path = '';
         \K::f3()->app_module = \K::f3()->get('PARAMS.controllerName');
-        \K::f3()->app_action = (\K::f3()->exists('PARAMS.actionName') ? \K::f3()->get('PARAMS.actionName') : \K::f3(
-        )->get(
-            'PARAMS.controllerName'
-        ));
+        \K::f3()->app_action = (\K::f3()->exists('PARAMS.actionName') ? \K::f3()->get('PARAMS.actionName') : 'index');
+
         if (\K::f3()->get('PARAMS.moduleName') == 'module') {
             \K::f3()->app_module_path = \K::f3()->app_module . '/' . \K::f3()->app_action;
         } else {
