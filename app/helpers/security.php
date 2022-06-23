@@ -20,7 +20,7 @@ class Security extends \Prefab
             }
 
             if (
-                !\K::f3()->exists('SESSION.app_session_token', $app_session_token)
+                !\K::sessionExists('app_session_token', $app_session_token)
                 or !\K::f3()->exists('POST.csrf_token', $postToken)
                 or !$this->validateToken($postToken)) {
                 \K::f3()->error(400, 'Invalid CSRF token');
@@ -38,7 +38,7 @@ class Security extends \Prefab
             $timeSend = $explode[1];
             $tokenSend = $explode[2];
 
-            if (!\K::f3()->exists('SESSION.app_session_token', $app_session_token)) {
+            if (!\K::sessionExists('app_session_token', $app_session_token)) {
                 return false;
             }
 
@@ -81,8 +81,8 @@ class Security extends \Prefab
         $salt = '';
         $time = '';
         try {
-            if (!\K::f3()->exists('SESSION.app_session_token', $app_session_token)) {
-                $app_session_token = \K::f3()->set('SESSION.app_session_token', $this->genAppSessionToken());
+            if (!\K::sessionExists('app_session_token', $app_session_token)) {
+                $app_session_token = \K::sessionSet('app_session_token', $this->genAppSessionToken());
             }
 
             $salt = $this->genAppSessionToken();

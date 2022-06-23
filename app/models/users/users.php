@@ -871,7 +871,7 @@ class Users
 
                 if (isset($password_hashed)) {
                     //app_session_register('app_logged_users_id', $user['id']);
-                    \K::f3()->set('SESSION.app_logged_users_id', $user['id']);
+                    \K::sessionSet('app_logged_users_id', $user['id']);
 
                     \Models\Users\Users_login_log::success($username, $user['id']);
 
@@ -884,7 +884,7 @@ class Users
                     }
                 } elseif ($hasher->CheckPassword($password, $user['password'])) {
                     //app_session_register('app_logged_users_id', $user['id']);
-                    \K::f3()->set('SESSION.app_logged_users_id', $user['id']);
+                    \K::sessionSet('app_logged_users_id', $user['id']);
 
                     //login log
                     if (\K::f3()->CFG_2STEP_VERIFICATION_ENABLED != 1) {
@@ -892,36 +892,18 @@ class Users
                     }
 
                     if ($remember_me == 1) {
-                        \K::f3()->set('COOKIE.app_remember_me', 1, 60 * 60 * 24 * 30);
-                        \K::f3()->set('COOKIE.app_stay_logged', 1, 60 * 60 * 24 * 30);
-                        \K::f3()->set('COOKIE.app_remember_user', base64_encode($user['field_12']), 60 * 60 * 24 * 30);
-                        \K::f3()->set('COOKIE.app_remember_pass', base64_encode($user['password']), 60 * 60 * 24 * 30);
-                        //setcookie('app_remember_me', 1, time() + 60 * 60 * 24 * 30, '/');
-                        //setcookie('app_stay_logged', 1, time() + 60 * 60 * 24 * 30, '/');
-                        /*setcookie(
-                            'app_remember_user',
-                            base64_encode($user['field_12']),
-                            time() + 60 * 60 * 24 * 30,
-                            '/'
-                        );*/
-                        /*setcookie(
-                            'app_remember_pass',
-                            base64_encode($user['password']),
-                            time() + 60 * 60 * 24 * 30,
-                            '/'
-                        );*/
+                        \K::cookieSet('app_remember_me', 1, 60 * 60 * 24 * 30);
+                        \K::cookieSet('app_stay_logged', 1, 60 * 60 * 24 * 30);
+                        \K::cookieSet('app_remember_user', base64_encode($user['field_12']), 60 * 60 * 24 * 30);
+                        \K::cookieSet('app_remember_pass', base64_encode($user['password']), 60 * 60 * 24 * 30);
                     } else {
-                        \K::f3()->clear('COOKIE.app_remember_me');
-                        \K::f3()->clear('COOKIE.app_stay_logged');
-                        \K::f3()->clear('COOKIE.app_remember_user');
-                        \K::f3()->clear('COOKIE.app_remember_pass');
-                        //setcookie('app_remember_me', '', time() - 3600, '/');
-                        //setcookie('app_stay_logged', '', time() - 3600, '/');
-                        //setcookie('app_remember_user', '', time() - 3600, '/');
-                        //setcookie('app_remember_pass', '', time() - 3600, '/');
+                        \K::cookieClear('app_remember_me');
+                        \K::cookieClear('app_stay_logged');
+                        \K::cookieClear('app_remember_user');
+                        \K::cookieClear('app_remember_pass');
                     }
 
-                    if (\K::f3()->exists('COOKIE.app_login_redirect_to', $redirect_to)) {
+                    if (\K::f3()->cookieExists('app_login_redirect_to', $redirect_to)) {
                         //setcookie('app_login_redirect_to','',time() - 3600,'/');
                         //redirect_to(str_replace('module=', '', $_COOKIE['app_login_redirect_to']));
                         \K::f3()->reroute($redirect_to);

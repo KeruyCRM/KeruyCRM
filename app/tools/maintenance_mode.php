@@ -39,7 +39,7 @@ class Maintenance_mode
 
     static function check()
     {
-        if (\K::f3()->exists('SESSION.app_logged_users_id') and \K::f3()->app_module_path != 'users/login') {
+        if (\K::sessionExists('app_logged_users_id') and \K::f3()->app_module_path != 'users/login') {
             if (\K::f3()->CFG_MAINTENANCE_MODE == 1 and \K::f3()->app_user['group_id'] != 0) {
                 if (!in_array(
                     \K::f3()->app_user['id'],

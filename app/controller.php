@@ -297,71 +297,71 @@ class Controller
 
     private function _setCfgSession()
     {
-        if (!\K::f3()->exists('SESSION.uploadify_attachments')) {
-            \K::f3()->set('SESSION.uploadify_attachments', []);
+        if (!\K::sessionExists('uploadify_attachments')) {
+            \K::sessionSet('uploadify_attachments', []);
         }
 
-        if (!\K::f3()->exists('SESSION.uploadify_attachments_queue')) {
-            \K::f3()->set('SESSION.uploadify_attachments_queue', []);
+        if (!\K::sessionExists('uploadify_attachments_queue')) {
+            \K::sessionSet('uploadify_attachments_queue', []);
         }
 
-        if (!\K::f3()->exists('SESSION.app_send_to')) {
-            \K::f3()->set('SESSION.app_send_to', []);
+        if (!\K::sessionExists('app_send_to')) {
+            \K::sessionSet('app_send_to', []);
         }
 
-        if (!\K::f3()->exists('SESSION.app_session_token')) {
-            \K::f3()->set('SESSION.app_session_token', \K::security()->genAppSessionToken());
+        if (!\K::sessionExists('app_session_token')) {
+            \K::sessionSet('app_session_token', \K::security()->genAppSessionToken());
         }
 
-        if (!\K::f3()->exists('SESSION.app_current_users_filter')) {
-            \K::f3()->set('SESSION.app_current_users_filter', []);
+        if (!\K::sessionExists('app_current_users_filter')) {
+            \K::sessionSet('app_current_users_filter', []);
         }
 
-        if (!\K::f3()->exists('SESSION.app_previously_logged_user')) {
-            \K::f3()->set('SESSION.app_previously_logged_user', 0);
+        if (!\K::sessionExists('app_previously_logged_user')) {
+            \K::sessionSet('app_previously_logged_user', 0);
         }
 
-        if (!\K::f3()->exists('SESSION.two_step_verification_info')) {
-            \K::f3()->set('SESSION.two_step_verification_info', []);
+        if (!\K::sessionExists('two_step_verification_info')) {
+            \K::sessionSet('two_step_verification_info', []);
         }
 
-        if (!\K::f3()->exists('SESSION.app_email_verification_code')) {
-            \K::f3()->set('SESSION.app_email_verification_code', '');
+        if (!\K::sessionExists('app_email_verification_code')) {
+            \K::sessionSet('app_email_verification_code', '');
         }
 
-        if (!\K::f3()->exists('SESSION.app_force_print_template')) {
-            \K::f3()->set('SESSION.app_force_print_template', false);
+        if (!\K::sessionExists('app_force_print_template')) {
+            \K::sessionSet('app_force_print_template', false);
         }
     }
 
     private function _setCfgSession2()
     {
-        if (!\K::f3()->exists('SESSION.app_current_version')) {
-            \K::f3()->set('SESSION.app_current_version', '');
+        if (!\K::sessionExists('app_current_version')) {
+            \K::sessionSet('app_current_version', '');
         }
 
         if (\K::f3()->CFG_DISABLE_CHECK_FOR_UPDATES == 1) {
             \K::f3()->app_current_version = '';
         }
 
-        if (!\K::f3()->exists('SESSION.app_selected_items')) {
-            \K::f3()->set('SESSION.app_selected_items', []);
+        if (!\K::sessionExists('app_selected_items')) {
+            \K::sessionSet('app_selected_items', []);
         }
 
-        if (!\K::f3()->exists('SESSION.listing_page_keeper')) {
-            \K::f3()->set('SESSION.listing_page_keeper', []);
+        if (!\K::sessionExists('listing_page_keeper')) {
+            \K::sessionSet('listing_page_keeper', []);
         }
 
-        if (!\K::f3()->exists('SESSION.user_roles_dropdown_change_holder')) {
-            \K::f3()->set('SESSION.user_roles_dropdown_change_holder', []);
+        if (!\K::sessionExists('user_roles_dropdown_change_holder')) {
+            \K::sessionSet('user_roles_dropdown_change_holder', []);
         }
 
-        if (!\K::f3()->exists('SESSION.app_subentity_form_items')) {
-            \K::f3()->set('SESSION.app_subentity_form_items', []);
+        if (!\K::sessionExists('app_subentity_form_items')) {
+            \K::sessionSet('app_subentity_form_items', []);
         }
 
-        if (!\K::f3()->exists('SESSION.app_subentity_form_items_deleted')) {
-            \K::f3()->set('SESSION.app_subentity_form_items_deleted', []);
+        if (!\K::sessionExists('app_subentity_form_items_deleted')) {
+            \K::sessionSet('app_subentity_form_items_deleted', []);
         }
     }
 
@@ -440,29 +440,29 @@ class Controller
     {
         //TODO AUTOlogin https://github.com/symfony/symfony/blob/4.4/src/Symfony/Component/Security/Http/RememberMe/TokenBasedRememberMeServices.php#L101
 
-        if (!\K::f3()->exists('SESSION.app_logged_users_id') and !in_array(!\K::f3()->module, $this->allowed_modules)) {
+        if (!\K::sessionExists('app_logged_users_id') and !in_array(!\K::f3()->module, $this->allowed_modules)) {
             //allows redirect user to current page after login if there is no any actions
 
             if (!\K::f3()->exists('GET.action') and !\K::f3()->exists('POST.action') and !\K::f3()->AJAX) {
-                \K::f3()->set('COOKIE.app_login_redirect_to', \K::f3()->URI, 10 * 60);
+                \K::cookieSet('app_login_redirect_to', \K::f3()->URI, 10 * 60);
                 //setcookie('app_login_redirect_to', $_SERVER['QUERY_STRING'], time() + 10 * 60, '/');
             }
             //if (isset($_COOKIE["app_remember_me"]) and isset($_COOKIE["app_stay_logged"])) {
-            if (\K::f3()->exists('COOKIE.app_remember_me') and \K::f3()->exists('COOKIE.app_stay_logged')) {
+            if (\K::cookieExists('app_remember_me') and \K::cookieExists('app_stay_logged')) {
                 //do not ask verification do if login by remember me function
                 \K::f3()->two_step_verification_info['is_checked'] = true;
 
                 \Models\Users\Users::login(
-                    base64_decode(\K::f3()->get('COOKIE.app_remember_user')),
+                    base64_decode(\K::cookieGet('app_remember_user')),
                     '',
                     1,
-                    base64_decode(\K::f3()->get('COOKIE.app_remember_pass'))
+                    base64_decode(\K::cookieGet('app_remember_pass'))
                 );
             } else {
                 //redirect_to('users/login');
                 \K::f3()->reroute('@Login');
             }
-        } elseif (\K::f3()->exists('SESSION.app_logged_users_id')) {
+        } elseif (\K::sessionExists('app_logged_users_id')) {
             $user_query = \Models\Users\Users::getGroupAndAccessByUserId(\K::f3()->app_logged_users_id);
 
             if (isset($user_query[0])) {
@@ -504,7 +504,7 @@ class Controller
                 \Models\Users\Users::set_client_id();
             } else {
                 //app_session_unregister('app_logged_users_id');
-                \K::f3()->clear('SESSION.app_logged_users_id');
+                \K::sessionClear('app_logged_users_id');
                 \K::f3()->reroute('@Login');
                 //redirect_to('users/login');
             }
