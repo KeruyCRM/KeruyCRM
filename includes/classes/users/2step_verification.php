@@ -35,9 +35,16 @@ class two_step_verification
     {
         global $app_user, $app_users_cache, $two_step_verification_info;
 
-        $code = $two_step_verification_info['code'] = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
-
-
+        $code = '';
+        try {
+            $code = $two_step_verification_info['code'] = str_pad(
+                (string)random_int(0, (int)str_repeat('9', CFG_VERIFICATION_CODE_LENGTH)),
+                CFG_VERIFICATION_CODE_LENGTH,
+                '0',
+                STR_PAD_LEFT
+            );
+        } catch (Exception $e) {
+        }
         switch (CFG_2STEP_VERIFICATION_TYPE) {
             case 'email':
                 $users_info_query = db_query(

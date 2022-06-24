@@ -481,12 +481,16 @@ class users
     {
         $chars = "abcdefghijkmnopqrstuvwxyz0123456789ABCDEFGHIJKMNOPQRSTUVWXYZ" . ($has_symbols ? '~!@#$%^&*()_+' : '');
 
-        return substr(str_shuffle(str_repeat($chars, $length)), 0, $length);
-        /*for ($i = 0; $i < $length; $i++) {
-            $password .= $chars[rand(0, strlen($chars) - 1)];
+        //return substr(str_shuffle(str_repeat($chars, $length)), 0, $length);
+        $password = '';
+        try {
+            for ($i = 0; $i < $length; $i++) {
+                $password .= $chars[random_int(0, strlen($chars) - 1)];
+            }
+        } catch (Exception $e) {
         }
 
-        return $password;*/
+        return $password;
     }
 
     static public function get_fields_access_schema($entities_id, $access_groups_id)

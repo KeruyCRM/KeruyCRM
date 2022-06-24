@@ -23,3 +23,5 @@ define('CFG_ALLOWED_COUNTRIES_LIST', '');
  */
 define('CFG_RESTRICTED_BY_IP_ENABLE', false);
 define('CFG_ALLOWED_IP_LIST', '');
+
+define('CFG_VERIFICATION_CODE_LENGTH', 6);
