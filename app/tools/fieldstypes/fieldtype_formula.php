@@ -8,7 +8,7 @@ class Fieldtype_formula
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_FORMULA_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_FORMULA_TITLE];
     }
 
     public function get_configuration()
@@ -16,50 +16,50 @@ class Fieldtype_formula
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FORMULA . fields::get_available_fields_helper(
+            'title' => \K::$fw->TEXT_FORMULA . fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_formula'
                 ),
             'name' => 'formula',
             'type' => 'code_small',
-            'tooltip_icon' => \K::f3()->TEXT_FORMULA_TIP_USAGE,
-            'tooltip' => \K::f3()->TEXT_FORMULA_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FORMULA_TIP_USAGE,
+            'tooltip' => \K::$fw->TEXT_FORMULA_TIP,
             'params' => ['class' => 'form-control code', 'mode' => 'sql']
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_NUMBER_FORMAT_INFO) . \K::f3()->TEXT_NUMBER_FORMAT,
+            'title' => tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
             'name' => 'number_format',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
-            'default' => \K::f3()->CFG_APP_NUMBER_FORMAT
+            'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_CALCULATE_TOTALS_INFO) . \K::f3()->TEXT_CALCULATE_TOTALS,
+            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
             'name' => 'calclulate_totals',
             'type' => 'checkbox'
         ];
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::f3(
+            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::f3(
                 )->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PREFIX,
+            'title' => \K::$fw->TEXT_PREFIX,
             'name' => 'prefix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SUFFIX,
+            'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
@@ -445,7 +445,7 @@ class Fieldtype_formula
                         }
                     } else {
                         echo '<div class="alert alert-danger">' . sprintf(
-                                \K::f3()->TEXT_ERROR_FORMULA_CALCULATION,
+                                \K::$fw->TEXT_ERROR_FORMULA_CALCULATION,
                                 $app_entities_cache[$entities_id]['name'],
                                 $fields['name'],
                                 $fields['id'],

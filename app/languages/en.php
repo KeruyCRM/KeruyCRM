@@ -16,4 +16,5 @@ return [
     'APP_LANGUAGE_COUNTRY' => 'gb',
 
     'APP_LANGUAGE_SHORT_CODE' => 'en',
-    'APP_LANGUAGE_TEXT_DIRECTION' => 'ltr',];
+    'APP_LANGUAGE_TEXT_DIRECTION' => 'ltr',
+];

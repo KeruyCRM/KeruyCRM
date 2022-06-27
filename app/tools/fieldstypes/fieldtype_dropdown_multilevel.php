@@ -8,7 +8,7 @@ class Fieldtype_dropdown_multilevel
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_TITLE, 'has_choices' => true];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_TITLE, 'has_choices' => true];
     }
 
     public function get_configuration()
@@ -16,62 +16,62 @@ class Fieldtype_dropdown_multilevel
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_CHOICES_VALUES,
+            'title' => \K::$fw->TEXT_DISPLAY_CHOICES_VALUES,
             'name' => 'display_choices_values',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_DISPLAY_CHOICES_VALUES_TIP
+            'tooltip_icon' => \K::$fw->TEXT_DISPLAY_CHOICES_VALUES_TIP
         ];
 
         //cfg global list if exist
         if (count($choices = global_lists::get_lists_choices()) > 0) {
             $cfg[] = [
-                'title' => \K::f3()->TEXT_USE_GLOBAL_LIST,
+                'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
                 'type' => 'dropdown',
                 'choices' => $choices,
-                'tooltip' => \K::f3()->TEXT_USE_GLOBAL_LIST_TOOLTIP,
+                'tooltip' => \K::$fw->TEXT_USE_GLOBAL_LIST_TOOLTIP,
                 'params' => ['class' => 'form-control input-medium']
             ];
         }
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_USE_SEARCH,
+            'title' => \K::$fw->TEXT_USE_SEARCH,
             'name' => 'use_search',
             'type' => 'dropdown',
-            'choices' => ['0' => \K::f3()->TEXT_NO, '1' => \K::f3()->TEXT_YES],
-            'tooltip' => \K::f3()->TEXT_USE_SEARCH_INFO,
+            'choices' => ['0' => \K::$fw->TEXT_NO, '1' => \K::$fw->TEXT_YES],
+            'tooltip' => \K::$fw->TEXT_USE_SEARCH_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_VALUE_DISPLAY,
+            'title' => \K::$fw->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_VALUE_DISPLAY,
             'name' => 'value_displya_own_column',
             'type' => 'dropdown',
-            'choices' => ['0' => \K::f3()->TEXT_NO, '1' => \K::f3()->TEXT_YES],
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_VALUE_DISPLAY_TIP,
+            'choices' => ['0' => \K::$fw->TEXT_NO, '1' => \K::$fw->TEXT_YES],
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_VALUE_DISPLAY_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_LEVEL_SETTINGS,
+            'title' => \K::$fw->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_LEVEL_SETTINGS,
             'name' => 'level_settings',
             'type' => 'textarea',
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_LEVEL_SETTINGS_INFO,
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_LEVEL_SETTINGS_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_LEVEL_SETTINGS_INFO,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_LEVEL_SETTINGS_TIP,
             'params' => ['class' => 'form-control required']
         ];
 
@@ -90,7 +90,7 @@ class Fieldtype_dropdown_multilevel
                 ) . ' field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '') . ($cfg->get(
                     'use_search'
                 ) == 1 ? ' chosen-select' : ''),
-            'data-placeholder' => \K::f3()->TEXT_SELECT_SOME_VALUES
+            'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
         ];
 
         $choices = [];

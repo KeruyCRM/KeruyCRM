@@ -8,7 +8,7 @@ class Fieldtype_mind_map
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_MIND_MAP_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_MIND_MAP_TITLE];
     }
 
     public function get_configuration()

@@ -8,59 +8,59 @@ class Fieldtype_dynamic_date
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_DYNAMIC_DATE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_DYNAMIC_DATE_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_FORMULA . fields::get_available_fields_helper(
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_FORMULA . fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_formula'
                 ),
             'name' => 'formula',
             'type' => 'code_small',
-            'tooltip_icon' => \K::f3()->TEXT_FORMULA_TIP_USAGE,
-            'tooltip' => \K::f3()->TEXT_FORMULA_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FORMULA_TIP_USAGE,
+            'tooltip' => \K::$fw->TEXT_FORMULA_TIP,
             'params' => ['class' => 'form-control code', 'mode' => 'sql']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DATE_FORMAT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DATE_FORMAT,
             'name' => 'date_format',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . CFG_APP_DATE_FORMAT . ', ' . \K::f3()->TEXT_DATE_FORMAT_INFO,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . CFG_APP_DATE_FORMAT . ', ' . \K::$fw->TEXT_DATE_FORMAT_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_COLOR][] = [
-            'title' => \K::f3()->TEXT_OVERDUE_DATES,
+        $cfg[\K::$fw->TEXT_COLOR][] = [
+            'title' => \K::$fw->TEXT_OVERDUE_DATES,
             'name' => 'background',
             'type' => 'colorpicker',
-            'tooltip_icon' => \K::f3()->TEXT_DATE_BACKGROUND_TOOLTIP
+            'tooltip_icon' => \K::$fw->TEXT_DATE_BACKGROUND_TOOLTIP
         ];
 
-        $cfg[\K::f3()->TEXT_COLOR][] = [
-            'title' => \K::f3()->TEXT_DAYS_BEFORE_DATE,
+        $cfg[\K::$fw->TEXT_COLOR][] = [
+            'title' => \K::$fw->TEXT_DAYS_BEFORE_DATE,
             'name' => 'day_before_date',
             'type' => 'input-with-colorpicker',
-            'tooltip_icon' => \K::f3()->TEXT_DAYS_BEFORE_DATE_TIP
+            'tooltip_icon' => \K::$fw->TEXT_DAYS_BEFORE_DATE_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_COLOR][] = [
-            'title' => \K::f3()->TEXT_DAYS_BEFORE_DATE . ' 2',
+        $cfg[\K::$fw->TEXT_COLOR][] = [
+            'title' => \K::$fw->TEXT_DAYS_BEFORE_DATE . ' 2',
             'name' => 'day_before_date2',
             'type' => 'input-with-colorpicker',
-            'tooltip_icon' => \K::f3()->TEXT_DAYS_BEFORE_DATE_TIP
+            'tooltip_icon' => \K::$fw->TEXT_DAYS_BEFORE_DATE_TIP
         ];
 
         $choices = ['' => ''];
@@ -74,19 +74,19 @@ class Fieldtype_dynamic_date
             $choices[$fields['id']] = $fields['name'];
         }
 
-        $cfg[\K::f3()->TEXT_COLOR][] = [
-            'title' => \K::f3()->TEXT_DISABLE_COLOR,
+        $cfg[\K::$fw->TEXT_COLOR][] = [
+            'title' => \K::$fw->TEXT_DISABLE_COLOR,
             'name' => 'disable_color_by_field',
             'type' => 'dropdown',
             'choices' => $choices,
-            'tooltip_icon' => \K::f3()->TEXT_DISABLE_COLOR_BY_FIELD_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_DISABLE_COLOR_BY_FIELD_TIP,
             'params' => [
                 'class' => 'form-control input-large',
                 'onChange' => 'fields_types_ajax_configuration(\'disable_color_by_field_values\',this.value)'
             ],
         ];
 
-        $cfg[\K::f3()->TEXT_COLOR][] = [
+        $cfg[\K::$fw->TEXT_COLOR][] = [
             'name' => 'disable_color_by_field_values',
             'type' => 'ajax',
             'html' => '<script>fields_types_ajax_configuration(\'disable_color_by_field_values\',$("#fields_configuration_disable_color_by_field").val())</script>'

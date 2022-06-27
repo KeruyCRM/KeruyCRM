@@ -8,7 +8,7 @@ class Fieldtype_mysql_query
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_TITLE];
     }
 
     public function get_configuration()
@@ -17,66 +17,66 @@ class Fieldtype_mysql_query
 
         $cfg[] = [
             'title' => tooltip_icon(
-                    \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY_INFO
-                ) . \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
+                    \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY_INFO
+                ) . \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
             'name' => 'dinamic_query',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_ENTITY,
+            'title' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_ENTITY,
             'name' => 'entity_id',
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_ENTITY_TOOLTIP,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_ENTITY_TOOLTIP,
             'type' => 'dropdown',
             'choices' => entities::get_choices(),
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_QUERY,
+            'title' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_QUERY,
             'name' => 'select_query',
             'type' => 'textarea',
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_QUERY_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_QUERY_TIP,
             'params' => ['class' => 'form-control textarea-small code required']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_WHERE_QUERY,
+            'title' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_WHERE_QUERY,
             'name' => 'where_query',
             'type' => 'textarea',
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_WHERE_QUERY_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_WHERE_QUERY_TIP,
             'params' => ['class' => 'form-control textarea-small code required']
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_NUMBER_FORMAT_INFO) . \K::f3()->TEXT_NUMBER_FORMAT,
+            'title' => tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
             'name' => 'number_format',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
-            'default' => \K::f3()->CFG_APP_NUMBER_FORMAT
+            'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_CALCULATE_TOTALS_INFO) . \K::f3()->TEXT_CALCULATE_TOTALS,
+            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
             'name' => 'calclulate_totals',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_CALCULATE_AVERAGE_VALUE,
+            'title' => \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PREFIX,
+            'title' => \K::$fw->TEXT_PREFIX,
             'name' => 'prefix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SUFFIX,
+            'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
@@ -158,7 +158,7 @@ class Fieldtype_mysql_query
             'app_fields', ['type in (?)', 'fieldtype_mysql_query'],
             [],
             null,
-            [\K::f3()->TTL_APP, 'app_fields']
+            [\K::$fw->TTL_APP, 'app_fields']
         );
         //while ($fields = db_fetch_array($fields_query)) {
         foreach ($fields_query as $fields) {

@@ -6,7 +6,7 @@ class Users_login_log
 {
     public static function get_type_choiсes()
     {
-        return ['' => '', '0' => \K::f3()->TEXT_LOGIN_ATTEMPT, '1' => \K::f3()->TEXT_SUCCESSFUL_LOGIN];
+        return ['' => '', '0' => \K::$fw->TEXT_LOGIN_ATTEMPT, '1' => \K::$fw->TEXT_SUCCESSFUL_LOGIN];
     }
 
     public static function success($username, $users_id)
@@ -24,7 +24,7 @@ class Users_login_log
         $sql_data = [
             'users_id' => $users_id,
             'username' => $username,
-            'identifier' => \K::f3()->IP,// $_SERVER['REMOTE_ADDR'],
+            'identifier' => \K::$fw->IP,// $_SERVER['REMOTE_ADDR'],
             'is_success' => $is_success,
             'date_added' => time(),
         ];

@@ -8,7 +8,7 @@ class Fieldtype_radioboxes
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_RADIOBOXES_TITLE, 'has_choices' => true];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_RADIOBOXES_TITLE, 'has_choices' => true];
     }
 
     public function get_configuration()
@@ -16,7 +16,7 @@ class Fieldtype_radioboxes
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_AS,
+            'title' => \K::$fw->TEXT_DISPLAY_AS,
             'name' => 'display_as',
             'type' => 'dropdown',
             'choices' => self::get_display_as_choices(),
@@ -25,27 +25,27 @@ class Fieldtype_radioboxes
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_CHOICES_VALUES,
+            'title' => \K::$fw->TEXT_DISPLAY_CHOICES_VALUES,
             'name' => 'display_choices_values',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_DISPLAY_CHOICES_VALUES_TIP
+            'tooltip_icon' => \K::$fw->TEXT_DISPLAY_CHOICES_VALUES_TIP
         ];
 
         //cfg global list if exist
         if (count($choices = global_lists::get_lists_choices()) > 0) {
             $cfg[] = [
-                'title' => \K::f3()->TEXT_USE_GLOBAL_LIST,
+                'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
                 'type' => 'dropdown',
                 'choices' => $choices,
-                'tooltip' => \K::f3()->TEXT_USE_GLOBAL_LIST_TOOLTIP,
+                'tooltip' => \K::$fw->TEXT_USE_GLOBAL_LIST_TOOLTIP,
                 'params' => ['class' => 'form-control input-medium']
             ];
         }
@@ -56,11 +56,11 @@ class Fieldtype_radioboxes
     public static function get_display_as_choices()
     {
         $choices = [
-            'list-inline' => \K::f3()->TEXT_INLINE_LIST,
-            'list-column-1' => \K::f3()->TEXT_COLUMN . ' 1',
-            'list-column-2' => \K::f3()->TEXT_COLUMN . ' 2',
-            'list-column-3' => \K::f3()->TEXT_COLUMN . ' 3',
-            'list-column-4' => \K::f3()->TEXT_COLUMN . ' 4',
+            'list-inline' => \K::$fw->TEXT_INLINE_LIST,
+            'list-column-1' => \K::$fw->TEXT_COLUMN . ' 1',
+            'list-column-2' => \K::$fw->TEXT_COLUMN . ' 2',
+            'list-column-3' => \K::$fw->TEXT_COLUMN . ' 3',
+            'list-column-4' => \K::$fw->TEXT_COLUMN . ' 4',
         ];
 
         return $choices;

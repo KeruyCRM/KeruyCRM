@@ -8,17 +8,17 @@ class Fieldtype_items_by_query
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_ITEMS_BY_QUERY_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_ITEMS_BY_QUERY_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_ENTITY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_ENTITY,
             'name' => 'entity_id',
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_ENTITY_TOOLTIP,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_ENTITY_TOOLTIP,
             'type' => 'dropdown',
             'choices' => entities::get_choices(),
             'params' => [
@@ -27,47 +27,47 @@ class Fieldtype_items_by_query
             ]
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'name' => 'fields_for_search_box',
             'type' => 'ajax',
             'html' => '<script>fields_types_ajax_configuration(\'fields_for_search_box\',$("#fields_configuration_entity_id").val())</script>'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DEBUG_MODE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DEBUG_MODE,
             'name' => 'debug_mode',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_DISPLAY_AS][] = [
-            'title' => \K::f3()->TEXT_IN_ITEM_PAGE,
+        $cfg[\K::$fw->TEXT_DISPLAY_AS][] = [
+            'title' => \K::$fw->TEXT_IN_ITEM_PAGE,
             'name' => 'display_as',
             'type' => 'dropdown',
-            'choices' => ['number' => \K::f3()->TEXT_NUMBER_OF_RECORDS, 'list' => \K::f3()->TEXT_LIST],
+            'choices' => ['number' => \K::$fw->TEXT_NUMBER_OF_RECORDS, 'list' => \K::$fw->TEXT_LIST],
             'default' => 'dropdown',
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_DISPLAY_AS][] = [
-            'title' => \K::f3()->TEXT_ITEMS_LISTING,
+        $cfg[\K::$fw->TEXT_DISPLAY_AS][] = [
+            'title' => \K::$fw->TEXT_ITEMS_LISTING,
             'name' => 'display_as_in_listing',
             'type' => 'dropdown',
-            'choices' => ['number' => \K::f3()->TEXT_NUMBER_OF_RECORDS, 'list' => \K::f3()->TEXT_LIST],
+            'choices' => ['number' => \K::$fw->TEXT_NUMBER_OF_RECORDS, 'list' => \K::$fw->TEXT_LIST],
             'default' => 'dropdown',
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_DISPLAY_AS][] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::f3()->TEXT_DISPLAY_NAME_AS_LINK,
+        $cfg[\K::$fw->TEXT_DISPLAY_AS][] = [
+            'title' => tooltip_icon(\K::$fw->TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
             'name' => 'display_as_link',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_DISPLAY_AS][] = [
-            'title' => \K::f3()->TEXT_DEFAULT_TEXT,
+        $cfg[\K::$fw->TEXT_DISPLAY_AS][] = [
+            'title' => \K::$fw->TEXT_DEFAULT_TEXT,
             'name' => 'default_text',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_TOTAL . ' (#)',
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_TOTAL . ' (#)',
             'params' => ['class' => 'form-control input-medium']
         ];
 
@@ -83,7 +83,7 @@ class Fieldtype_items_by_query
                 $entities_id = $value;
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_WHERE_QUERY .
+                    'title' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_WHERE_QUERY .
                         fields::get_available_fields_helper(
                             $entities_id,
                             'fields_configuration_where_query',
@@ -96,19 +96,19 @@ class Fieldtype_items_by_query
                         ) . '</div>',
                     'name' => 'where_query',
                     'type' => 'textarea',
-                    'tooltip' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_WHERE_QUERY_TIP,
+                    'tooltip' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_WHERE_QUERY_TIP,
                     'params' => ['class' => 'form-control input-xlarge code']
                 ];
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
+                    'title' => \K::$fw->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
                             $entities_id,
                             'fields_configuration_heading_template'
                         ),
                     'name' => 'heading_template',
                     'type' => 'textarea',
-                    'tooltip_icon' => \K::f3()->TEXT_HEADING_TEMPLATE_INFO,
-                    'tooltip' => \K::f3()->TEXT_ENTER_TEXT_PATTERN_INFO,
+                    'tooltip_icon' => \K::$fw->TEXT_HEADING_TEMPLATE_INFO,
+                    'tooltip' => \K::$fw->TEXT_ENTER_TEXT_PATTERN_INFO,
                     'params' => ['class' => 'form-control input-xlarge code']
                 ];
 
@@ -155,7 +155,7 @@ class Fieldtype_items_by_query
 
                 return implode(', ', $list);
             } else {
-                $html = (strlen($cfg->get('default_text')) ? $cfg->get('default_text') : \K::f3()->TEXT_TOTAL . ' (#)');
+                $html = (strlen($cfg->get('default_text')) ? $cfg->get('default_text') : \K::$fw->TEXT_TOTAL . ' (#)');
                 $html = (strstr($html, '#') ? str_replace('#', $count_items, $html) : $html . $count_items);
 
                 return $html;
@@ -166,7 +166,7 @@ class Fieldtype_items_by_query
         if (($cfg->get('display_as') == 'number' and !isset($options['is_listing'])) or ($cfg->get(
                     'display_as_in_listing'
                 ) == 'number' and isset($options['is_listing']))) {
-            $html = (strlen($cfg->get('default_text')) ? $cfg->get('default_text') : \K::f3()->TEXT_TOTAL . ' (#)');
+            $html = (strlen($cfg->get('default_text')) ? $cfg->get('default_text') : \K::$fw->TEXT_TOTAL . ' (#)');
             $html = (strstr($html, '#') ? str_replace('#', $count_items, $html) : $html . $count_items);
 
             $result = items::parse_path($options['path']);

@@ -6,7 +6,7 @@ class Users
 {
     static public function output_heading_from_item($item)
     {
-        return (\K::f3()->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname'
+        return (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname'
             ? $item['field_7'] . ' ' . $item['field_8']
             : $item['field_8'] . ' ' . $item['field_7']);
     }
@@ -26,7 +26,7 @@ class Users
 
         //get public profile fields
         //if (defined('CFG_PUBLIC_USER_PROFILE_FIELDS') and $include_public_profile) {
-        if (strlen(\K::f3()->CFG_PUBLIC_USER_PROFILE_FIELDS) > 0 and $include_public_profile) {
+        if (strlen(\K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS) > 0 and $include_public_profile) {
             $fields_query = db_query(
                 "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserverd_types_list(
                 ) . ") and f.id in (" . \K::f3(
@@ -105,7 +105,7 @@ class Users
                 'group_id' => (int)$users['field_6'],
                 'group_name' => ($users['group_id'] > 0 ? $users['group_name'] : (defined(
                     'TEXT_ADMINISTRATOR'
-                ) ? \K::f3()->TEXT_ADMINISTRATOR : 'Administrator')),
+                ) ? \K::$fw->TEXT_ADMINISTRATOR : 'Administrator')),
                 'profile' => $profile_fields
             ];
         }
@@ -165,8 +165,8 @@ class Users
             return '';
         }
 
-        if (strlen($users_cache['photo']) and is_file(\K::f3()->DIR_WS_USERS . $users_cache['photo'])) {
-            $photo = '<img src=' . url_for_file(\K::f3()->DIR_WS_USERS . $users_cache['photo']) . ' width=50>';
+        if (strlen($users_cache['photo']) and is_file(\K::$fw->DIR_WS_USERS . $users_cache['photo'])) {
+            $photo = '<img src=' . url_for_file(\K::$fw->DIR_WS_USERS . $users_cache['photo']) . ' width=50>';
         } else {
             $photo = '<img src=' . url_for_file('images/' . 'no_photo.png') . ' width=50>';
         }
@@ -223,7 +223,7 @@ class Users
         while ($users = db_fetch_array($users_query)) {
             $group_name = ((is_string($users['group_name']) and strlen(
                     $users['group_name']
-                ) > 0) ? $users['group_name'] : \K::f3()->TEXT_ADMINISTRATOR);
+                ) > 0) ? $users['group_name'] : \K::$fw->TEXT_ADMINISTRATOR);
             $choices[$group_name][$users['id']] = $users['field_8'] . ' ' . $users['field_7'];
         }
 
@@ -237,8 +237,7 @@ class Users
         $access_schema = users::get_entities_access_schema_by_groups($entities_id);
 
         $choices = [];
-        $order_by_sql = (\K::f3(
-        )->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? 'u.field_7, u.field_8' : 'u.field_8, u.field_7');
+        $order_by_sql = (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? 'u.field_7, u.field_8' : 'u.field_8, u.field_7');
         $users_query = db_query(
             "select u.*,a.name as group_name from app_entity_1 u left join app_access_groups a on a.id=u.field_6 where u.field_5=1 order by " . $order_by_sql
         );
@@ -313,7 +312,7 @@ class Users
                     users::send_email($options);
                 }
             } else {
-                if (\K::f3()->CFG_EMAIL_COPY_SENDER == 0 and $users_id == $app_user['id']) {
+                if (\K::$fw->CFG_EMAIL_COPY_SENDER == 0 and $users_id == $app_user['id']) {
                     continue;
                 }
 
@@ -346,12 +345,12 @@ class Users
         global $alerts;
 
         //check status
-        if (\K::f3()->CFG_EMAIL_USE_NOTIFICATION == 0 and !isset($options['send_directly'])) {
+        if (\K::$fw->CFG_EMAIL_USE_NOTIFICATION == 0 and !isset($options['send_directly'])) {
             return false;
         }
 
         //Sending via cron. Use send_directly to skip corn
-        if (\K::f3()->CFG_SEND_EMAILS_ON_SCHEDULE == 1 and !isset($options['send_directly'])) {
+        if (\K::$fw->CFG_SEND_EMAILS_ON_SCHEDULE == 1 and !isset($options['send_directly'])) {
             $sql_data = [
                 'date_added' => time(),
                 'email_to' => $options['to'],
@@ -372,26 +371,26 @@ class Users
 
         try {
             $mail->CharSet = "UTF-8";
-            $mail->setLanguage(\K::f3()->APP_LANGUAGE_SHORT_CODE);
+            $mail->setLanguage(\K::$fw->APP_LANGUAGE_SHORT_CODE);
 
-            if (\K::f3()->CFG_EMAIL_USE_SMTP == 1) {
+            if (\K::$fw->CFG_EMAIL_USE_SMTP == 1) {
                 $mail->isSMTP();                          // Set mailer to use SMTP
-                $mail->Host = \K::f3()->CFG_EMAIL_SMTP_SERVER;      // Specify main and backup server
-                $mail->Port = \K::f3()->CFG_EMAIL_SMTP_PORT;
+                $mail->Host = \K::$fw->CFG_EMAIL_SMTP_SERVER;      // Specify main and backup server
+                $mail->Port = \K::$fw->CFG_EMAIL_SMTP_PORT;
 
-                if (strlen(\K::f3()->CFG_EMAIL_SMTP_LOGIN) > 0 or strlen(\K::f3()->CFG_EMAIL_SMTP_PASSWORD)) {
+                if (strlen(\K::$fw->CFG_EMAIL_SMTP_LOGIN) > 0 or strlen(\K::$fw->CFG_EMAIL_SMTP_PASSWORD)) {
                     $mail->SMTPAuth = true;                               // Enable SMTP authentication
-                    $mail->Username = \K::f3()->CFG_EMAIL_SMTP_LOGIN;               // SMTP username
-                    $mail->Password = \K::f3()->CFG_EMAIL_SMTP_PASSWORD;            // SMTP password
+                    $mail->Username = \K::$fw->CFG_EMAIL_SMTP_LOGIN;               // SMTP username
+                    $mail->Password = \K::$fw->CFG_EMAIL_SMTP_PASSWORD;            // SMTP password
                 } else {
                     $mail->SMTPAuth = false;
                 }
 
                 //set encryption
-                switch (\K::f3()->CFG_EMAIL_SMTP_ENCRYPTION) {
+                switch (\K::$fw->CFG_EMAIL_SMTP_ENCRYPTION) {
                     case 'ssl':
                     case 'tls':
-                        $mail->SMTPSecure = \K::f3()->CFG_EMAIL_SMTP_ENCRYPTION;
+                        $mail->SMTPSecure = \K::$fw->CFG_EMAIL_SMTP_ENCRYPTION;
                         break;
                     default:
                         $mail->SMTPAutoTLS = false;
@@ -400,7 +399,7 @@ class Users
                 }
 
                 //set debug mode                
-                if (\K::f3()->CFG_EMAIL_SMTP_DEBUG) {
+                if (\K::$fw->CFG_EMAIL_SMTP_DEBUG) {
                     $mail->SMTPDebug = 3;
                     $mail->Debugoutput = 'app_smtp_error_log';
                 }
@@ -408,8 +407,8 @@ class Users
 
             if (isset($options['force_send_from'])) {
                 $mail->setFrom($options['from'], $options['from_name'], false);
-            } elseif (\K::f3()->CFG_EMAIL_SEND_FROM_SINGLE == 1) {
-                $mail->setFrom(\K::f3()->CFG_EMAIL_ADDRESS_FROM, \K::f3()->CFG_EMAIL_NAME_FROM, false);
+            } elseif (\K::$fw->CFG_EMAIL_SEND_FROM_SINGLE == 1) {
+                $mail->setFrom(\K::$fw->CFG_EMAIL_ADDRESS_FROM, \K::$fw->CFG_EMAIL_NAME_FROM, false);
             } else {
                 $mail->setFrom($options['from'], $options['from_name'], false);
             }
@@ -429,16 +428,16 @@ class Users
             //use custom html layout
             $options['html_layout'] = $options['html_layout'] ?? 1;
 
-            if ($options['html_layout'] and \K::f3()->CFG_USE_EMAIL_HTML_LAYOUT and strstr(
-                    \K::f3()->CFG_EMAIL_HTML_LAYOUT,
+            if ($options['html_layout'] and \K::$fw->CFG_USE_EMAIL_HTML_LAYOUT and strstr(
+                    \K::$fw->CFG_EMAIL_HTML_LAYOUT,
                     '${body}'
                 )) {
-                $options['body'] = str_replace('${body}', $options['body'], \K::f3()->CFG_EMAIL_HTML_LAYOUT);
+                $options['body'] = str_replace('${body}', $options['body'], \K::$fw->CFG_EMAIL_HTML_LAYOUT);
             }
 
             $mail->Subject = (strlen(
-                    \K::f3()->CFG_EMAIL_SUBJECT_LABEL
-                ) > 0 ? \K::f3()->CFG_EMAIL_SUBJECT_LABEL . ' ' : '') . $options['subject'];
+                    \K::$fw->CFG_EMAIL_SUBJECT_LABEL
+                ) > 0 ? \K::$fw->CFG_EMAIL_SUBJECT_LABEL . ' ' : '') . $options['subject'];
             $mail->Body = $options['body'];
 
             $h2t = new html2text($options['body']);
@@ -449,9 +448,9 @@ class Users
             if (is_object($alerts)) {
                 $alerts->add(
                     sprintf(
-                        \K::f3()->TEXT_MAILER_ERROR,
+                        \K::$fw->TEXT_MAILER_ERROR,
                         $options['to']
-                    ) . ': ' . $mail->ErrorInfo . (\K::f3()->CFG_EMAIL_SMTP_DEBUG ? '<br>' . \K::f3(
+                    ) . ': ' . $mail->ErrorInfo . (\K::$fw->CFG_EMAIL_SMTP_DEBUG ? '<br>' . \K::f3(
                         )->TEXT_MORE_INFO . ': log/smtp_log.txt' : ''),
                     'error'
                 );
@@ -465,7 +464,7 @@ class Users
                 );
             }
 
-            if (\K::f3()->CFG_EMAIL_SMTP_DEBUG) {
+            if (\K::$fw->CFG_EMAIL_SMTP_DEBUG) {
                 error_log("\n", 3, "log/smtp_log.txt");
             }
 
@@ -480,7 +479,7 @@ class Users
         $files_list = [];
         foreach ($attachments as $filename => $name) {
             if (is_file($filename)) {
-                if (copy($filename, \K::f3()->DIR_FS_TMP . sha1($name))) {
+                if (copy($filename, \K::$fw->DIR_FS_TMP . sha1($name))) {
                     $files_list[] = $name;
                 }
             }
@@ -492,17 +491,25 @@ class Users
     static public function get_random_password($length = null, $has_symbols = true)
     {
         if ($length === null) {
-            $length = \K::f3()->CFG_PASSWORD_MIN_LENGTH;
+            $length = \K::$fw->CFG_PASSWORD_MIN_LENGTH;
         }
         $chars = "abcdefghijkmnopqrstuvwxyz0123456789ABCDEFGHIJKMNOPQRSTUVWXYZ" . ($has_symbols ? '~!@#$%^&*()_+' : '');
 
-        return substr(str_shuffle(str_repeat($chars, $length)), 0, $length);
+        $password = '';
+        try {
+            for ($i = 0; $i < $length; $i++) {
+                $password .= $chars[random_int(0, strlen($chars) - 1)];
+            }
+        } catch (\Exception $e) {
+        }
+
+        return $password;
     }
 
     static public function get_fields_access_schema($entities_id, $access_groups_id)
     {
-        if (isset(\K::f3()->roles_fields_access_schema) and \K::f3()->roles_fields_access_schema) {
-            return \K::f3()->roles_fields_access_schema;
+        if (isset(\K::$fw->roles_fields_access_schema) and \K::$fw->roles_fields_access_schema) {
+            return \K::$fw->roles_fields_access_schema;
         }
 
         $access_schema = [];
@@ -548,7 +555,7 @@ class Users
         $access_info_query = \K::model()->db_fetch(
             'app_entities_access', ['access_groups_id = ?', $access_groups_id],
             [], [],
-            [\K::f3()->TTL_APP, 'app_entities_access']
+            [\K::$fw->TTL_APP, 'app_entities_access']
         );
 
         //while ($access_info = db_fetch_array($access_info_query)) {
@@ -830,18 +837,18 @@ class Users
     {
         //global $app_user;
         //TODO Refactor generation $client_id
-        if (!\K::f3()->app_user['client_id']) {
-            $client_id = mt_rand(100000, 999999) . \K::f3()->app_user['id'];
+        if (!\K::$fw->app_user['client_id']) {
+            $client_id = mt_rand(100000, 999999) . \K::$fw->app_user['id'];
 
             //db_query("update app_entity_1 set client_id={$client_id} where id={$app_user['id']}");
             \K::model()->db_perform(
                 'app_entity_1',
                 ['client_id' => $client_id],
                 '',
-                ['id = ?', \K::f3()->app_user['id']]
+                ['id = ?', \K::$fw->app_user['id']]
             );
 
-            \K::f3()->app_user['client_id'] = $client_id;
+            \K::$fw->app_user['client_id'] = $client_id;
         }
     }
 
@@ -875,19 +882,19 @@ class Users
 
                     \Models\Users\Users_login_log::success($username, $user['id']);
 
-                    if (!\K::f3()->exists('GET.action')) {
+                    if (!\K::fw()->exists('GET.action')) {
                         //redirect_to($_GET['module'], get_all_get_url_params());
-                        \K::f3()->reroute(\K::f3()->URI);
+                        \K::fw()->reroute(\K::$fw->URI);
                     } else {
                         //redirect_to('dashboard/');
-                        \K::f3()->reroute('@Dashboard');
+                        \K::fw()->reroute('@Dashboard');
                     }
                 } elseif ($hasher->CheckPassword($password, $user['password'])) {
                     //app_session_register('app_logged_users_id', $user['id']);
                     \K::sessionSet('app_logged_users_id', $user['id']);
 
                     //login log
-                    if (\K::f3()->CFG_2STEP_VERIFICATION_ENABLED != 1) {
+                    if (\K::$fw->CFG_2STEP_VERIFICATION_ENABLED != 1) {
                         \Models\Users\Users_login_log::success($username, $user['id']);
                     }
 
@@ -903,13 +910,13 @@ class Users
                         \K::cookieClear('app_remember_pass');
                     }
 
-                    if (\K::f3()->cookieExists('app_login_redirect_to', $redirect_to)) {
+                    if (\K::cookieExists('app_login_redirect_to', $redirect_to)) {
                         //setcookie('app_login_redirect_to','',time() - 3600,'/');
                         //redirect_to(str_replace('module=', '', $_COOKIE['app_login_redirect_to']));
-                        \K::f3()->reroute($redirect_to);
+                        \K::fw()->reroute($redirect_to);
                     } else {
                         //redirect_to('dashboard/');
-                        \K::f3()->reroute('@Dashboard');
+                        \K::fw()->reroute('@Dashboard');
                     }
                 } else {
                     //login log
@@ -917,12 +924,12 @@ class Users
 
                     //TODO Fix lang?
                     //if (!defined('TEXT_USER_NOT_FOUND')) {
-                    //    require('includes/languages/' . \K::f3()->CFG_APP_LANGUAGE);
+                    //    require('includes/languages/' . \K::$keruy->CFG_APP_LANGUAGE);
                     //}
 
-                    //$alerts->add(\K::f3()->TEXT_USER_NOT_FOUND, 'error');
-                    \K::flash()->addMessage(\K::f3()->TEXT_USER_NOT_FOUND, 'error');
-                    \K::f3()->reroute('@Login');
+                    //$alerts->add(\K::$keruy->TEXT_USER_NOT_FOUND, 'error');
+                    \K::flash()->addMessage(\K::$fw->TEXT_USER_NOT_FOUND, 'error');
+                    \K::fw()->reroute('@Login');
                     //redirect_to('users/login');
                 }
             } else {
@@ -931,12 +938,12 @@ class Users
 
                 //TODO Fix lang?
                 //if (!defined('TEXT_USER_NOT_FOUND')) {
-                //    require('includes/languages/' . \K::f3()->CFG_APP_LANGUAGE);
+                //    require('includes/languages/' . \K::$keruy->CFG_APP_LANGUAGE);
                 //}
 
-                //$alerts->add(\K::f3()->TEXT_USER_IS_NOT_ACTIVE, 'error');
-                \K::flash()->addMessage(\K::f3()->TEXT_USER_IS_NOT_ACTIVE, 'error');
-                \K::f3()->reroute('@Login');
+                //$alerts->add(\K::$keruy->TEXT_USER_IS_NOT_ACTIVE, 'error');
+                \K::flash()->addMessage(\K::$fw->TEXT_USER_IS_NOT_ACTIVE, 'error');
+                \K::fw()->reroute('@Login');
                 //redirect_to('users/login');
             }
         } else {
@@ -948,9 +955,9 @@ class Users
             //    require('includes/languages/' . CFG_APP_LANGUAGE);
             //}
 
-            //$alerts->add(\K::f3()->TEXT_USER_NOT_FOUND, 'error');
-            \K::flash()->addMessage(\K::f3()->TEXT_USER_NOT_FOUND, 'error');
-            \K::f3()->reroute('@Login');
+            //$alerts->add(\K::$keruy->TEXT_USER_NOT_FOUND, 'error');
+            \K::flash()->addMessage(\K::$fw->TEXT_USER_NOT_FOUND, 'error');
+            \K::fw()->reroute('@Login');
             //redirect_to('users/login');
         }
     }

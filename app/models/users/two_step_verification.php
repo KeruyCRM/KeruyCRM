@@ -6,7 +6,7 @@ class Two_step_verification
 {
     public static function check()
     {
-        if (\K::f3()->CFG_2STEP_VERIFICATION_ENABLED != 1) {
+        if (\K::$fw->CFG_2STEP_VERIFICATION_ENABLED != 1) {
             return true;
         }
 
@@ -14,17 +14,17 @@ class Two_step_verification
             return true;
         }
 
-        if (\K::f3()->app_module_path == 'users/2step_verification') {
+        if (\K::$fw->app_module_path == 'users/2step_verification') {
             return true;
         }
 
         //skip for guest user
-        if (\K::f3()->CFG_ENABLE_GUEST_LOGIN == 1 and \K::f3()->CFG_GUEST_LOGIN_USER == \K::f3()->app_user['id']) {
+        if (\K::$fw->CFG_ENABLE_GUEST_LOGIN == 1 and \K::$fw->CFG_GUEST_LOGIN_USER == \K::$fw->app_user['id']) {
             return true;
         }
 
-        if (!isset(\K::f3()->two_step_verification_info['is_checked']) and !in_array(
-                \K::f3()->app_module_path,
+        if (!isset(\K::$fw->two_step_verification_info['is_checked']) and !in_array(
+                \K::$fw->app_module_path,
                 ['users/2step_verification', 'users/login']
             )) {
             //redirect_to('users/2step_verification');
@@ -36,9 +36,18 @@ class Two_step_verification
     {
         global $app_user, $app_users_cache, $two_step_verification_info;
 
-        $code = $two_step_verification_info['code'] = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
+        $code = '';
+        try {
+            $code = $two_step_verification_info['code'] = str_pad(
+                (string)random_int(0, (int)str_repeat('9', \K::$fw->CFG_VERIFICATION_CODE_LENGTH)),
+                \K::$fw->CFG_VERIFICATION_CODE_LENGTH,
+                '0',
+                STR_PAD_LEFT
+            );
+        } catch (\Exception $e) {
+        }
 
-        switch (\K::f3()->CFG_2STEP_VERIFICATION_TYPE) {
+        switch (\K::$fw->CFG_2STEP_VERIFICATION_TYPE) {
             case 'email':
                 $users_info_query = db_query(
                     "select * from app_entity_1 where id='" . db_input($app_user['id']) . "' and field_5=1"
@@ -47,10 +56,10 @@ class Two_step_verification
                     $options = [
                         'to' => $users_info['field_9'],
                         'to_name' => $app_users_cache[$users_info['id']]['name'],
-                        'subject' => \K::f3()->TEXT_2STEP_VERIFICATION_EMAIL_SUBJECT,
-                        'body' => sprintf(\K::f3()->TEXT_2STEP_VERIFICATION_EMAIL_BODY, $code),
-                        'from' => \K::f3()->CFG_EMAIL_ADDRESS_FROM,
-                        'from_name' => \K::f3()->TEXT_EMAIL_NAME_FROM,
+                        'subject' => \K::$fw->TEXT_2STEP_VERIFICATION_EMAIL_SUBJECT,
+                        'body' => sprintf(\K::$fw->TEXT_2STEP_VERIFICATION_EMAIL_BODY, $code),
+                        'from' => \K::$fw->CFG_EMAIL_ADDRESS_FROM,
+                        'from_name' => \K::$fw->TEXT_EMAIL_NAME_FROM,
                         'send_directly' => true,
                     ];
 
@@ -63,14 +72,14 @@ class Two_step_verification
                     "select * from app_entity_1 where id='" . db_input($app_user['id']) . "' and field_5=1"
                 );
                 if ($users_info = db_fetch_array($users_info_query) and isset($app_user['email'])) {
-                    $module_id = \K::f3()->CFG_2STEP_VERIFICATION_SMS_MODULE;
+                    $module_id = \K::$fw->CFG_2STEP_VERIFICATION_SMS_MODULE;
                     $phone = (isset(
-                        $users_info['field_' . \K::f3()->CFG_2STEP_VERIFICATION_USER_PHONE]
-                    ) ? $users_info['field_' . \K::f3()->CFG_2STEP_VERIFICATION_USER_PHONE] : '');
+                        $users_info['field_' . \K::$fw->CFG_2STEP_VERIFICATION_USER_PHONE]
+                    ) ? $users_info['field_' . \K::$fw->CFG_2STEP_VERIFICATION_USER_PHONE] : '');
 
                     if (strlen($phone)) {
-                        $message_text = \K::f3()->TEXT_2STEP_VERIFICATION_EMAIL_SUBJECT . '. ' . sprintf(
-                                \K::f3()->TEXT_2STEP_VERIFICATION_EMAIL_BODY,
+                        $message_text = \K::$fw->TEXT_2STEP_VERIFICATION_EMAIL_SUBJECT . '. ' . sprintf(
+                                \K::$fw->TEXT_2STEP_VERIFICATION_EMAIL_BODY,
                                 $code
                             );
                         sms::send_by_module($module_id, $phone, $message_text);

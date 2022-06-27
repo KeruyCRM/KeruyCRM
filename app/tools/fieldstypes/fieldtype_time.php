@@ -8,7 +8,7 @@ class Fieldtype_time
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_TIME];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_TIME];
     }
 
     public function get_configuration()
@@ -16,19 +16,19 @@ class Fieldtype_time
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $choices = [
-            'calendar' => \K::f3()->TEXT_CALENDAR,
-            'input' => \K::f3()->TEXT_FIELDTYPE_INPUT_TITLE,
+            'calendar' => \K::$fw->TEXT_CALENDAR,
+            'input' => \K::$fw->TEXT_FIELDTYPE_INPUT_TITLE,
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_AS,
+            'title' => \K::$fw->TEXT_DISPLAY_AS,
             'name' => 'display_as',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -36,10 +36,10 @@ class Fieldtype_time
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SUM_IN_COMMENTS,
+            'title' => \K::$fw->TEXT_SUM_IN_COMMENTS,
             'name' => 'sum_in_comments',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_SUM_IN_COMMENTS_INFO
+            'tooltip_icon' => \K::$fw->TEXT_SUM_IN_COMMENTS_INFO
         ];
 
         return $cfg;

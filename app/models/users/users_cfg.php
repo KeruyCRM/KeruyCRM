@@ -8,11 +8,11 @@ class Users_cfg
 
     public function __construct()
     {
-        if (!isset(\K::f3()->app_user['id'])) {
+        if (!isset(\K::$fw->app_user['id'])) {
             return false;
         }
 
-        $cfg_query = \K::model()->db_fetch('app_users_configuration', ['users_id = ?', \K::f3()->app_user['id']]);
+        $cfg_query = \K::model()->db_fetch('app_users_configuration', ['users_id = ?', \K::$fw->app_user['id']]);
 
         //while ($v = db_fetch_array($cfg_query)) {
         foreach ($cfg_query as $v) {
@@ -39,9 +39,9 @@ class Users_cfg
                 [
                     'configuration_name' => $key,
                     'configuration_value' => trim($value),
-                    'users_id' => \K::f3()->app_user['id']
+                    'users_id' => \K::$fw->app_user['id']
                 ], '',
-                ['users_id = ? and configuration_name = ?', \K::f3()->app_user['id'], $key]
+                ['users_id = ? and configuration_name = ?', \K::$fw->app_user['id'], $key]
             );
         }
     }

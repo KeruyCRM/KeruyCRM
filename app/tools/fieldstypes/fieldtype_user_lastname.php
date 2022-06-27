@@ -9,8 +9,8 @@ class Fieldtype_user_lastname
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_USER_LASTNAME_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_USER_LASTNAME_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_USER_LASTNAME_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_USER_LASTNAME_TITLE
         ];
     }
 
@@ -19,12 +19,12 @@ class Fieldtype_user_lastname
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
-        $cfg[] = ['title' => \K::f3()->TEXT_DISABLE, 'name' => 'is_disabled', 'type' => 'checkbox'];
+        $cfg[] = ['title' => \K::$fw->TEXT_DISABLE, 'name' => 'is_disabled', 'type' => 'checkbox'];
 
         return $cfg;
     }

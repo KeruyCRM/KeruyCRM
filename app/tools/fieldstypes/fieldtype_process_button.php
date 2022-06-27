@@ -8,7 +8,7 @@ class Fieldtype_process_button
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_PROCESS_BUTTON_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_PROCESS_BUTTON_TITLE];
     }
 
     public function get_configuration($params = [])
@@ -28,8 +28,8 @@ class Fieldtype_process_button
             }
 
             $cfg[] = [
-                'title' => \K::f3()->TEXT_EXT_PROCESSES,
-                'tooltip_icon' => \K::f3()->TEXT_EXT_SELECT_BUTTONS_TO_DISPLAY,
+                'title' => \K::$fw->TEXT_EXT_PROCESSES,
+                'tooltip_icon' => \K::$fw->TEXT_EXT_SELECT_BUTTONS_TO_DISPLAY,
                 'name' => 'process_button',
                 'type' => 'dropdown',
                 'choices' => $choices,
@@ -37,36 +37,36 @@ class Fieldtype_process_button
             ];
 
             $cfg[] = [
-                'title' => \K::f3()->TEXT_DISPLAY_AS,
-                'tooltip_icon' => \K::f3()->TEXT_EXT_MULTIPLE_BUTTONS_DISPLAY_TYPE,
+                'title' => \K::$fw->TEXT_DISPLAY_AS,
+                'tooltip_icon' => \K::$fw->TEXT_EXT_MULTIPLE_BUTTONS_DISPLAY_TYPE,
                 'name' => 'display_as',
                 'type' => 'dropdown',
                 'choices' => [
-                    'inline' => \K::f3()->TEXT_INLINE_LIST,
-                    'inrow' => \K::f3()->TEXT_EXT_EXTRA_ROWS,
-                    'grouped' => \K::f3()->TEXT_EXT_BUTTON_GROUP,
-                    'dropdown' => \K::f3()->TEXT_FIELDTYPE_DROPDOWN_TITLE
+                    'inline' => \K::$fw->TEXT_INLINE_LIST,
+                    'inrow' => \K::$fw->TEXT_EXT_EXTRA_ROWS,
+                    'grouped' => \K::$fw->TEXT_EXT_BUTTON_GROUP,
+                    'dropdown' => \K::$fw->TEXT_FIELDTYPE_DROPDOWN_TITLE
                 ],
                 'params' => ['class' => 'form-control input-medium']
             ];
 
             $cfg[] = [
-                'title' => \K::f3()->TEXT_BUTTON_TITLE,
+                'title' => \K::$fw->TEXT_BUTTON_TITLE,
                 'name' => 'button_title',
                 'type' => 'input',
                 'params' => ['class' => 'form-control input-medium'],
-                'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_ACTION,
+                'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_ACTION,
                 'form_group' => ['form_display_rules' => 'fields_configuration_display_as:dropdown']
             ];
 
             $cfg[] = [
-                'title' => \K::f3()->TEXT_EXT_PROCESS_BUTTON_COLOR,
+                'title' => \K::$fw->TEXT_EXT_PROCESS_BUTTON_COLOR,
                 'name' => 'button_color',
                 'type' => 'colorpicker',
                 'form_group' => ['form_display_rules' => 'fields_configuration_display_as:dropdown']
             ];
         } else {
-            $cfg[] = ['html' => app_alert_warning(\K::f3()->TEXT_EXTENSION_REQUIRED), 'type' => 'html'];
+            $cfg[] = ['html' => app_alert_warning(\K::$fw->TEXT_EXTENSION_REQUIRED), 'type' => 'html'];
         }
 
         return $cfg;

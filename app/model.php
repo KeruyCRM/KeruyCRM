@@ -8,19 +8,19 @@ class Model extends \Prefab
     {
         //\Cache::instance()->reset('schema'); Сброс кеша
         try {
-            $host = \K::f3()->DB_host;
-            $port = \K::f3()->DB_port;
-            $name = \K::f3()->DB_name;
-            if (\K::f3()->TYPE_DATABASE == 'mysql') {
+            $host = \K::$fw->DB_host;
+            $port = \K::$fw->DB_port;
+            $name = \K::$fw->DB_name;
+            if (\K::$fw->TYPE_DATABASE == 'mysql') {
                 $this->db = new \DB\SQL(
                     "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4",
-                    \K::f3()->DB_username,
-                    \K::f3()->DB_password
+                    \K::$fw->DB_username,
+                    \K::$fw->DB_password
                 /*,[
                     \PDO::ATTR_TIMEOUT => 5
                 ]*/
                 );
-            } elseif (\K::f3()->TYPE_DATABASE == 'sqlite') {
+            } elseif (\K::$fw->TYPE_DATABASE == 'sqlite') {
                 $this->db = new \DB\SQL("db/{$name}.sqlite");
             } else {
                 exit('Type database not defined');
@@ -37,7 +37,7 @@ class Model extends \Prefab
 
     public function mapper($table, $fields = null)
     {
-        $mapper = new DB\SQL\Mapper($this->db, $table, $fields, \K::f3()->TTL_SCHEMA);
+        $mapper = new DB\SQL\Mapper($this->db, $table, $fields, \K::$fw->TTL_SCHEMA);
 
         $mapper->aftererase(function ($self) {
             \K::cache()->reset($self->table() . '.sql');
@@ -123,7 +123,7 @@ class Model extends \Prefab
         //global $$link, $app_db_query_log, $app_db_slow_query_log;
         return $this->db->exec($query);
 
-        if (\K::f3()->DEV_MODE) {
+        if (\K::$fw->DEV_MODE) {
             $starttime = microtime(true);
         }
 
@@ -148,9 +148,9 @@ class Model extends \Prefab
             die($html);
         }
 
-        if (\K::f3()->DEV_MODE) {
+        if (\K::$fw->DEV_MODE) {
             $time = number_format((microtime(true) - $starttime), 3);
-            if ($time > \K::f3()->CFG_SLOW_QUERY_TIME) {
+            if ($time > \K::$fw->CFG_SLOW_QUERY_TIME) {
                 $app_db_slow_query_log[] = $query . ' [' . $time . ']';
             } else {
                 $app_db_query_log[] = $query . ' [' . $time . ']';

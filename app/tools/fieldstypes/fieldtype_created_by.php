@@ -9,8 +9,8 @@ class Fieldtype_created_by
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_CREATEDBY_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_CREATEDBY_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_CREATEDBY_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_CREATEDBY_TITLE
         ];
     }
 
@@ -19,7 +19,7 @@ class Fieldtype_created_by
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS,
+            'title' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS,
             'name' => 'disable_notification',
             'type' => 'checkbox'
         ];
@@ -32,7 +32,7 @@ class Fieldtype_created_by
         global $app_users_cache;
 
         if ($options['field']['entities_id'] == 1 and $options['value'] == 0) {
-            return \K::f3()->TEXT_PUBLIC_REGISTRATION;
+            return \K::$fw->TEXT_PUBLIC_REGISTRATION;
         } elseif (isset($options['is_export']) and isset($app_users_cache[$options['value']])) {
             return $app_users_cache[$options['value']]['name'];
         } elseif (isset($app_users_cache[$options['value']])) {
@@ -57,8 +57,7 @@ class Fieldtype_created_by
 
         $choices = [];
         $order_by_sql = (
-        \K::f3(
-        )->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? 'u.field_7, u.field_8' : 'u.field_8, u.field_7');
+        \K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? 'u.field_7, u.field_8' : 'u.field_8, u.field_7');
         $users_query = db_query(
             "select u.*,a.name as group_name from app_entity_1 u left join app_access_groups a on a.id=u.field_6 where u.field_5=1 order by group_name, " . $order_by_sql
         );
@@ -71,7 +70,7 @@ class Fieldtype_created_by
                     'view_assigned',
                     $access_schema[$users['field_6']]
                 )) {
-                $group_name = (strlen($users['group_name']) > 0 ? $users['group_name'] : \K::f3()->TEXT_ADMINISTRATOR);
+                $group_name = (strlen($users['group_name']) > 0 ? $users['group_name'] : \K::$fw->TEXT_ADMINISTRATOR);
                 $choices[$group_name][$users['id']] = $app_users_cache[$users['id']]['name'];
             }
         }

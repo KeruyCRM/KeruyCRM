@@ -8,61 +8,61 @@ class Fieldtype_video
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_VIDEO_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_VIDEO_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
-            'choices' => ['input-large' => \K::f3()->TEXT_INPUT_LARGE, 'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'choices' => ['input-large' => \K::$fw->TEXT_INPUT_LARGE, 'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE],
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_NAME,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_NAME,
             'name' => 'hide_field_name',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_VIDEO_PLAYER][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_VIDEO_PLAYER][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'video_width',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT . ': 300',
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT . ': 300',
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_VIDEO_PLAYER][] = [
-            'title' => \K::f3()->TEXT_HEIGHT,
+        $cfg[\K::$fw->TEXT_VIDEO_PLAYER][] = [
+            'title' => \K::$fw->TEXT_HEIGHT,
             'name' => 'video_height',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_VIDEO_PLAYER][] = [
-            'title' => \K::f3()->TEXT_BUTTON_TITLE,
+        $cfg[\K::$fw->TEXT_VIDEO_PLAYER][] = [
+            'title' => \K::$fw->TEXT_BUTTON_TITLE,
             'name' => 'button_title',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_BUTTON_DISPLAYS_IN_LISTING,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_VIEW,
+            'tooltip_icon' => \K::$fw->TEXT_BUTTON_DISPLAYS_IN_LISTING,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_VIEW,
             'params' => ['class' => 'form-control input-large']
         ];
 
-        $cfg[\K::f3()->TEXT_VIDEO_PLAYER][] = [
-            'title' => \K::f3()->TEXT_HIDE_VIDEO_PLAYER,
+        $cfg[\K::$fw->TEXT_VIDEO_PLAYER][] = [
+            'title' => \K::$fw->TEXT_HIDE_VIDEO_PLAYER,
             'name' => 'hide_video_player',
             'type' => 'checkbox'
         ];
@@ -109,7 +109,7 @@ class Fieldtype_video
                 $path .= '-' . $options['item']['id'];
             }
 
-            $button_title = (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : \K::f3()->TEXT_VIEW);
+            $button_title = (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : \K::$fw->TEXT_VIEW);
             $url = url_for('items/videopopup', 'path=' . $path . '&field_id=' . $options['field']['id']);
             $html = link_to_modalbox($button_title, $url, ['class' => 'btn btn-default']);
 

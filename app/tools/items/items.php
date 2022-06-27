@@ -558,7 +558,7 @@ class Items
                 $menu[] = [
                     'title' => (strlen($parent_entity_cfg->get('window_heading')) > 0 ? $parent_entity_cfg->get(
                         'window_heading'
-                    ) : \K::f3()->TEXT_INFO),
+                    ) : \K::$fw->TEXT_INFO),
                     'url' => url_for('items/info', 'path=' . implode('/', $path_to_item)),
                     'selected_id' => $entity_id
                 ];
@@ -566,7 +566,7 @@ class Items
                 $menu[] = [
                     'title' => (strlen($parent_entity_cfg->get('window_heading')) > 0 ? $parent_entity_cfg->get(
                         'window_heading'
-                    ) : \K::f3()->TEXT_INFO)
+                    ) : \K::$fw->TEXT_INFO)
                 ];
             }
 
@@ -611,7 +611,7 @@ class Items
             }
 
             if (count($s) > 0) {
-                $menu[] = ['title' => \K::f3()->TEXT_REPORTS, 'submenu' => $s];
+                $menu[] = ['title' => \K::$fw->TEXT_REPORTS, 'submenu' => $s];
             }
         }
 
@@ -1372,7 +1372,7 @@ class Items
         if ($check['total'] > 0) {
             $msg = strlen(trim($cfg->get('unique_error_msg'))) ? trim(
                 $cfg->get('unique_error_msg')
-            ) : \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR;
+            ) : \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR;
             return json_encode($msg);
         } else {
             return json_encode(true);
@@ -1453,7 +1453,7 @@ class Items
         //subject for new item
         $subject = (strlen($entity_cfg->get('email_subject_new_item')) > 0 ? $entity_cfg->get(
                 'email_subject_new_item'
-            ) . ' ' . $item_name : \K::f3()->TEXT_DEFAULT_EMAIL_SUBJECT_NEW_ITEM . ' ' . $item_name);
+            ) . ' ' . $item_name : \K::$fw->TEXT_DEFAULT_EMAIL_SUBJECT_NEW_ITEM . ' ' . $item_name);
 
         //Send notification if there are assigned users and items is new or there is changed fields or new assigned users
         if (count($app_send_to) > 0) {

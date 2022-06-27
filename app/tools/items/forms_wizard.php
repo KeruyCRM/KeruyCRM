@@ -34,7 +34,7 @@ class Forms_wizard
     public function ajax_modal_template_footer($action_button_title = null)
     {
         if ($action_button_title === null) {
-            $action_button_title = \K::f3()->TEXT_SAVE;
+            $action_button_title = \K::$fw->TEXT_SAVE;
         }
         $html_bar = '';
 
@@ -62,7 +62,7 @@ class Forms_wizard
                     </div>
                     <div class="col-md-6 col-xs-6">
                         <div class="fa fa-spinner fa-spin primary-modal-action-loading"></div>	
-                        <a href="#" type="button" class="btn btn-info btn-wizard-next">' . \K::f3()->TEXT_NEXT . ' <i class="fa fa-angle-right"></i></a>
+                        <a href="#" type="button" class="btn btn-info btn-wizard-next">' . \K::$fw->TEXT_NEXT . ' <i class="fa fa-angle-right"></i></a>
                         <button type="submit" class="btn btn-primary btn-primary-modal-action btn-wizard-finish">' . $action_button_title . '</button>
                     </div>
                 </div>   
@@ -85,7 +85,7 @@ class Forms_wizard
                             var current = index+1;
                             var $percent = (current / total) * 100;
                             $("#' . $this->form_name . '").find(".progress-bar").css({width: $percent + "%"}).html("' . \K::f3(
-            )->TEXT_STEP . ' " + current + " ' . \K::f3()->TEXT_OF . ' "+total);
+            )->TEXT_STEP . ' " + current + " ' . \K::$fw->TEXT_OF . ' "+total);
                         },
                         onNext: function (tab, navigation, index) 
                         {

@@ -8,7 +8,7 @@ class Fieldtype_input_url
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_INPUT_URL_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_INPUT_URL_TITLE];
     }
 
     public function get_configuration()
@@ -16,60 +16,60 @@ class Fieldtype_input_url
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_TARGET,
+            'title' => \K::$fw->TEXT_TARGET,
             'name' => 'target',
             'type' => 'dropdown',
-            'choices' => ['_blank' => \K::f3()->TEXT_TARGET_BLANK, '_self' => \K::f3()->TEXT_TARGET_SELF],
+            'choices' => ['_blank' => \K::$fw->TEXT_TARGET_BLANK, '_self' => \K::$fw->TEXT_TARGET_SELF],
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[] = ['title' => \K::f3()->TEXT_VALIDATE_URL, 'name' => 'validate_url', 'type' => 'checkbox'];
+        $cfg[] = ['title' => \K::$fw->TEXT_VALIDATE_URL, 'name' => 'validate_url', 'type' => 'checkbox'];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_URL_PREVIEW_TEXT,
+            'title' => \K::$fw->TEXT_URL_PREVIEW_TEXT,
             'name' => 'preview_text',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_URL_PREVIEW_TEXT_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_URL_PREVIEW_TEXT_TIP,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_URL_PREFIX,
+            'title' => \K::$fw->TEXT_URL_PREFIX,
             'name' => 'prefix',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_URL_PREFIX_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_URL_PREFIX_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE,
+            'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
             'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
-            'tooltip_icon' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ERROR_MESSAGE,
+            'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR,
+            'tooltip_icon' => \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
@@ -102,7 +102,7 @@ class Fieldtype_input_url
         $cfg = new settings($options['field']['configuration']);
 
         $url = $options['value'];
-        $url_text = \K::f3()->TEXT_VIEW;
+        $url_text = \K::$fw->TEXT_VIEW;
 
         if ($cfg->get('preview_text') == 'none') {
             $url_text = $url;

@@ -9,8 +9,8 @@ class Fieldtype_user_last_login_date
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_USER_LAST_LOGIN_DATE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_USER_LAST_LOGIN_DATE
+            'name' => \K::$fw->TEXT_FIELDTYPE_USER_LAST_LOGIN_DATE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_USER_LAST_LOGIN_DATE
         ];
     }
 

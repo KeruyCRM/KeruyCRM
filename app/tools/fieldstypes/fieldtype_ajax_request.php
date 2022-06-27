@@ -8,28 +8,28 @@ class Fieldtype_ajax_request
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_AJAX_REQUEST_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_AJAX_REQUEST_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_PHP_CODE][] = [
+        $cfg[\K::$fw->TEXT_PHP_CODE][] = [
             'title' => '',
             'name' => 'php_code',
             'type' => 'code',
             'params' => ['class' => 'form-control', 'mode' => 'php']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DEBUG_MODE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DEBUG_MODE,
             'name' => 'debug_mode',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DEFAULT_TEXT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DEFAULT_TEXT,
             'name' => 'default_text',
             'type' => 'textarea',
             'params' => ['class' => 'form-control']

@@ -117,7 +117,7 @@ class Favorites
             <li class="external">
                 <a href="' . url_for(
                 'users/favorites'
-            ) . '">' . \K::f3()->TEXT_DISPLAYED . ': ' . $count_favorites . '. ' . \K::f3()->TEXT_GO_TO . ' "' . \K::f3(
+            ) . '">' . \K::$fw->TEXT_DISPLAYED . ': ' . $count_favorites . '. ' . \K::$fw->TEXT_GO_TO . ' "' . \K::f3(
             )->TEXT_FAVORITES . '"<i class="fa fa-angle-right"></i></a>
             </li>
         ';
@@ -131,7 +131,7 @@ class Favorites
             </a>
             <ul class="dropdown-menu extended tasks">
                 <li style="cursor:pointer" onClick="location.href=\'' . url_for('users/favorites') . '\'">
-                    <p>' . \K::f3()->TEXT_FAVORITES . '</p>
+                    <p>' . \K::$fw->TEXT_FAVORITES . '</p>
                 </li>
                 <li>
                     <ul class="dropdown-menu-list scroller" style="height: ' . $dropdown_menu_height . 'px;">

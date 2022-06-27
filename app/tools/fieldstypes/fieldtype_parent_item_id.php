@@ -9,8 +9,8 @@ class Fieldtype_parent_item_id
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_PARENT_ITEM_ID_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_PARENT_ITEM_ID_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_PARENT_ITEM_ID_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_PARENT_ITEM_ID_TITLE
         ];
     }
 

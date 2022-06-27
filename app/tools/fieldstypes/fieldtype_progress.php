@@ -8,34 +8,34 @@ class Fieldtype_progress
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_PROGRESS_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_PROGRESS_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_STEP,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_STEP,
             'name' => 'step',
             'type' => 'dropdown',
             'choices' => ['5' => 5, '10' => 10, '1' => 1],
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_PROGRESS_BAR][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_PROGRESS_BAR,
+        $cfg[\K::$fw->TEXT_PROGRESS_BAR][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_PROGRESS_BAR,
             'name' => 'display_progress_bar',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_PROGRESS_BAR][] = [
-            'title' => \K::f3()->TEXT_MIN_WIDTH,
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_VALUES_IN_PIXELS_OR_LEAVE_BLANK,
+        $cfg[\K::$fw->TEXT_PROGRESS_BAR][] = [
+            'title' => \K::$fw->TEXT_MIN_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_VALUES_IN_PIXELS_OR_LEAVE_BLANK,
             'name' => 'bar_min_width',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_PROGRESS_BAR][] = [
-            'title' => \K::f3()->TEXT_COLOR,
+        $cfg[\K::$fw->TEXT_PROGRESS_BAR][] = [
+            'title' => \K::$fw->TEXT_COLOR,
             'name' => 'bar_color',
             'type' => 'colorpicker'
         ];

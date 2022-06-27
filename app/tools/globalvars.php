@@ -14,19 +14,19 @@ class GlobalVars extends \Prefab
             'app_global_vars', ['is_folder = ?', 0],
             [],
             null,
-            [\K::f3()->TTL_APP, 'app_global_vars']
+            [\K::$fw->TTL_APP, 'app_global_vars']
         );
 
         //while ($vars = db_fetch($vars_query)) {
         foreach ($vars_query as $vars) {
-            \K::f3()->{'VAR_' . $vars->name} = $vars->value;
+            \K::$fw->{'VAR_' . $vars->name} = $vars->value;
             $this->vars['VAR_' . $vars->name] = $vars->value;
         }
     }
 
     public function apply_to_text($text)
     {
-        $app_user = \K::f3()->app_user;
+        $app_user = \K::$fw->app_user;
 
         $this->vars['[current_user_id]'] = $app_user['id'];
         $this->vars['[current_user_group_id]'] = $app_user['group_id'];

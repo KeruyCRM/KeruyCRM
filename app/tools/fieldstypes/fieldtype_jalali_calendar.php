@@ -8,27 +8,27 @@ class Fieldtype_jalali_calendar
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_JALALI_CALENDAR_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_JALALI_CALENDAR_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[] = ['title' => \K::f3()->TEXT_TIME, 'name' => 'time_picker', 'type' => 'checkbox'];
+        $cfg[] = ['title' => \K::$fw->TEXT_TIME, 'name' => 'time_picker', 'type' => 'checkbox'];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED,
+            'title' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED,
             'name' => 'notify_when_changed',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED_TIP
+            'tooltip_icon' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED_TIP
         ];
 
         return $cfg;

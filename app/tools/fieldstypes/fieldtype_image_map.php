@@ -8,7 +8,7 @@ class Fieldtype_image_map
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_IMAGE_MAP_TITLE, 'has_choices' => true];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_IMAGE_MAP_TITLE, 'has_choices' => true];
     }
 
     public function get_configuration()
@@ -16,28 +16,28 @@ class Fieldtype_image_map
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DEFAULT_TEXT,
+            'title' => \K::$fw->TEXT_DEFAULT_TEXT,
             'name' => 'default_text',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_TEXT_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_TEXT_INFO,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[] = ['title' => \K::f3()->TEXT_MAP_SETTINGS, 'type' => 'section'];
+        $cfg[] = ['title' => \K::$fw->TEXT_MAP_SETTINGS, 'type' => 'section'];
 
         $choices = [
             '6' => '1%',
@@ -50,7 +50,7 @@ class Fieldtype_image_map
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SCALE,
+            'title' => \K::$fw->TEXT_SCALE,
             'name' => 'scale',
             'default' => 3,
             'type' => 'dropdown',
@@ -58,13 +58,13 @@ class Fieldtype_image_map
             'params' => ['class' => 'form-control input-small']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'map_width',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HEIGHT,
+            'title' => \K::$fw->TEXT_HEIGHT,
             'name' => 'map_height',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
@@ -92,7 +92,7 @@ class Fieldtype_image_map
         }
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FIELDS_IN_POPUP,
+            'title' => \K::$fw->TEXT_FIELDS_IN_POPUP,
             'name' => 'fields_in_popup',
             'default' => '',
             'type' => 'dropdown',
@@ -114,9 +114,9 @@ class Fieldtype_image_map
 
         if (count($choices) > 1) {
             $cfg[] = [
-                'title' => \K::f3()->TEXT_BACKGROUND_COLOR,
+                'title' => \K::$fw->TEXT_BACKGROUND_COLOR,
                 'name' => 'background',
-                'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_IMAGE_MAP_BACKGROUND_COLOR_INFO,
+                'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_IMAGE_MAP_BACKGROUND_COLOR_INFO,
                 'type' => 'dropdown',
                 'choices' => $choices,
                 'params' => [
@@ -145,7 +145,7 @@ class Fieldtype_image_map
                     $choices = fields_choices::get_choices($value, false);
                     if (count($choices)) {
                         $cfg[] = [
-                            'title' => \K::f3()->TEXT_ICONS,
+                            'title' => \K::$fw->TEXT_ICONS,
                             'type' => 'section',
                             'html' => '<p class="form-section-description">' . \K::f3(
                                 )->TEXT_FIELDTYPE_IMAGE_MAP_ICONS_TIP . '</p>'
@@ -177,7 +177,7 @@ class Fieldtype_image_map
                 ) . ' field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '') . ($cfg->get(
                     'use_search'
                 ) == 1 ? ' chosen-select' : ''),
-            'data-placeholder' => \K::f3()->TEXT_SELECT_SOME_VALUES
+            'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
         ];
 
         $choices = [];
@@ -253,7 +253,7 @@ class Fieldtype_image_map
         //upload
         if (isset($_FILES['filename']['name'])) {
             if (strlen($_FILES['filename']['name']) > 0) {
-                $map_dir = \K::f3()->DIR_WS_UPLOADS . 'maps/' . $choices_id;
+                $map_dir = \K::$fw->DIR_WS_UPLOADS . 'maps/' . $choices_id;
 
                 //check dir
                 if (!is_dir($map_dir)) {
@@ -292,7 +292,7 @@ class Fieldtype_image_map
 
     public static function delete_map_files($choices_id)
     {
-        $map_dir = \K::f3()->DIR_WS_UPLOADS . 'maps/' . $choices_id;
+        $map_dir = \K::$fw->DIR_WS_UPLOADS . 'maps/' . $choices_id;
 
         if (is_dir($map_dir)) {
             //delete exist files in map dir

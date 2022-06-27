@@ -8,7 +8,7 @@ class Fieldtype_phone
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_PHONE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_PHONE];
     }
 
     public function get_configuration()
@@ -17,49 +17,49 @@ class Fieldtype_phone
 
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_INPUT_FIELD_MASK,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_INPUT_FIELD_MASK,
             'name' => 'mask',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_INPUT_FIELD_PHONE_MASK_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_INPUT_FIELD_PHONE_MASK_TIP,
             'params' => ['class' => 'form-control']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
             'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
-            'tooltip_icon' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ERROR_MESSAGE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR,
+            'tooltip_icon' => \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
@@ -67,29 +67,29 @@ class Fieldtype_phone
             $modules = new modules('telephony');
             $choices = $modules->get_active_modules();
 
-            $cfg[\K::f3()->TEXT_EXT_TELEPHONY_MODULE][] = [
-                'title' => \K::f3()->TEXT_EXT_TELEPHONY_MODULE,
+            $cfg[\K::$fw->TEXT_EXT_TELEPHONY_MODULE][] = [
+                'title' => \K::$fw->TEXT_EXT_TELEPHONY_MODULE,
                 'name' => 'telephony_module',
                 'type' => 'dropdown',
                 'choices' => ['' => ''] + $choices,
-                'tooltip_icon' => \K::f3()->TEXT_EXT_FIELDTYPE_PHONE_TELEPHONY_MODULE_INFO,
+                'tooltip_icon' => \K::$fw->TEXT_EXT_FIELDTYPE_PHONE_TELEPHONY_MODULE_INFO,
                 'params' => ['class' => 'form-control input-large']
             ];
 
             $modules = new modules('sms');
             $choices = $modules->get_active_modules();
 
-            $cfg[\K::f3()->TEXT_EXT_TELEPHONY_MODULE][] = [
-                'title' => \K::f3()->TEXT_EXT_SMS_MODULE,
+            $cfg[\K::$fw->TEXT_EXT_TELEPHONY_MODULE][] = [
+                'title' => \K::$fw->TEXT_EXT_SMS_MODULE,
                 'name' => 'sms_module',
                 'type' => 'dropdown',
                 'choices' => ['' => ''] + $choices,
-                'tooltip_icon' => \K::f3()->TEXT_EXT_FIELDTYPE_PHONE_SMS_MODULE_INFO,
+                'tooltip_icon' => \K::$fw->TEXT_EXT_FIELDTYPE_PHONE_SMS_MODULE_INFO,
                 'params' => ['class' => 'form-control input-large']
             ];
 
-            $cfg[\K::f3()->TEXT_EXT_TELEPHONY_MODULE][] = [
-                'title' => \K::f3()->TEXT_EXT_SHOW_CALL_SMS_HISTORY,
+            $cfg[\K::$fw->TEXT_EXT_TELEPHONY_MODULE][] = [
+                'title' => \K::$fw->TEXT_EXT_SHOW_CALL_SMS_HISTORY,
                 'name' => 'show_history',
                 'type' => 'checkbox'
             ];

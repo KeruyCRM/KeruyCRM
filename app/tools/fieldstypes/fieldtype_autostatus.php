@@ -8,43 +8,42 @@ class Fieldtype_autostatus
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_AUTOSTATUS_TITLE, 'has_choices' => true];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_AUTOSTATUS_TITLE, 'has_choices' => true];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED,
             'name' => 'notify_when_changed',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED_TIP
+            'tooltip_icon' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_STAGES_PANEL][] = [
-            'title' => \K::f3()->TEXT_TYPE,
+        $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [
+            'title' => \K::$fw->TEXT_TYPE,
             'name' => 'panel_type',
             'type' => 'dropdown',
             'params' => ['class' => 'form-control input-medium'],
             'choices' => ['' => ''] + stages_panel::get_type_choices()
         ];
 
-        $cfg[\K::f3()->TEXT_STAGES_PANEL][] = [
-            'title' => \K::f3()->TEXT_COLOR,
+        $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [
+            'title' => \K::$fw->TEXT_COLOR,
             'name' => 'color',
             'type' => 'colorpicker'
         ];
 
-        $cfg[\K::f3()->TEXT_STAGES_PANEL][] = [
-            'title' => \K::f3()->TEXT_ACTIVE_ITEM_COLOR,
+        $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [
+            'title' => \K::$fw->TEXT_ACTIVE_ITEM_COLOR,
             'name' => 'color_active',
             'type' => 'colorpicker'
         ];
 
-
-        $cfg[\K::f3()->TEXT_ACTION][] = [
-            'html' => '<p>' . \K::f3()->TEXT_FIELDTYPE_AUTOSTATUS_ACTION_TIP . '</p>',
+        $cfg[\K::$fw->TEXT_ACTION][] = [
+            'html' => '<p>' . \K::$fw->TEXT_FIELDTYPE_AUTOSTATUS_ACTION_TIP . '</p>',
             'type' => 'html'
         ];
 
@@ -61,7 +60,7 @@ class Fieldtype_autostatus
             }
 
             foreach (fields_choices::get_choices(_POST('id'), false) as $choice_id => $choice_name) {
-                $cfg[\K::f3()->TEXT_ACTION][] = [
+                $cfg[\K::$fw->TEXT_ACTION][] = [
                     'title' => $choice_name,
                     'name' => 'run_process_for_choice_' . $choice_id,
                     'type' => 'dropdown',
@@ -70,8 +69,8 @@ class Fieldtype_autostatus
                 ];
             }
         } else {
-            $cfg[\K::f3()->TEXT_ACTION][] = [
-                'html' => '<div class="alert alert-warning">' . \K::f3()->TEXT_EXTENSION_REQUIRED . '</div>',
+            $cfg[\K::$fw->TEXT_ACTION][] = [
+                'html' => '<div class="alert alert-warning">' . \K::$fw->TEXT_EXTENSION_REQUIRED . '</div>',
                 'type' => 'html'
             ];
         }
@@ -138,7 +137,6 @@ class Fieldtype_autostatus
                     if (isset($sql_query_having[$entities_id])) {
                         $listing_sql_query .= reports::prepare_filters_having_query($sql_query_having[$entities_id]);
                     }
-
 
                     $item_info_query = db_query(
                         "select e.* " . fieldtype_formula::prepare_query_select(

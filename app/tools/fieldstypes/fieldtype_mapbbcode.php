@@ -8,17 +8,17 @@ class Fieldtype_mapbbcode
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_MAPBBCODE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_MAPBBCODE_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DEFAULT_POSITION,
+            'title' => \K::$fw->TEXT_DEFAULT_POSITION,
             'name' => 'default_position',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_DEFAULT_POSITION_TIP,
+            'tooltip' => \K::$fw->TEXT_DEFAULT_POSITION_TIP,
             'params' => ['class' => 'form-control input-medium']
         ];
 
@@ -28,7 +28,7 @@ class Fieldtype_mapbbcode
         }
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DEFAULT_ZOOM,
+            'title' => \K::$fw->TEXT_DEFAULT_ZOOM,
             'name' => 'default_zoom',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -37,7 +37,7 @@ class Fieldtype_mapbbcode
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_COORDINATES_IN_FORM,
+            'title' => \K::$fw->TEXT_HIDE_COORDINATES_IN_FORM,
             'name' => 'hide_coordinates',
             'type' => 'checkbox'
         ];

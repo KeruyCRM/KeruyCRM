@@ -8,14 +8,14 @@ class Fieldtype_php_code
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_PHP_CODE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_PHP_CODE_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_PHP_CODE][] = [
+        $cfg[\K::$fw->TEXT_PHP_CODE][] = [
             'title' => '<div style="text-align:left; margin-bottom: 5px;">' . fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_php_code'
@@ -25,14 +25,14 @@ class Fieldtype_php_code
             'params' => ['class' => 'form-control', 'mode' => 'php']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DEBUG_MODE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DEBUG_MODE,
             'name' => 'debug_mode',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_FIELDTYPE_PHP_CODE_RUN_DYNAMIC_INFO) . \K::f3()->TEXT_RUN_DYNAMIC,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => tooltip_icon(\K::$fw->TEXT_FIELDTYPE_PHP_CODE_RUN_DYNAMIC_INFO) . \K::$fw->TEXT_RUN_DYNAMIC,
             'name' => 'dinamic_query',
             'type' => 'checkbox'
         ];
@@ -157,7 +157,7 @@ class Fieldtype_php_code
         try {
             eval($php_code);
         } catch (Error $e) {
-            echo alert_error(\K::f3()->TEXT_ERROR . ' ' . $e->getMessage() . ' on line ' . $e->getLine());
+            echo alert_error(\K::$fw->TEXT_ERROR . ' ' . $e->getMessage() . ' on line ' . $e->getLine());
         }
 
         return (isset($output_value) ? $output_value : '');

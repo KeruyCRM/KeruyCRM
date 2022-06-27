@@ -8,83 +8,83 @@ class Fieldtype_entity
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_ENTITY_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_ENTITY_TITLE];
     }
 
     public function get_configuration($params = [])
     {
         $cfg = [];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SELECT_ENTITY,
+            'title' => \K::$fw->TEXT_SELECT_ENTITY,
             'name' => 'entity_id',
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_ENTITY_SELECT_ENTITY_TOOLTIP,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_ENTITY_SELECT_ENTITY_TOOLTIP,
             'type' => 'dropdown',
             'choices' => entities::get_choices(),
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_USERS_AS,
+            'title' => \K::$fw->TEXT_DISPLAY_USERS_AS,
             'name' => 'display_as',
-            'tooltip' => \K::f3()->TEXT_DISPLAY_USERS_AS_TOOLTIP,
+            'tooltip' => \K::$fw->TEXT_DISPLAY_USERS_AS_TOOLTIP,
             'type' => 'dropdown',
             'choices' => [
-                'dropdown' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN,
-                'checkboxes' => \K::f3()->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
-                'dropdown_muliple' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
+                'checkboxes' => \K::$fw->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
+                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ],
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DEFAULT_TEXT,
+            'title' => \K::$fw->TEXT_DEFAULT_TEXT,
             'name' => 'default_text',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_DEFAULT_TEXT_INFO,
+            'tooltip' => \K::$fw->TEXT_DEFAULT_TEXT_INFO,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_ONLY_ASSIGNED_RECORDS,
-            'tooltip_icon' => \K::f3()->TEXT_DISPLAY_ONLY_ASSIGNED_RECORDS_INFO,
+            'title' => \K::$fw->TEXT_DISPLAY_ONLY_ASSIGNED_RECORDS,
+            'tooltip_icon' => \K::$fw->TEXT_DISPLAY_ONLY_ASSIGNED_RECORDS_INFO,
             'name' => 'display_assigned_records_only',
             'type' => 'checkbox'
         ];
 
-        $cfg[] = ['title' => \K::f3()->TEXT_HIDE_PLUS_BUTTON, 'name' => 'hide_plus_button', 'type' => 'checkbox'];
+        $cfg[] = ['title' => \K::$fw->TEXT_HIDE_PLUS_BUTTON, 'name' => 'hide_plus_button', 'type' => 'checkbox'];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::f3()->TEXT_DISPLAY_NAME_AS_LINK,
+            'title' => tooltip_icon(\K::$fw->TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
             'name' => 'display_as_link',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = ['name' => 'fields_in_popup', 'type' => 'hidden'];
@@ -145,7 +145,7 @@ class Fieldtype_entity
 
         //add empty value if dispalys as dropdown and field is not requireed
         if ($cfg->get('display_as') == 'dropdown') {
-            $choices[''] = (strlen($cfg->get('default_text')) ? $cfg->get('default_text') : \K::f3()->TEXT_NONE);
+            $choices[''] = (strlen($cfg->get('default_text')) ? $cfg->get('default_text') : \K::$fw->TEXT_NONE);
         }
 
         $listing_sql_query = 'e.id>0 ';
@@ -320,7 +320,7 @@ class Fieldtype_entity
                 'multiple' => 'multiple',
                 'data-placeholder' => (strlen($cfg->get('default_text')) ? $cfg->get(
                     'default_text'
-                ) : \K::f3()->TEXT_SELECT_SOME_VALUES)
+                ) : \K::$fw->TEXT_SELECT_SOME_VALUES)
             ];
 
             if (strlen($button_add_html)) {

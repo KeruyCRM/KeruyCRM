@@ -148,9 +148,16 @@ class Controller
     public function __construct()
     {
         if (!file_exists('config/database.php')) {
-            \K::f3()->reroute('/set/install/index');
+            \K::fw()->reroute('/set/install/index');
         }
 
+        \K::keruy()->{'qwerty.123'} = 123;
+        \K::keruy()->refSync('asdf', \K::keruy()->{'qwerty.123'});
+        \K::keruy()->asdf = 456;
+
+        var_export(\K::$fw->{'qwerty'});
+
+        die;
         $this->_setSession();
 
         \K::security()->checkCsrfToken();
@@ -158,35 +165,35 @@ class Controller
 
         $this->_setCfgIni();
 
-        \K::f3()->mset($this->defaultCfg);
+        \K::fw()->mset($this->defaultCfg);
 
         $this->_setCfgFromDB();
         $this->_setCfg();
 
-        \K::f3()->app_global_vars = \Tools\GlobalVars::instance();
+        \K::$fw->app_global_vars = \Tools\GlobalVars::instance();
 
         //set php timezone
-        \K::f3()->TZ = \K::f3()->CFG_APP_TIMEZONE;
+        \K::fw()->TZ = \K::$fw->CFG_APP_TIMEZONE;
 
         //set mysql timezone as it's configured for app
         \K::model()->exec("SET time_zone = '" . date('P') . "'");
 
         //cache vars
         $get_heading_fields = \Models\Fields::get_heading_fields();
-        \K::f3()->app_heading_fields_cache = $get_heading_fields['id'];
-        \K::f3()->app_heading_fields_id_cache = $get_heading_fields['entities_id'];
+        \K::$fw->app_heading_fields_cache = $get_heading_fields['id'];
+        \K::$fw->app_heading_fields_id_cache = $get_heading_fields['entities_id'];
 
-        \K::f3()->app_not_formula_fields_cache = \Models\Fields::not_formula_fields_cache();
-        \K::f3()->app_formula_fields_cache = \Models\Fields::formula_fields_cache();
-        \K::f3()->app_fields_cache = \Models\Fields::get_cache();
+        \K::$fw->app_not_formula_fields_cache = \Models\Fields::not_formula_fields_cache();
+        \K::$fw->app_formula_fields_cache = \Models\Fields::formula_fields_cache();
+        \K::$fw->app_fields_cache = \Models\Fields::get_cache();
 
-        \K::f3()->app_access_rules_fields_cache = \Models\Access_rules::get_access_rules_fields_cache();
-        \K::f3()->app_mysql_query_fields_cache = \Tools\FieldsTypes\Fieldtype_mysql_query::get_fields_cache();
+        \K::$fw->app_access_rules_fields_cache = \Models\Access_rules::get_access_rules_fields_cache();
+        \K::$fw->app_mysql_query_fields_cache = \Tools\FieldsTypes\Fieldtype_mysql_query::get_fields_cache();
 
-        \K::f3()->app_entities_cache = \Models\Entities::get_cache();
-        \K::f3()->app_choices_cache = \Models\Fields_choices::get_cache();
-        \K::f3()->app_global_choices_cache = \Models\Global_lists::get_cache();
-        \K::f3()->app_access_groups_cache = \Models\Access_groups::get_cache();
+        \K::$fw->app_entities_cache = \Models\Entities::get_cache();
+        \K::$fw->app_choices_cache = \Models\Fields_choices::get_cache();
+        \K::$fw->app_global_choices_cache = \Models\Global_lists::get_cache();
+        \K::$fw->app_access_groups_cache = \Models\Access_groups::get_cache();
 
         //TODO num2str
         //$app_num2str = new num2str();
@@ -195,28 +202,30 @@ class Controller
 
         $this->_setCfgSession();
 
-        \K::f3()->app_plugin_path = '';
-        \K::f3()->app_module = \K::f3()->get('PARAMS.controllerName');
-        \K::f3()->app_action = (\K::f3()->exists('PARAMS.actionName') ? \K::f3()->get('PARAMS.actionName') : 'index');
+        \K::$fw->app_plugin_path = '';
+        \K::$fw->app_module = \K::fw()->get('PARAMS.controllerName');
+        \K::$fw->app_action = (\K::fw()->exists('PARAMS.actionName') ? \K::fw()->get(
+            'PARAMS.actionName'
+        ) : 'index');
 
-        if (\K::f3()->get('PARAMS.moduleName') == 'module') {
-            \K::f3()->app_module_path = \K::f3()->app_module . '/' . \K::f3()->app_action;
+        if (\K::fw()->get('PARAMS.moduleName') == 'module') {
+            \K::$fw->app_module_path = \K::$fw->app_module . '/' . \K::$fw->app_action;
         } else {
-            \K::f3()->app_module_path = \K::f3()->get('PARAMS.moduleName') . '/' . \K::f3()->app_module . '/' . \K::f3(
-                )->app_action;
+            \K::$fw->app_module_path = \K::fw()->get('PARAMS.moduleName') . '/' . \K::keruy(
+                )->app_module . '/' . \K::$fw->app_action;
         }
 
-        \K::f3()->app_title = (strlen(\K::f3()->CFG_APP_SHORT_NAME) > 0 ? \K::f3()->CFG_APP_SHORT_NAME : \K::f3(
-        )->CFG_APP_NAME);
+        \K::$fw->app_title = (strlen(\K::$fw->CFG_APP_SHORT_NAME) > 0 ? \K::keruy(
+        )->CFG_APP_SHORT_NAME : \K::$fw->CFG_APP_NAME);
 
-        \K::f3()->app_module_action = ($_GET['action'] ?? (isset($_POST['action']) ? $_POST['action'] : ''));
+        \K::$fw->app_module_action = ($_GET['action'] ?? (isset($_POST['action']) ? $_POST['action'] : ''));
 
-        \K::f3(
+        \K::keruy(
         )->app_redirect_to = ($_GET['redirect_to'] ?? (isset($_POST['redirect_to']) ? $_POST['redirect_to'] : ''));
 
-        \K::f3()->app_path = ($_GET['path'] ?? (isset($_POST['path']) ? $_POST['path'] : ''));
+        \K::$fw->app_path = ($_GET['path'] ?? (isset($_POST['path']) ? $_POST['path'] : ''));
 
-        if (\K::f3()->CFG_USE_PUBLIC_REGISTRATION == 1) {
+        if (\K::$fw->CFG_USE_PUBLIC_REGISTRATION == 1) {
             $this->allowed_modules[] = 'users/registration';
             $this->allowed_modules[] = 'users/validate_form';
             $this->allowed_modules[] = 'users/registration_success';
@@ -225,7 +234,7 @@ class Controller
         $this->_setPlugin();//TODO include plugin
         $this->_userLogin();
 
-        \K::f3()->app_users_cfg = new \Models\Users\Users_cfg();
+        \K::$fw->app_users_cfg = new \Models\Users\Users_cfg();
 
         $this->_setCfgSession2();
         $this->_checkEnvironment();
@@ -251,10 +260,10 @@ class Controller
     private function _setSession()
     {
         new \DB\SQL\Session(\K::model()->db, 'app_sessions_new', false, function ($session) {
-            if (K::f3()->SESSION_CHECK_IP and $session->ip() !== \K::f3()->IP) {
+            if (K::keruy()->SESSION_CHECK_IP and $session->ip() !== \K::$fw->IP) {
                 return false;
             }
-            if (K::f3()->SESSION_CHECK_BROWSER and $session->agent() !== \K::f3()->AGENT) {
+            if (K::keruy()->SESSION_CHECK_BROWSER and $session->agent() !== \K::$fw->AGENT) {
                 return false;
             }
             return true;
@@ -263,21 +272,21 @@ class Controller
 
     private function _setCfgFromDB()
     {
-        $cfg = \K::model()->db_fetch_all('app_configuration', null, [\K::f3()->TTL_APP, 'app_configuration']);
+        $cfg = \K::model()->db_fetch_all('app_configuration', null, [\K::$fw->TTL_APP, 'app_configuration']);
 
         foreach ($cfg as $v) {
             $v = $v->cast();
 
-            \K::f3()->{$v['configuration_name']} = $v['configuration_value'];
+            \K::$fw->{$v['configuration_name']} = $v['configuration_value'];
         }
     }
 
     private function _setCfg()
     {
-        \K::f3()->mset(
+        \K::fw()->mset(
             [
-                'DIR_FS_BACKUPS_AUTO' => \K::f3()->DIR_FS_CATALOG . 'backups/auto/',
-                'CFG_GLOBAL_SEARCH_ROWS_PER_PAGE' => \K::f3()->CFG_APP_ROWS_PER_PAGE,
+                'DIR_FS_BACKUPS_AUTO' => \K::$fw->DIR_FS_CATALOG . 'backups/auto/',
+                'CFG_GLOBAL_SEARCH_ROWS_PER_PAGE' => \K::$fw->CFG_APP_ROWS_PER_PAGE,
                 'CFG_SERVER_UPLOAD_MAX_FILESIZE' => ((int)ini_get("post_max_size") < (int)ini_get(
                     "upload_max_filesize"
                 ) ? (int)ini_get(
@@ -334,8 +343,8 @@ class Controller
             \K::sessionSet('app_current_version', '');
         }
 
-        if (\K::f3()->CFG_DISABLE_CHECK_FOR_UPDATES == 1) {
-            \K::f3()->app_current_version = '';
+        if (\K::$fw->CFG_DISABLE_CHECK_FOR_UPDATES == 1) {
+            \K::$fw->app_current_version = '';
         }
 
         if (!\K::sessionExists('app_selected_items')) {
@@ -389,21 +398,21 @@ class Controller
 
         foreach ($required_php_extensions as $ext) {
             if (!extension_loaded($ext)) {
-                $error_list[] = sprintf(\K::f3()->TEXT_ERROR_LIB, strtoupper($ext));
+                $error_list[] = sprintf(\K::$fw->TEXT_ERROR_LIB, strtoupper($ext));
             }
         }
 
         //check folder
         $check_folders = [
-            \K::f3()->DIR_FS_UPLOADS,
-            \K::f3()->DIR_FS_ATTACHMENTS,
-            \K::f3()->DIR_FS_ATTACHMENTS_PREVIEW,
-            \K::f3()->DIR_FS_IMAGES,
-            \K::f3()->DIR_FS_USERS,
-            \K::f3()->DIR_FS_BACKUPS,
-            \K::f3()->DIR_FS_TMP,
-            \K::f3()->DIR_FS_CACHE,
-            \K::f3()->DIR_FS_CATALOG . 'log/'
+            \K::$fw->DIR_FS_UPLOADS,
+            \K::$fw->DIR_FS_ATTACHMENTS,
+            \K::$fw->DIR_FS_ATTACHMENTS_PREVIEW,
+            \K::$fw->DIR_FS_IMAGES,
+            \K::$fw->DIR_FS_USERS,
+            \K::$fw->DIR_FS_BACKUPS,
+            \K::$fw->DIR_FS_TMP,
+            \K::$fw->DIR_FS_CACHE,
+            \K::$fw->DIR_FS_CATALOG . 'log/'
         ];
 
         foreach ($check_folders as $v) {
@@ -411,13 +420,13 @@ class Controller
                 if (!is_writable($v)) {
                     $error_list[] = sprintf(
                         'Error: folder "%s" is not writable!',
-                        str_replace(\K::f3()->DIR_FS_CATALOG, '', $v)
+                        str_replace(\K::$fw->DIR_FS_CATALOG, '', $v)
                     );
                 }
             } else {
                 $error_list[] = sprintf(
                     'Error: folder "%s" does not exist',
-                    str_replace(\K::f3()->DIR_FS_CATALOG, '', $v)
+                    str_replace(\K::$fw->DIR_FS_CATALOG, '', $v)
                 );
             }
         }
@@ -434,17 +443,17 @@ class Controller
     {
         //TODO AUTOlogin https://github.com/symfony/symfony/blob/4.4/src/Symfony/Component/Security/Http/RememberMe/TokenBasedRememberMeServices.php#L101
 
-        if (!\K::sessionExists('app_logged_users_id') and !in_array(!\K::f3()->module, $this->allowed_modules)) {
+        if (!\K::sessionExists('app_logged_users_id') and !in_array(!\K::$fw->module, $this->allowed_modules)) {
             //allows redirect user to current page after login if there is no any actions
 
-            if (!\K::f3()->exists('GET.action') and !\K::f3()->exists('POST.action') and !\K::f3()->AJAX) {
-                \K::cookieSet('app_login_redirect_to', \K::f3()->URI, 10 * 60);
+            if (!\K::fw()->exists('GET.action') and !\K::fw()->exists('POST.action') and !\K::$fw->AJAX) {
+                \K::cookieSet('app_login_redirect_to', \K::$fw->URI, 10 * 60);
                 //setcookie('app_login_redirect_to', $_SERVER['QUERY_STRING'], time() + 10 * 60, '/');
             }
             //if (isset($_COOKIE["app_remember_me"]) and isset($_COOKIE["app_stay_logged"])) {
             if (\K::cookieExists('app_remember_me') and \K::cookieExists('app_stay_logged')) {
                 //do not ask verification do if login by remember me function
-                \K::f3()->two_step_verification_info['is_checked'] = true;
+                \K::$fw->two_step_verification_info['is_checked'] = true;
 
                 \Models\Users\Users::login(
                     base64_decode(\K::cookieGet('app_remember_user')),
@@ -454,10 +463,10 @@ class Controller
                 );
             } else {
                 //redirect_to('users/login');
-                \K::f3()->reroute('@Login');
+                \K::fw()->reroute('@Login');
             }
         } elseif (\K::sessionExists('app_logged_users_id')) {
-            $user_query = \Models\Users\Users::getGroupAndAccessByUserId(\K::f3()->app_logged_users_id);
+            $user_query = \Models\Users\Users::getGroupAndAccessByUserId(\K::$fw->app_logged_users_id);
 
             if (isset($user_query[0])) {
                 $user = $user_query[0];
@@ -469,7 +478,7 @@ class Controller
                     $photo = '';
                 }
 
-                \K::f3()->app_user = [
+                \K::$fw->app_user = [
                     'id' => $user['id'],
                     'group_id' => (int)$user['field_6'],
                     'group_name' => $user['group_name'],
@@ -486,12 +495,12 @@ class Controller
                 ];
 
                 //generate users access to entities schema
-                if (\K::f3()->app_user['group_id'] > 0) {
-                    \K::f3()->app_users_access = \Models\Users\Users::get_users_access_schema(
-                        \K::f3()->app_user['group_id']
+                if (\K::$fw->app_user['group_id'] > 0) {
+                    \K::$fw->app_users_access = \Models\Users\Users::get_users_access_schema(
+                        \K::$fw->app_user['group_id']
                     );
                 } else {
-                    \K::f3()->app_users_access = [];
+                    \K::$fw->app_users_access = [];
                 }
 
                 //set unique client id for rss or ical
@@ -499,7 +508,7 @@ class Controller
             } else {
                 //app_session_unregister('app_logged_users_id');
                 \K::sessionClear('app_logged_users_id');
-                \K::f3()->reroute('@Login');
+                \K::fw()->reroute('@Login');
                 //redirect_to('users/login');
             }
         }

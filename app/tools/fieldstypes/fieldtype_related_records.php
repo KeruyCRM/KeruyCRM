@@ -8,7 +8,7 @@ class Fieldtype_related_records
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_RELATED_RECORDS_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_RELATED_RECORDS_TITLE];
     }
 
     public function get_configuration($params = [])
@@ -17,10 +17,10 @@ class Fieldtype_related_records
 
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_SELECT_ENTITY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_SELECT_ENTITY,
             'name' => 'entity_id',
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_RELATED_RECORDS_SELECT_ENTITY_TOOLTIP . ' ' . $entity_info['name'],
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_RELATED_RECORDS_SELECT_ENTITY_TOOLTIP . ' ' . $entity_info['name'],
             'type' => 'dropdown',
             'choices' => entities::get_choices(),
             'params' => ['class' => 'form-control input-medium'],
@@ -28,80 +28,80 @@ class Fieldtype_related_records
         ];
 
         /*
-          $cfg[\K::f3()->TEXT_SETTINGS][] = array('title'=>tooltip_icon(TEXT_ROWS_PER_PAGE_IF_NOT_SET) . \K::f3()->TEXT_ROWS_PER_PAGE,
+          $cfg[\K::$keruy->TEXT_SETTINGS][] = array('title'=>tooltip_icon(TEXT_ROWS_PER_PAGE_IF_NOT_SET) . \K::$keruy->TEXT_ROWS_PER_PAGE,
           'name'=>'rows_per_page',
           'type'=>'input',
           'params'=>array('class'=>'form-control input-xsmall'));
          */
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => tooltip_icon(
-                    \K::f3()->TEXT_DISPLAY_IN_MAIN_COLUMN_INFO
-                ) . \K::f3()->TEXT_DISPLAY_IN_MAIN_COLUMN,
+                    \K::$fw->TEXT_DISPLAY_IN_MAIN_COLUMN_INFO
+                ) . \K::$fw->TEXT_DISPLAY_IN_MAIN_COLUMN,
             'name' => 'display_in_main_column',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_COLLAPSED,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_COLLAPSED,
             'name' => 'is_collapsed',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_SEARCH_BAR,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_SEARCH_BAR,
             'name' => 'display_search_bar',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_NO_RECORDS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_NO_RECORDS,
             'name' => 'hide_field_without_records',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_BUTTONS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_BUTTONS,
             'name' => 'hide_controls',
             'type' => 'dropdown',
             'choices' => [
-                'add' => \K::f3()->TEXT_BUTTON_ADD,
-                'bind' => \K::f3()->TEXT_BUTTON_BIND,
-                'with_selected' => \K::f3()->TEXT_WITH_SELECTED
+                'add' => \K::$fw->TEXT_BUTTON_ADD,
+                'bind' => \K::$fw->TEXT_BUTTON_BIND,
+                'with_selected' => \K::$fw->TEXT_WITH_SELECTED
             ],
             'params' => ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_IN_LISTING,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_IN_LISTING,
             'name' => 'display_in_listing',
             'type' => 'dropdown',
-            'choices' => ['count' => \K::f3()->TEXT_COUNT_RELATED_ITEMS, 'list' => \K::f3()->TEXT_LIST_RELATED_ITEMS],
+            'choices' => ['count' => \K::$fw->TEXT_COUNT_RELATED_ITEMS, 'list' => \K::$fw->TEXT_LIST_RELATED_ITEMS],
             'params' => ['class' => 'form-control input-medium']
         ];
 
         /*
-          $cfg[\K::f3()->TEXT_SETTINGS][] = array(
-          'title'=>tooltip_icon(TEXT_ENTER_TEXT_PATTERN_INFO) . \K::f3()->TEXT_HEADING_PATTER_IN_LINSING,
-          'tooltip' => \K::f3()->TEXT_HEADING_TEMPLATE_INFO,
+          $cfg[\K::$keruy->TEXT_SETTINGS][] = array(
+          'title'=>tooltip_icon(TEXT_ENTER_TEXT_PATTERN_INFO) . \K::$keruy->TEXT_HEADING_PATTER_IN_LINSING,
+          'tooltip' => \K::$keruy->TEXT_HEADING_TEMPLATE_INFO,
           'name'=>'heading_template',
           'type'=>'textarea',
           'params'=>array('class'=>'form-control input-xlare textarea-small'));
          */
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['name' => 'fields_in_listing', 'type' => 'hidden'];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['name' => 'fields_in_popup', 'type' => 'hidden'];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'fields_in_listing', 'type' => 'hidden'];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'fields_in_popup', 'type' => 'hidden'];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['name' => 'create_related_comment', 'type' => 'hidden'];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['name' => 'create_related_comment_text', 'type' => 'hidden'];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['name' => 'delete_related_comment', 'type' => 'hidden'];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['name' => 'delete_related_comment_text', 'type' => 'hidden'];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['name' => 'create_related_comment_to', 'type' => 'hidden'];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['name' => 'create_related_comment_to_text', 'type' => 'hidden'];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['name' => 'delete_related_comment_to', 'type' => 'hidden'];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['name' => 'delete_related_comment_to_text', 'type' => 'hidden'];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'create_related_comment', 'type' => 'hidden'];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'create_related_comment_text', 'type' => 'hidden'];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'delete_related_comment', 'type' => 'hidden'];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'delete_related_comment_text', 'type' => 'hidden'];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'create_related_comment_to', 'type' => 'hidden'];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'create_related_comment_to_text', 'type' => 'hidden'];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'delete_related_comment_to', 'type' => 'hidden'];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'delete_related_comment_to_text', 'type' => 'hidden'];
 
         //TEXT_FIELDS
-        $cfg[\K::f3()->TEXT_LINK_RECORD][] = [
+        $cfg[\K::$fw->TEXT_LINK_RECORD][] = [
             'name' => 'fields_for_search_box',
             'type' => 'ajax',
             'html' => '<script>fields_types_ajax_configuration(\'fields_for_search_box\',$("#fields_configuration_entity_id").val())</script>'
@@ -130,24 +130,24 @@ class Fieldtype_related_records
                 }
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_SEARCH_BY_FIELDS,
+                    'title' => \K::$fw->TEXT_SEARCH_BY_FIELDS,
                     'name' => 'fields_for_search',
                     'type' => 'dropdown',
                     'choices' => $choices,
-                    'tooltip_icon' => \K::f3()->TEXT_SEARCH_BY_FIELDS_INFO,
+                    'tooltip_icon' => \K::$fw->TEXT_SEARCH_BY_FIELDS_INFO,
                     'params' => ['class' => 'form-control chosen-select input-xlarge', 'multiple' => 'multiple']
                 ];
 
                 //dorpdown template
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
+                    'title' => \K::$fw->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
                             $entities_id,
                             'fields_configuration_heading_template'
                         ),
                     'name' => 'heading_template',
                     'type' => 'textarea',
-                    'tooltip_icon' => \K::f3()->TEXT_HEADING_TEMPLATE_INFO,
-                    'tooltip' => \K::f3()->TEXT_ENTER_TEXT_PATTERN_INFO,
+                    'tooltip_icon' => \K::$fw->TEXT_HEADING_TEMPLATE_INFO,
+                    'tooltip' => \K::$fw->TEXT_ENTER_TEXT_PATTERN_INFO,
                     'params' => ['class' => 'form-control input-xlarge']
                 ];
 

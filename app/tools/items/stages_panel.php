@@ -7,10 +7,10 @@ class Stages_panel
     public static function get_type_choices()
     {
         return [
-            'trianlge' => \K::f3()->TEXT_TRIANGLE,
-            'rectangle' => \K::f3()->TEXT_RECTANGLE,
-            'dot' => \K::f3()->TEXT_DOT,
-            'circle' => \K::f3()->TEXT_CIRCLE
+            'trianlge' => \K::$fw->TEXT_TRIANGLE,
+            'rectangle' => \K::$fw->TEXT_RECTANGLE,
+            'dot' => \K::$fw->TEXT_DOT,
+            'circle' => \K::$fw->TEXT_CIRCLE
         ];
     }
 

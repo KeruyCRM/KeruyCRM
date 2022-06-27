@@ -7,10 +7,10 @@ class Users_alerts
     public static function get_types_choices()
     {
         $choices = [
-            'warning' => \K::f3()->TEXT_ALERT_WARNING,
-            'danger' => \K::f3()->TEXT_ALERT_DANGER,
-            'success' => \K::f3()->TEXT_ALERT_SUCCESS,
-            'info' => \K::f3()->TEXT_ALERT_INFO,
+            'warning' => \K::$fw->TEXT_ALERT_WARNING,
+            'danger' => \K::$fw->TEXT_ALERT_DANGER,
+            'success' => \K::$fw->TEXT_ALERT_SUCCESS,
+            'info' => \K::$fw->TEXT_ALERT_INFO,
         ];
 
         return $choices;
@@ -26,8 +26,8 @@ class Users_alerts
     public static function get_location_choices()
     {
         $choices = [
-            'all' => \K::f3()->TEXT_LOCATION_ON_ALL_PAGES,
-            'dashboard' => \K::f3()->TEXT_LOCATION_ON_DASHBOARD,
+            'all' => \K::$fw->TEXT_LOCATION_ON_ALL_PAGES,
+            'dashboard' => \K::$fw->TEXT_LOCATION_ON_DASHBOARD,
         ];
 
         return $choices;

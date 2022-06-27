@@ -8,87 +8,87 @@ class Fieldtype_auto_increment
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_AUTO_INCREMENT_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_AUTO_INCREMENT_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
             'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
-            'tooltip_icon' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ERROR_MESSAGE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR,
+            'tooltip_icon' => \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_VIEW_ONLY,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_VIEW_ONLY,
             'name' => 'view_only',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_VALUE_VIEW_ONLY_INFO
+            'tooltip_icon' => \K::$fw->TEXT_VALUE_VIEW_ONLY_INFO
         ];
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_DEFAULT_VALUE,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_DEFAULT_VALUE,
             'name' => 'default_value',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_VALUE_INFO,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': 1',
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_VALUE_INFO,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': 1',
             'params' => ['class' => 'form-control input-small number']
         ];
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_STEP,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_STEP,
             'name' => 'step',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small'],
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . 1
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . 1
         ];
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_PREFIX,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_PREFIX,
             'name' => 'prefix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_SUFFIX,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
@@ -96,8 +96,8 @@ class Fieldtype_auto_increment
 
         $entity_info = db_find('app_entities', $_POST['entities_id']);
         if ($entity_info['parent_id'] > 0) {
-            $cfg[\K::f3()->TEXT_VALUE][] = [
-                'title' => \K::f3()->TEXT_FIELDTYPE_AUTO_INCREMENT_SEPARATE_NUMBERING,
+            $cfg[\K::$fw->TEXT_VALUE][] = [
+                'title' => \K::$fw->TEXT_FIELDTYPE_AUTO_INCREMENT_SEPARATE_NUMBERING,
                 'name' => 'separate_numbering',
                 'type' => 'checkbox'
             ];
@@ -124,7 +124,6 @@ class Fieldtype_auto_increment
         }
 
         $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
-
 
         if ($cfg->get('view_only') == 1) {
             return '<p class="form-control-static">' . $cfg->get('prefix') . $obj['field_' . $field['id']] . $cfg->get(

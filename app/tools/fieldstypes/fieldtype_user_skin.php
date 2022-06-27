@@ -9,15 +9,15 @@ class Fieldtype_user_skin
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_USER_SKIN_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_USER_SKIN_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_USER_SKIN_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_USER_SKIN_TITLE
         ];
     }
 
     public function render($field, $obj, $params = [])
     {
-        if (strlen(\K::f3()->CFG_APP_SKIN)) {
-            return '<p class="form-control-static">' . \K::f3()->CFG_APP_SKIN . '</p>';
+        if (strlen(\K::$fw->CFG_APP_SKIN)) {
+            return '<p class="form-control-static">' . \K::$fw->CFG_APP_SKIN . '</p>';
         } else {
             if (!strlen($obj['field_' . $field['id']])) {
                 $obj['field_' . $field['id']] = 'default';

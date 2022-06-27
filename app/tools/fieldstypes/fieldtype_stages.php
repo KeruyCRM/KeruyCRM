@@ -8,63 +8,63 @@ class Fieldtype_stages
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_STAGES_TITLE, 'has_choices' => true];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_STAGES_TITLE, 'has_choices' => true];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED,
             'name' => 'notify_when_changed',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED_TIP
+            'tooltip_icon' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DEFAULT_TEXT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DEFAULT_TEXT,
             'name' => 'default_text',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_TEXT_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_TEXT_INFO,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         //cfg global list if exist
         if (count($choices = global_lists::get_lists_choices()) > 0) {
-            $cfg[\K::f3()->TEXT_SETTINGS][] = [
-                'title' => \K::f3()->TEXT_USE_GLOBAL_LIST,
+            $cfg[\K::$fw->TEXT_SETTINGS][] = [
+                'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
                 'type' => 'dropdown',
                 'choices' => $choices,
-                'tooltip' => \K::f3()->TEXT_USE_GLOBAL_LIST_TOOLTIP,
+                'tooltip' => \K::$fw->TEXT_USE_GLOBAL_LIST_TOOLTIP,
                 'params' => ['class' => 'form-control input-medium']
             ];
         }
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_DROPDOWN,
-            'tooltip_icon' => \K::f3()->TEXT_HIDDEN_FIELDS_IN_FORM,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_DROPDOWN,
+            'tooltip_icon' => \K::$fw->TEXT_HIDDEN_FIELDS_IN_FORM,
             'name' => 'hide_in_form',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_STAGES_PANEL][] = [
-            'title' => \K::f3()->TEXT_TYPE,
+        $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [
+            'title' => \K::$fw->TEXT_TYPE,
             'name' => 'panel_type',
             'type' => 'dropdown',
             'params' => ['class' => 'form-control input-medium'],
@@ -72,13 +72,13 @@ class Fieldtype_stages
         ];
 
         $choises = [
-            'all' => \K::f3()->TEXT_ALL_STAGES,
-            'consistently' => \K::f3()->TEXT_CONSISTENTLY,
-            'branching' => \K::f3()->TEXT_BRANCHING,
+            'all' => \K::$fw->TEXT_ALL_STAGES,
+            'consistently' => \K::$fw->TEXT_CONSISTENTLY,
+            'branching' => \K::$fw->TEXT_BRANCHING,
         ];
 
-        $cfg[\K::f3()->TEXT_STAGES_PANEL][] = [
-            'title' => \K::f3()->TEXT_SHOW,
+        $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [
+            'title' => \K::$fw->TEXT_SHOW,
             'name' => 'display_type',
             'type' => 'dropdown',
             'choices' => $choises,
@@ -90,32 +90,32 @@ class Fieldtype_stages
                 )->TEXT_FIELDTYPE_STAGES_SHOW_BRANCHING_TIP . '</span>'
         ];
 
-        $cfg[\K::f3()->TEXT_STAGES_PANEL][] = [
-            'title' => \K::f3()->TEXT_COLOR,
+        $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [
+            'title' => \K::$fw->TEXT_COLOR,
             'name' => 'color',
             'type' => 'colorpicker'
         ];
 
-        $cfg[\K::f3()->TEXT_STAGES_PANEL][] = [
-            'title' => \K::f3()->TEXT_ACTIVE_ITEM_COLOR,
+        $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [
+            'title' => \K::$fw->TEXT_ACTIVE_ITEM_COLOR,
             'name' => 'color_active',
             'type' => 'colorpicker'
         ];
 
-        $cfg[\K::f3()->TEXT_STAGES_PANEL][] = [
-            'title' => \K::f3()->TEXT_ACTION_BY_CLICK,
+        $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [
+            'title' => \K::$fw->TEXT_ACTION_BY_CLICK,
             'name' => 'click_action',
             'type' => 'dropdown',
             'params' => ['class' => 'form-control input-xlarge'],
             'choices' => [
                 '' => '',
-                'change_value' => \K::f3()->TEXT_ALLOW_CHANGING_VALUE,
-                'change_value_next_step' => \K::f3()->TEXT_ALLOW_CHANGING_VALUE_NEXT_STEP
+                'change_value' => \K::$fw->TEXT_ALLOW_CHANGING_VALUE,
+                'change_value_next_step' => \K::$fw->TEXT_ALLOW_CHANGING_VALUE_NEXT_STEP
             ]
         ];
 
-        $cfg[\K::f3()->TEXT_STAGES_PANEL][] = [
-            'title' => \K::f3()->TEXT_ADD_COMMENT,
+        $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [
+            'title' => \K::$fw->TEXT_ADD_COMMENT,
             'name' => 'add_comment',
             'type' => 'checkbox'
         ];
@@ -132,7 +132,7 @@ class Fieldtype_stages
         }
 
         foreach ($choices as $choice_id => $choice_name) {
-            $cfg[\K::f3()->TEXT_CONFIRMATION_TEXT][] = [
+            $cfg[\K::$fw->TEXT_CONFIRMATION_TEXT][] = [
                 'title' => $choice_name,
                 'name' => 'confirmation_text_for_choice_' . $choice_id,
                 'type' => 'textarea',
@@ -140,8 +140,8 @@ class Fieldtype_stages
             ];
         }
 
-        $cfg[\K::f3()->TEXT_ACTION][] = [
-            'html' => '<p>' . \K::f3()->TEXT_FIELDTYPE_STAGES_ACTION_TIP . '</p>',
+        $cfg[\K::$fw->TEXT_ACTION][] = [
+            'html' => '<p>' . \K::$fw->TEXT_FIELDTYPE_STAGES_ACTION_TIP . '</p>',
             'type' => 'html'
         ];
 
@@ -158,7 +158,7 @@ class Fieldtype_stages
             }
 
             foreach ($choices as $choice_id => $choice_name) {
-                $cfg[\K::f3()->TEXT_ACTION][] = [
+                $cfg[\K::$fw->TEXT_ACTION][] = [
                     'title' => $choice_name,
                     'name' => 'run_process_for_choice_' . $choice_id,
                     'type' => 'dropdown',
@@ -167,8 +167,8 @@ class Fieldtype_stages
                 ];
             }
         } else {
-            $cfg[\K::f3()->TEXT_ACTION][] = [
-                'html' => '<div class="alert alert-warning">' . \K::f3()->TEXT_EXTENSION_REQUIRED . '</div>',
+            $cfg[\K::$fw->TEXT_ACTION][] = [
+                'html' => '<div class="alert alert-warning">' . \K::$fw->TEXT_EXTENSION_REQUIRED . '</div>',
                 'type' => 'html'
             ];
         }

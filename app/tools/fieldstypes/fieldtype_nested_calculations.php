@@ -8,7 +8,7 @@ class Fieldtype_nested_calculations
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_NESTED_CALCULATIONS_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_NESTED_CALCULATIONS_TITLE];
     }
 
     public function get_configuration()
@@ -16,12 +16,12 @@ class Fieldtype_nested_calculations
         $cfg = [];
 
         $choices = [
-            'COUNT' => \K::f3()->TEXT_FUNCTION_COUNT,
-            'SUM' => \K::f3()->TEXT_FUNCTION_SUM,
+            'COUNT' => \K::$fw->TEXT_FUNCTION_COUNT,
+            'SUM' => \K::$fw->TEXT_FUNCTION_SUM,
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FUNCTION,
+            'title' => \K::$fw->TEXT_FUNCTION,
             'name' => 'calc_function',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -29,11 +29,11 @@ class Fieldtype_nested_calculations
         ];
 
         $choices = [
-            'top_level' => \K::f3()->TEXT_ONLY_AT_THE_TOP_LEVEL,
-            'all_tree' => \K::f3()->TEXT_ALL_OVER_TREE_BRANCH,
+            'top_level' => \K::$fw->TEXT_ONLY_AT_THE_TOP_LEVEL,
+            'all_tree' => \K::$fw->TEXT_ALL_OVER_TREE_BRANCH,
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PERFORM_CALCULATION,
+            'title' => \K::$fw->TEXT_PERFORM_CALCULATION,
             'name' => 'calc_type',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -50,7 +50,7 @@ class Fieldtype_nested_calculations
         }
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FIELD,
+            'title' => \K::$fw->TEXT_FIELD,
             'name' => 'calc_field_id',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -59,20 +59,20 @@ class Fieldtype_nested_calculations
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_NUMBER_FORMAT_INFO) . \K::f3()->TEXT_NUMBER_FORMAT,
+            'title' => tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
             'name' => 'number_format',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
-            'default' => \K::f3()->CFG_APP_NUMBER_FORMAT
+            'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PREFIX,
+            'title' => \K::$fw->TEXT_PREFIX,
             'name' => 'prefix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SUFFIX,
+            'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']

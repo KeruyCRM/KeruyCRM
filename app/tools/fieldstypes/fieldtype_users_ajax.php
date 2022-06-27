@@ -8,7 +8,7 @@ class Fieldtype_users_ajax
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_USERS_AJAX_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_USERS_AJAX_TITLE];
     }
 
     public function get_configuration($params = [])
@@ -16,80 +16,80 @@ class Fieldtype_users_ajax
         $entity_info = db_find('app_entities', $params['entities_id']);
 
         $cfg = [];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_USERS_AS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_USERS_AS,
             'name' => 'display_as',
             'type' => 'dropdown',
             'params' => ['class' => 'form-control input-xlarge'],
             'choices' => [
-                'dropdown' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN,
-                'dropdown_multiple' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
+                'dropdown_multiple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ]
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DEFAULT_TEXT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DEFAULT_TEXT,
             'name' => 'default_text',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_TEXT_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_TEXT_INFO,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_NAME,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_NAME,
             'name' => 'hide_field_name',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_NAME_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_NAME_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS,
             'name' => 'disable_notification',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO
+            'tooltip_icon' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO
         ];
 
         if ($entity_info['parent_id'] > 0) {
-            $cfg[\K::f3()->TEXT_SETTINGS][] = [
-                'title' => \K::f3()->TEXT_DISABLE_USERS_DEPENDENCY,
+            $cfg[\K::$fw->TEXT_SETTINGS][] = [
+                'title' => \K::$fw->TEXT_DISABLE_USERS_DEPENDENCY,
                 'name' => 'disable_dependency',
                 'type' => 'checkbox',
-                'tooltip_icon' => \K::f3()->TEXT_DISABLE_USERS_DEPENDENCY_INFO
+                'tooltip_icon' => \K::$fw->TEXT_DISABLE_USERS_DEPENDENCY_INFO
             ];
         }
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_PLUS_BUTTON,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_PLUS_BUTTON,
             'name' => 'hide_plus_button',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_ADMIN,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_ADMIN,
             'name' => 'hide_admin',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_AUTHORIZED_USER_BY_DEFAULT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_AUTHORIZED_USER_BY_DEFAULT,
             'name' => 'authorized_user_by_default',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_AUTHORIZED_USER_BY_DEFAULT_INFO
+            'tooltip_icon' => \K::$fw->TEXT_AUTHORIZED_USER_BY_DEFAULT_INFO
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_USERS_GROUPS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_USERS_GROUPS,
             'name' => 'use_groups',
             'type' => 'dropdown',
             'choices' => access_groups::get_choices(false),
-            'tooltip_icon' => \K::f3()->TEXT_USE_GROUPS_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_USE_GROUPS_TIP,
             'params' => ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
         ];
 
@@ -103,32 +103,32 @@ class Fieldtype_users_ajax
             $choices[$fields['id']] = fields_types::get_option($fields['type'], 'name', $fields['name']);
         }
 
-        $cfg[\K::f3()->TEXT_LIST][] = [
-            'title' => \K::f3()->TEXT_SEARCH_BY_FIELDS,
+        $cfg[\K::$fw->TEXT_LIST][] = [
+            'title' => \K::$fw->TEXT_SEARCH_BY_FIELDS,
             'name' => 'fields_for_search',
             'type' => 'dropdown',
             'choices' => $choices,
-            'tooltip_icon' => \K::f3()->TEXT_SEARCH_BY_FIELDS_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_SEARCH_BY_FIELDS_INFO,
             'params' => ['class' => 'form-control chosen-select input-xlarge', 'multiple' => 'multiple']
         ];
 
-        $cfg[\K::f3()->TEXT_LIST][] = [
-            'title' => \K::f3()->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
+        $cfg[\K::$fw->TEXT_LIST][] = [
+            'title' => \K::$fw->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
                     1,
                     'fields_configuration_heading_template'
                 ),
             'name' => 'heading_template',
             'type' => 'textarea',
-            'tooltip_icon' => \K::f3()->TEXT_HEADING_TEMPLATE_INFO,
-            'tooltip' => \K::f3()->TEXT_ENTER_TEXT_PATTERN_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_HEADING_TEMPLATE_INFO,
+            'tooltip' => \K::$fw->TEXT_ENTER_TEXT_PATTERN_INFO,
             'params' => ['class' => 'form-control code']
         ];
 
-        $cfg[\K::f3()->TEXT_LIST][] = [
-            'title' => \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_WHERE_QUERY,
+        $cfg[\K::$fw->TEXT_LIST][] = [
+            'title' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_WHERE_QUERY,
             'name' => 'mysql_query_where',
             'type' => 'textarea',
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_ENTITY_MYSQL_QUERY_TIP,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_ENTITY_MYSQL_QUERY_TIP,
             'params' => ['class' => 'form-control code']
         ];
 
@@ -145,30 +145,30 @@ class Fieldtype_users_ajax
                 ) . ' (#' . $fields['id'] . ')';
         }
 
-        $cfg[\K::f3()->TEXT_DISPLAY_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_FIELDS_IN_POPUP,
+        $cfg[\K::$fw->TEXT_DISPLAY_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_FIELDS_IN_POPUP,
             'name' => 'fields_in_popup',
             'type' => 'dropdown',
             'choices' => $choices,
-            'tooltip_icon' => \K::f3()->TEXT_FIELDS_IN_POPUP_RELATED_ITEMS,
-            'tooltip' => \K::f3()->TEXT_SORT_ITEMS_IN_LIST,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDS_IN_POPUP_RELATED_ITEMS,
+            'tooltip' => \K::$fw->TEXT_SORT_ITEMS_IN_LIST,
             'params' => ['class' => 'form-control chosen-select chosen-sortable input-xlarge', 'multiple' => 'multiple']
         ];
 
-        $cfg[\K::f3()->TEXT_DISPLAY_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
+        $cfg[\K::$fw->TEXT_DISPLAY_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
                     1,
                     'fields_configuration_heading_template_display'
                 ),
             'name' => 'heading_template_display',
             'type' => 'textarea',
-            'tooltip_icon' => \K::f3()->TEXT_HEADING_TEMPLATE_INFO,
-            'tooltip' => \K::f3()->TEXT_ENTER_TEXT_PATTERN_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_HEADING_TEMPLATE_INFO,
+            'tooltip' => \K::$fw->TEXT_ENTER_TEXT_PATTERN_INFO,
             'params' => ['class' => 'form-control code']
         ];
 
-        $cfg[\K::f3()->TEXT_DISPLAY_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_COPY_VALUES .
+        $cfg[\K::$fw->TEXT_DISPLAY_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_COPY_VALUES .
                 fields::get_available_fields_helper(
                     1,
                     'fields_configuration_copy_values',
@@ -181,11 +181,11 @@ class Fieldtype_users_ajax
                 ) . '</div>',
             'name' => 'copy_values',
             'type' => 'textarea',
-            'tooltip' => \K::f3()->TEXT_COPY_FIELD_VALUES_INFO,
+            'tooltip' => \K::$fw->TEXT_COPY_FIELD_VALUES_INFO,
             'params' => ['class' => 'form-control input-xlarge code']
         ];
 
-        $cfg[\K::f3()->TEXT_DISPLAY_SETTINGS][] = [
+        $cfg[\K::$fw->TEXT_DISPLAY_SETTINGS][] = [
             'type' => 'html',
             'html' => input_hidden_tag('fields_configuration[entity_id]', 1)
         ];
@@ -214,7 +214,7 @@ class Fieldtype_users_ajax
 
         if ($cfg->get('display_as') == 'dropdown_multiple') {
             $attributes['multiple'] = 'multiple';
-            $attributes['data-placeholder'] = \K::f3()->TEXT_ENTER_VALUE;
+            $attributes['data-placeholder'] = \K::$fw->TEXT_ENTER_VALUE;
             $add_empty = false;
 
             $field_name = 'fields[' . $field['id'] . '][]';

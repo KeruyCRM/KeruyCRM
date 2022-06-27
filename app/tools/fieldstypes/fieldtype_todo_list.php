@@ -8,60 +8,60 @@ class Fieldtype_todo_list
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_TODO_LIST_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_TODO_LIST_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_USE_COMMENTS,
+            'title' => \K::$fw->TEXT_USE_COMMENTS,
             'name' => 'use_comments',
             'type' => 'dropdown',
             'params' => ['class' => 'form-control input-large'],
             'choices' => [
                 '' => '',
-                'auto' => \K::f3()->TEXT_AUTO_ADD_COMMENT,
-                'form' => \K::f3()->TEXT_OPEN_COMMENT_FORM
+                'auto' => \K::$fw->TEXT_AUTO_ADD_COMMENT,
+                'form' => \K::$fw->TEXT_OPEN_COMMENT_FORM
             ],
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_TODO_LIST_USE_COMMENTS_INFO
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_TODO_LIST_USE_COMMENTS_INFO
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FOR_SUCCESSFUL_CHECK,
+            'title' => \K::$fw->TEXT_FOR_SUCCESSFUL_CHECK,
             'name' => 'text_check',
             'type' => 'input',
             'params' => ['class' => 'form-control input-large']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FOR_UNCHECK,
+            'title' => \K::$fw->TEXT_FOR_UNCHECK,
             'name' => 'text_unckeck',
             'type' => 'input',
             'params' => ['class' => 'form-control input-large']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_CHECKBOXES_IF_NO_ACCESS,
+            'title' => \K::$fw->TEXT_HIDE_CHECKBOXES_IF_NO_ACCESS,
             'name' => 'hide_checkboxes',
             'type' => 'checkbox'
         ];

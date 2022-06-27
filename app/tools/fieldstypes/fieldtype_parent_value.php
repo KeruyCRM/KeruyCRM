@@ -8,7 +8,7 @@ class Fieldtype_parent_value
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_PARENT_VALUE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_PARENT_VALUE_TITLE];
     }
 
     public function get_configuration()
@@ -40,7 +40,7 @@ class Fieldtype_parent_value
         }
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SELECT_FIELD,
+            'title' => \K::$fw->TEXT_SELECT_FIELD,
             'name' => 'field_id',
             'type' => 'dropdown',
             'choices' => $choices,

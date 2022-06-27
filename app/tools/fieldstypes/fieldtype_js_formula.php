@@ -8,7 +8,7 @@ class Fieldtype_js_formula
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_JS_FORMULA_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_JS_FORMULA_TITLE];
     }
 
     public function get_configuration()
@@ -16,53 +16,53 @@ class Fieldtype_js_formula
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FORMULA . fields::get_available_fields_helper(
+            'title' => \K::$fw->TEXT_FORMULA . fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_formula'
                 ),
             'name' => 'formula',
             'type' => 'code_small',
-            'tooltip' => \K::f3()->TEXT_JS_FORMULA_TIP,
+            'tooltip' => \K::$fw->TEXT_JS_FORMULA_TIP,
             'params' => ['class' => 'form-control code']
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_NUMBER_FORMAT_INFO) . \K::f3()->TEXT_NUMBER_FORMAT,
+            'title' => tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
             'name' => 'number_format',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
-            'default' => \K::f3()->CFG_APP_NUMBER_FORMAT
+            'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_CALCULATE_TOTALS_INFO) . \K::f3()->TEXT_CALCULATE_TOTALS,
+            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
             'name' => 'calclulate_totals',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::f3(
+            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::f3(
                 )->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PREFIX,
+            'title' => \K::$fw->TEXT_PREFIX,
             'name' => 'prefix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SUFFIX,
+            'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
@@ -249,7 +249,7 @@ class Fieldtype_js_formula
     		
     		} 
     		catch (err) {
-					alert("' . \K::f3()->TEXT_JS_FORMULA_ERROR . ': ' . str_replace(["\n", "\r", "\n\r"],
+					alert("' . \K::$fw->TEXT_JS_FORMULA_ERROR . ': ' . str_replace(["\n", "\r", "\n\r"],
                 '',
                 addslashes($js_formula)) . '"+"\n"+err)  				
 				}

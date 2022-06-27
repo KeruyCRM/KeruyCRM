@@ -8,7 +8,7 @@ class Fieldtype_color
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_COLOR_TITLE, 'has_choices' => true];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_COLOR_TITLE, 'has_choices' => true];
     }
 
     public function get_configuration()
@@ -16,35 +16,35 @@ class Fieldtype_color
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_USERS_AS,
+            'title' => \K::$fw->TEXT_DISPLAY_USERS_AS,
             'name' => 'display_as',
             'type' => 'dropdown',
             'choices' => [
-                'dropdown' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN,
+                'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
                 //TODO FIX dropdown_muliple => dropdown_multiple
-                'dropdown_muliple' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE,
-                'checkboxes' => \K::f3()->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
+                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE,
+                'checkboxes' => \K::$fw->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
             ],
             'params' => ['class' => 'form-control input-large']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium'],
             'form_group' => ['form_display_rules' => 'fields_configuration_display_as:dropdown,dropdown_muliple']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_COLUMN,
+            'title' => \K::$fw->TEXT_COLUMN,
             'name' => 'ul-class',
             'type' => 'dropdown',
             'choices' => fieldtype_radioboxes::get_display_as_choices(),
@@ -54,27 +54,27 @@ class Fieldtype_color
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_CHOICES_VALUES,
+            'title' => \K::$fw->TEXT_DISPLAY_CHOICES_VALUES,
             'name' => 'display_choices_values',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_DISPLAY_CHOICES_VALUES_TIP
+            'tooltip_icon' => \K::$fw->TEXT_DISPLAY_CHOICES_VALUES_TIP
         ];
 
         //cfg global list if exist
         if (count($choices = global_lists::get_lists_choices()) > 0) {
             $cfg[] = [
-                'title' => \K::f3()->TEXT_USE_GLOBAL_LIST,
+                'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
                 'type' => 'dropdown',
                 'choices' => $choices,
-                'tooltip' => \K::f3()->TEXT_USE_GLOBAL_LIST_TOOLTIP,
+                'tooltip' => \K::$fw->TEXT_USE_GLOBAL_LIST_TOOLTIP,
                 'params' => ['class' => 'form-control input-medium']
             ];
         }
@@ -90,7 +90,7 @@ class Fieldtype_color
             'class' => 'form-control ' . $cfg->get(
                     'width'
                 ) . ' chosen-select field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),
-            'data-placeholder' => \K::f3()->TEXT_SELECT_SOME_VALUES
+            'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
         ];
 
         //use global lists if exsit    

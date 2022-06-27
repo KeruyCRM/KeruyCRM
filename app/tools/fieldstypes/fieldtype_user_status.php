@@ -9,8 +9,8 @@ class Fieldtype_user_status
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_USER_STATUS_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_USER_STATUS_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_USER_STATUS_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_USER_STATUS_TITLE
         ];
     }
 
@@ -24,7 +24,7 @@ class Fieldtype_user_status
         }
 
         if (isset($obj['id']) and $obj['id'] == $app_user['id'] and $obj['id'] > 0) {
-            return '<p class="form-control-static">' . \K::f3()->TEXT_ACTIVE . '</p>' . input_hidden_tag(
+            return '<p class="form-control-static">' . \K::$fw->TEXT_ACTIVE . '</p>' . input_hidden_tag(
                     'fields[' . $field['id'] . ']',
                     $value
                 );
@@ -32,10 +32,10 @@ class Fieldtype_user_status
 
         return select_tag(
                 'fields[' . $field['id'] . ']',
-                ['1' => \K::f3()->TEXT_ACTIVE, '0' => \K::f3()->TEXT_INACTIVE],
+                ['1' => \K::$fw->TEXT_ACTIVE, '0' => \K::$fw->TEXT_INACTIVE],
                 $value,
                 ['class' => 'form-control input-medium']
-            ) . tooltip_text(\K::f3()->TEXT_FIELDTYPE_USER_STATUS_TOOLTIP);
+            ) . tooltip_text(\K::$fw->TEXT_FIELDTYPE_USER_STATUS_TOOLTIP);
     }
 
     public function process($options)
@@ -49,15 +49,15 @@ class Fieldtype_user_status
 
         switch (true) {
             case ($options['value'] == 1 and $options['item']['is_email_verified'] == 1):
-                $html = '<span class="label label-success">' . \K::f3()->TEXT_ACTIVE . '</span>';
+                $html = '<span class="label label-success">' . \K::$fw->TEXT_ACTIVE . '</span>';
                 break;
             case ($options['value'] == 1 and $options['item']['is_email_verified'] == 0):
                 $html = '<span id="user_status_' . $options['item']['id'] . '" class="label label-warning" title="' . addslashes(
-                        \K::f3()->TEXT_EMAIL_NOT_VERIFIED
-                    ) . '">' . \K::f3()->TEXT_ACTIVE . '</span>';
+                        \K::$fw->TEXT_EMAIL_NOT_VERIFIED
+                    ) . '">' . \K::$fw->TEXT_ACTIVE . '</span>';
                 break;
             case ($options['value'] == 0):
-                $html = '<span class="label label-default">' . \K::f3()->TEXT_INACTIVE . '</span>';
+                $html = '<span class="label label-default">' . \K::$fw->TEXT_INACTIVE . '</span>';
                 break;
         }
 

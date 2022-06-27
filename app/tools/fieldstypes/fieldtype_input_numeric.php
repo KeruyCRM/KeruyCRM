@@ -8,111 +8,111 @@ class Fieldtype_input_numeric
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_INPUT_NUMERIC_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_INPUT_NUMERIC_TITLE];
     }
 
     public function get_configuration($params = [])
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED,
             'name' => 'notify_when_changed',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED_TIP
+            'tooltip_icon' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_NUMBER_FORMAT_INFO) . \K::f3()->TEXT_NUMBER_FORMAT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
             'name' => 'number_format',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
-            'default' => \K::f3()->CFG_APP_NUMBER_FORMAT
+            'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_CALCULATE_TOTALS_INFO) . \K::f3()->TEXT_CALCULATE_TOTALS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
             'name' => 'calclulate_totals',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => tooltip_icon(
-                    \K::f3()->TEXT_CALCULATE_AVERAGE_VALUE_INFO
-                ) . \K::f3()->TEXT_CALCULATE_AVERAGE_VALUE,
+                    \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO
+                ) . \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
             'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
-            'tooltip_icon' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ERROR_MESSAGE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR,
+            'tooltip_icon' => \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_DEFAULT_VALUE,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_DEFAULT_VALUE,
             'name' => 'default_value',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_VALUE_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_VALUE_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_PREFIX,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_PREFIX,
             'name' => 'prefix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_SUFFIX,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_PREFIX_SUFFIX_IN_FORM,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_PREFIX_SUFFIX_IN_FORM,
             'name' => 'display_prefix_suffix_in_form',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_MIN_VALUE,
-            'tooltip_icon' => \K::f3()->TEXT_MIN_MAX_VALUE_TIP,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_MIN_VALUE,
+            'tooltip_icon' => \K::$fw->TEXT_MIN_MAX_VALUE_TIP,
             'name' => 'min_value',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_MAX_VALUE,
-            'tooltip_icon' => \K::f3()->TEXT_MIN_MAX_VALUE_TIP,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_MAX_VALUE,
+            'tooltip_icon' => \K::$fw->TEXT_MIN_MAX_VALUE_TIP,
             'name' => 'max_value',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
@@ -120,8 +120,8 @@ class Fieldtype_input_numeric
 
         if (is_ext_installed()) {
             if (count(currencies::get_choices())) {
-                $cfg[\K::f3()->TEXT_VALUE][] = [
-                    'title' => \K::f3()->TEXT_EXT_CURRENCIES,
+                $cfg[\K::$fw->TEXT_VALUE][] = [
+                    'title' => \K::$fw->TEXT_EXT_CURRENCIES,
                     'name' => 'currencies',
                     'type' => 'dropdown',
                     'choices' => currencies::get_choices(),

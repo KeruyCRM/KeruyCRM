@@ -2,65 +2,66 @@
 
 const KERUY_CRM = 1;
 
-$f3 = require 'core/base.php';
+$fw = require 'core/base.php';
+$fw->AUTOLOAD = 'app/';
+\K::keruy();
 
-$f3->PROJECT_VERSION = '2.0.0 alpha';
-$f3->PACKAGE = 'KeruyCRM';
-$f3->AUTOLOAD = 'app/';
-$f3->UI = 'template/';
-$f3->DEBUG = 3;
+\K::$fw->PACKAGE = 'KeruyCRM';
 
-$f3->CACHE = true;
-$f3->TTL_SCHEMA = 3600;
-$f3->TTL_APP = 3600;
+\K::$fw->UI = 'template/';
+\K::$fw->DEBUG = 3;
+\K::$fw->CACHE = true;
 
-$f3->TOKEN_LIFE = 600;//* 60 * 24;//??
-$f3->TOKEN_LENGTH = 32;
+\K::$fw->DOMAIN = \K::$fw->SCHEME . '://' . \K::$fw->HOST . '/';
+\K::$fw->FOLDER_ADMIN = 'admin';
+\K::$fw->URI_ADMIN = '/' . \K::$fw->FOLDER_ADMIN;
+\K::$fw->URL_ADMIN = \K::$fw->DOMAIN . \K::$fw->FOLDER_ADMIN;
 
-$f3->SESSION_CHECK_IP = false;
-$f3->SESSION_CHECK_BROWSER = true;
+\K::$fw->LOCALES = 'app/languages/';
 
-$f3->DOMAIN = $f3->SCHEME . '://' . $f3->HOST . '/';
-$f3->FOLDER_ADMIN = 'admin';
-$f3->URI_ADMIN = '/' . $f3->FOLDER_ADMIN;
-$f3->URL_ADMIN = $f3->DOMAIN . $f3->FOLDER_ADMIN;
+\K::$fw->FALLBACK = 'en';
 
-$f3->LOCALES = 'app/languages/';
-
-$f3->FALLBACK = 'en';
-
-$f3->TYPE_DATABASE = 'mysql';//sqlite?
+\K::$fw->mset([
+    'PROJECT_VERSION' => '2.0.0 alpha',
+    'TYPE_DATABASE' => 'mysql',//sqlite?
+    'TTL_SCHEMA' => 3600,
+    'TTL_APP' => 3600,
+    'TOKEN_LIFE' => 600,
+    'TOKEN_LENGTH' => 32,
+    'SESSION_CHECK_IP' => false,
+    'SESSION_CHECK_BROWSER' => true,
+    'CFG_VERIFICATION_CODE_LENGTH' => 6,
+]);
 
 if (file_exists('config/database.php')) {
     include 'config/database.php';
 }
 
-$f3->route(
+\K::$fw->route(
     'GET|POST @mainRouterAction: /@moduleName/@controllerName/@actionName',
     '\Controllers\@moduleName\@controllerName->@actionName'
 );
 
-$f3->route(
+\K::$fw->route(
     'GET|POST @mainRouter: /@moduleName/@controllerName',
     '\Controllers\@moduleName\@controllerName->index'
 );
 
-$f3->route(
+\K::$fw->route(
     'GET|POST /set/install/@action/@lang',
     '\Controllers\Set\Install->@action'
 );
-$f3->route(
+\K::$fw->route(
     'GET|POST /set/install/@action',
     '\Controllers\Set\Install->@action'
 );
 
-$f3->redirect('GET /install', '/set/install/index');
-$f3->redirect('GET /', '/module/dashboard');
+\K::$fw->redirect('GET /install', '/set/install/index');
+\K::$fw->redirect('GET /', '/module/dashboard');
 
-//$f3->route('GET /example [ajax]','Page->getFragment');
-//$f3->route('GET /example [sync]','Page->getFull');
+//\K::$fw->route('GET /example [ajax]','Page->getFragment');
+//\K::$fw->route('GET /example [sync]','Page->getFull');
 
 //require_once 'app/routing.php';
-//set off session warning
 
-$f3->run();
+\K::$fw->run();

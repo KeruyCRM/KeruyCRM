@@ -9,8 +9,8 @@ class Fieldtype_user_photo
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_USER_PHOTO_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_USER_PHOTO_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_USER_PHOTO_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_USER_PHOTO_TITLE
         ];
     }
 
@@ -24,7 +24,7 @@ class Fieldtype_user_photo
         if (strlen($filename) > 0) {
             $file = attachments::parse_filename($filename);
 
-            $html .= image_tag(\K::f3()->DIR_WS_USERS . $file['file_sha1'], ['class' => 'user-photo-in-form']
+            $html .= image_tag(\K::$fw->DIR_WS_USERS . $file['file_sha1'], ['class' => 'user-photo-in-form']
                 ) . input_hidden_tag(
                     'user_photo',
                     $filename
@@ -36,11 +36,11 @@ class Fieldtype_user_photo
         if (IS_AJAX or $app_module_path == 'users/registration') {
             $html .= '<a href="javascript: open_sub_dialog(\'' . url_for(
                     'users/photo'
-                ) . '\')" class="btn btn-sm btn-default">' . \K::f3()->TEXT_UPLOAD . '</a>';
+                ) . '\')" class="btn btn-sm btn-default">' . \K::$fw->TEXT_UPLOAD . '</a>';
         } else {
             $html .= '<a href="javascript: open_dialog(\'' . url_for(
                     'users/photo'
-                ) . '\')" class="btn btn-sm btn-default">' . \K::f3()->TEXT_UPLOAD . '</a>';
+                ) . '\')" class="btn btn-sm btn-default">' . \K::$fw->TEXT_UPLOAD . '</a>';
         }
 
         $html .= ' <a style="' . (!strlen(
@@ -73,8 +73,8 @@ class Fieldtype_user_photo
         if (isset($_POST['delete_user_photo']) and $_POST['delete_user_photo'] == 1) {
             $file = str_replace(['..', '/', '\/'], '', $_POST['user_photo']);
 
-            if (is_file(\K::f3()->DIR_FS_USERS . $file)) {
-                unlink(\K::f3()->DIR_FS_USERS . $file);
+            if (is_file(\K::$fw->DIR_FS_USERS . $file)) {
+                unlink(\K::$fw->DIR_FS_USERS . $file);
             }
 
             return '';
@@ -95,15 +95,15 @@ class Fieldtype_user_photo
             $filename = $file['file'];
 
             $filepath = (is_file(
-                \K::f3()->DIR_WS_USERS . $file['file_sha1']
-            ) ? \K::f3()->DIR_WS_USERS . $file['file_sha1'] : 'images/no_photo.png');
+                \K::$fw->DIR_WS_USERS . $file['file_sha1']
+            ) ? \K::$fw->DIR_WS_USERS . $file['file_sha1'] : 'images/no_photo.png');
 
             if (isset($options['is_print'])) {
                 return '<img width=120 height=120 src=' . $filepath . ' class="user-profile-photo">';
             } elseif (isset($options['is_export'])) {
                 return $file['name'];
             } elseif (isset($options['is_listing'])) {
-                return image_tag(\K::f3()->DIR_WS_USERS . $file['file_sha1'], ['width' => 50]);
+                return image_tag(\K::$fw->DIR_WS_USERS . $file['file_sha1'], ['width' => 50]);
             } else {
                 return '
         		<div class="attachments-gallery">
@@ -112,9 +112,9 @@ class Fieldtype_user_photo
         					<div class="gallery-image"><a class="fancybox" href="' . url_for(
                         'items/info&path=' . $options['path'],
                         '&action=preview_user_photo&file=' . urlencode(base64_encode($filename))
-                    ) . '">' . image_tag(\K::f3()->DIR_WS_USERS . $file['file_sha1']) . '</a></div>
+                    ) . '">' . image_tag(\K::$fw->DIR_WS_USERS . $file['file_sha1']) . '</a></div>
         					<div class="gallery-download-link">' . link_to(
-                        '<i class="fa fa-download"></i> ' . \K::f3()->TEXT_DOWNLOAD,
+                        '<i class="fa fa-download"></i> ' . \K::$fw->TEXT_DOWNLOAD,
                         url_for(
                             'items/info&path=' . $options['path'],
                             '&action=download_user_photo&file=' . urlencode(base64_encode($filename))
@@ -151,9 +151,9 @@ class Fieldtype_user_photo
         }
 
         if (strlen($item['field_10']) and strstr($item['field_10'], 'tmp_photo')) {
-            $pathinfo = pathinfo(\K::f3()->DIR_WS_USERS . $item['field_10']);
+            $pathinfo = pathinfo(\K::$fw->DIR_WS_USERS . $item['field_10']);
             $new_name = 'user_' . $item['id'] . '.' . $pathinfo['extension'];
-            rename(\K::f3()->DIR_WS_USERS . $item['field_10'], \K::f3()->DIR_WS_USERS . $new_name);
+            rename(\K::$fw->DIR_WS_USERS . $item['field_10'], \K::$fw->DIR_WS_USERS . $new_name);
 
             db_query("update app_entity_1 set field_10='{$new_name}' where id={$item['id']}");
         }

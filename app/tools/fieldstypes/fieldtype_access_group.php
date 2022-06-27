@@ -8,7 +8,7 @@ class Fieldtype_access_group
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_ACCESS_GROUP_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_ACCESS_GROUP_TITLE];
     }
 
     public function get_configuration()
@@ -16,60 +16,60 @@ class Fieldtype_access_group
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_USERS_AS,
+            'title' => \K::$fw->TEXT_DISPLAY_USERS_AS,
             'name' => 'display_as',
             'type' => 'dropdown',
             'choices' => [
-                'dropdown' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN,
-                'checkboxes' => \K::f3()->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
-                'dropdown_muliple' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
+                'checkboxes' => \K::$fw->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
+                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ],
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DEFAULT_TEXT,
+            'title' => \K::$fw->TEXT_DEFAULT_TEXT,
             'name' => 'default_text',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_TEXT_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_TEXT_INFO,
             'params' => ['class' => 'form-control input-large']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_USERS_GROUPS,
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_ACCESS_GROUP_USERS_GROUP_TIP,
+            'title' => \K::$fw->TEXT_USERS_GROUPS,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_ACCESS_GROUP_USERS_GROUP_TIP,
             'name' => 'use_groups',
             'type' => 'dropdown',
             'choices' => access_groups::get_choices(false),
             'params' => ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
         ];
 
-        $cfg[] = ['title' => \K::f3()->TEXT_HIDE_ADMIN, 'name' => 'hide_admin', 'type' => 'checkbox'];
+        $cfg[] = ['title' => \K::$fw->TEXT_HIDE_ADMIN, 'name' => 'hide_admin', 'type' => 'checkbox'];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SEND_NOTIFICATION,
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_ACCESS_GROUP_NOTIFY_TIP,
+            'title' => \K::$fw->TEXT_SEND_NOTIFICATION,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_ACCESS_GROUP_NOTIFY_TIP,
             'name' => 'send_notification',
             'type' => 'checkbox'
         ];
@@ -86,7 +86,7 @@ class Fieldtype_access_group
         $choices = [];
 
         if ($cfg->get('hide_admin') != 1) {
-            $choices[0] = \K::f3()->TEXT_ADMINISTRATOR;
+            $choices[0] = \K::$fw->TEXT_ADMINISTRATOR;
         }
 
         $where_sql = "where (select count(*) from app_entities_access ea where ea.access_groups_id=ag.id and entities_id='" . $field['entities_id'] . "' and length(access_schema))>0";
@@ -129,7 +129,7 @@ class Fieldtype_access_group
             return select_tag(
                     'fields[' . $field['id'] . ']',
                     [
-                        '' => (strlen($cfg->get('default_text')) ? $cfg->get('default_text') : \K::f3()->TEXT_NONE)
+                        '' => (strlen($cfg->get('default_text')) ? $cfg->get('default_text') : \K::$fw->TEXT_NONE)
                     ] + $choices,
                     $value,
                     $attributes

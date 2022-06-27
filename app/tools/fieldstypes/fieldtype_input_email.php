@@ -8,57 +8,57 @@ class fieldtype_input_email
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_INPUT_EMAIL_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_INPUT_EMAIL_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[] = ['title' => \K::f3()->TEXT_DISPLAY_AS_LINK, 'name' => 'display_as_link', 'type' => 'checkbox'];
+        $cfg[] = ['title' => \K::$fw->TEXT_DISPLAY_AS_LINK, 'name' => 'display_as_link', 'type' => 'checkbox'];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE,
+            'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
             'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
-            'tooltip_icon' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ERROR_MESSAGE,
+            'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR,
+            'tooltip_icon' => \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
@@ -96,7 +96,7 @@ class fieldtype_input_email
         } elseif ($cfg->get('display_as_link') == 1) {
             $html = '<a href="mailto:' . $options['value'] . '" target="_blank">' . $options['value'] . '</a>';
 
-            if (is_ext_installed() and \K::f3()->CFG_MAIL_INTEGRATION and mail_accounts_users::has_access()) {
+            if (is_ext_installed() and \K::$fw->CFG_MAIL_INTEGRATION and mail_accounts_users::has_access()) {
                 $html = '<a href="javascript: open_dialog(\'' . url_for(
                         'ext/mail/create',
                         'mail_to=' . $options['value'] . '&path=' . $options['field']['entities_id'] . '-' . $options['item']['id']

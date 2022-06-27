@@ -9,8 +9,8 @@ class Fieldtype_user_email
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_USER_EMAIL_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_USER_EMAIL_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_USER_EMAIL_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_USER_EMAIL_TITLE
         ];
     }
 
@@ -19,10 +19,10 @@ class Fieldtype_user_email
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
         return $cfg;
@@ -46,7 +46,7 @@ class Fieldtype_user_email
     {
         if (isset($options['is_export'])) {
             return $options['value'];
-        } elseif (\K::f3()->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION == 'email' and \K::f3(
+        } elseif (\K::$fw->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION == 'email' and \K::f3(
             )->CFG_USE_PUBLIC_REGISTRATION == 1 and $options['item']['is_email_verified'] == 0) {
             $html = '';
             $access_rules = new access_rules($options['field']['entities_id'], $options['item']);
@@ -54,12 +54,12 @@ class Fieldtype_user_email
                 $html = link_to_modalbox(
                     '<i id="user_email_verify_' . $options['item']['id'] . '" class="fa fa-refresh" aria-hidden="true"></i>',
                     url_for('items/verify_email', 'path=1-' . $options['item']['id']),
-                    ['title' => \K::f3()->TEXT_EMAIL_VERIFICATION_EMAIL_SUBJECT]
+                    ['title' => \K::$fw->TEXT_EMAIL_VERIFICATION_EMAIL_SUBJECT]
                 );
             }
 
             return '<strike id="user_email_' . $options['item']['id'] . '" title="' . addslashes(
-                    \K::f3()->TEXT_EMAIL_NOT_VERIFIED
+                    \K::$fw->TEXT_EMAIL_NOT_VERIFIED
                 ) . '">' . $options['value'] . '</strike> ' . $html;
         } else {
             return $options['value'];

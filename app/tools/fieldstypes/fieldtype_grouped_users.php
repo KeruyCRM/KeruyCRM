@@ -8,81 +8,81 @@ class Fieldtype_grouped_users
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_GROUPEDUSERS_TITLE, 'has_choices' => true];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_GROUPEDUSERS_TITLE, 'has_choices' => true];
     }
 
     public function get_configuration($params = [])
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_USERS_AS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_USERS_AS,
             'name' => 'display_as',
-            'tooltip' => \K::f3()->TEXT_DISPLAY_USERS_AS_TOOLTIP,
+            'tooltip' => \K::$fw->TEXT_DISPLAY_USERS_AS_TOOLTIP,
             'type' => 'dropdown',
             'choices' => [
-                'dropdown' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN,
-                'checkboxes' => \K::f3()->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
-                'dropdown_muliple' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
+                'checkboxes' => \K::$fw->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
+                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ],
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DEFAULT_TEXT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DEFAULT_TEXT,
             'name' => 'default_text',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_DEFAULT_TEXT_INFO,
+            'tooltip' => \K::$fw->TEXT_DEFAULT_TEXT_INFO,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS,
             'name' => 'disable_notification',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO
+            'tooltip_icon' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO
         ];
 
         //cfg global list if exist
         if (count($choices = global_lists::get_lists_choices()) > 0) {
-            $cfg[\K::f3()->TEXT_SETTINGS][] = [
-                'title' => \K::f3()->TEXT_USE_GLOBAL_LIST,
+            $cfg[\K::$fw->TEXT_SETTINGS][] = [
+                'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
                 'type' => 'dropdown',
                 'choices' => $choices,
-                'tooltip' => \K::f3()->TEXT_USE_GLOBAL_LIST_TOOLTIP,
+                'tooltip' => \K::$fw->TEXT_USE_GLOBAL_LIST_TOOLTIP,
                 'params' => ['class' => 'form-control input-medium']
             ];
         }
 
         $choices = [];
-        $choices['listing'] = \K::f3()->TEXT_IN_LISTING;
-        $choices['info_page'] = \K::f3()->TEXT_IN_ITEM_PAGE;
-        $cfg[\K::f3()->TEXT_USERS][] = [
-            'title' => \K::f3()->TEXT_SHOW_USERS,
+        $choices['listing'] = \K::$fw->TEXT_IN_LISTING;
+        $choices['info_page'] = \K::$fw->TEXT_IN_ITEM_PAGE;
+        $cfg[\K::$fw->TEXT_USERS][] = [
+            'title' => \K::$fw->TEXT_SHOW_USERS,
             'name' => 'show_users',
             'type' => 'dropdown',
             'choices' => $choices,
             'params' => ['class' => 'form-control input-large chosen-select', 'multiple' => 'multiple'],
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_GROUPEDUSERS_SHOW_USERS_TIP
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GROUPEDUSERS_SHOW_USERS_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_USERS][] = [
-            'title' => \K::f3()->TEXT_SHOW_USERS_ACCESS_GROUP,
+        $cfg[\K::$fw->TEXT_USERS][] = [
+            'title' => \K::$fw->TEXT_SHOW_USERS_ACCESS_GROUP,
             'name' => 'show_users_access_group',
             'type' => 'checkbox'
         ];
@@ -152,7 +152,7 @@ class Fieldtype_grouped_users
                             'width'
                         ) . ' field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),
                     'multiple' => 'multiple',
-                    'data-placeholder' => \K::f3()->TEXT_SELECT_SOME_VALUES
+                    'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
                 ];
 
                 return select_tag('fields[' . $field['id'] . '][]', $choices, explode(',', $value), $attributes);

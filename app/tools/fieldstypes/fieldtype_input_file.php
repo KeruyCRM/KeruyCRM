@@ -8,7 +8,7 @@ class Fieldtype_input_file
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_INPUT_FILE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_INPUT_FILE_TITLE];
     }
 
     public function get_configuration()
@@ -16,22 +16,22 @@ class Fieldtype_input_file
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOWED_EXTENSIONS,
+            'title' => \K::$fw->TEXT_ALLOWED_EXTENSIONS,
             'name' => 'allowed_extensions',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOWED_EXTENSIONS_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_ALLOWED_EXTENSIONS_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
 
@@ -49,7 +49,7 @@ class Fieldtype_input_file
         ' . (users::has_access('delete') ? '<div><label class="checkbox">' . input_checkbox_tag(
                         'delete_files[' . $field['id'] . ']',
                         1
-                    ) . ' ' . \K::f3()->TEXT_DELETE . '</label></div>' : '');
+                    ) . ' ' . \K::$fw->TEXT_DELETE . '</label></div>' : '');
         }
 
         $cfg = new fields_types_cfg($field['configuration']);
@@ -74,8 +74,8 @@ class Fieldtype_input_file
 
         if (isset($_POST['delete_files'][$field_id])) {
             $file = attachments::parse_filename($_POST['files'][$field_id]);
-            if (is_file(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
-                unlink(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
+            if (is_file(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
+                unlink(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
             }
 
             //delete files from file storage
@@ -92,10 +92,10 @@ class Fieldtype_input_file
 
             if (move_uploaded_file(
                 $_FILES['fields']['tmp_name'][$field_id],
-                \K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file']
+                \K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file']
             )) {
                 //autoresize images if enabled
-                attachments::resize(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file']);
+                attachments::resize(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file']);
 
                 //add file to queue
                 if (class_exists('file_storage')) {

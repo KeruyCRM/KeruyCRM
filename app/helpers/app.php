@@ -42,20 +42,18 @@ class App
     {
         $html = '';
 
-        if (is_file(\K::f3()->DIR_FS_UPLOADS . \K::f3()->CFG_APP_FAVICON)) {
-            $type = mime_content_type(\K::f3()->DIR_FS_UPLOADS . \K::f3()->CFG_APP_FAVICON);
+        if (is_file(\K::$fw->DIR_FS_UPLOADS . \K::$fw->CFG_APP_FAVICON)) {
+            $type = mime_content_type(\K::$fw->DIR_FS_UPLOADS . \K::$fw->CFG_APP_FAVICON);
 
             switch ($type) {
                 case 'image/x-icon':
                 case 'image/vnd.microsoft.icon':
-                    $html = '<link  type="image/x-icon" rel="shortcut icon" href="' . self::f3(
-                        )->DIR_WS_UPLOADS . \K::f3()->CFG_APP_FAVICON . '" />';
+                    $html = '<link  type="image/x-icon" rel="shortcut icon" href="' . \K::$fw->DIR_WS_UPLOADS . \K::$fw->CFG_APP_FAVICON . '" />';
                     break;
                 case 'image/jpeg':
                 case 'image/png':
                 case 'image/gif':
-                    $html = '<link  type="' . $type . '" rel="icon" href="' . \K::f3()->DIR_WS_UPLOADS . self::f3(
-                        )->CFG_APP_FAVICON . '" />';
+                    $html = '<link  type="' . $type . '" rel="icon" href="' . \K::$fw->DIR_WS_UPLOADS . \K::$fw->CFG_APP_FAVICON . '" />';
                     break;
             }
         } else {
@@ -76,7 +74,7 @@ class App
             return false;
         }
 
-        $filename = \K::f3()->DIR_FS_CACHE . $filename;
+        $filename = \K::$fw->DIR_FS_CACHE . $filename;
         $success = false;
 
         // try to open the file
@@ -101,7 +99,7 @@ class App
     //  $filename -  The name of the file to read.
     public static function app_read_cache(&$var, $filename, $auto_expire = false, $is_cache = true)
     {
-        $filename = \K::f3()->DIR_FS_CACHE . $filename;
+        $filename = \K::$fw->DIR_FS_CACHE . $filename;
 
         //check if cache is enabled
         if (!$is_cache or !file_exists($filename)) {
@@ -150,12 +148,12 @@ class App
         $html = '';
         $filename = '';
 
-        if (\K::f3()->CFG_MAINTENANCE_MODE == 1 and is_file(
-                \K::f3()->DIR_FS_UPLOADS . '/' . \K::f3()->CFG_APP_LOGIN_MAINTENANCE_BACKGROUND
+        if (\K::$fw->CFG_MAINTENANCE_MODE == 1 and is_file(
+                \K::$fw->DIR_FS_UPLOADS . '/' . \K::$fw->CFG_APP_LOGIN_MAINTENANCE_BACKGROUND
             )) {
-            $filename = \K::f3()->CFG_APP_LOGIN_MAINTENANCE_BACKGROUND;
-        } elseif (is_file(\K::f3()->DIR_FS_UPLOADS . '/' . \K::f3()->CFG_APP_LOGIN_PAGE_BACKGROUND)) {
-            $filename = \K::f3()->CFG_APP_LOGIN_PAGE_BACKGROUND;
+            $filename = \K::$fw->CFG_APP_LOGIN_MAINTENANCE_BACKGROUND;
+        } elseif (is_file(\K::$fw->DIR_FS_UPLOADS . '/' . \K::$fw->CFG_APP_LOGIN_PAGE_BACKGROUND)) {
+            $filename = \K::$fw->CFG_APP_LOGIN_PAGE_BACKGROUND;
         }
 
         if (strlen($filename)) {
@@ -201,7 +199,7 @@ class App
     public static function format_date($d, $date_format = false)
     {
         if (!$date_format) {
-            $date_format = \K::f3()->CFG_APP_DATE_FORMAT;
+            $date_format = \K::$fw->CFG_APP_DATE_FORMAT;
         }
 
         if (strlen($date_format) == 0) {
@@ -218,7 +216,7 @@ class App
     public static function format_date_time($d, $date_format = false)
     {
         if (!$date_format) {
-            $date_format = \K::f3()->CFG_APP_DATETIME_FORMAT;
+            $date_format = \K::$fw->CFG_APP_DATETIME_FORMAT;
         }
 
         if (strlen($date_format) == 0) {
@@ -285,11 +283,9 @@ class App
     public static function render_bool_value($v, $is_label = true)
     {
         if ($is_label) {
-            return ($v == 1 ? '<span class="label label-success">' . self::f3(
-                )->TEXT_YES . '</span>' : '<span class="label label-default">' . \K::f3()->TEXT_NO . '</span>');
+            return ($v == 1 ? '<span class="label label-success">' . \K::$fw->TEXT_YES . '</span>' : '<span class="label label-default">' . \K::$fw->TEXT_NO . '</span>');
         } else {
-            return ($v == 1 ? '<span class="text-yes">' . self::f3(
-                )->TEXT_YES . '</span>' : '<span class="text-no">' . \K::f3()->TEXT_NO . '</span>');
+            return ($v == 1 ? '<span class="text-yes">' . \K::$fw->TEXT_YES . '</span>' : '<span class="text-no">' . \K::$fw->TEXT_NO . '</span>');
         }
     }
 
@@ -447,7 +443,6 @@ class App
             8192 => "Deprecated"
         ];
 
-
         if (isset($errortype[$errno])) {
             $errlevel = $errortype[$errno];
         } else {
@@ -549,7 +544,6 @@ class App
             } else {
                 return false;
             }
-
 
             $tmp_img_small = imagecreatetruecolor($width_small, $height_small);
 
@@ -974,7 +968,6 @@ class App
         $list['TEXT_TOGGLE_ON'] = TEXT_TOGGLE_ON;
         $list['TEXT_TOGGLE_OFF'] = TEXT_TOGGLE_OFF;
 
-
         $html = '
     <script>
      var i18n = new Array()
@@ -1020,7 +1013,6 @@ class App
           {
           $search_str = trim(strtolower($search_str));
           } */
-
 
         $search_str = trim(str_replace(['AND', 'OR'], ['and', 'or'], $search_str));
 
@@ -1180,11 +1172,11 @@ class App
     public static function app_json_encode($arr)
     {
         //convmap since 0x80 char codes so it takes all multibyte codes (above ASCII 127). So such characters are being "hidden" from normal json_encoding
-        array_walk_recursive($arr, public static function (&$item, $key) {
-        if (is_string($item)) {
-            $item = (mb_encode_numericentity($item, [0x80, 0xffff, 0, 0xffff], 'UTF-8'));
-        }
-    });
+        array_walk_recursive($arr, function (&$item, $key) {
+            if (is_string($item)) {
+                $item = (mb_encode_numericentity($item, [0x80, 0xffff, 0, 0xffff], 'UTF-8'));
+            }
+        });
         return mb_decode_numericentity(json_encode($arr), [0x80, 0xffff, 0, 0xffff], 'UTF-8');
     }
 

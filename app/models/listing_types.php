@@ -145,7 +145,6 @@ class listing_types
             $choices[] = $info['type'];
         }
 
-
         $html = '';
 
         if (count($choices) > 1) {
@@ -204,7 +203,6 @@ class listing_types
                     $fields = array_merge($fields, explode(',', $listing_sections['fields']));
                 }
             }
-
 
             if (count($fields)) {
                 $check_query = db_query(

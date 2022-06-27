@@ -9,8 +9,8 @@ class Fieldtype_user_firstname
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_USER_FIRSTNAME_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_USER_FIRSTNAME_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_USER_FIRSTNAME_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_USER_FIRSTNAME_TITLE
         ];
     }
 
@@ -19,10 +19,10 @@ class Fieldtype_user_firstname
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
         return $cfg;

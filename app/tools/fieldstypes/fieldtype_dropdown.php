@@ -8,87 +8,87 @@ class Fieldtype_dropdown
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_DROPDOWN_TITLE, 'has_choices' => true];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_DROPDOWN_TITLE, 'has_choices' => true];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED,
             'name' => 'notify_when_changed',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED_TIP
+            'tooltip_icon' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DEFAULT_TEXT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DEFAULT_TEXT,
             'name' => 'default_text',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_TEXT_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_TEXT_INFO,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_USE_SEARCH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_USE_SEARCH,
             'name' => 'use_search',
             'type' => 'dropdown',
-            'choices' => ['0' => \K::f3()->TEXT_NO, '1' => \K::f3()->TEXT_YES],
-            'tooltip' => \K::f3()->TEXT_USE_SEARCH_INFO,
+            'choices' => ['0' => \K::$fw->TEXT_NO, '1' => \K::$fw->TEXT_YES],
+            'tooltip' => \K::$fw->TEXT_USE_SEARCH_INFO,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         //cfg global list if exist
         if (count($choices = global_lists::get_lists_choices()) > 0) {
-            $cfg[\K::f3()->TEXT_SETTINGS][] = [
-                'title' => \K::f3()->TEXT_USE_GLOBAL_LIST,
+            $cfg[\K::$fw->TEXT_SETTINGS][] = [
+                'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
                 'type' => 'dropdown',
                 'choices' => $choices,
-                'tooltip' => \K::f3()->TEXT_USE_GLOBAL_LIST_TOOLTIP,
+                'tooltip' => \K::$fw->TEXT_USE_GLOBAL_LIST_TOOLTIP,
                 'params' => ['class' => 'form-control input-medium']
             ];
         }
 
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_CHOICES_VALUES,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_CHOICES_VALUES,
             'name' => 'display_choices_values',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_DISPLAY_CHOICES_VALUES_TIP
+            'tooltip_icon' => \K::$fw->TEXT_DISPLAY_CHOICES_VALUES_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_PARENT_NAME,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_PARENT_NAME,
             'name' => 'display_parent_name',
             'type' => 'dropdown',
-            'choices' => [0 => \K::f3()->TEXT_NO, 1 => \K::f3()->TEXT_YES],
+            'choices' => [0 => \K::$fw->TEXT_NO, 1 => \K::$fw->TEXT_YES],
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_VALUE][] = [
-            'title' => \K::f3()->TEXT_SEPARATOR,
+        $cfg[\K::$fw->TEXT_VALUE][] = [
+            'title' => \K::$fw->TEXT_SEPARATOR,
             'name' => 'parent_name_separator',
             'type' => 'input',
             'default' => ':',
@@ -109,7 +109,7 @@ class Fieldtype_dropdown
                 ) . ' field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '') . ($cfg->get(
                     'use_search'
                 ) == 1 ? ' chosen-select' : ''),
-            'data-placeholder' => \K::f3()->TEXT_SELECT_SOME_VALUES
+            'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
         ];
 
 //use global lists if exsit    

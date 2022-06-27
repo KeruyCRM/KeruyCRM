@@ -8,7 +8,7 @@ class Fieldtype_input_encrypted
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_INPUT_ENCRYPTED_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_INPUT_ENCRYPTED_TITLE];
     }
 
     public function get_configuration()
@@ -19,75 +19,75 @@ class Fieldtype_input_encrypted
 
         $html = '
                 <div class="form-group">
-        	        <label class="col-md-3 control-label" >' . \K::f3()->TEXT_ENCRYPTION_KEY . '</label>
+        	        <label class="col-md-3 control-label" >' . \K::$fw->TEXT_ENCRYPTION_KEY . '</label>
             	    <div class="col-md-9">' . input_tag(
                 'encryption_key',
                 $encryption_key,
                 ['class' => 'form-control input-large required', 'readonly' => 'readonly']
-            ) . tooltip_text(\K::f3()->TEXT_ENCRYPTION_KEY_INFO) . '
+            ) . tooltip_text(\K::$fw->TEXT_ENCRYPTION_KEY_INFO) . '
         	        </div>			
     	        </div>
             ';
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = ['type' => 'html', 'html' => $html];
+        $cfg[\K::$fw->TEXT_SETTINGS][] = ['type' => 'html', 'html' => $html];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_HIDE_VALUE][] = [
-            'title' => \K::f3()->TEXT_HIDE_VALUE,
+        $cfg[\K::$fw->TEXT_HIDE_VALUE][] = [
+            'title' => \K::$fw->TEXT_HIDE_VALUE,
             'name' => 'hide_value',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_HIDE_VALUE][] = [
-            'title' => \K::f3()->TEXT_REPLACE_WITH_SYMBOL,
+        $cfg[\K::$fw->TEXT_HIDE_VALUE][] = [
+            'title' => \K::$fw->TEXT_REPLACE_WITH_SYMBOL,
             'name' => 'replace_symbol',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': X',
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': X',
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_HIDE_VALUE][] = [
-            'title' => \K::f3()->TEXT_DISCLOSE_NUMBER_FIRST_LETTERS,
+        $cfg[\K::$fw->TEXT_HIDE_VALUE][] = [
+            'title' => \K::$fw->TEXT_DISCLOSE_NUMBER_FIRST_LETTERS,
             'name' => 'count_first_letters',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small number']
         ];
-        $cfg[\K::f3()->TEXT_HIDE_VALUE][] = [
-            'title' => \K::f3()->TEXT_DISCLOSE_NUMBER_LAST_LETTERS,
+        $cfg[\K::$fw->TEXT_HIDE_VALUE][] = [
+            'title' => \K::$fw->TEXT_DISCLOSE_NUMBER_LAST_LETTERS,
             'name' => 'count_last_letters',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small number']
         ];
 
         $choices = [];
-        $choices[0] = \K::f3()->TEXT_ADMINISTRATOR;
+        $choices[0] = \K::$fw->TEXT_ADMINISTRATOR;
 
         $groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
         while ($groups = db_fetch_array($groups_query)) {
@@ -100,12 +100,12 @@ class Fieldtype_input_encrypted
             $choices[$groups['id']] = $groups['name'];
         }
 
-        $cfg[\K::f3()->TEXT_HIDE_VALUE][] = [
-            'title' => \K::f3()->TEXT_USERS_GROUPS,
+        $cfg[\K::$fw->TEXT_HIDE_VALUE][] = [
+            'title' => \K::$fw->TEXT_USERS_GROUPS,
             'name' => 'users_groups',
             'type' => 'dropdown',
             'choices' => $choices,
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_INPUT_PROTECTED_USERS_GROUPS_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_INPUT_PROTECTED_USERS_GROUPS_TIP,
             'params' => ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
         ];
 
@@ -122,7 +122,7 @@ class Fieldtype_input_encrypted
         if (!ctype_print($value)) {
             $value_query = db_query(
                 "select AES_DECRYPT('" . db_input($value) . "','" . db_input(
-                    \K::f3()->DB_ENCRYPTION_KEY
+                    \K::$fw->DB_ENCRYPTION_KEY
                 ) . "') as text",
                 false
             );
@@ -157,14 +157,14 @@ class Fieldtype_input_encrypted
         global $alerts;
 
         if (!db_has_encryption_key()) {
-            $alerts->add(sprintf(\K::f3()->TEXT_ENCRYPTION_KEY_ERROR, $options['field']['name']), 'error');
+            $alerts->add(sprintf(\K::$fw->TEXT_ENCRYPTION_KEY_ERROR, $options['field']['name']), 'error');
             return '';
         }
 
         if (strlen($options['value'])) {
             $value_query = db_query(
                 "select AES_ENCRYPT('" . db_input(trim($options['value'])) . "','" . db_input(
-                    \K::f3()->DB_ENCRYPTION_KEY
+                    \K::$fw->DB_ENCRYPTION_KEY
                 ) . "') as text",
                 false
             );
@@ -225,7 +225,7 @@ class Fieldtype_input_encrypted
             if (in_array($field['type'], ['fieldtype_input_encrypted', 'fieldtype_textarea_encrypted']
                 ) and db_has_encryption_key()) {
                 $listing_sql_query_select .= ", AES_DECRYPT(field_" . $field['id'] . ",'" . db_input(
-                        \K::f3()->DB_ENCRYPTION_KEY
+                        \K::$fw->DB_ENCRYPTION_KEY
                     ) . "') as field_" . $field['id'];
             }
         }

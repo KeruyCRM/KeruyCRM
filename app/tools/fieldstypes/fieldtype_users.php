@@ -8,7 +8,7 @@ class Fieldtype_users
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_USERS_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_USERS_TITLE];
     }
 
     public function get_configuration($params = [])
@@ -16,72 +16,72 @@ class Fieldtype_users
         $entity_info = db_find('app_entities', $params['entities_id']);
 
         $cfg = [];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_USERS_AS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_USERS_AS,
             'name' => 'display_as',
             'type' => 'dropdown',
             'params' => ['class' => 'form-control input-xlarge'],
             'choices' => [
-                'dropdown' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN,
-                'checkboxes' => \K::f3()->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
-                'dropdown_muliple' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
+                'checkboxes' => \K::$fw->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
+                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ]
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_NAME,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_NAME,
             'name' => 'hide_field_name',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_NAME_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_NAME_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS,
             'name' => 'disable_notification',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO
+            'tooltip_icon' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO
         ];
 
         if ($entity_info['parent_id'] > 0) {
-            $cfg[\K::f3()->TEXT_SETTINGS][] = [
-                'title' => \K::f3()->TEXT_DISABLE_USERS_DEPENDENCY,
+            $cfg[\K::$fw->TEXT_SETTINGS][] = [
+                'title' => \K::$fw->TEXT_DISABLE_USERS_DEPENDENCY,
                 'name' => 'disable_dependency',
                 'type' => 'checkbox',
-                'tooltip_icon' => \K::f3()->TEXT_DISABLE_USERS_DEPENDENCY_INFO
+                'tooltip_icon' => \K::$fw->TEXT_DISABLE_USERS_DEPENDENCY_INFO
             ];
         }
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_ADMIN,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_ADMIN,
             'name' => 'hide_admin',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_AUTHORIZED_USER_BY_DEFAULT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_AUTHORIZED_USER_BY_DEFAULT,
             'name' => 'authorized_user_by_default',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_AUTHORIZED_USER_BY_DEFAULT_INFO
+            'tooltip_icon' => \K::$fw->TEXT_AUTHORIZED_USER_BY_DEFAULT_INFO
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_EXTRA][] = [
-            'title' => \K::f3()->TEXT_HIDE_ACCESS_GROUP,
+        $cfg[\K::$fw->TEXT_EXTRA][] = [
+            'title' => \K::$fw->TEXT_HIDE_ACCESS_GROUP,
             'name' => 'hide_access_group',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_EXTRA][] = [
-            'title' => \K::f3()->TEXT_USERS_GROUPS,
+        $cfg[\K::$fw->TEXT_EXTRA][] = [
+            'title' => \K::$fw->TEXT_USERS_GROUPS,
             'name' => 'use_groups',
             'type' => 'dropdown',
             'choices' => access_groups::get_choices(false),
-            'tooltip_icon' => \K::f3()->TEXT_USE_GROUPS_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_USE_GROUPS_TIP,
             'params' => ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
         ];
 
@@ -159,7 +159,7 @@ class Fieldtype_users
 
                     $group_name = (strlen($access_group_id) > 0 ? access_groups::get_name_by_id(
                         $access_group_id
-                    ) : \K::f3()->TEXT_ADMINISTRATOR);
+                    ) : \K::$fw->TEXT_ADMINISTRATOR);
 
                     if ($cfg->get('hide_access_group') == 1) {
                         $choices[$users['id']] = $app_users_cache[$users['id']]['name'];
@@ -202,7 +202,7 @@ class Fieldtype_users
 
             return select_tag(
                     'fields[' . $field['id'] . ']',
-                    ['' => \K::f3()->TEXT_NONE] + $choices,
+                    ['' => \K::$fw->TEXT_NONE] + $choices,
                     $value,
                     $attributes
                 ) . fields_types::custom_error_handler($field['id']);
@@ -219,7 +219,7 @@ class Fieldtype_users
             $attributes = [
                 'class' => 'form-control input-xlarge chosen-select field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),
                 'multiple' => 'multiple',
-                'data-placeholder' => \K::f3()->TEXT_SELECT_SOME_VALUES
+                'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
             ];
             return select_tag(
                     'fields[' . $field['id'] . '][]',

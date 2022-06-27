@@ -8,70 +8,70 @@ class Fieldtype_input_dynamic_mask
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_INPUT_FIELD_MASK,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_INPUT_FIELD_MASK,
             'name' => 'mask',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_INPUT_FIELD_MASK_TIP . '<br>' .
-                \K::f3()->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_INFO . '<br>' . \K::f3(
+            'tooltip' => \K::$fw->TEXT_INPUT_FIELD_MASK_TIP . '<br>' .
+                \K::$fw->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_INFO . '<br>' . \K::f3(
                 )->TEXT_EXAMPLE . ': aa-9{1,4} <br><br>' .
-                \K::f3()->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_OPTIONAL_INFO . '<br>' . \K::f3(
+                \K::$fw->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_OPTIONAL_INFO . '<br>' . \K::f3(
                 )->TEXT_EXAMPLE . ': 999[-999]',
             'params' => ['class' => 'form-control']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
             'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
-            'tooltip_icon' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ERROR_MESSAGE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR,
+            'tooltip_icon' => \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
-        $cfg[\K::f3()->TEXT_JS_CODE][] = [
+        $cfg[\K::$fw->TEXT_JS_CODE][] = [
             'title' => '',
             'name' => 'js_code',
             'type' => 'code',
             'params' => ['class' => 'form-control']
         ];
-        $cfg[\K::f3()->TEXT_JS_CODE . ' (' . \K::f3()->TEXT_EXAMPLE . ')'][] = [
+        $cfg[\K::$fw->TEXT_JS_CODE . ' (' . \K::$fw->TEXT_EXAMPLE . ')'][] = [
             'type' => 'html',
             'html' => '
 <textarea class="form-control code" style="height: 300px" readonly>
@@ -112,7 +112,7 @@ class Fieldtype_input_dynamic_mask
         $script = '';
 
         if (strlen($cfg->get('js_code'))) {
-            $error_info = \K::f3()->TEXT_ERROR . ' ' . \K::f3()->TEXT_FIELD . ' #' . $field['id'] . ' (' . addslashes(
+            $error_info = \K::$fw->TEXT_ERROR . ' ' . \K::$fw->TEXT_FIELD . ' #' . $field['id'] . ' (' . addslashes(
                     $field['name']
                 ) . ')';
             $script = '

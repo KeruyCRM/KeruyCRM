@@ -56,10 +56,10 @@ class Access_groups
     public static function get_access_view_choices()
     {
         $choices = [
-            '' => \K::f3()->TEXT_NO,
-            'view' => \K::f3()->TEXT_VIEW_ACCESS,
-            'view_assigned' => \K::f3()->TEXT_VIEW_ASSIGNED_ACCESS,
-            'action_with_assigned' => \K::f3()->TEXT_VIEW_ALL_ACTION_WIDTH_ASSIGNED_ACCESS,
+            '' => \K::$fw->TEXT_NO,
+            'view' => \K::$fw->TEXT_VIEW_ACCESS,
+            'view_assigned' => \K::$fw->TEXT_VIEW_ASSIGNED_ACCESS,
+            'action_with_assigned' => \K::$fw->TEXT_VIEW_ALL_ACTION_WIDTH_ASSIGNED_ACCESS,
         ];
 
         return $choices;
@@ -68,28 +68,28 @@ class Access_groups
     public static function get_access_choices()
     {
         $access_choices = [
-            'create' => \K::f3()->TEXT_CREATE_ACCESS,
-            'update' => \K::f3()->TEXT_UPDATE_ACCESS,
+            'create' => \K::$fw->TEXT_CREATE_ACCESS,
+            'update' => \K::$fw->TEXT_UPDATE_ACCESS,
         ];
 
         //extra access available in extension
         if (is_ext_installed()) {
             $access_choices += [
-                'update_selected' => \K::f3()->TEXT_UPDATE_SELECTED_ACCESS,
-                'copy' => \K::f3()->TEXT_COPY_RECORDS,
-                'move' => \K::f3()->TEXT_MOVE_RECORDS,
-                'repeat' => \K::f3()->TEXT_EXT_REPEAT,
+                'update_selected' => \K::$fw->TEXT_UPDATE_SELECTED_ACCESS,
+                'copy' => \K::$fw->TEXT_COPY_RECORDS,
+                'move' => \K::$fw->TEXT_MOVE_RECORDS,
+                'repeat' => \K::$fw->TEXT_EXT_REPEAT,
             ];
         }
 
         $access_choices += [
-            'delete' => \K::f3()->TEXT_DELETE_ACCESS,
-            'delete_selected' => \K::f3()->TEXT_DELETE_SELECTED_ACCESS,
-            'delete_creator' => \K::f3()->TEXT_DELETE_BY_CREATOR_ONLY,
-            'export' => \K::f3()->TEXT_EXPORT_ACCESS,
-            'export_selected' => \K::f3()->TEXT_EXPORT_SELECTED_ACCESS,
-            'import' => \K::f3()->TEXT_IMPORT,
-            'reports' => \K::f3()->TEXT_REPORTS_CREATE_ACCESS,
+            'delete' => \K::$fw->TEXT_DELETE_ACCESS,
+            'delete_selected' => \K::$fw->TEXT_DELETE_SELECTED_ACCESS,
+            'delete_creator' => \K::$fw->TEXT_DELETE_BY_CREATOR_ONLY,
+            'export' => \K::$fw->TEXT_EXPORT_ACCESS,
+            'export_selected' => \K::$fw->TEXT_EXPORT_SELECTED_ACCESS,
+            'import' => \K::$fw->TEXT_IMPORT,
+            'reports' => \K::$fw->TEXT_REPORTS_CREATE_ACCESS,
         ];
 
         return $access_choices;
@@ -120,7 +120,7 @@ class Access_groups
         global $app_access_groups_cache;
 
         if ($id == 0) {
-            return \K::f3()->TEXT_ADMINISTRATOR;
+            return \K::$fw->TEXT_ADMINISTRATOR;
         } else {
             if (isset($app_access_groups_cache[$id])) {
                 return $app_access_groups_cache[$id];
@@ -153,7 +153,7 @@ class Access_groups
         $count = db_fetch_array($count_query);
 
         if ($count['total'] > 0) {
-            return sprintf(\K::f3()->TEXT_ERROR_DELETE_USER_GROUP, $count['total']);
+            return sprintf(\K::$fw->TEXT_ERROR_DELETE_USER_GROUP, $count['total']);
         } else {
             return '';
         }
@@ -164,7 +164,7 @@ class Access_groups
         $choices = [];
 
         if ($include_administrator) {
-            $choices[0] = \K::f3()->TEXT_ADMINISTRATOR;
+            $choices[0] = \K::$fw->TEXT_ADMINISTRATOR;
         }
 
         $groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
@@ -180,7 +180,7 @@ class Access_groups
         $cache = [];
 
         //if (defined('TEXT_ADMINISTRATOR')) {
-        $cache[0] = \K::f3()->TEXT_ADMINISTRATOR;
+        $cache[0] = \K::$fw->TEXT_ADMINISTRATOR;
         //}
 
         //$groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
@@ -189,7 +189,7 @@ class Access_groups
             [],
             ['order', 'sort_order, name'],
             'id,name',//FIX
-            [\K::f3()->TTL_APP, 'app_access_groups']
+            [\K::$fw->TTL_APP, 'app_access_groups']
         );
 
         //while ($v = db_fetch_array($groups_query)) {

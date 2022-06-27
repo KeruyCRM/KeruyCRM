@@ -8,7 +8,7 @@ class Fieldtype_users_approve
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_USERS_APPROVE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_USERS_APPROVE_TITLE];
     }
 
     public function get_configuration($params = [])
@@ -16,136 +16,136 @@ class Fieldtype_users_approve
         $entity_info = db_find('app_entities', $params['entities_id']);
 
         $cfg = [];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_USERS_AS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_USERS_AS,
             'name' => 'display_as',
             'type' => 'dropdown',
             'params' => ['class' => 'form-control input-xlarge'],
             'choices' => [
-                'dropdown' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN,
-                'checkboxes' => \K::f3()->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
-                'dropdown_muliple' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
+                'checkboxes' => \K::$fw->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
+                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ]
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DEFAULT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DEFAULT,
             'name' => 'users_by_default',
             'type' => 'dropdown',
             'choices' => users::get_choices(),
             'params' => ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS,
             'name' => 'disable_notification',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO
+            'tooltip_icon' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO
         ];
 
         if ($entity_info['parent_id'] > 0) {
-            $cfg[\K::f3()->TEXT_SETTINGS][] = [
-                'title' => \K::f3()->TEXT_DISABLE_USERS_DEPENDENCY,
+            $cfg[\K::$fw->TEXT_SETTINGS][] = [
+                'title' => \K::$fw->TEXT_DISABLE_USERS_DEPENDENCY,
                 'name' => 'disable_dependency',
                 'type' => 'checkbox',
-                'tooltip_icon' => \K::f3()->TEXT_DISABLE_USERS_DEPENDENCY_INFO
+                'tooltip_icon' => \K::$fw->TEXT_DISABLE_USERS_DEPENDENCY_INFO
             ];
         }
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_ADMIN,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_ADMIN,
             'name' => 'hide_admin',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_NAME,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_NAME,
             'name' => 'hide_field_name',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_NAME_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_NAME_TIP
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_BUTTON_TITLE,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_BUTTON_TITLE,
             'name' => 'button_title',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_APPROVE
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_APPROVE
         ];
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_ICON,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_ICON,
             'name' => 'button_icon',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip' => \K::f3()->TEXT_MENU_ICON_TITLE_TOOLTIP
+            'tooltip' => \K::$fw->TEXT_MENU_ICON_TITLE_TOOLTIP
         ];
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_COLOR,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_COLOR,
             'name' => 'button_color',
             'type' => 'colorpicker'
         ];
 
-        $cfg[\K::f3()->TEXT_ACTION][] = [
-            'title' => \K::f3()->TEXT_CONFIRMATION_WINDOW,
+        $cfg[\K::$fw->TEXT_ACTION][] = [
+            'title' => \K::$fw->TEXT_CONFIRMATION_WINDOW,
             'name' => 'confirmation_window',
             'type' => 'dropdown',
-            'choices' => ['0' => \K::f3()->TEXT_NO, '1' => \K::f3()->TEXT_YES],
+            'choices' => ['0' => \K::$fw->TEXT_NO, '1' => \K::$fw->TEXT_YES],
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_ACTION][] = [
-            'title' => \K::f3()->TEXT_CONFIRMATION_TEXT,
+        $cfg[\K::$fw->TEXT_ACTION][] = [
+            'title' => \K::$fw->TEXT_CONFIRMATION_TEXT,
             'name' => 'confirmation_text',
             'type' => 'textarea',
             'params' => ['class' => 'form-control textarea-small'],
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_ARE_YOU_SURE
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_ARE_YOU_SURE
         ];
 
-        $cfg[\K::f3()->TEXT_ACTION][] = [
-            'title' => \K::f3()->TEXT_ADD_COMMENT,
+        $cfg[\K::$fw->TEXT_ACTION][] = [
+            'title' => \K::$fw->TEXT_ADD_COMMENT,
             'name' => 'add_comment',
             'type' => 'dropdown',
-            'choices' => ['0' => \K::f3()->TEXT_NO, '1' => \K::f3()->TEXT_YES],
+            'choices' => ['0' => \K::$fw->TEXT_NO, '1' => \K::$fw->TEXT_YES],
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_ACTION][] = [
-            'title' => \K::f3()->TEXT_COMMENT_TEXT,
+        $cfg[\K::$fw->TEXT_ACTION][] = [
+            'title' => \K::$fw->TEXT_COMMENT_TEXT,
             'name' => 'comment_text',
             'type' => 'textarea',
             'params' => ['class' => 'form-control textarea-small'],
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_APPROVED
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_APPROVED
         ];
 
-        $cfg[\K::f3()->TEXT_SIGNATURE][] = [
-            'title' => \K::f3()->TEXT_SIGNATURE,
+        $cfg[\K::$fw->TEXT_SIGNATURE][] = [
+            'title' => \K::$fw->TEXT_SIGNATURE,
             'name' => 'use_signature',
             'type' => 'dropdown',
-            'choices' => ['0' => \K::f3()->TEXT_NO, '1' => \K::f3()->TEXT_YES],
+            'choices' => ['0' => \K::$fw->TEXT_NO, '1' => \K::$fw->TEXT_YES],
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_SIGNATURE][] = [
-            'title' => \K::f3()->TEXT_DESCRIPTION,
+        $cfg[\K::$fw->TEXT_SIGNATURE][] = [
+            'title' => \K::$fw->TEXT_DESCRIPTION,
             'name' => 'signature_description',
             'type' => 'textarea',
             'params' => ['class' => 'form-control textarea-small']
         ];
-        $cfg[\K::f3()->TEXT_SIGNATURE][] = [
-            'title' => \K::f3()->TEXT_WIDTH_IN_ITEM_PAGE,
+        $cfg[\K::$fw->TEXT_SIGNATURE][] = [
+            'title' => \K::$fw->TEXT_WIDTH_IN_ITEM_PAGE,
             'name' => 'signature_width_item_page',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip_icon' => \K::f3()->TEXT_WIDTH_IN_ITEM_PAGE_INFO
+            'tooltip_icon' => \K::$fw->TEXT_WIDTH_IN_ITEM_PAGE_INFO
         ];
-        $cfg[\K::f3()->TEXT_SIGNATURE][] = [
-            'title' => \K::f3()->TEXT_WIDTH_IN_PRINT_PAGE,
+        $cfg[\K::$fw->TEXT_SIGNATURE][] = [
+            'title' => \K::$fw->TEXT_WIDTH_IN_PRINT_PAGE,
             'name' => 'signature_width_print_page',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip_icon' => \K::f3()->TEXT_WIDTH_IN_PRINT_PAGE_INFO
+            'tooltip_icon' => \K::$fw->TEXT_WIDTH_IN_PRINT_PAGE_INFO
         ];
 
         $choices = [];
@@ -160,13 +160,13 @@ class Fieldtype_users_approve
             }
         }
 
-        $cfg[\K::f3()->TEXT_ACTION][] = [
-            'title' => \K::f3()->TEXT_ALL_USERS_APPROVED,
+        $cfg[\K::$fw->TEXT_ACTION][] = [
+            'title' => \K::$fw->TEXT_ALL_USERS_APPROVED,
             'name' => 'run_process',
             'type' => 'dropdown',
             'choices' => $choices,
             'params' => ['class' => 'form-control input-large'],
-            'tooltip' => \K::f3()->TEXT_ALL_USERS_APPROVED_INFO
+            'tooltip' => \K::$fw->TEXT_ALL_USERS_APPROVED_INFO
         ];
 
         return $cfg;
@@ -205,8 +205,7 @@ class Fieldtype_users_approve
         }
 
         $choices = [];
-        $order_by_sql = (\K::f3(
-        )->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? 'u.field_7, u.field_8' : 'u.field_8, u.field_7');
+        $order_by_sql = (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? 'u.field_7, u.field_8' : 'u.field_8, u.field_7');
         $users_query = db_query(
             "select u.*,a.name as group_name from app_entity_1 u left join app_access_groups a on a.id=u.field_6 where {$where_sql} order by group_name, " . $order_by_sql
         );
@@ -227,7 +226,7 @@ class Fieldtype_users_approve
                     continue;
                 }
 
-                $group_name = (strlen($users['group_name']) > 0 ? $users['group_name'] : \K::f3()->TEXT_ADMINISTRATOR);
+                $group_name = (strlen($users['group_name']) > 0 ? $users['group_name'] : \K::$fw->TEXT_ADMINISTRATOR);
                 $choices[$group_name][$users['id']] = $app_users_cache[$users['id']]['name'];
             }
         }
@@ -259,7 +258,7 @@ class Fieldtype_users_approve
 
             return select_tag(
                     'fields[' . $field['id'] . ']',
-                    ['' => \K::f3()->TEXT_NONE] + $choices,
+                    ['' => \K::$fw->TEXT_NONE] + $choices,
                     $value,
                     $attributes
                 ) . fields_types::custom_error_handler($field['id']);
@@ -276,7 +275,7 @@ class Fieldtype_users_approve
             $attributes = [
                 'class' => 'form-control input-xlarge chosen-select field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),
                 'multiple' => 'multiple',
-                'data-placeholder' => \K::f3()->TEXT_SELECT_SOME_VALUES
+                'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
             ];
             return select_tag(
                     'fields[' . $field['id'] . '][]',
@@ -456,7 +455,7 @@ class Fieldtype_users_approve
                                 $cfg->get('button_icon')
                             ) . ' ' : '') . (strlen($cfg->get('button_title')) ? $cfg->get(
                             'button_title'
-                        ) : \K::f3()->TEXT_APPROVE);
+                        ) : \K::$fw->TEXT_APPROVE);
 
                     $btn_css = 'btn-color-' . $options['field']['id'];
 

@@ -236,7 +236,7 @@ class Global_lists
         $choices_query = \K::model()->db_fetch_all(
             'app_global_lists_choices',
             null,
-            [\K::f3()->TTL_APP, 'app_global_lists_choices']
+            [\K::$fw->TTL_APP, 'app_global_lists_choices']
         );
 
         //while ($v = db_fetch_array($choices_query)) {

@@ -7,7 +7,7 @@ class Entities
     public static function get_cache()
     {
         $cache = [];
-        $entities_query = \K::model()->db_fetch_all('app_entities', null, [\K::f3()->TTL_APP, 'app_entities']);
+        $entities_query = \K::model()->db_fetch_all('app_entities', null, [\K::$fw->TTL_APP, 'app_entities']);
 
         //while ($entities = db_fetch_array($entities_query)) {
         foreach ($entities_query as $entities) {
@@ -89,7 +89,7 @@ class Entities
 
     public static function insert_default_form_tab($id)
     {
-        $sql_data = ['name' => \K::f3()->TEXT_INFO, 'entities_id' => $id];
+        $sql_data = ['name' => \K::$fw->TEXT_INFO, 'entities_id' => $id];
 
         $mapper = \K::model()->db_perform('app_forms_tabs', $sql_data);
 
@@ -182,13 +182,13 @@ class Entities
 
         //check if entity is Users
         if ($id == 1) {
-            $msg = sprintf(\K::f3()->TEXT_WARN_DELETE_ENTITY_USERS, $name);
+            $msg = sprintf(\K::$fw->TEXT_WARN_DELETE_ENTITY_USERS, $name);
         } //check if there are sub entities
         elseif (db_count('app_entities', $id, 'parent_id') > 0) {
-            $msg = sprintf(\K::f3()->TEXT_WARN_DELETE_ENTITY_HAS_PARENT, $name);
+            $msg = sprintf(\K::$fw->TEXT_WARN_DELETE_ENTITY_HAS_PARENT, $name);
         } //chec if there is items
         elseif (db_count('app_entity_' . $id) > 0) {
-            $msg = sprintf(\K::f3()->TEXT_WARN_DELETE_ENTITY_HAS_ITEMS, $name);
+            $msg = sprintf(\K::$fw->TEXT_WARN_DELETE_ENTITY_HAS_ITEMS, $name);
         } //check if there are relationship with other entities
         else {
             $relationship = [];
@@ -206,7 +206,7 @@ class Entities
 
             if (count($relationship) > 0) {
                 $msg = sprintf(
-                    \K::f3()->TEXT_WARN_DELETE_ENTITY_HAS_RELATIONSHIP,
+                    \K::$fw->TEXT_WARN_DELETE_ENTITY_HAS_RELATIONSHIP,
                     $name,
                     implode('<br>', $relationship)
                 );
@@ -219,7 +219,7 @@ class Entities
     public static function get_name_by_id($id)
     {
         //global $app_entities_cache;
-        $app_entities_cache = \K::f3()->app_entities_cache;
+        $app_entities_cache = \K::$fw->app_entities_cache;
 
         return (isset($app_entities_cache[$id]) ? $app_entities_cache[$id]['name'] : '');
     }
@@ -243,7 +243,7 @@ class Entities
     public static function get_choices_with_empty($empty_text = null)
     {
         if ($empty_text === null) {
-            $empty_text = \K::f3()->TEXT_VIEW_ALL;
+            $empty_text = \K::$fw->TEXT_VIEW_ALL;
         }
         $choices = self::get_choices();
         return ['0' => $empty_text] + $choices;
@@ -315,7 +315,7 @@ class Entities
     public static function get_parents($entities_id, $parents = [])
     {
         //global $app_entities_cache;
-        $app_entities_cache = \K::f3()->app_entities_cache;
+        $app_entities_cache = \K::$fw->app_entities_cache;
 
         ////$entities_query = db_query("select * from app_entities where id='" . $entities_id . "'");
         ////if($entities = db_fetch_array($entities_query))

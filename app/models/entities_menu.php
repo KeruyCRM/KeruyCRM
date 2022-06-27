@@ -177,7 +177,6 @@ class entities_menu
                         }
                     } while ($check);
 
-
                     $choices[$type][$key] = $name;
                 }
             }

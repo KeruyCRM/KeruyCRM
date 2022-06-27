@@ -8,17 +8,17 @@ class fieldtype_entity_multilevel
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_ENTITY_MULTILEVEL_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_ENTITY_MULTILEVEL_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_SELECT_ENTITY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_SELECT_ENTITY,
             'name' => 'entity_id',
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_ENTITY_MULTILEVEL_SELECT_ENTITY_TOOLTIP,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_ENTITY_MULTILEVEL_SELECT_ENTITY_TOOLTIP,
             'type' => 'dropdown',
             'choices' => entities::get_choices(),
             'params' => [
@@ -27,46 +27,46 @@ class fieldtype_entity_multilevel
             ],
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'name' => 'parent_value_box',
             'type' => 'ajax',
             'html' => '<script>fields_types_ajax_configuration(\'parent_value_box\',$("#fields_configuration_entity_id").val())</script>'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_PLUS_BUTTON,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_PLUS_BUTTON,
             'name' => 'hide_plus_button',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => tooltip_icon(TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::f3()->TEXT_DISPLAY_NAME_AS_LINK,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => tooltip_icon(TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
             'name' => 'display_as_link',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         //TEXT_FIELDS
-        $cfg[\K::f3()->TEXT_FIELDS][] = [
+        $cfg[\K::$fw->TEXT_FIELDS][] = [
             'name' => 'fields_for_search_box',
             'type' => 'ajax',
             'html' => '<script>fields_types_ajax_configuration(\'fields_for_search_box\',$("#fields_configuration_entity_id").val())</script>'
@@ -104,8 +104,8 @@ class fieldtype_entity_multilevel
                         'name' => 'force_parent_item_id',
                         'type' => 'dropdown',
                         'choices' => $choices,
-                        'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_ENTITY_MULTILEVEL_PARENT_FIELD_TIP,
-                        'tooltip' => \K::f3()->TEXT_FIELDTYPE_ENTITY_MULTILEVEL_PARENT_FIELD_VALUE_TIP,
+                        'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_ENTITY_MULTILEVEL_PARENT_FIELD_TIP,
+                        'tooltip' => \K::$fw->TEXT_FIELDTYPE_ENTITY_MULTILEVEL_PARENT_FIELD_VALUE_TIP,
                         'params' => ['class' => 'form-control input-xlarge']
                     ];
                 }
@@ -128,12 +128,12 @@ class fieldtype_entity_multilevel
                 }
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_FIELDS_IN_POPUP,
+                    'title' => \K::$fw->TEXT_FIELDS_IN_POPUP,
                     'name' => 'fields_in_popup',
                     'type' => 'dropdown',
                     'choices' => $choices,
-                    'tooltip_icon' => \K::f3()->TEXT_FIELDS_IN_POPUP_RELATED_ITEMS,
-                    'tooltip' => \K::f3()->TEXT_SORT_ITEMS_IN_LIST,
+                    'tooltip_icon' => \K::$fw->TEXT_FIELDS_IN_POPUP_RELATED_ITEMS,
+                    'tooltip' => \K::$fw->TEXT_SORT_ITEMS_IN_LIST,
                     'params' => [
                         'class' => 'form-control chosen-select chosen-sortable input-xlarge',
                         'multiple' => 'multiple'
@@ -151,28 +151,28 @@ class fieldtype_entity_multilevel
                 }
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_SEARCH_BY_FIELDS,
+                    'title' => \K::$fw->TEXT_SEARCH_BY_FIELDS,
                     'name' => 'fields_for_search',
                     'type' => 'dropdown',
                     'choices' => $choices,
-                    'tooltip_icon' => \K::f3()->TEXT_SEARCH_BY_FIELDS_INFO,
+                    'tooltip_icon' => \K::$fw->TEXT_SEARCH_BY_FIELDS_INFO,
                     'params' => ['class' => 'form-control chosen-select input-xlarge', 'multiple' => 'multiple']
                 ];
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
+                    'title' => \K::$fw->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
                             $entities_id,
                             'fields_configuration_heading_template'
                         ),
                     'name' => 'heading_template',
                     'type' => 'textarea',
-                    'tooltip_icon' => \K::f3()->TEXT_HEADING_TEMPLATE_INFO,
-                    'tooltip' => \K::f3()->TEXT_ENTER_TEXT_PATTERN_INFO,
+                    'tooltip_icon' => \K::$fw->TEXT_HEADING_TEMPLATE_INFO,
+                    'tooltip' => \K::$fw->TEXT_ENTER_TEXT_PATTERN_INFO,
                     'params' => ['class' => 'form-control input-xlarge']
                 ];
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_COPY_VALUES .
+                    'title' => \K::$fw->TEXT_COPY_VALUES .
                         fields::get_available_fields_helper(
                             $entities_id,
                             'fields_configuration_copy_values',
@@ -185,7 +185,7 @@ class fieldtype_entity_multilevel
                         ) . '</div>',
                     'name' => 'copy_values',
                     'type' => 'textarea',
-                    'tooltip' => \K::f3()->TEXT_COPY_FIELD_VALUES_INFO,
+                    'tooltip' => \K::$fw->TEXT_COPY_FIELD_VALUES_INFO,
                     'params' => ['class' => 'form-control input-xlarge']
                 ];
 

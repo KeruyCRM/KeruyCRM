@@ -8,32 +8,32 @@ class Fieldtype_input_datetime
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_INPUT_DATETIME_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_INPUT_DATETIME_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED,
             'name' => 'notify_when_changed',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED_TIP
+            'tooltip_icon' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DATE_FORMAT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DATE_FORMAT,
             'name' => 'date_format',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->CFG_APP_DATETIME_FORMAT . ', ' . \K::f3(
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->CFG_APP_DATETIME_FORMAT . ', ' . \K::f3(
                 )->TEXT_DATE_FORMAT_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
@@ -45,74 +45,74 @@ class Fieldtype_input_datetime
             'yyyy-mm' => 'yyyy-mm',
             'yyyy' => 'yyyy',
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DATE_FORMAT_IN_CALENDAR,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DATE_FORMAT_IN_CALENDAR,
             'name' => 'date_format_in_calendar',
             'type' => 'dropdown',
             'choices' => $choices,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_EXTRA][] = [
-            'title' => \K::f3()->TEXT_DEFAULT_DATE,
+        $cfg[\K::$fw->TEXT_EXTRA][] = [
+            'title' => \K::$fw->TEXT_DEFAULT_DATE,
             'name' => 'default_value',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_DATE_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_DATE_INFO,
             'params' => ['class' => 'form-control input-small', 'type' => 'number']
         ];
 
-        $cfg[\K::f3()->TEXT_EXTRA][] = [
-            'title' => \K::f3()->TEXT_MIN_DATE,
+        $cfg[\K::$fw->TEXT_EXTRA][] = [
+            'title' => \K::$fw->TEXT_MIN_DATE,
             'name' => 'min_date',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_DATE_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_DATE_INFO,
             'params' => ['class' => 'form-control input-small', 'type' => 'number']
         ];
 
-        $cfg[\K::f3()->TEXT_EXTRA][] = [
-            'title' => \K::f3()->TEXT_MAX_DATE,
+        $cfg[\K::$fw->TEXT_EXTRA][] = [
+            'title' => \K::$fw->TEXT_MAX_DATE,
             'name' => 'max_date',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_DATE_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_DATE_INFO,
             'params' => ['class' => 'form-control input-small', 'type' => 'number']
         ];
 
-        $cfg[\K::f3()->TEXT_EXTRA][] = [
-            'title' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE,
+        $cfg[\K::$fw->TEXT_EXTRA][] = [
+            'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
             'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
-            'tooltip_icon' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
-        $cfg[\K::f3()->TEXT_EXTRA][] = [
-            'title' => \K::f3()->TEXT_ERROR_MESSAGE,
+        $cfg[\K::$fw->TEXT_EXTRA][] = [
+            'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR,
+            'tooltip_icon' => \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
-        $cfg[\K::f3()->TEXT_COLOR][] = [
-            'title' => \K::f3()->TEXT_OVERDUE_DATES,
+        $cfg[\K::$fw->TEXT_COLOR][] = [
+            'title' => \K::$fw->TEXT_OVERDUE_DATES,
             'name' => 'background',
             'type' => 'colorpicker',
-            'tooltip_icon' => \K::f3()->TEXT_DATE_BACKGROUND_TOOLTIP
+            'tooltip_icon' => \K::$fw->TEXT_DATE_BACKGROUND_TOOLTIP
         ];
 
-        $cfg[\K::f3()->TEXT_COLOR][] = [
-            'title' => \K::f3()->TEXT_DAYS_BEFORE_DATE,
+        $cfg[\K::$fw->TEXT_COLOR][] = [
+            'title' => \K::$fw->TEXT_DAYS_BEFORE_DATE,
             'name' => 'day_before_date',
             'type' => 'input-with-colorpicker',
-            'tooltip_icon' => \K::f3()->TEXT_DAYS_BEFORE_DATE_TIP
+            'tooltip_icon' => \K::$fw->TEXT_DAYS_BEFORE_DATE_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_COLOR][] = [
-            'title' => \K::f3()->TEXT_DAYS_BEFORE_DATE . ' 2',
+        $cfg[\K::$fw->TEXT_COLOR][] = [
+            'title' => \K::$fw->TEXT_DAYS_BEFORE_DATE . ' 2',
             'name' => 'day_before_date2',
             'type' => 'input-with-colorpicker',
-            'tooltip_icon' => \K::f3()->TEXT_DAYS_BEFORE_DATE_TIP
+            'tooltip_icon' => \K::$fw->TEXT_DAYS_BEFORE_DATE_TIP
         ];
 
         $choices = ['' => ''];
@@ -126,19 +126,19 @@ class Fieldtype_input_datetime
             $choices[$fields['id']] = $fields['name'];
         }
 
-        $cfg[\K::f3()->TEXT_COLOR][] = [
-            'title' => \K::f3()->TEXT_DISABLE_COLOR,
+        $cfg[\K::$fw->TEXT_COLOR][] = [
+            'title' => \K::$fw->TEXT_DISABLE_COLOR,
             'name' => 'disable_color_by_field',
             'type' => 'dropdown',
             'choices' => $choices,
-            'tooltip_icon' => \K::f3()->TEXT_DISABLE_COLOR_BY_FIELD_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_DISABLE_COLOR_BY_FIELD_TIP,
             'params' => [
                 'class' => 'form-control input-large',
                 'onChange' => 'fields_types_ajax_configuration(\'disable_color_by_field_values\',this.value)'
             ],
         ];
 
-        $cfg[\K::f3()->TEXT_COLOR][] = [
+        $cfg[\K::$fw->TEXT_COLOR][] = [
             'name' => 'disable_color_by_field_values',
             'type' => 'ajax',
             'html' => '<script>fields_types_ajax_configuration(\'disable_color_by_field_values\',$("#fields_configuration_disable_color_by_field").val())</script>'

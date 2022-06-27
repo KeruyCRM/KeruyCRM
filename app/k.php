@@ -2,7 +2,17 @@
 
 class K
 {
-    public static function f3()
+    public static $fw;
+
+    public static function keruy()
+    {
+        if (is_null(self::$fw)) {
+            self::$fw = self::fw();
+        }
+        return self::$fw;
+    }
+
+    public static function fw()
     {
         return \Base::instance();
     }
@@ -44,46 +54,49 @@ class K
 
     public static function sessionExists($key, &$val = null)
     {
-        return self::f3()->exists('SESSION.' . $key, $val);
+        return self::fw()->exists('SESSION.' . $key, $val);
     }
 
     public static function sessionGet($key, $args = null)
     {
-        return self::f3()->get('SESSION.' . $key, $args);
+        return self::fw()->get('SESSION.' . $key, $args);
     }
 
-    public static function sessionSet($key, $val, $ttl = 0)
+    public static function sessionSet($key, $val, $initRef = false, $ttl = 0)
     {
-        return self::f3()->set('SESSION.' . $key, $val, $ttl);
+        self::fw()->set('SESSION.' . $key, $val, $ttl);
+        if ($initRef) {
+            self::fw()->refSync($key, self::fw()->{'SESSION.' . $key});
+        }
     }
 
     public static function sessionClear($key)
     {
-        self::f3()->clear('SESSION.' . $key);
+        self::fw()->clear('SESSION.' . $key);
     }
 
     public static function cookieExists($key, &$val = null)
     {
-        return self::f3()->exists('COOKIE.' . $key, $val);
+        return self::fw()->exists('COOKIE.' . $key, $val);
     }
 
     public static function cookieGet($key, $args = null)
     {
-        return self::f3()->get('COOKIE.' . $key, $args);
+        return self::fw()->get('COOKIE.' . $key, $args);
     }
 
     public static function cookieSet($key, $val, $ttl = 0)
     {
-        return self::f3()->set('COOKIE.' . $key, $val, $ttl);
+        return self::fw()->set('COOKIE.' . $key, $val, $ttl);
     }
 
     public static function cookieClear($key)
     {
-        self::f3()->clear('COOKIE.' . $key);
+        self::fw()->clear('COOKIE.' . $key);
     }
 
     public static function reroute($url, $module = 'module/', $permanent = false, $die = true)
     {
-        return self::f3()->reroute('/' . $module . $url, $permanent, $die);
+        return self::fw()->reroute('/' . $module . $url, $permanent, $die);
     }
 }

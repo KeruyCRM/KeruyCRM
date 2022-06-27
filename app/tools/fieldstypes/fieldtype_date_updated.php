@@ -9,8 +9,8 @@ class Fieldtype_date_updated
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_DATE_UPDATED_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_DATE_UPDATED_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_DATE_UPDATED_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_DATE_UPDATED_TITLE
         ];
     }
 

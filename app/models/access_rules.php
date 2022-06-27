@@ -11,8 +11,8 @@ class Access_rules
     public function __construct($entities_id, $item_info)
     {
         //global $app_user, $app_access_rules_fields_cache;
-        $app_user = \K::f3()->app_user;
-        $app_access_rules_fields_cache = \K::f3()->app_access_rules_fields_cache;
+        $app_user = \K::$fw->app_user;
+        $app_access_rules_fields_cache = \K::$fw->app_access_rules_fields_cache;
 
         $this->access_schema = null;
         $this->fields_view_only_access = '';
@@ -56,7 +56,7 @@ class Access_rules
         $access_rules_fields_query = \K::model()->db_fetch_all(
             'app_access_rules_fields',
             null,
-            [\K::f3()->TTL_APP, 'app_access_rules_fields']
+            [\K::$fw->TTL_APP, 'app_access_rules_fields']
         );
 
         //while ($access_rules_fields = db_fetch_array($access_rules_fields_query)) {
@@ -73,7 +73,7 @@ class Access_rules
     public function get_access_schema()
     {
         //global $current_access_schema;
-        $current_access_schema = \K::f3()->current_access_schema;
+        $current_access_schema = \K::$fw->current_access_schema;
 
         if (!isset($this->access_schema)) {
             return null;
@@ -128,8 +128,8 @@ class Access_rules
     public static function has_add_buttons_access($entities_id, $parent_item_id)
     {
         //global $app_entities_cache, $sql_query_having;
-        $app_entities_cache = \K::f3()->app_entities_cache;
-        $sql_query_having = \K::f3()->sql_query_having;
+        $app_entities_cache = \K::$fw->app_entities_cache;
+        $sql_query_having = \K::$fw->sql_query_having;
 
         if ($app_entities_cache[$entities_id]['parent_id'] == 0) {
             return true;

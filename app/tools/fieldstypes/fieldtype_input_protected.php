@@ -8,7 +8,7 @@ class Fieldtype_input_protected
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_INPUT_PROTECTED_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_INPUT_PROTECTED_TITLE];
     }
 
     public function get_configuration()
@@ -16,28 +16,28 @@ class Fieldtype_input_protected
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_REPLACE_WITH_SYMBOL,
+            'title' => \K::$fw->TEXT_REPLACE_WITH_SYMBOL,
             'name' => 'replace_symbol',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': X',
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': X',
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISCLOSE_NUMBER_FIRST_LETTERS,
+            'title' => \K::$fw->TEXT_DISCLOSE_NUMBER_FIRST_LETTERS,
             'name' => 'count_first_letters',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small number']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISCLOSE_NUMBER_LAST_LETTERS,
+            'title' => \K::$fw->TEXT_DISCLOSE_NUMBER_LAST_LETTERS,
             'name' => 'count_last_letters',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small number']
         ];
 
         $choices = [];
-        $choices[0] = \K::f3()->TEXT_ADMINISTRATOR;
+        $choices[0] = \K::$fw->TEXT_ADMINISTRATOR;
 
         $groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
         while ($groups = db_fetch_array($groups_query)) {
@@ -51,56 +51,56 @@ class Fieldtype_input_protected
         }
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_USERS_GROUPS,
+            'title' => \K::$fw->TEXT_USERS_GROUPS,
             'name' => 'users_groups',
             'type' => 'dropdown',
             'choices' => $choices,
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_INPUT_PROTECTED_USERS_GROUPS_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_INPUT_PROTECTED_USERS_GROUPS_TIP,
             'params' => ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE,
+            'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
             'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
-            'tooltip_icon' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ERROR_MESSAGE,
+            'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR,
+            'tooltip_icon' => \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 

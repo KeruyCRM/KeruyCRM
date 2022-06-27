@@ -8,7 +8,7 @@ class Fieldtype_action
 
     public function __construct()
     {
-        $this->options = ['name' => \K::f3()->TEXT_FIELDTYPE_ACTION_TITLE];
+        $this->options = ['name' => \K::$fw->TEXT_FIELDTYPE_ACTION_TITLE];
     }
 
     public function output($options)
@@ -62,7 +62,7 @@ class Fieldtype_action
         //change user pasword
         if (users::has_access('update', $access_rules->get_access_schema()) and $options['field']['entities_id'] == 1) {
             $list[] = button_icon(
-                \K::f3()->TEXT_CHANGE_PASSWORD,
+                \K::$fw->TEXT_CHANGE_PASSWORD,
                 'fa fa-unlock-alt',
                 url_for(
                     'items/change_user_password',
@@ -76,7 +76,7 @@ class Fieldtype_action
         if ($app_user['group_id'] == 0 and $options['field']['entities_id'] == 1) {
             if ($options['item']['field_5'] == 1) {
                 $list[] = button_icon(
-                    \K::f3()->TEXT_BUTTON_LOGIN,
+                    \K::$fw->TEXT_BUTTON_LOGIN,
                     'fa fa-sign-in',
                     url_for('users/login_as', 'users_id=' . $options['item']['id']),
                     true
@@ -100,7 +100,7 @@ class Fieldtype_action
                 $access_rules->get_access_schema()
             )) {
             $list[] = button_icon(
-                \K::f3()->TEXT_BUTTON_CREATE,
+                \K::$fw->TEXT_BUTTON_CREATE,
                 'fa fa-plus',
                 url_for(
                     'items/form',
@@ -109,7 +109,7 @@ class Fieldtype_action
             );
         } else {
             $list[] = button_icon(
-                \K::f3()->TEXT_BUTTON_INFO,
+                \K::$fw->TEXT_BUTTON_INFO,
                 'fa fa-info',
                 url_for(
                     'items/info',
@@ -120,7 +120,6 @@ class Fieldtype_action
                 false
             );
         }
-
 
         //hide checkbox for mulitple items update if users don't have access
         if (count($list) == 1 and !users::has_users_access_name_to_entity(

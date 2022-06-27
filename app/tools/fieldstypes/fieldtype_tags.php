@@ -8,7 +8,7 @@ class Fieldtype_tags
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_TAGS_TITLE, 'has_choices' => true];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_TAGS_TITLE, 'has_choices' => true];
     }
 
     public function get_configuration()
@@ -16,66 +16,66 @@ class Fieldtype_tags
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_AS,
+            'title' => \K::$fw->TEXT_DISPLAY_AS,
             'name' => 'display_as',
             'type' => 'dropdown',
             'choices' => [
-                'dropdown_multiple' => \K::f3()->TEXT_FIELDTYPE_DROPDOWN_MULTIPLE_TITLE,
-                'dropdown' => \K::f3()->TEXT_FIELDTYPE_DROPDOWN_TITLE
+                'dropdown_multiple' => \K::$fw->TEXT_FIELDTYPE_DROPDOWN_MULTIPLE_TITLE,
+                'dropdown' => \K::$fw->TEXT_FIELDTYPE_DROPDOWN_TITLE
             ],
             'default' => 'dropdown_multiple',
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_AUTOMATICALLY_CREATE_TAG,
+            'title' => \K::$fw->TEXT_AUTOMATICALLY_CREATE_TAG,
             'name' => 'auto_create_tag',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_AUTOMATICALLY_CREATE_TAG_TIP
+            'tooltip_icon' => \K::$fw->TEXT_AUTOMATICALLY_CREATE_TAG_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_CHOICES_VALUES,
+            'title' => \K::$fw->TEXT_DISPLAY_CHOICES_VALUES,
             'name' => 'display_choices_values',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_DISPLAY_CHOICES_VALUES_TIP
+            'tooltip_icon' => \K::$fw->TEXT_DISPLAY_CHOICES_VALUES_TIP
         ];
 
         //cfg global list if exist
         if (count($choices = global_lists::get_lists_choices()) > 0) {
             $cfg[] = [
-                'title' => \K::f3()->TEXT_USE_GLOBAL_LIST,
+                'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
                 'type' => 'dropdown',
                 'choices' => $choices,
-                'tooltip' => \K::f3()->TEXT_USE_GLOBAL_LIST_TOOLTIP,
+                'tooltip' => \K::$fw->TEXT_USE_GLOBAL_LIST_TOOLTIP,
                 'params' => ['class' => 'form-control input-medium']
             ];
         }
@@ -99,7 +99,7 @@ class Fieldtype_tags
 
         if ($cfg->get('display_as') == 'dropdown_multiple') {
             $attributes['multiple'] = 'multiple';
-            $attributes['data-placeholder'] = \K::f3()->TEXT_ENTER_VALUE;
+            $attributes['data-placeholder'] = \K::$fw->TEXT_ENTER_VALUE;
             $add_empty = false;
 
             $field_name = 'fields[' . $field['id'] . '][]';

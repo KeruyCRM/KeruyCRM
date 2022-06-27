@@ -152,6 +152,10 @@ final class Base extends Prefab implements ArrayAccess {
 		return $this->hive[$key]=&$GLOBALS['_'.$key];
 	}
 
+    function refSync($key,&$val) {
+        return $this->hive[$key]=&$val;
+    }
+
 	/**
 	*	Return the parts of specified hive key
 	*	@return array

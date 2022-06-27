@@ -9,8 +9,8 @@ class Fieldtype_user_accessgroups
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_USER_ACCESSGROUP_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_USER_ACCESSGROUP_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_USER_ACCESSGROUP_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_USER_ACCESSGROUP_TITLE
         ];
     }
 
@@ -37,12 +37,12 @@ class Fieldtype_user_accessgroups
 
         if ($app_module_path == 'users/registration') {
             $choices = [];
-            $choices[''] = \K::f3()->TEXT_SELECT_SOME_VALUES;
+            $choices[''] = \K::$fw->TEXT_SELECT_SOME_VALUES;
             $groups_query = db_fetch_all(
                 'app_access_groups',
                 (strlen(
-                    \K::f3()->CFG_PUBLIC_REGISTRATION_USER_GROUP
-                ) ? 'id in (' . \K::f3()->CFG_PUBLIC_REGISTRATION_USER_GROUP . ')' : ''),
+                    \K::$fw->CFG_PUBLIC_REGISTRATION_USER_GROUP
+                ) ? 'id in (' . \K::$fw->CFG_PUBLIC_REGISTRATION_USER_GROUP . ')' : ''),
                 'sort_order, name'
             );
             while ($v = db_fetch_array($groups_query)) {
@@ -65,9 +65,9 @@ class Fieldtype_user_accessgroups
                 );
         }
 
-        if (\K::f3()->CFG_ENABLE_MULTIPLE_ACCESS_GROUPS or strlen($obj['multiple_access_groups'])) {
+        if (\K::$fw->CFG_ENABLE_MULTIPLE_ACCESS_GROUPS or strlen($obj['multiple_access_groups'])) {
             if ($app_module_path == 'users/registration') {
-                if (\K::f3()->CFG_USE_PUBLIC_REGISTRATION_MULTIPLE_USER_GROUPS) {
+                if (\K::$fw->CFG_USE_PUBLIC_REGISTRATION_MULTIPLE_USER_GROUPS) {
                     unset($choices['']);
                     return select_checkboxes_tag(
                             'fields[' . $field['id'] . ']',
@@ -268,7 +268,7 @@ class Fieldtype_user_accessgroups
                     }
 
                     $choices = [];
-                    $choices[''] = \K::f3()->TEXT_SELECT_SOME_VALUES;
+                    $choices[''] = \K::$fw->TEXT_SELECT_SOME_VALUES;
                     $groups_query = db_query(
                         "select id,name from app_access_groups where id>0 " . (count(
                             $include

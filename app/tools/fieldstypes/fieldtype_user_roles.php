@@ -8,7 +8,7 @@ class Fieldtype_user_roles
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_USER_ROLES_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_USER_ROLES_TITLE];
     }
 
     public function get_configuration($params = [])
@@ -17,46 +17,46 @@ class Fieldtype_user_roles
 
         $cfg = [];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_USERS_AS,
+            'title' => \K::$fw->TEXT_DISPLAY_USERS_AS,
             'name' => 'display_as',
             'type' => 'dropdown',
             'params' => ['class' => 'form-control input-xlarge'],
             'choices' => [
-                'dropdown' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN,
-                'dropdown_muliple' => \K::f3()->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
+                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ]
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_NAME,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_NAME,
             'name' => 'hide_field_name',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_NAME_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_NAME_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS,
+            'title' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS,
             'name' => 'disable_notification',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO
+            'tooltip_icon' => \K::$fw->TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO
         ];
 
         if ($entity_info['parent_id'] > 0) {
             $cfg[] = [
-                'title' => \K::f3()->TEXT_DISABLE_USERS_DEPENDENCY,
+                'title' => \K::$fw->TEXT_DISABLE_USERS_DEPENDENCY,
                 'name' => 'disable_dependency',
                 'type' => 'checkbox',
-                'tooltip_icon' => \K::f3()->TEXT_DISABLE_USERS_DEPENDENCY_INFO
+                'tooltip_icon' => \K::$fw->TEXT_DISABLE_USERS_DEPENDENCY_INFO
             ];
         }
 
-        $cfg[] = ['title' => \K::f3()->TEXT_HIDE_ADMIN, 'name' => 'hide_admin', 'type' => 'checkbox'];
+        $cfg[] = ['title' => \K::$fw->TEXT_HIDE_ADMIN, 'name' => 'hide_admin', 'type' => 'checkbox'];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_AUTHORIZED_USER_BY_DEFAULT,
+            'title' => \K::$fw->TEXT_AUTHORIZED_USER_BY_DEFAULT,
             'name' => 'authorized_user_by_default',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_AUTHORIZED_USER_BY_DEFAULT_INFO
+            'tooltip_icon' => \K::$fw->TEXT_AUTHORIZED_USER_BY_DEFAULT_INFO
         ];
 
         return $cfg;
@@ -95,8 +95,7 @@ class Fieldtype_user_roles
         }
 
         $choices = [];
-        $order_by_sql = (\K::f3(
-        )->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? 'u.field_7, u.field_8' : 'u.field_8, u.field_7');
+        $order_by_sql = (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? 'u.field_7, u.field_8' : 'u.field_8, u.field_7');
         $users_query = db_query(
             "select u.*,a.name as group_name from app_entity_1 u left join app_access_groups a on a.id=u.field_6 where {$where_sql} order by group_name, " . $order_by_sql
         );
@@ -117,7 +116,7 @@ class Fieldtype_user_roles
                     continue;
                 }
 
-                $group_name = (strlen($users['group_name']) > 0 ? $users['group_name'] : \K::f3()->TEXT_ADMINISTRATOR);
+                $group_name = (strlen($users['group_name']) > 0 ? $users['group_name'] : \K::$fw->TEXT_ADMINISTRATOR);
                 $choices[$group_name][$users['id']] = $app_users_cache[$users['id']]['name'];
             }
         }
@@ -190,7 +189,7 @@ class Fieldtype_user_roles
 
             $html = select_tag(
                 'fields[' . $field['id'] . ']',
-                ['' => \K::f3()->TEXT_NONE] + $choices,
+                ['' => \K::$fw->TEXT_NONE] + $choices,
                 $value,
                 $attributes
             );
@@ -198,7 +197,7 @@ class Fieldtype_user_roles
             $attributes = [
                 'class' => 'form-control input-xlarge chosen-select field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),
                 'multiple' => 'multiple',
-                'data-placeholder' => \K::f3()->TEXT_SELECT_SOME_VALUES
+                'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
             ];
             $html = select_tag('fields[' . $field['id'] . '][]', $choices, explode(',', $value), $attributes);
         }

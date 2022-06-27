@@ -8,7 +8,7 @@ class Fieldtype_subentity_form
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_SUBENTITY_FORM_TITLE, 'has_choices' => true];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_SUBENTITY_FORM_TITLE, 'has_choices' => true];
     }
 
     public function get_configuration()
@@ -35,8 +35,8 @@ class Fieldtype_subentity_form
             }
         }
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_SUB_ENTITY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_SUB_ENTITY,
             'name' => 'entity_id',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -46,35 +46,35 @@ class Fieldtype_subentity_form
             ]
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_MAX_COUNT_RECORDS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_MAX_COUNT_RECORDS,
             'name' => 'max_count_records',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small'],
-            'tooltip_icon' => \K::f3()->TEXT_MAX_COUNT_RECORDS_IN_FORM_INFO
+            'tooltip_icon' => \K::$fw->TEXT_MAX_COUNT_RECORDS_IN_FORM_INFO
         ];
 
         $choices = [
-            'column' => \K::f3()->TEXT_INTO_COLUMN,
-            'row' => \K::f3()->TEXT_INTO_ROW,
-            'window' => \K::f3()->TEXT_IN_NEW_WINDOW,
+            'column' => \K::$fw->TEXT_INTO_COLUMN,
+            'row' => \K::$fw->TEXT_INTO_ROW,
+            'window' => \K::$fw->TEXT_IN_NEW_WINDOW,
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_FIELDS_DISPLAY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_FIELDS_DISPLAY,
             'name' => 'fields_display',
             'type' => 'dropdown',
             'choices' => $choices,
             'params' => ['class' => 'form-control input-medium required']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'type' => 'html',
             'html' => '
                 <div class="form-group">
                     <label class="col-md-3 control-label"></label>
                     <div class="col-md-9">
-                        <div class="help-block" id="help_blcok_row">' . \K::f3()->TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_ROW . '</div>
+                        <div class="help-block" id="help_blcok_row">' . \K::$fw->TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_ROW . '</div>
                         <div class="help-block" id="help_blcok_windows">' . \K::f3(
                 )->TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_NEW_WINDOW . '</div>
                     </div>			
@@ -127,62 +127,62 @@ class Fieldtype_subentity_form
                 ',
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'name' => 'fields_in_form',
             'type' => 'ajax',
             'html' => '<script>fields_types_ajax_configuration(\'fields_in_form\',$("#fields_configuration_entity_id").val())</script>'
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_INSERT_RECORD_AUTOMATICALLY,
-            'tooltip_icon' => \K::f3()->TEXT_INSERT_RECORD_AUTOMATICALLY_INFO,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_INSERT_RECORD_AUTOMATICALLY,
+            'tooltip_icon' => \K::$fw->TEXT_INSERT_RECORD_AUTOMATICALLY_INFO,
             'name' => 'auto_insert',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_SHOW_NUMBER_OF_RECORDS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_SHOW_NUMBER_OF_RECORDS,
             'name' => 'has_count',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_NAME,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_NAME,
             'name' => 'hide_field_name',
             'type' => 'checkbox'
         ];
 
         //button configuration
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_BUTTON_TITLE,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_BUTTON_TITLE,
             'name' => 'button_title',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_ADD
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_ADD
         ];
 
         $choices = [
-            'left' => \K::f3()->TEXT_ON_LEFT,
-            'right' => \K::f3()->TEXT_ON_RIGHT,
-            'center' => \K::f3()->TEXT_ALIGN_CENTER,
+            'left' => \K::$fw->TEXT_ON_LEFT,
+            'right' => \K::$fw->TEXT_ON_RIGHT,
+            'center' => \K::$fw->TEXT_ALIGN_CENTER,
         ];
 
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_POSITION,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_POSITION,
             'name' => 'button_position',
             'type' => 'dropdown',
             'choices' => $choices,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_ICON,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_ICON,
             'name' => 'button_icon',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip' => \K::f3()->TEXT_MENU_ICON_TITLE_TOOLTIP
+            'tooltip' => \K::$fw->TEXT_MENU_ICON_TITLE_TOOLTIP
         ];
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_COLOR,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_COLOR,
             'name' => 'button_color',
             'type' => 'colorpicker'
         ];
@@ -249,7 +249,7 @@ class Fieldtype_subentity_form
                 }
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_FIELDS_IN_FORM,
+                    'title' => \K::$fw->TEXT_FIELDS_IN_FORM,
                     'name' => 'fields_in_form',
                     'type' => 'dropdown',
                     'choices' => $choices,
@@ -276,10 +276,10 @@ class Fieldtype_subentity_form
                 }
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_FIELDS_IN_LISTING,
+                    'title' => \K::$fw->TEXT_FIELDS_IN_LISTING,
                     'name' => 'fields_in_listing',
                     'type' => 'dropdown',
-                    'tooltip' => \K::f3()->TEXT_FIELDS_IN_LISTING_ON_FORM_PAGE,
+                    'tooltip' => \K::$fw->TEXT_FIELDS_IN_LISTING_ON_FORM_PAGE,
                     'choices' => $choices,
                     'params' => [
                         'class' => 'form-control chosen-select chosen-sortable input-xlarge',
@@ -288,12 +288,12 @@ class Fieldtype_subentity_form
                 ];
 
                 $choices = [
-                    'table' => \K::f3()->TEXT_TABLE,
-                    'list' => \K::f3()->TEXT_LIST,
+                    'table' => \K::$fw->TEXT_TABLE,
+                    'list' => \K::$fw->TEXT_LIST,
                 ];
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_DISPLAY_AS,
+                    'title' => \K::$fw->TEXT_DISPLAY_AS,
                     'name' => 'listing_type',
                     'type' => 'dropdown',
                     'choices' => $choices,
@@ -301,11 +301,11 @@ class Fieldtype_subentity_form
                 ];
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_COLUMN_WIDTH,
+                    'title' => \K::$fw->TEXT_COLUMN_WIDTH,
                     'name' => 'column_width',
                     'type' => 'input',
                     'params' => ['class' => 'form-control input-large'],
-                    'tooltip' => \K::f3()->TEXT_ENTER_COLUMN_WIDTH_BY_COMMA
+                    'tooltip' => \K::$fw->TEXT_ENTER_COLUMN_WIDTH_BY_COMMA
                 ];
 
                 $cfg[] = [

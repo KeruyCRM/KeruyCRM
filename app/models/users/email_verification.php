@@ -6,8 +6,7 @@ class Email_verification
 {
     public static function check()
     {
-        if (\K::f3()->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION != 'email' or \K::f3(
-            )->CFG_USE_PUBLIC_REGISTRATION != 1) {
+        if (\K::$fw->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION != 'email' or \K::$fw->CFG_USE_PUBLIC_REGISTRATION != 1) {
             return true;
         }
 
@@ -16,16 +15,16 @@ class Email_verification
             return true;
         }
 
-        if (\K::f3()->app_module_path == 'users/email_verification') {
+        if (\K::$fw->app_module_path == 'users/email_verification') {
             return true;
         }
 
-        if (\K::f3()->app_user['is_email_verified'] == 0 and !in_array(
-                \K::f3()->app_module_path,
+        if (\K::$fw->app_user['is_email_verified'] == 0 and !in_array(
+                \K::$fw->app_module_path,
                 ['users/email_verification', 'users/login']
             )) {
             //redirect_to('users/email_verification');
-            \K::f3()->reroute('/users/email_verification');
+            \K::fw()->reroute('/users/email_verification');
         }
     }
 
@@ -33,7 +32,7 @@ class Email_verification
     {
         global $app_user, $app_email_verification_code;
 
-        if (isset($_POST['fields'][9]) and \K::f3()->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION == 'email' and \K::f3(
+        if (isset($_POST['fields'][9]) and \K::$fw->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION == 'email' and \K::f3(
             )->CFG_USE_PUBLIC_REGISTRATION == 1) {
             if ($app_user['email'] != $_POST['fields'][9]) {
                 $app_email_verification_code = '';
@@ -56,10 +55,10 @@ class Email_verification
             $options = [
                 'to' => $users_info['field_9'],
                 'to_name' => $app_users_cache[$users_info['id']]['name'],
-                'subject' => \K::f3()->TEXT_EMAIL_VERIFICATION_EMAIL_SUBJECT,
-                'body' => sprintf(\K::f3()->TEXT_EMAIL_VERIFICATION_EMAIL_BODY, $code),
-                'from' => \K::f3()->CFG_EMAIL_ADDRESS_FROM,
-                'from_name' => \K::f3()->CFG_EMAIL_NAME_FROM,
+                'subject' => \K::$fw->TEXT_EMAIL_VERIFICATION_EMAIL_SUBJECT,
+                'body' => sprintf(\K::$fw->TEXT_EMAIL_VERIFICATION_EMAIL_BODY, $code),
+                'from' => \K::$fw->CFG_EMAIL_ADDRESS_FROM,
+                'from_name' => \K::$fw->CFG_EMAIL_NAME_FROM,
                 'send_directly' => true,
             ];
 
@@ -74,7 +73,7 @@ class Email_verification
         //set is_email_confirmed
         db_query("update app_entity_1 set is_email_verified=1 where id='" . $app_user['id'] . "'");
 
-        $alerts->add(\K::f3()->TEXT_EMAIL_VERIFIED, 'success');
+        $alerts->add(\K::$fw->TEXT_EMAIL_VERIFIED, 'success');
 
         redirect_to('dashboard/');
     }

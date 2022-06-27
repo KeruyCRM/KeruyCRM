@@ -8,7 +8,7 @@ class Fieldtype_boolean_checkbox
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_BOOLEAN_CHECKBOX_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_BOOLEAN_CHECKBOX_TITLE];
     }
 
     public function get_configuration()
@@ -16,33 +16,33 @@ class Fieldtype_boolean_checkbox
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED,
+            'title' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED,
             'name' => 'notify_when_changed',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED_TIP
+            'tooltip_icon' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DEFAULT_VALUE,
+            'title' => \K::$fw->TEXT_DEFAULT_VALUE,
             'name' => 'default_value',
             'type' => 'dropdown',
-            'choices' => ['' => '', 'true' => \K::f3()->TEXT_BOOLEAN_TRUE, 'false' => \K::f3()->TEXT_BOOLEAN_FALSE],
+            'choices' => ['' => '', 'true' => \K::$fw->TEXT_BOOLEAN_TRUE, 'false' => \K::$fw->TEXT_BOOLEAN_FALSE],
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_BOOLEAN_TRUE_VALUE,
+            'title' => \K::$fw->TEXT_BOOLEAN_TRUE_VALUE,
             'name' => 'text_boolean_true',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_BOOLEAN_TRUE_VALUE_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_BOOLEAN_TRUE_VALUE_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_BOOLEAN_FALSE_VALUE,
+            'title' => \K::$fw->TEXT_BOOLEAN_FALSE_VALUE,
             'name' => 'text_boolean_false',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_BOOLEAN_FALSE_VALUE_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_BOOLEAN_FALSE_VALUE_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 
@@ -79,13 +79,13 @@ class Fieldtype_boolean_checkbox
             case 'true':
                 return (strlen($cfg->get('text_boolean_true')) > 0 ? $cfg->get(
                     'text_boolean_true'
-                ) : \K::f3()->TEXT_BOOLEAN_TRUE);
+                ) : \K::$fw->TEXT_BOOLEAN_TRUE);
                 break;
             case '':
             case 'false':
                 return (strlen($cfg->get('text_boolean_true')) > 0 ? $cfg->get(
                     'text_boolean_false'
-                ) : \K::f3()->TEXT_BOOLEAN_FALSE);
+                ) : \K::$fw->TEXT_BOOLEAN_FALSE);
                 break;
             default:
                 return '';

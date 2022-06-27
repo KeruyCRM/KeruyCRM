@@ -18,8 +18,8 @@ class Attachments
             $file = self::parse_filename($filename);
 
             //delete file
-            if (is_file(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
-                unlink(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
+            if (is_file(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
+                unlink(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
             }
 
             //delete from sessions
@@ -192,8 +192,8 @@ class Attachments
                 if (strlen($files = $items['field_' . $fields['id']]) > 0) {
                     foreach (explode(',', $files) as $file) {
                         $file = self::parse_filename($file);
-                        if (is_file(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
-                            unlink(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
+                        if (is_file(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
+                            unlink(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
 
                             //delete image preview if exist
                             self::delete_image_preview($file);
@@ -218,8 +218,8 @@ class Attachments
         if ($comments = db_fetch_array($comments_query)) {
             foreach (explode(',', $comments['attachments']) as $file) {
                 $file = self::parse_filename($file);
-                if (is_file(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
-                    unlink(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
+                if (is_file(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
+                    unlink(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
 
                     //delete image preview if exist
                     self::delete_image_preview($file);
@@ -232,16 +232,16 @@ class Attachments
     {
         $filename = str_replace([" ", ","], "_", trim($filename));
 
-        if (!is_dir(\K::f3()->DIR_WS_IMAGES . date('Y'))) {
-            mkdir(\K::f3()->DIR_WS_IMAGES . date('Y'));
+        if (!is_dir(\K::$fw->DIR_WS_IMAGES . date('Y'))) {
+            mkdir(\K::$fw->DIR_WS_IMAGES . date('Y'));
         }
 
-        if (!is_dir(\K::f3()->DIR_WS_IMAGES . date('Y') . '/' . date('m'))) {
-            mkdir(\K::f3()->DIR_WS_IMAGES . date('Y') . '/' . date('m'));
+        if (!is_dir(\K::$fw->DIR_WS_IMAGES . date('Y') . '/' . date('m'))) {
+            mkdir(\K::$fw->DIR_WS_IMAGES . date('Y') . '/' . date('m'));
         }
 
-        if (!is_dir(\K::f3()->DIR_WS_IMAGES . date('Y') . '/' . date('m') . '/' . date('d'))) {
-            mkdir(\K::f3()->DIR_WS_IMAGES . date('Y') . '/' . date('m') . '/' . date('d'));
+        if (!is_dir(\K::$fw->DIR_WS_IMAGES . date('Y') . '/' . date('m') . '/' . date('d'))) {
+            mkdir(\K::$fw->DIR_WS_IMAGES . date('Y') . '/' . date('m') . '/' . date('d'));
         }
 
         return [
@@ -254,22 +254,21 @@ class Attachments
     {
         $filename = str_replace([" ", ","], "_", trim($filename));
 
-        if (!is_dir(\K::f3()->DIR_WS_ATTACHMENTS . date('Y'))) {
-            mkdir(\K::f3()->DIR_WS_ATTACHMENTS . date('Y'));
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y'))) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y'));
         }
 
-        if (!is_dir(\K::f3()->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m'))) {
-            mkdir(\K::f3()->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m'));
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m'))) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m'));
         }
 
-        if (!is_dir(\K::f3()->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m') . '/' . date('d'))) {
-            mkdir(\K::f3()->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m') . '/' . date('d'));
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m') . '/' . date('d'))) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m') . '/' . date('d'));
         }
 
         return [
             'name' => time() . '_' . $filename,
-            'file' => (\K::f3()->CFG_ENCRYPT_FILE_NAME == 1 ? sha1(time() . '_' . $filename) : time(
-                ) . '_' . $filename),
+            'file' => (\K::$fw->CFG_ENCRYPT_FILE_NAME == 1 ? sha1(time() . '_' . $filename) : time() . '_' . $filename),
             'folder' => date('Y') . '/' . date('m') . '/' . date('d')
         ];
     }
@@ -304,10 +303,10 @@ class Attachments
             $icon = 'images/fileicons/attachment.png';
         }
 
-        if (is_file($file_path = \K::f3()->DIR_WS_ATTACHMENTS . $folder . '/' . sha1($filename))) {
+        if (is_file($file_path = \K::$fw->DIR_WS_ATTACHMENTS . $folder . '/' . sha1($filename))) {
             $size = self::file_size_convert(filesize($file_path));
         } //in encryption disabled
-        elseif (is_file($file_path = \K::f3()->DIR_WS_ATTACHMENTS . $folder . '/' . $filename)) {
+        elseif (is_file($file_path = \K::$fw->DIR_WS_ATTACHMENTS . $folder . '/' . $filename)) {
             $size = self::file_size_convert(filesize($file_path));
         } else {
             $size = 0;
@@ -318,9 +317,9 @@ class Attachments
         return [
             'name' => $name,
             'file' => $filename,
-            'file_sha1' => (\K::f3()->CFG_ENCRYPT_FILE_NAME == 1 ? sha1($filename) : $filename),
+            'file_sha1' => (\K::$fw->CFG_ENCRYPT_FILE_NAME == 1 ? sha1($filename) : $filename),
             'file_path' => $file_path,
-            //'folder' => \K::f3()->DIR_WS_ATTACHMENTS . $folder . '/',
+            //'folder' => \K::$keruy->DIR_WS_ATTACHMENTS . $folder . '/',
             'mime_type' => ($size ? mime_content_type($file_path) : ''),
             'is_image' => \Helpers\App::is_image($file_path),
             'is_pdf' => \Helpers\App::is_pdf($filename),
@@ -383,7 +382,7 @@ class Attachments
                 $file_info = self::parse_filename($file);
 
                 $new_file = self::prepare_filename($file_info['name']);
-                $new_file_path = \K::f3()->DIR_WS_ATTACHMENTS . '/' . $new_file['folder'] . '/' . $new_file['file'];
+                $new_file_path = \K::$fw->DIR_WS_ATTACHMENTS . '/' . $new_file['folder'] . '/' . $new_file['file'];
 
                 $current_file_path = $file_info['file_path'];
 
@@ -410,14 +409,14 @@ class Attachments
             }
         }
 
-        $max_img_width = (int)\K::f3()->CFG_MAX_IMAGE_WIDTH;
-        $max_img_height = (int)\K::f3()->CFG_MAX_IMAGE_HEIGHT;
+        $max_img_width = (int)\K::$fw->CFG_MAX_IMAGE_WIDTH;
+        $max_img_height = (int)\K::$fw->CFG_MAX_IMAGE_HEIGHT;
 
-        if (($max_img_width > 0 or $max_img_height > 0) and \K::f3()->CFG_RESIZE_IMAGES == 1 and is_image($filepath)) {
+        if (($max_img_width > 0 or $max_img_height > 0) and \K::$fw->CFG_RESIZE_IMAGES == 1 and is_image($filepath)) {
             $img = getimagesize($filepath);
 
             //skip large images
-            $skip_size = (int)\K::f3()->CFG_SKIP_IMAGE_RESIZE;
+            $skip_size = (int)\K::$fw->CFG_SKIP_IMAGE_RESIZE;
             if ($skip_size > 0) {
                 if ($img[0] > $skip_size or $img[1] > $skip_size) {
                     return false;
@@ -425,8 +424,8 @@ class Attachments
             }
 
             //skip image types
-            if (strlen(\K::f3()->CFG_RESIZE_IMAGES_TYPES) > 0) {
-                if (!in_array($img[2], explode(',', \K::f3()->CFG_RESIZE_IMAGES_TYPES))) {
+            if (strlen(\K::$fw->CFG_RESIZE_IMAGES_TYPES) > 0) {
+                if (!in_array($img[2], explode(',', \K::$fw->CFG_RESIZE_IMAGES_TYPES))) {
                     return false;
                 }
             }
@@ -501,7 +500,7 @@ class Attachments
         $filetime = (int)$filename_array[0];
 
         //get foler
-        $filepath = \K::f3()->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date(
+        $filepath = \K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date(
                 'm',
                 $filetime
             ) . '/' . date(
@@ -518,22 +517,22 @@ class Attachments
         $filepath = $info['filepath'];
         $filetime = $info['filetime'];
 
-        if (!is_dir(\K::f3()->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime))) {
-            mkdir(\K::f3()->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime));
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime))) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime));
         }
 
-        if (!is_dir(\K::f3()->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime))) {
-            mkdir(\K::f3()->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime));
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime))) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime));
         }
 
         if (!is_dir(
-            \K::f3()->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime) . '/' . date(
+            \K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime) . '/' . date(
                 'd',
                 $filetime
             )
         )) {
             mkdir(
-                \K::f3()->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime) . '/' . date(
+                \K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime) . '/' . date(
                     'd',
                     $filetime
                 )

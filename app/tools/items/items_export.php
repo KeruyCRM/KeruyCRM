@@ -2,7 +2,7 @@
 
 namespace Tools\Items;
 
-require(\K::f3()->CFG_PATH_TO_PHPSPREADSHEET);
+require(\K::$fw->CFG_PATH_TO_PHPSPREADSHEET);
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -42,7 +42,7 @@ class Items_export
         $spreadsheet->getActiveSheet()->getStyle($highest_column . '1')->getFont()->setBold(true);
 
         // Rename worksheet
-        $spreadsheet->getActiveSheet()->setTitle(\K::f3()->TEXT_LIST);
+        $spreadsheet->getActiveSheet()->setTitle(\K::$fw->TEXT_LIST);
 
         // Redirect output to a client’s web browser (Xlsx)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

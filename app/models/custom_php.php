@@ -27,7 +27,7 @@ class Custom_php
             ],
             [],
             'code',//FIX
-            [\K::f3()->TTL_APP, 'app_custom_php']
+            [\K::$fw->TTL_APP, 'app_custom_php']
         );
 
         //while ($code = db_fetch($code_query)) {

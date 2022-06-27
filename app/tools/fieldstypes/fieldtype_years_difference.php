@@ -8,7 +8,7 @@ class Fieldtype_years_difference
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_YEARS_DIFFERENCE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_YEARS_DIFFERENCE_TITLE];
     }
 
     public function get_configuration()
@@ -17,17 +17,17 @@ class Fieldtype_years_difference
 
         $cfg[] = [
             'title' => tooltip_icon(
-                    \K::f3()->TEXT_FIELDTYPE_DAYS_DIFFERENCE_DYNAMIC_INFO
-                ) . \K::f3()->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
+                    \K::$fw->TEXT_FIELDTYPE_DAYS_DIFFERENCE_DYNAMIC_INFO
+                ) . \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
             'name' => 'dinamic_query',
             'type' => 'dropdown',
-            'choices' => ['0' => \K::f3()->TEXT_NO, '1' => \K::f3()->TEXT_YES],
+            'choices' => ['0' => \K::$fw->TEXT_NO, '1' => \K::$fw->TEXT_YES],
             'params' => ['class' => 'form-control input-small']
         ];
 
         $choices = [];
-        $choices['today'] = '[' . \K::f3()->TEXT_CURRENT_DATE . ']';
-        $choices['date_added'] = '[' . \K::f3()->TEXT_DATE_ADDED . ']';
+        $choices['today'] = '[' . \K::$fw->TEXT_CURRENT_DATE . ']';
+        $choices['date_added'] = '[' . \K::$fw->TEXT_DATE_ADDED . ']';
         $fields_query = db_query(
             "select * from app_fields where type in ('fieldtype_input_date','fieldtype_input_datetime','fieldtype_dynamic_date') and entities_id='" . db_input(
                 $_POST['entities_id']
@@ -38,7 +38,7 @@ class Fieldtype_years_difference
         }
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_START_DATE,
+            'title' => \K::$fw->TEXT_START_DATE,
             'name' => 'start_date',
             'default' => '',
             'type' => 'dropdown',
@@ -46,7 +46,7 @@ class Fieldtype_years_difference
             'params' => ['class' => 'form-control input-large chosen-select required']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_END_DATE,
+            'title' => \K::$fw->TEXT_END_DATE,
             'name' => 'end_date',
             'default' => '',
             'type' => 'dropdown',
@@ -55,30 +55,30 @@ class Fieldtype_years_difference
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_CALCULATE_DIFFERENCE_DAYS,
+            'title' => \K::$fw->TEXT_CALCULATE_DIFFERENCE_DAYS,
             'name' => 'calclulate_diff_days',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_CALCULATE_TOTALS_INFO) . \K::f3()->TEXT_CALCULATE_TOTALS,
+            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
             'name' => 'calclulate_totals',
             'type' => 'checkbox'
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_CALCULATE_AVERAGE_VALUE,
+            'title' => \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PREFIX,
+            'title' => \K::$fw->TEXT_PREFIX,
             'name' => 'prefix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SUFFIX,
+            'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']

@@ -50,56 +50,56 @@ class Fieldtype_barcode
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_BARCODE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_BARCODE_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'dropdown',
             'choices' => [
-                'input-small' => \K::f3()->TEXT_INPUT_SMALL,
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
             'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
-            'tooltip_icon' => \K::f3()->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ERROR_MESSAGE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
-            'tooltip' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_UNIQUE_FIELD_VALUE_ERROR,
+            'tooltip_icon' => \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR_MSG_TIP,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
@@ -137,42 +137,42 @@ class Fieldtype_barcode
             'PDF417' => 'PDF417',
         ];
 
-        $cfg[\K::f3()->TEXT_BARCODE][] = [
-            'title' => \K::f3()->TEXT_FIELDTYPE_BARCODE_TYPE,
+        $cfg[\K::$fw->TEXT_BARCODE][] = [
+            'title' => \K::$fw->TEXT_FIELDTYPE_BARCODE_TYPE,
             'name' => 'barcode_type',
             'type' => 'dropdown',
             'choices' => $choices,
             'default' => 'TYPE_CODE_128',
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_BARCODE_ACCEPTED_TYPE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_BARCODE_ACCEPTED_TYPE_TIP,
             'params' => ['class' => 'form-control input-medium chosen-select']
         ];
 
-        $cfg[\K::f3()->TEXT_BARCODE][] = [
-            'title' => \K::f3()->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING . fields::get_available_fields_helper(
+        $cfg[\K::$fw->TEXT_BARCODE][] = [
+            'title' => \K::$fw->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING . fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_template'
                 ),
             'name' => 'template',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING_TIP_ICON,
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING_TIP . '<br>' . \K::f3(
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING_TIP_ICON,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING_TIP . '<br>' . \K::f3(
                 )->TEXT_ENTER_TEXT_PATTERN_DATE_INFO,
             'params' => ['class' => 'form-control input-large']
         ];
 
-        $cfg[\K::f3()->TEXT_EXPORT][] = [
-            'title' => \K::f3()->TEXT_HEIGHT,
+        $cfg[\K::$fw->TEXT_EXPORT][] = [
+            'title' => \K::$fw->TEXT_HEIGHT,
             'name' => 'height',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_BARCODE_HEIGHT_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_BARCODE_HEIGHT_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_EXPORT][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_FIELD_VALUE,
+        $cfg[\K::$fw->TEXT_EXPORT][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_FIELD_VALUE,
             'name' => 'display_field_value',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_BARCODE_DISPLAY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_BARCODE_DISPLAY_TIP
         ];
 
         return $cfg;
@@ -196,7 +196,7 @@ class Fieldtype_barcode
         //if entered temlate then barcode will be autogenerate
         if (strlen($cfg->get('template'))) {
             $attributes['readonly'] = true;
-            $attributes['title'] = \K::f3()->TEXT_BARCODE_GENERATED_AUTOMATICALLY;
+            $attributes['title'] = \K::$fw->TEXT_BARCODE_GENERATED_AUTOMATICALLY;
 
             $script = '
                 <script>

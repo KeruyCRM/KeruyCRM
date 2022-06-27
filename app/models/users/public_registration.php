@@ -7,7 +7,7 @@ class Public_registration
     public static function send_user_activation_email_msg($user_id, $previous_item_info)
     {
         //skip notification
-        if (\K::f3()->CFG_USE_PUBLIC_REGISTRATION == 0 or \K::f3(
+        if (\K::$fw->CFG_USE_PUBLIC_REGISTRATION == 0 or \K::f3(
             )->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION != 'manually') {
             return false;
         }
@@ -22,15 +22,15 @@ class Public_registration
                     'to' => $item['field_9'],
                     'to_name' => $to_name,
                     'subject' => (strlen(
-                        \K::f3()->CFG_USER_ACTIVATION_EMAIL_SUBJECT
-                    ) > 0 ? \K::f3()->CFG_USER_ACTIVATION_EMAIL_SUBJECT : \K::f3()->TEXT_USER_ACTIVATION_EMAIL_SUBJECT),
-                    'body' => (strlen(\K::f3()->CFG_USER_ACTIVATION_EMAIL_BODY) > 0 ? \K::f3(
+                        \K::$fw->CFG_USER_ACTIVATION_EMAIL_SUBJECT
+                    ) > 0 ? \K::$fw->CFG_USER_ACTIVATION_EMAIL_SUBJECT : \K::$fw->TEXT_USER_ACTIVATION_EMAIL_SUBJECT),
+                    'body' => (strlen(\K::$fw->CFG_USER_ACTIVATION_EMAIL_BODY) > 0 ? \K::f3(
                     )->CFG_USER_ACTIVATION_EMAIL_BODY : sprintf(
-                        \K::f3()->TEXT_USER_ACTIVATION_EMAIL_BODY,
+                        \K::$fw->TEXT_USER_ACTIVATION_EMAIL_BODY,
                         url_for('users/login', '', true)
                     )),
-                    'from' => \K::f3()->CFG_EMAIL_ADDRESS_FROM,
-                    'from_name' => \K::f3()->CFG_EMAIL_NAME_FROM
+                    'from' => \K::$fw->CFG_EMAIL_ADDRESS_FROM,
+                    'from_name' => \K::$fw->CFG_EMAIL_NAME_FROM
                 ];
 
                 users::send_email($options);

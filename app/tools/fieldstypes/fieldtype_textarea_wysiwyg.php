@@ -8,30 +8,30 @@ class Fieldtype_textarea_wysiwyg
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_TEXTAREA_WYSIWYG_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_TEXTAREA_WYSIWYG_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_TOOLBAR,
+            'title' => \K::$fw->TEXT_TOOLBAR,
             'name' => 'toolbar',
             'type' => 'dropdown',
-            'choices' => ['' => \K::f3()->TEXT_DEFAULT, 'small' => \K::f3()->TEXT_IN_ONE_LINE],
+            'choices' => ['' => \K::$fw->TEXT_DEFAULT, 'small' => \K::$fw->TEXT_IN_ONE_LINE],
             'params' => ['class' => 'form-control input-medium']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         return $cfg;

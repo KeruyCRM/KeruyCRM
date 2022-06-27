@@ -8,7 +8,7 @@ class Fieldtype_text_pattern
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_TEXT_PATTERN];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_TEXT_PATTERN];
     }
 
     public function get_configuration()
@@ -16,13 +16,13 @@ class Fieldtype_text_pattern
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PATTERN . fields::get_available_fields_helper(
+            'title' => \K::$fw->TEXT_PATTERN . fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_pattern'
                 ),
             'name' => 'pattern',
             'type' => 'textarea',
-            'tooltip' => \K::f3()->TEXT_ENTER_TEXT_PATTERN_INFO,
+            'tooltip' => \K::$fw->TEXT_ENTER_TEXT_PATTERN_INFO,
             'params' => ['class' => 'form-control']
         ];
 

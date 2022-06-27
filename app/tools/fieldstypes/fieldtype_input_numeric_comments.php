@@ -8,7 +8,7 @@ class Fieldtype_input_numeric_comments
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_INPUT_NUMERIC_COMMENTS_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_INPUT_NUMERIC_COMMENTS_TITLE];
     }
 
     public function get_configuration($params = [])
@@ -16,49 +16,49 @@ class Fieldtype_input_numeric_comments
         $cfg = [];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_NUMBER_FORMAT_INFO) . \K::f3()->TEXT_NUMBER_FORMAT,
+            'title' => tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
             'name' => 'number_format',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
-            'default' => \K::f3()->CFG_APP_NUMBER_FORMAT
+            'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::f3()->TEXT_CALCULATE_TOTALS_INFO) . \K::f3()->TEXT_CALCULATE_TOTALS,
+            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
             'name' => 'calclulate_totals',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_CALCULATE_AVERAGE_VALUE,
+            'title' => \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DEFAULT_VALUE,
+            'title' => \K::$fw->TEXT_DEFAULT_VALUE,
             'name' => 'default_value',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT_VALUE_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT_VALUE_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PREFIX,
+            'title' => \K::$fw->TEXT_PREFIX,
             'name' => 'prefix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SUFFIX,
+            'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DISPLAY_PREFIX_SUFFIX_IN_FORM,
+            'title' => \K::$fw->TEXT_DISPLAY_PREFIX_SUFFIX_IN_FORM,
             'name' => 'display_prefix_suffix_in_form',
             'type' => 'checkbox'
         ];

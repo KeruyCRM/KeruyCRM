@@ -118,7 +118,7 @@ class Subentity_form
             
             function subentity_form' . $this->field_id . '_remove(rows_count,item_id)
             {
-                if(confirm("' . addslashes(\K::f3()->TEXT_ARE_YOU_SURE) . '"))
+                if(confirm("' . addslashes(\K::$fw->TEXT_ARE_YOU_SURE) . '"))
                 {
                     $("#subentity_form' . $this->field_id . ' #suentity_form_row_"+rows_count).remove();
                     $(window).resize();
@@ -138,7 +138,7 @@ class Subentity_form
             
             function subentity_form' . $this->field_id . '_itemrow_remove(row)
             {
-                if(confirm("' . addslashes(\K::f3()->TEXT_ARE_YOU_SURE) . '"))
+                if(confirm("' . addslashes(\K::$fw->TEXT_ARE_YOU_SURE) . '"))
                 {
                     $("#subentity_form' . $this->field_id . ' #itemrow_"+row).remove();
                     $(window).resize();
@@ -207,7 +207,7 @@ class Subentity_form
                 'has_count'
             ) == 1 ? ' <span>' . $rows_count . '</span>' : '') . '</h3>
            <button onClick="subentity_form' . $this->field_id . '_remove(' . $rows_count . ',' . $form_item_id . ')"  type="button" class="btn btn-default btn-subentity-form-remove" title="' . addslashes(
-                \K::f3()->TEXT_DELETE
+                \K::$fw->TEXT_DELETE
             ) . '"><i class="las la-times"></i></button>
            ';
 
@@ -273,7 +273,7 @@ class Subentity_form
                     </div>
                 </td>
                 <td class="control-label"><button onClick="subentity_form' . $this->field_id . '_remove(' . $rows_count . ',' . $form_item_id . ')"  type="button" class="btn btn-default btn-subentity-form-row-remove" title="' . addslashes(
-                \K::f3()->TEXT_DELETE
+                \K::$fw->TEXT_DELETE
             ) . '"><i class="las la-times"></i></button></td>
                 </tr>
            </table>
@@ -690,7 +690,7 @@ class Subentity_form
             $edit_button = '<button type="button" class="btn btn-default btn-xs purple btn-submodal-open" data-parent-entity-item-id="" data-field-id="" data-submodal-url="' . $submodal_url . '"><i class="fa fa-edit"></i></button>';
 
             $html .= '<td style="white-space:nowrap">' . $edit_button . ' <button onClick="subentity_form' . $this->field_id . '_itemrow_remove(\'' . $row . '\')"  type="button" class="btn btn-default btn-xs purple" title="' . addslashes(
-                    \K::f3()->TEXT_DELETE
+                    \K::$fw->TEXT_DELETE
                 ) . '"><i class="fa fa-times" aria-hidden="true"></i></button></td>';
 
             $html .= '</tr>';
@@ -736,7 +736,7 @@ class Subentity_form
             $edit_button = '<button type="button" class="btn btn-default btn-xs purple btn-submodal-open" data-parent-entity-item-id="" data-field-id="" data-submodal-url="' . $submodal_url . '"><i class="fa fa-edit"></i></button>';
 
             $html .= '<div class="item-panel-action-btn">' . $edit_button . ' <button onClick="subentity_form' . $this->field_id . '_itemrow_remove(\'' . $row . '\')"  type="button" class="btn btn-default btn-xs purple" title="' . addslashes(
-                    \K::f3()->TEXT_DELETE
+                    \K::$fw->TEXT_DELETE
                 ) . '"><i class="fa fa-times" aria-hidden="true"></i></button></div>';
 
             foreach ($listing_fields as $col => $field) {

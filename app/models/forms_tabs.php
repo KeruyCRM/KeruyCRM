@@ -92,7 +92,6 @@ class forms_tabs
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">' . $tabs['name'] . ' <i class="fa fa-angle-down"></i></a>
                             <ul class="dropdown-menu" role="menu">';
 
-
                 $subtabs_query = db_query(
                     "select * from app_forms_tabs where parent_id={$tabs['id']} and entities_id={$entities_id} order by sort_order, name"
                 );

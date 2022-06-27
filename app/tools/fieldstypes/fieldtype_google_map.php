@@ -8,7 +8,7 @@ class Fieldtype_google_map
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_GOOGLE_MAP_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_TITLE];
     }
 
     public function get_configuration()
@@ -16,18 +16,18 @@ class Fieldtype_google_map
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_API_KEY,
+            'title' => \K::$fw->TEXT_API_KEY,
             'name' => 'api_key',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_GOOGLE_MAP_API_KEY_TIP,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_API_KEY_TIP,
             'params' => ['class' => 'form-control input-xlarge required']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ADDRESS . fields::get_available_fields_helper(
+            'title' => \K::$fw->TEXT_ADDRESS . fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_address_pattern',
-                    \K::f3()->TEXT_SELECT_FIELD,
+                    \K::$fw->TEXT_SELECT_FIELD,
                     [
                         'fieldtype_input',
                         'fieldtype_input_masked',
@@ -40,22 +40,22 @@ class Fieldtype_google_map
                 ),
             'name' => 'address_pattern',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_ADDRESS_PATTERN_INFO,
+            'tooltip' => \K::$fw->TEXT_ADDRESS_PATTERN_INFO,
             'params' => ['class' => 'form-control input-xlarge required']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'map_width',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_WIDTH_INPUT_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_WIDTH_INPUT_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HEIGHT,
+            'title' => \K::$fw->TEXT_HEIGHT,
             'name' => 'map_height',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_HEIGHT_INPUT_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_HEIGHT_INPUT_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
 
@@ -65,7 +65,7 @@ class Fieldtype_google_map
         }
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DEFAULT_ZOOM,
+            'title' => \K::$fw->TEXT_DEFAULT_ZOOM,
             'name' => 'zoom',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -268,7 +268,7 @@ class Fieldtype_google_map
 
                         if (isset($result['error_message'])) {
                             $alerts->add(
-                                \K::f3()->TEXT_FIELD . ' "' . $fields['name'] . '": ' . $result['error_message'],
+                                \K::$fw->TEXT_FIELD . ' "' . $fields['name'] . '": ' . $result['error_message'],
                                 'error'
                             );
                         } else {

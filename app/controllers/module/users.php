@@ -6,6 +6,5 @@ class Users extends \Controller
 {
     public function login()
     {
-
     }
 }

@@ -141,7 +141,7 @@ class Users_notifications
         if ($itmes_count == 0) {
             $items_html .= '
           <li>
-  					<a onClick="return false;">' . \K::f3()->TEXT_NO_RECORDS_FOUND . '</a>
+  					<a onClick="return false;">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</a>
   				</li>
         ';
         }
@@ -153,7 +153,7 @@ class Users_notifications
             $external_html = '
           <li class="external">
 						<a href="' . url_for('users/notifications') . '">' . sprintf(
-                    \K::f3()->TEXT_DISPLAY_NUMBER_OF_ITEMS_OPEN_REPORT,
+                    \K::$fw->TEXT_DISPLAY_NUMBER_OF_ITEMS_OPEN_REPORT,
                     $itmes_display_count
                 ) . '</a>
 					</li>
@@ -169,7 +169,7 @@ class Users_notifications
 				</a>
 				<ul class="dropdown-menu extended tasks">
 					<li style="cursor:pointer" onClick="location.href=\'' . url_for('users/notifications') . '\'">
-						<p>' . \K::f3()->TEXT_USERS_NOTIFICATIONS . '</p>
+						<p>' . \K::$fw->TEXT_USERS_NOTIFICATIONS . '</p>
 					</li>
 					<li>
 						<ul class="dropdown-menu-list scroller" style="height: ' . $dropdown_menu_height . 'px;">

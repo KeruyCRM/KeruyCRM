@@ -9,23 +9,23 @@ class Security extends \Prefab
     public function initCsrfToken()
     {
         echo $this->generateToken() . PHP_EOL;
-        \K::f3()->set('csrf_token', $this->generateToken());
+        \K::fw()->set('csrf_token', $this->generateToken());
     }
 
     public function checkCsrfToken()
     {
-        if (\K::f3()->VERB == 'POST') {
-            if (\K::f3()->exists('TOKEN_DISABLED')) {
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::fw()->exists('TOKEN_DISABLED')) {
                 return true;
             }
 
             if (
                 !\K::sessionExists('app_session_token', $app_session_token)
-                or !\K::f3()->exists('POST.csrf_token', $postToken)
+                or !\K::fw()->exists('POST.csrf_token', $postToken)
                 or !$this->validateToken($postToken)) {
-                \K::f3()->error(400, 'Invalid CSRF token');
+                \K::fw()->error(400, 'Invalid CSRF token');
             } else {
-                //\K::f3()->error(200, 'TRUE');
+                //\K::$fw->error(200, 'TRUE');
             }
         }
     }
@@ -44,14 +44,14 @@ class Security extends \Prefab
 
             $timeDecode = $this->decrypt36($timeSend, $saltSend . $this->_DELIMITER . $app_session_token);
 
-            if ($timeDecode + \K::f3()->TOKEN_LIFE < time()) {
+            if ($timeDecode + \K::$fw->TOKEN_LIFE < time()) {
                 return false;
             }
 
             $hash = hash_hmac('sha256', $saltSend . $this->_DELIMITER . $timeSend, $app_session_token, true);
             $base64 = base64_encode($hash);
             $purified = $this->purified($base64);
-            $tokenNew = substr($purified, 0, \K::f3()->TOKEN_LENGTH);
+            $tokenNew = substr($purified, 0, \K::$fw->TOKEN_LENGTH);
 
             return hash_equals($tokenNew, $tokenSend);
         } catch (\Exception $e) {
@@ -63,11 +63,11 @@ class Security extends \Prefab
     {
         $app_session_token = '';
         try {
-            $bytesWithMargin = random_bytes(\K::f3()->TOKEN_LENGTH * 3);
+            $bytesWithMargin = random_bytes(\K::$fw->TOKEN_LENGTH * 3);
 
             $base64 = base64_encode($bytesWithMargin);
             $purified = $this->purified($base64);
-            $app_session_token = substr($purified, 0, \K::f3()->TOKEN_LENGTH);
+            $app_session_token = substr($purified, 0, \K::$fw->TOKEN_LENGTH);
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
@@ -92,7 +92,7 @@ class Security extends \Prefab
             $hash = hash_hmac('sha256', $salt . $this->_DELIMITER . $time, $app_session_token, true);
             $base64 = base64_encode($hash);
             $purified = $this->purified($base64);
-            $token = substr($purified, 0, \K::f3()->TOKEN_LENGTH);
+            $token = substr($purified, 0, \K::$fw->TOKEN_LENGTH);
         } catch (\Exception $e) {
             echo $e->getMessage();
         }

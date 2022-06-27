@@ -8,79 +8,78 @@ class Fieldtype_attachments
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_ATTACHMENTS_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_ATTACHMENTS_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED,
             'name' => 'notify_when_changed',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_NOTIFY_WHEN_CHANGED_TIP
+            'tooltip_icon' => \K::$fw->TEXT_NOTIFY_WHEN_CHANGED_TIP
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_USE_IMAGE_PREVIEW,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_USE_IMAGE_PREVIEW,
             'name' => 'use_image_preview',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_USE_IMAGE_PREVIEW_TIP
+            'tooltip_icon' => \K::$fw->TEXT_USE_IMAGE_PREVIEW_TIP
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_FILE_DATE_ADDED,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_FILE_DATE_ADDED,
             'name' => 'display_date_added',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOW_CHANGE_FILE_NAME,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOW_CHANGE_FILE_NAME,
             'name' => 'allow_change_file_name',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_FILES_UPLOAD_LIMIT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_FILES_UPLOAD_LIMIT,
             'name' => 'upload_limit',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_FILES_UPLOAD_LIMIT_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FILES_UPLOAD_LIMIT_TIP,
             'params' => ['class' => 'form-control input-xsmall']
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_FILES_UPLOAD_SIZE_LIMIT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_FILES_UPLOAD_SIZE_LIMIT,
             'name' => 'upload_size_limit',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_FILES_UPLOAD_SIZE_LIMIT_TIP,
-            'tooltip' => \K::f3()->TEXT_MAX_UPLOAD_FILE_SIZE . ' ' . \K::f3(
-                )->CFG_SERVER_UPLOAD_MAX_FILESIZE . 'MB ' . \K::f3()->TEXT_MAX_UPLOAD_FILE_SIZE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FILES_UPLOAD_SIZE_LIMIT_TIP,
+            'tooltip' => \K::$fw->TEXT_MAX_UPLOAD_FILE_SIZE . ' ' . \K::f3(
+                )->CFG_SERVER_UPLOAD_MAX_FILESIZE . 'MB ' . \K::$fw->TEXT_MAX_UPLOAD_FILE_SIZE_TIP,
             'params' => ['class' => 'form-control input-xsmall']
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ALLOWED_EXTENSIONS,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ALLOWED_EXTENSIONS,
             'name' => 'allowed_extensions',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOWED_EXTENSIONS_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_ALLOWED_EXTENSIONS_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_PLAY_AUDIO_FILE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_PLAY_AUDIO_FILE,
             'name' => 'play_audio_file',
             'type' => 'checkbox',
             'tooltip_icon' => 'mp3, wav, ogg'
         ];
 
-
-        $cfg[\K::f3()->TEXT_DELETION][] = [
-            'title' => \K::f3()->TEXT_CONFIRM_DELETION,
+        $cfg[\K::$fw->TEXT_DELETION][] = [
+            'title' => \K::$fw->TEXT_CONFIRM_DELETION,
             'name' => 'confirm_delation',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_DELETION][] = [
-            'title' => \K::f3()->TEXT_ALLOWS_DELETE_IF_HAS_DELETE_ACCESS,
+        $cfg[\K::$fw->TEXT_DELETION][] = [
+            'title' => \K::$fw->TEXT_ALLOWS_DELETE_IF_HAS_DELETE_ACCESS,
             'name' => 'check_delete_access',
             'type' => 'checkbox'
         ];
@@ -194,7 +193,6 @@ class Fieldtype_attachments
             //print_r($mime_types);
         }
 
-
         $attachments_preview_html = attachments::render_preview(
             $field_id,
             $uploadify_attachments[$field_id],
@@ -233,7 +231,7 @@ class Fieldtype_attachments
                 "fileType"		   :   ' . $fileType . ',
                 "fileTypeExtra"	   :   "' . $cfg->get('allowed_extensions') . '",
                 "buttonClass"      : "btn btn-default btn-upload",
-                "buttonText"       : "<i class=\"fa fa-upload\"></i> ' . \K::f3()->TEXT_ADD_ATTACHMENTS . '",				
+                "buttonText"       : "<i class=\"fa fa-upload\"></i> ' . \K::$fw->TEXT_ADD_ATTACHMENTS . '",				
                 "formData"         : {
                                         "timestamp" : ' . $timestamp . ',
                                         "token"     : "' . $form_token . '",
@@ -262,7 +260,7 @@ class Fieldtype_attachments
         $("button[type=submit]").bind("click",function(){                                                 
             if(is_file_uploading)
             {
-              alert("' . \K::f3()->TEXT_PLEASE_WAIT_FILES_LOADING . '"); return false;
+              alert("' . \K::$fw->TEXT_PLEASE_WAIT_FILES_LOADING . '"); return false;
             }                           
           });
         
@@ -276,7 +274,6 @@ class Fieldtype_attachments
     public function process($options)
     {
         global $app_changed_fields;
-
 
         if (is_array($options['value'])) {
             $attachments = [];
@@ -318,8 +315,8 @@ class Fieldtype_attachments
                 }
 
                 $file = attachments::parse_filename($filename);
-                if (is_file(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
-                    unlink(\K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
+                if (is_file(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
+                    unlink(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
                 }
             }
         }
@@ -328,7 +325,6 @@ class Fieldtype_attachments
         db_query("delete from app_attachments where date_added!='" . date('Y-m-d') . "'");
 
         $options['value'] = implode(',', $attachments);
-
 
         //notify when changed
         if (isset($options['is_new_item'])) {
@@ -524,7 +520,6 @@ class Fieldtype_attachments
                 }
                 */
 
-
                 if ($use_file_storage) {
                     $html .= '
 		                  <ul style="padding: 0px; margin: 0px;">';
@@ -614,7 +609,7 @@ class Fieldtype_attachments
                                         ]
                                     ),
                                     'download_link' => link_to(
-                                        '<i class="fa fa-download"></i> ' . \K::f3()->TEXT_DOWNLOAD,
+                                        '<i class="fa fa-download"></i> ' . \K::$fw->TEXT_DOWNLOAD,
                                         url_for(
                                             'items/info',
                                             'path=' . $options['path'] . '&action=download_attachment&file=' . urlencode(
@@ -794,7 +789,7 @@ class Fieldtype_attachments
 
             $params = [
                 'accept' => implode(',', $fileTypeList),
-                'data-msg-accept' => \K::f3()->TEXT_ERROR_FILE_EXTENSION
+                'data-msg-accept' => \K::$fw->TEXT_ERROR_FILE_EXTENSION
             ];
         }
 
@@ -824,7 +819,7 @@ class Fieldtype_attachments
 
             $params = [
                 'accept' => implode(',', $fileTypeList),
-                'data-msg-accept' => \K::f3()->TEXT_ERROR_FILE_EXTENSION
+                'data-msg-accept' => \K::$fw->TEXT_ERROR_FILE_EXTENSION
             ];
         }
 

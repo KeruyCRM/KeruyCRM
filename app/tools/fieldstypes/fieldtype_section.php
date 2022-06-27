@@ -8,7 +8,7 @@ class Fieldtype_section
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_SECTION];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_SECTION];
     }
 
     public function get_configuration()
@@ -16,7 +16,7 @@ class Fieldtype_section
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_DESCRIPTION,
+            'title' => \K::$fw->TEXT_DESCRIPTION,
             'name' => 'description',
             'type' => 'textarea',
             'params' => ['class' => 'form-control']

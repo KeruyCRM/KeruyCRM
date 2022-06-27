@@ -13,7 +13,7 @@ class Fields
             ['is_heading = ?', 1],
             [],
             null,
-            [\K::f3()->TTL_APP, 'app_fields']
+            [\K::$fw->TTL_APP, 'app_fields']
         );
 
         //while ($fields = db_fetch_array($fields_query)) {
@@ -38,7 +38,7 @@ class Fields
             ['type not in (?, ?)', 'fieldtype_formula', 'fieldtype_dynamic_date'],
             [],
             null,
-            [\K::f3()->TTL_APP, 'app_fields']
+            [\K::$fw->TTL_APP, 'app_fields']
         );
 
         //while ($fields = db_fetch_array($fields_query)) {
@@ -63,7 +63,7 @@ class Fields
             ['type in (?, ?)', 'fieldtype_formula', 'fieldtype_dynamic_date'],
             [],
             null,
-            [\K::f3()->TTL_APP, 'app_fields']
+            [\K::$fw->TTL_APP, 'app_fields']
         );
 
         //while ($fields = db_fetch_array($fields_query)) {
@@ -88,7 +88,7 @@ class Fields
         $fields_query = \K::model()->db_fetch_all(
             'app_fields',
             'id,type,name,entities_id,configuration',
-            [\K::f3()->TTL_APP, 'app_fields']
+            [\K::$fw->TTL_APP, 'app_fields']
         );
 
         //while ($fields = db_fetch_array($fields_query)) {
@@ -132,7 +132,7 @@ class Fields
 
     public static function get_choices($entities_id, $cfg = [])
     {
-        $app_entities_cache = \K::f3()->app_entities_cache;
+        $app_entities_cache = \K::$fw->app_entities_cache;
 
         $cfg = new settings($cfg, [
             'include_paretns' => 0,
@@ -191,8 +191,8 @@ class Fields
             return '
         <table class="table">
           <tr>
-            <th>' . \K::f3()->TEXT_ID . '</th>
-            <th>' . \K::f3()->TEXT_NAME . '</th>
+            <th>' . \K::$fw->TEXT_ID . '</th>
+            <th>' . \K::$fw->TEXT_NAME . '</th>
           </tr>
           ' . $html . '
         </table>
@@ -205,7 +205,7 @@ class Fields
     public static function check_before_delete($entity_id, $id)
     {
         //global $app_fields_cache;
-        $app_fields_cache = \K::f3()->app_fields_cache;
+        $app_fields_cache = \K::$fw->app_fields_cache;
 
         $msg = '';
 
@@ -220,13 +220,13 @@ class Fields
         }
 
         if (count($use_in_formula)) {
-            $msg .= \K::f3()->TEXT_FIELD_USING_IN_FORMULA . ': ' . implode(', ', $use_in_formula);
+            $msg .= \K::$fw->TEXT_FIELD_USING_IN_FORMULA . ': ' . implode(', ', $use_in_formula);
         }
 
         if (strlen($msg)) {
             $name = $app_fields_cache[$entity_id][$id]['name'];
             $msg = sprintf(
-                    \K::f3()->TEXT_YOU_CANT_DELETE_FIELD,
+                    \K::$fw->TEXT_YOU_CANT_DELETE_FIELD,
                     $name
                 ) . '<br><br><p class="alert alert-warning">' . $msg . '</p>';
         }
@@ -267,7 +267,7 @@ class Fields
     public static function get_heading_id($entity_id)
     {
         //global $app_heading_fields_id_cache;
-        $app_heading_fields_id_cache = \K::f3()->app_heading_fields_id_cache;
+        $app_heading_fields_id_cache = \K::$fw->app_heading_fields_id_cache;
 
         if (isset($app_heading_fields_id_cache[$entity_id])) {
             return $app_heading_fields_id_cache[$entity_id];
@@ -303,13 +303,13 @@ class Fields
 
             if (strlen($cfg->get('min_value'))) {
                 $attributes[] = 'min: jQuery.validator.format("' . htmlspecialchars(
-                        \K::f3()->TEXT_MIN_VALUE_WARNING
+                        \K::$fw->TEXT_MIN_VALUE_WARNING
                     ) . '")';
             }
 
             if (strlen($cfg->get('max_value'))) {
                 $attributes[] = 'max: jQuery.validator.format("' . htmlspecialchars(
-                        \K::f3()->TEXT_MAX_VALUE_WARNING
+                        \K::$fw->TEXT_MAX_VALUE_WARNING
                     ) . '")';
             }
 
@@ -362,10 +362,10 @@ class Fields
     public static function render_unique_fields_rules($entities_id, $item_id = false)
     {
         //global $app_items_form_name, $public_form, $app_session_token, $app_path;
-        $app_items_form_name = \K::f3()->app_items_form_name;
-        $public_form = \K::f3()->public_form;
-        $app_session_token = \K::f3()->app_session_token;
-        $app_path = \K::f3()->app_path;
+        $app_items_form_name = \K::$fw->app_items_form_name;
+        $public_form = \K::$fw->public_form;
+        $app_session_token = \K::$fw->app_session_token;
+        $app_path = \K::$fw->app_path;
 
         if ($app_items_form_name == 'registration_form') {
             $url = url_for("users/registration", "action=check_unique&entities_id=1");
@@ -431,7 +431,7 @@ class Fields
     public static function get_search_feidls($entity_id)
     {
         //global $app_user;
-        $app_user = \K::f3()->app_user;
+        $app_user = \K::$fw->app_user;
 
         $fields_access_schema = users::get_fields_access_schema($entity_id, $app_user['group_id']);
 
@@ -468,8 +468,8 @@ class Fields
     public static function get_filters_choices($entity_id, $show_parent_item_fitler = true, $exclude = "")
     {
         //global $app_user, $app_redirect_to;
-        $app_user = \K::f3()->app_user;
-        $app_redirect_to = \K::f3()->app_redirect_to;
+        $app_user = \K::$fw->app_user;
+        $app_redirect_to = \K::$fw->app_redirect_to;
 
         $entity_info = db_find('app_entities', $entity_id);
 
@@ -764,10 +764,10 @@ class Fields
         $include_parent = false
     ) {
         //global $app_entities_cache;
-        $app_entities_cache = \K::f3()->app_entities_cache;
+        $app_entities_cache = \K::$fw->app_entities_cache;
 
         if ($dropdown_title === null) {
-            $dropdown_title = \K::f3()->TEXT_AVAILABLE_FIELDS;
+            $dropdown_title = \K::$fw->TEXT_AVAILABLE_FIELDS;
         }
 
         $entities_info = db_find('app_entities', $entities_id);
@@ -804,23 +804,19 @@ class Fields
         if (!count($use_fieldtypes) and !$skip_reserved) {
             $html .= '  			  			
 	  	    <li>
-	  				<a href="#" class="insert_to_template_' . $unique_id . '" data-field="[id]">' . self::f3(
-                )->TEXT_FIELDTYPE_ID_TITLE . ' [id]</a>
+	  				<a href="#" class="insert_to_template_' . $unique_id . '" data-field="[id]">' . \K::$fw->TEXT_FIELDTYPE_ID_TITLE . ' [id]</a>
 	  	    </li>
 	  	    <li>
-	  	      <a href="#" class="insert_to_template_' . $unique_id . '" data-field="[date_added]">' . self::f3(
-                )->TEXT_FIELDTYPE_DATEADDED_TITLE . ' [date_added]</a>
+	  	      <a href="#" class="insert_to_template_' . $unique_id . '" data-field="[date_added]">' . \K::$fw->TEXT_FIELDTYPE_DATEADDED_TITLE . ' [date_added]</a>
 	  	    </li>
 	  	    <li>
-	  	      <a href="#" class="insert_to_template_' . $unique_id . '" data-field="[created_by]">' . self::f3(
-                )->TEXT_FIELDTYPE_CREATEDBY_TITLE . ' [created_by]</a>
+	  	      <a href="#" class="insert_to_template_' . $unique_id . '" data-field="[created_by]">' . \K::$fw->TEXT_FIELDTYPE_CREATEDBY_TITLE . ' [created_by]</a>
 	  	    </li>';
 
             if ($entities_info['parent_id'] > 0) {
                 $html .= '
 	  				<li>
-		  	      <a href="#" class="insert_to_template_' . $unique_id . '" data-field="[parent_item_id]">' . self::f3(
-                    )->TEXT_FIELDTYPE_PARENT_ITEM_ID_TITLE . ' [parent_item_id]</a>
+		  	      <a href="#" class="insert_to_template_' . $unique_id . '" data-field="[parent_item_id]">' . \K::$fw->TEXT_FIELDTYPE_PARENT_ITEM_ID_TITLE . ' [parent_item_id]</a>
 		  	    </li>';
             }
         }
@@ -927,7 +923,7 @@ class Fields
     static function prepare_field_db_name_by_type($entities_id, $fields_id, $alias = 'e')
     {
         //global $app_fields_cache;
-        $app_fields_cache = \K::f3()->app_fields_cache;
+        $app_fields_cache = \K::$fw->app_fields_cache;
 
         switch ($app_fields_cache[$entities_id][$fields_id]['type']) {
             case 'fieldtype_id':

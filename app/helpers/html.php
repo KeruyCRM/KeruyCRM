@@ -262,7 +262,6 @@ class Html
 
             $attributes['id'] = self::generate_id_from_name($name . '[' . $k . ']');
 
-
             $html .= '<li><label style="color: ' . $color . '">' . self::input_checkbox_tag(
                     $name . '[]',
                     $k,

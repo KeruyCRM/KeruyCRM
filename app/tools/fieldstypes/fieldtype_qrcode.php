@@ -8,7 +8,7 @@ class Fieldtype_qrcode
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_QRCODE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_QRCODE_TITLE];
     }
 
     public function get_configuration()
@@ -16,31 +16,31 @@ class Fieldtype_qrcode
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_QRCODE_PATTERN . fields::get_available_fields_helper(
+            'title' => \K::$fw->TEXT_QRCODE_PATTERN . fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_pattern'
                 ),
             'name' => 'pattern',
             'type' => 'textarea',
-            'tooltip' => \K::f3()->TEXT_ENTER_TEXT_PATTERN_INFO,
+            'tooltip' => \K::$fw->TEXT_ENTER_TEXT_PATTERN_INFO,
             'params' => ['class' => 'form-control']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_CODE_ERROR_CORRECTION,
+            'title' => \K::$fw->TEXT_CODE_ERROR_CORRECTION,
             'name' => 'ecc',
             'type' => 'dropdown',
             'choices' => [
-                'l' => \K::f3()->TEXT_CODE_ERROR_CORRECTION_L,
-                'm' => \K::f3()->TEXT_CODE_ERROR_CORRECTION_M,
-                'q' => \K::f3()->TEXT_CODE_ERROR_CORRECTION_Q,
-                'h' => \K::f3()->TEXT_CODE_ERROR_CORRECTION_H
+                'l' => \K::$fw->TEXT_CODE_ERROR_CORRECTION_L,
+                'm' => \K::$fw->TEXT_CODE_ERROR_CORRECTION_M,
+                'q' => \K::$fw->TEXT_CODE_ERROR_CORRECTION_Q,
+                'h' => \K::$fw->TEXT_CODE_ERROR_CORRECTION_H
             ],
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PIXEL_SIZE,
+            'title' => \K::$fw->TEXT_PIXEL_SIZE,
             'name' => 'pixel_size',
             'type' => 'dropdown',
             'choices' => ['2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6],
@@ -48,7 +48,7 @@ class Fieldtype_qrcode
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_ON_INFO_PAGE,
+            'title' => \K::$fw->TEXT_HIDE_FIELD_ON_INFO_PAGE,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox'
         ];

@@ -92,7 +92,6 @@ class comments
                     'path' => $path
                 ];
 
-
                 $html_fields .= "
             <tr>
       				<th style='text-align: left;vertical-align: top; font-size: 11px;'>&bull;&nbsp;" . htmlspecialchars(
@@ -109,7 +108,6 @@ class comments
             if (strlen($html_fields)) {
                 $descripttion .= "<table style='padding-top: 7px;'>" . $html_fields . "</table>";
             }
-
 
             if (strlen($descripttion)) {
                 return '<sup class="last_comment_info" data-toggle="popover" title="' . format_date_time(
@@ -155,7 +153,6 @@ class comments
         $fields_access_schema = users::get_fields_access_schema($entity_id, $user_info['field_6']);
         $choices_cache = fields_choices::get_cache();
 
-
         $count = 0;
         $html = '<table width="100%">';
         $limit = (int)CFG_EMAIL_AMOUNT_PREVIOUS_COMMENTS;
@@ -186,7 +183,6 @@ class comments
                     'path' => $current_path,
                     'is_comments_listing' => true,
                 ];
-
 
                 $html_fields .= '                      
             <tr><th style="text-align: left; font-family:Arial;font-size:13px; vertical-align: top">&bull;&nbsp;' . fields_types::get_option(

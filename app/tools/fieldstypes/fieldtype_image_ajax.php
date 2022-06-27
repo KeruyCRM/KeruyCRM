@@ -8,41 +8,41 @@ class Fieldtype_image_ajax
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_IMAGE_AJAX_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_IMAGE_AJAX_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_CHANGE_FILE_NAME,
+            'title' => \K::$fw->TEXT_ALLOW_CHANGE_FILE_NAME,
             'name' => 'allow_change_file_name',
             'type' => 'checkbox'
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_FILES_UPLOAD_SIZE_LIMIT,
+            'title' => \K::$fw->TEXT_FILES_UPLOAD_SIZE_LIMIT,
             'name' => 'upload_size_limit',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_FILES_UPLOAD_SIZE_LIMIT_TIP,
-            'tooltip' => \K::f3()->TEXT_MAX_UPLOAD_FILE_SIZE . ' ' . \K::f3(
-                )->CFG_SERVER_UPLOAD_MAX_FILESIZE . 'MB ' . \K::f3()->TEXT_MAX_UPLOAD_FILE_SIZE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FILES_UPLOAD_SIZE_LIMIT_TIP,
+            'tooltip' => \K::$fw->TEXT_MAX_UPLOAD_FILE_SIZE . ' ' . \K::f3(
+                )->CFG_SERVER_UPLOAD_MAX_FILESIZE . 'MB ' . \K::$fw->TEXT_MAX_UPLOAD_FILE_SIZE_TIP,
             'params' => ['class' => 'form-control input-xsmall']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PREVIEW_IMAGE_SIZE,
+            'title' => \K::$fw->TEXT_PREVIEW_IMAGE_SIZE,
             'name' => 'width',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_PREVIEW_IMAGE_SIZE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_PREVIEW_IMAGE_SIZE_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_PREVIEW_IMAGE_SIZE_IN_LISTING,
+            'title' => \K::$fw->TEXT_PREVIEW_IMAGE_SIZE_IN_LISTING,
             'name' => 'width_in_listing',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
@@ -55,7 +55,7 @@ class Fieldtype_image_ajax
             'png' => 'png',
         ];
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOWED_EXTENSIONS,
+            'title' => \K::$fw->TEXT_ALLOWED_EXTENSIONS,
             'name' => 'allowed_extensions',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -180,7 +180,7 @@ $(function(){
         fileType         : [\'' . implode("','", $allowed_mime_types) . '\'],
         fileTypeExtra    : "' . implode(',', $allowed_extensions) . '",
         buttonClass      : "btn btn-default btn-upload",
-        buttonText       : "<i class=\"fa fa-upload\"></i> ' . \K::f3()->TEXT_SELECT_IMAGE . '",				            
+        buttonText       : "<i class=\"fa fa-upload\"></i> ' . \K::$fw->TEXT_SELECT_IMAGE . '",				            
         formData       :  {
                                 "timestamp" : ' . $timestamp . ',
                                 "token"     : "' . $form_token . '",
@@ -189,7 +189,7 @@ $(function(){
         queueID          : "uploadifive_queue_list_' . $field_id . '",
         fileSizeLimit : "' . (strlen($cfg->get('upload_size_limit')) ? (int)$cfg->get(
                 'upload_size_limit'
-            ) : \K::f3()->CFG_SERVER_UPLOAD_MAX_FILESIZE) . 'MB",
+            ) : \K::$fw->CFG_SERVER_UPLOAD_MAX_FILESIZE) . 'MB",
         multi: false,
         uploadScript: "' . $uploadScript . '",
         onUpload: function (filesToUpload)
@@ -230,7 +230,7 @@ $(function(){
                     $new_name = $file['date_added'] . '_' . db_input_protect($v['name']) . (strlen(
                             $file['extension']
                         ) ? '.' . $file['extension'] : '');
-                    $filepath = \K::f3()->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . (\K::f3(
+                    $filepath = \K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . (\K::f3(
                         )->CFG_ENCRYPT_FILE_NAME == 1 ? sha1(
                             $new_name
                         ) : $new_name);

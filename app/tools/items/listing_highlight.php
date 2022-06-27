@@ -357,7 +357,7 @@ class Listing_highlight
 
         switch (self::get_field_type_key($field['type'])) {
             case 'boolean':
-                $html = ($value == 'true' ? \K::f3()->TEXT_BOOLEAN_TRUE : \K::f3()->TEXT_BOOLEAN_FALSE);
+                $html = ($value == 'true' ? \K::$fw->TEXT_BOOLEAN_TRUE : \K::$fw->TEXT_BOOLEAN_FALSE);
                 break;
             case 'choices':
                 if ($cfg->get('use_global_list') > 0) {

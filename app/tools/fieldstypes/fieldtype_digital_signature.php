@@ -8,7 +8,7 @@ class Fieldtype_digital_signature
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_DIGITAL_SIGNATURE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_DIGITAL_SIGNATURE_TITLE];
     }
 
     public function get_configuration()
@@ -24,10 +24,10 @@ class Fieldtype_digital_signature
             $choices = $modules->get_active_modules();
         }
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_MODULE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_MODULE,
             'name' => 'module_id',
-            'tooltip' => (!is_ext_installed() ? \K::f3()->TEXT_EXTENSION_REQUIRED : ''),
+            'tooltip' => (!is_ext_installed() ? \K::$fw->TEXT_EXTENSION_REQUIRED : ''),
             'type' => 'dropdown',
             'choices' => $choices,
             'params' => ['class' => 'form-control input-large required']
@@ -42,8 +42,8 @@ class Fieldtype_digital_signature
             $choices[$fields['id']] = fields_types::get_option($fields['type'], 'name', $fields['name']);
         }
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_FIELDS_FOR_SIGNATURE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_FIELDS_FOR_SIGNATURE,
             'name' => 'signature_fields',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -63,8 +63,8 @@ class Fieldtype_digital_signature
         }
 
         if (count($choices) > 1) {
-            $cfg[\K::f3()->TEXT_SETTINGS][] = [
-                'title' => \K::f3()->TEXT_ASSIGNED_TO,
+            $cfg[\K::$fw->TEXT_SETTINGS][] = [
+                'title' => \K::$fw->TEXT_ASSIGNED_TO,
                 'name' => 'assigned_to',
                 'type' => 'dropdown',
                 'choices' => $choices,
@@ -86,39 +86,39 @@ class Fieldtype_digital_signature
             }
         }
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ACTION,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ACTION,
             'name' => 'run_process',
             'type' => 'dropdown',
             'choices' => $choices,
             'params' => ['class' => 'form-control input-large']
         ];
 
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_BUTTON_TITLE,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_BUTTON_TITLE,
             'name' => 'button_title',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_DIGITAL_SIGNATURE
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_DIGITAL_SIGNATURE
         ];
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_ICON,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_ICON,
             'name' => 'button_icon',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip' => \K::f3()->TEXT_MENU_ICON_TITLE_TOOLTIP
+            'tooltip' => \K::$fw->TEXT_MENU_ICON_TITLE_TOOLTIP
         ];
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_COLOR,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_COLOR,
             'name' => 'button_color',
             'type' => 'colorpicker'
         ];
 
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_NAME,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_NAME,
             'name' => 'hide_field_name',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_NAME_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_NAME_TIP
         ];
 
         return $cfg;
@@ -208,7 +208,7 @@ class Fieldtype_digital_signature
                             $cfg->get('button_icon')
                         ) . ' ' : '') . (strlen($cfg->get('button_title')) ? $cfg->get(
                         'button_title'
-                    ) : \K::f3()->TEXT_DIGITAL_SIGNATURE);
+                    ) : \K::$fw->TEXT_DIGITAL_SIGNATURE);
 
                 $btn_css = 'btn-color-' . $options['field']['id'];
 

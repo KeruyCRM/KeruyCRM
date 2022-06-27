@@ -8,61 +8,61 @@ class Fieldtype_iframe
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_IFRAME_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_IFRAME_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'input_width',
             'type' => 'dropdown',
             'choices' => [
-                'input-medium' => \K::f3()->TEXT_INPUT_MEDIUM,
-                'input-large' => \K::f3()->TEXT_INPUT_LARGE,
-                'input-xlarge' => \K::f3()->TEXT_INPUT_XLARGE
+                'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+                'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+                'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
             ],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_HIDE_FIELD_IF_EMPTY_TIP
+            'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
 
         $cfg['Iframe'][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg['Iframe'][] = [
-            'title' => \K::f3()->TEXT_HEIGHT,
+            'title' => \K::$fw->TEXT_HEIGHT,
             'name' => 'height',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg['Iframe'][] = [
-            'title' => \K::f3()->TEXT_SCROLL_BAR,
+            'title' => \K::$fw->TEXT_SCROLL_BAR,
             'name' => 'scrolling',
             'type' => 'dropdown',
-            'choices' => ['auto' => \K::f3()->TEXT_AUTOMATIC, 'no' => \K::f3()->TEXT_NO, 'yes' => \K::f3()->TEXT_YES],
-            'tooltip_icon' => \K::f3()->TEXT_ENTER_WIDTH,
+            'choices' => ['auto' => \K::$fw->TEXT_AUTOMATIC, 'no' => \K::$fw->TEXT_NO, 'yes' => \K::$fw->TEXT_YES],
+            'tooltip_icon' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium']
         ];
 
         $cfg['Iframe'][] = [
-            'title' => \K::f3()->TEXT_EXTRA_PARAMS,
+            'title' => \K::$fw->TEXT_EXTRA_PARAMS,
             'name' => 'extra_params',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_IFRAME_EXTRA_PARAMS_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_IFRAME_EXTRA_PARAMS_TIP,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 

@@ -8,7 +8,7 @@ class Fieldtype_image_map_nested
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_IMAGE_MAP_NESTED_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_IMAGE_MAP_NESTED_TITLE];
     }
 
     public function get_configuration()
@@ -21,8 +21,8 @@ class Fieldtype_image_map_nested
             $choices[$entities['id']] = $entities['name'];
         }
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ENTITY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ENTITY,
             'name' => 'entity_id',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -32,17 +32,17 @@ class Fieldtype_image_map_nested
             ]
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_FILES_UPLOAD_SIZE_LIMIT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_FILES_UPLOAD_SIZE_LIMIT,
             'name' => 'upload_size_limit',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_FILES_UPLOAD_SIZE_LIMIT_TIP,
-            'tooltip' => \K::f3()->TEXT_MAX_UPLOAD_FILE_SIZE . ' ' . \K::f3(
-                )->CFG_SERVER_UPLOAD_MAX_FILESIZE . 'MB ' . \K::f3()->TEXT_MAX_UPLOAD_FILE_SIZE_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_FILES_UPLOAD_SIZE_LIMIT_TIP,
+            'tooltip' => \K::$fw->TEXT_MAX_UPLOAD_FILE_SIZE . ' ' . \K::f3(
+                )->CFG_SERVER_UPLOAD_MAX_FILESIZE . 'MB ' . \K::$fw->TEXT_MAX_UPLOAD_FILE_SIZE_TIP,
             'params' => ['class' => 'form-control input-xsmall']
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_PREVIEW_IMAGE_SIZE_IN_LISTING,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_PREVIEW_IMAGE_SIZE_IN_LISTING,
             'name' => 'width_in_listing',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
@@ -58,28 +58,28 @@ class Fieldtype_image_map_nested
             '0' => '100%',
         ];
 
-        $cfg[\K::f3()->TEXT_MAP_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_SCALE,
+        $cfg[\K::$fw->TEXT_MAP_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_SCALE,
             'name' => 'scale',
             'default' => 3,
             'type' => 'dropdown',
             'choices' => $choices,
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_MAP_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_MAP_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'map_width',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_MAP_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HEIGHT,
+        $cfg[\K::$fw->TEXT_MAP_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HEIGHT,
             'name' => 'map_height',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_FIELDS][] = [
+        $cfg[\K::$fw->TEXT_FIELDS][] = [
             'name' => 'fields_in_popup_box',
             'type' => 'ajax',
             'html' => '<script>fields_types_ajax_configuration(\'fields_in_popup_box\',$("#fields_configuration_entity_id").val())</script>'
@@ -122,7 +122,7 @@ class Fieldtype_image_map_nested
                 }
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_FIELDS_IN_POPUP,
+                    'title' => \K::$fw->TEXT_FIELDS_IN_POPUP,
                     'name' => 'fields_in_popup',
                     'default' => '',
                     'type' => 'dropdown',
@@ -143,9 +143,9 @@ class Fieldtype_image_map_nested
                 }
 
                 $cfg[] = [
-                    'title' => \K::f3()->TEXT_BACKGROUND_COLOR,
+                    'title' => \K::$fw->TEXT_BACKGROUND_COLOR,
                     'name' => 'background',
-                    'tooltip_icon' => \K::f3()->TEXT_FIELDTYPE_IMAGE_MAP_BACKGROUND_COLOR_INFO,
+                    'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_IMAGE_MAP_BACKGROUND_COLOR_INFO,
                     'type' => 'dropdown',
                     'choices' => $choices,
                     'params' => [
@@ -165,7 +165,7 @@ class Fieldtype_image_map_nested
                 $choices = fields_choices::get_choices($value, false);
                 if (count($choices)) {
                     $cfg[] = [
-                        'title' => \K::f3()->TEXT_ICONS,
+                        'title' => \K::$fw->TEXT_ICONS,
                         'type' => 'section',
                         'html' => '<p class="form-section-description">' . \K::f3(
                             )->TEXT_FIELDTYPE_IMAGE_MAP_ICONS_TIP . '</p>'
@@ -301,7 +301,7 @@ $(function(){
         fileType         : [\'' . implode("','", $allowed_mime_types) . '\'],
         fileTypeExtra    : "' . implode(',', $allowed_extensions) . '",
         buttonClass      : "btn btn-default btn-upload",
-        buttonText       : "<i class=\"fa fa-upload\"></i> ' . \K::f3()->TEXT_SELECT_IMAGE . '",				            
+        buttonText       : "<i class=\"fa fa-upload\"></i> ' . \K::$fw->TEXT_SELECT_IMAGE . '",				            
         formData       :  {
                                 "timestamp" : ' . $timestamp . ',
                                 "token"     : "' . $form_token . '",
@@ -310,7 +310,7 @@ $(function(){
         queueID          : "uploadifive_queue_list_' . $field_id . '",
         fileSizeLimit : "' . (strlen($cfg->get('upload_size_limit')) ? (int)$cfg->get(
                 'upload_size_limit'
-            ) : \K::f3()->CFG_SERVER_UPLOAD_MAX_FILESIZE) . 'MB",
+            ) : \K::$fw->CFG_SERVER_UPLOAD_MAX_FILESIZE) . 'MB",
         multi: false,
         uploadScript: "' . $uploadScript . '",
         onUpload: function (filesToUpload)
@@ -457,19 +457,19 @@ $(function(){
 
     public function prepare_map_files($field_id, $item_id, $file)
     {
-        if (!is_dir(\K::f3()->DIR_WS_UPLOADS . 'maps_nested')) {
-            mkdir(\K::f3()->DIR_WS_UPLOADS . 'maps_nested');
+        if (!is_dir(\K::$fw->DIR_WS_UPLOADS . 'maps_nested')) {
+            mkdir(\K::$fw->DIR_WS_UPLOADS . 'maps_nested');
         }
 
-        if (!is_dir(\K::f3()->DIR_WS_UPLOADS . 'maps_nested/' . $field_id)) {
-            mkdir(\K::f3()->DIR_WS_UPLOADS . 'maps_nested/' . $field_id);
+        if (!is_dir(\K::$fw->DIR_WS_UPLOADS . 'maps_nested/' . $field_id)) {
+            mkdir(\K::$fw->DIR_WS_UPLOADS . 'maps_nested/' . $field_id);
         }
 
-        if (!is_dir(\K::f3()->DIR_WS_UPLOADS . 'maps_nested/' . $field_id . '/' . $item_id)) {
-            mkdir(\K::f3()->DIR_WS_UPLOADS . 'maps_nested/' . $field_id . '/' . $item_id);
+        if (!is_dir(\K::$fw->DIR_WS_UPLOADS . 'maps_nested/' . $field_id . '/' . $item_id)) {
+            mkdir(\K::$fw->DIR_WS_UPLOADS . 'maps_nested/' . $field_id . '/' . $item_id);
         }
 
-        $map_dir = \K::f3()->DIR_WS_UPLOADS . 'maps_nested/' . $field_id . '/' . $item_id . '/';
+        $map_dir = \K::$fw->DIR_WS_UPLOADS . 'maps_nested/' . $field_id . '/' . $item_id . '/';
 
         $map_filepath = $map_dir . $file['name'];
 

@@ -8,70 +8,70 @@ class Fieldtype_signature
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_SIGNATURE_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_SIGNATURE_TITLE];
     }
 
     public function get_configuration($params = [])
     {
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DESCRIPTION,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DESCRIPTION,
             'name' => 'signature_description',
             'type' => 'textarea',
             'params' => ['class' => 'form-control textarea-small']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH_IN_ITEM_PAGE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH_IN_ITEM_PAGE,
             'name' => 'signature_width_item_page',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip_icon' => \K::f3()->TEXT_WIDTH_IN_ITEM_PAGE_INFO
+            'tooltip_icon' => \K::$fw->TEXT_WIDTH_IN_ITEM_PAGE_INFO
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH_IN_PRINT_PAGE,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH_IN_PRINT_PAGE,
             'name' => 'signature_width_print_page',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip_icon' => \K::f3()->TEXT_WIDTH_IN_PRINT_PAGE_INFO
+            'tooltip_icon' => \K::$fw->TEXT_WIDTH_IN_PRINT_PAGE_INFO
         ];
 
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_BUTTON_TITLE,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_BUTTON_TITLE,
             'name' => 'button_title',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_APPROVE
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_APPROVE
         ];
 
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_ICON,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_ICON,
             'name' => 'button_icon',
             'type' => 'input',
             'params' => ['class' => 'form-control input-medium'],
-            'tooltip' => \K::f3()->TEXT_MENU_ICON_TITLE_TOOLTIP
+            'tooltip' => \K::$fw->TEXT_MENU_ICON_TITLE_TOOLTIP
         ];
 
-        $cfg[\K::f3()->TEXT_BUTTON][] = [
-            'title' => \K::f3()->TEXT_COLOR,
+        $cfg[\K::$fw->TEXT_BUTTON][] = [
+            'title' => \K::$fw->TEXT_COLOR,
             'name' => 'button_color',
             'type' => 'colorpicker'
         ];
 
-        $cfg[\K::f3()->TEXT_ACTION][] = [
-            'title' => \K::f3()->TEXT_ADD_COMMENT,
+        $cfg[\K::$fw->TEXT_ACTION][] = [
+            'title' => \K::$fw->TEXT_ADD_COMMENT,
             'name' => 'add_comment',
             'type' => 'dropdown',
-            'choices' => ['0' => \K::f3()->TEXT_NO, '1' => \K::f3()->TEXT_YES],
+            'choices' => ['0' => \K::$fw->TEXT_NO, '1' => \K::$fw->TEXT_YES],
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_ACTION][] = [
-            'title' => \K::f3()->TEXT_COMMENT_TEXT,
+        $cfg[\K::$fw->TEXT_ACTION][] = [
+            'title' => \K::$fw->TEXT_COMMENT_TEXT,
             'name' => 'comment_text',
             'type' => 'textarea',
             'params' => ['class' => 'form-control textarea-small'],
-            'tooltip_icon' => \K::f3()->TEXT_DEFAULT . ': ' . \K::f3()->TEXT_APPROVED
+            'tooltip_icon' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_APPROVED
         ];
 
         $choices = [];
@@ -86,13 +86,13 @@ class Fieldtype_signature
             }
         }
 
-        $cfg[\K::f3()->TEXT_ACTION][] = [
-            'title' => \K::f3()->TEXT_ALL_USERS_APPROVED,
+        $cfg[\K::$fw->TEXT_ACTION][] = [
+            'title' => \K::$fw->TEXT_ALL_USERS_APPROVED,
             'name' => 'run_process',
             'type' => 'dropdown',
             'choices' => $choices,
             'params' => ['class' => 'form-control input-large'],
-            'tooltip' => \K::f3()->TEXT_ALL_USERS_APPROVED_INFO
+            'tooltip' => \K::$fw->TEXT_ALL_USERS_APPROVED_INFO
         ];
 
         return $cfg;

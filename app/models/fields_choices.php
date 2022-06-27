@@ -248,7 +248,7 @@ class Fields_choices
         $list = [];
 
         //$choices_query = db_query("select * from app_fields_choices");
-        $choices_query = \K::model()->db_fetch_all('app_fields_choices', null, [\K::f3()->TTL_APP, 'app_fields_choices']
+        $choices_query = \K::model()->db_fetch_all('app_fields_choices', null, [\K::$fw->TTL_APP, 'app_fields_choices']
         );
 
         //while ($v = db_fetch_array($choices_query)) {

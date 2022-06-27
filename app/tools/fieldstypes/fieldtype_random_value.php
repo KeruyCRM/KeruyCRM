@@ -8,7 +8,7 @@ class Fieldtype_random_value
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_RANDOM_VALUE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_RANDOM_VALUE];
     }
 
     public function get_configuration()
@@ -16,14 +16,14 @@ class Fieldtype_random_value
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_VALUE_LENGTH,
+            'title' => \K::$fw->TEXT_VALUE_LENGTH,
             'name' => 'value_length',
             'default' => 5,
             'type' => 'input',
@@ -31,40 +31,40 @@ class Fieldtype_random_value
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_CHARACTERS,
+            'title' => \K::$fw->TEXT_CHARACTERS,
             'name' => 'value_characters',
             'type' => 'textarea',
-            'tooltip_icon' => \K::f3()->TEXT_CHARACTERS_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_CHARACTERS_TIP,
             'params' => ['class' => 'form-control textarea-small'],
             'tooltip' => '~!@#$%^&*()_+abcdefghijkmnopqrstuvwxyz0123456789ABCDEFGHIJKMNOPQRSTUVWXYZ'
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SPLIT_VALUE,
+            'title' => \K::$fw->TEXT_SPLIT_VALUE,
             'name' => 'split_value',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_SPLIT_VALUE_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_SPLIT_VALUE_INFO,
             'params' => ['class' => 'form-control input-xsmall']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_SPLIT_VALUE_CHAR,
+            'title' => \K::$fw->TEXT_SPLIT_VALUE_CHAR,
             'name' => 'split_value_char',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_SPLIT_VALUE_CHAR_INFO,
+            'tooltip_icon' => \K::$fw->TEXT_SPLIT_VALUE_CHAR_INFO,
             'params' => ['class' => 'form-control input-xsmall']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_START_ROW,
+            'title' => \K::$fw->TEXT_START_ROW,
             'name' => 'start_row',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_START_ROW_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_START_ROW_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_END_ROW,
+            'title' => \K::$fw->TEXT_END_ROW,
             'name' => 'end_row',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']

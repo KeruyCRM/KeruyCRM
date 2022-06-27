@@ -9,15 +9,16 @@ class Fieldtype_user_language
     public function __construct()
     {
         $this->options = [
-            'name' => \K::f3()->TEXT_FIELDTYPE_USER_LANGUAGE_TITLE,
-            'title' => \K::f3()->TEXT_FIELDTYPE_USER_LANGUAGE_TITLE
+            'name' => \K::$fw->TEXT_FIELDTYPE_USER_LANGUAGE_TITLE,
+            'title' => \K::$fw->TEXT_FIELDTYPE_USER_LANGUAGE_TITLE
         ];
     }
 
     public function render($field, $obj, $params = [])
     {
-        $selected = (strlen($obj['field_' . $field['id']]) > 0 ? $obj['field_' . $field['id']] : \K::f3(
-        )->CFG_APP_LANGUAGE);
+        $selected = (strlen(
+            $obj['field_' . $field['id']]
+        ) > 0 ? $obj['field_' . $field['id']] : \K::$fw->CFG_APP_LANGUAGE);
         return select_tag(
             'fields[' . $field['id'] . ']',
             app_get_languages_choices(),

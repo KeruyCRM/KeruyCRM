@@ -8,7 +8,7 @@ class Fieldtype_id
 
     public function __construct()
     {
-        $this->options = ['name' => \K::f3()->TEXT_FIELDTYPE_ID_TITLE, 'title' => \K::f3()->TEXT_FIELDTYPE_ID_TITLE];
+        $this->options = ['name' => \K::$fw->TEXT_FIELDTYPE_ID_TITLE, 'title' => \K::$fw->TEXT_FIELDTYPE_ID_TITLE];
     }
 
     public function get_configuration()
@@ -16,10 +16,10 @@ class Fieldtype_id
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::f3()->TEXT_ALLOW_SEARCH,
+            'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
-            'tooltip_icon' => \K::f3()->TEXT_ALLOW_SEARCH_TIP
+            'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
 
         return $cfg;

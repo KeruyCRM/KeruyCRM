@@ -8,26 +8,26 @@ class Fieldtype_google_map_directions
 
     public function __construct()
     {
-        $this->options = ['title' => \K::f3()->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_TITLE];
+        $this->options = ['title' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_TITLE];
     }
 
     public function get_configuration()
     {
         $cfg = [];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_API_KEY,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_API_KEY,
             'name' => 'api_key',
             'type' => 'input',
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_GOOGLE_MAP_API_KEY_TIP,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_API_KEY_TIP,
             'params' => ['class' => 'form-control input-xlarge required']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_ADDRESS . fields::get_available_fields_helper(
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_ADDRESS . fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_address_pattern',
-                    \K::f3()->TEXT_SELECT_FIELD,
+                    \K::$fw->TEXT_SELECT_FIELD,
                     [
                         'fieldtype_input',
                         'fieldtype_input_masked',
@@ -40,23 +40,23 @@ class Fieldtype_google_map_directions
                 ),
             'name' => 'address_pattern',
             'type' => 'textarea',
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_ADDRESS_TIP . '<br>' . \K::f3(
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_ADDRESS_TIP . '<br>' . \K::f3(
                 )->TEXT_ADDRESS_PATTERN_INFO,
             'params' => ['class' => 'form-control input-xlarge required']
         ];
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_WIDTH,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'map_width',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_WIDTH_INPUT_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_WIDTH_INPUT_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_HEIGHT,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_HEIGHT,
             'name' => 'map_height',
             'type' => 'input',
-            'tooltip_icon' => \K::f3()->TEXT_HEIGHT_INPUT_TIP,
+            'tooltip_icon' => \K::$fw->TEXT_HEIGHT_INPUT_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
 
@@ -65,8 +65,8 @@ class Fieldtype_google_map_directions
             $choices[$i] = $i;
         }
 
-        $cfg[\K::f3()->TEXT_SETTINGS][] = [
-            'title' => \K::f3()->TEXT_DEFAULT_ZOOM,
+        $cfg[\K::$fw->TEXT_SETTINGS][] = [
+            'title' => \K::$fw->TEXT_DEFAULT_ZOOM,
             'name' => 'zoom',
             'type' => 'dropdown',
             'choices' => $choices,
@@ -74,35 +74,35 @@ class Fieldtype_google_map_directions
             'params' => ['class' => 'form-control input-small']
         ];
 
-        $cfg[\K::f3()->TEXT_MARKER][] = [
-            'title' => \K::f3()->TEXT_LABEL,
+        $cfg[\K::$fw->TEXT_MARKER][] = [
+            'title' => \K::$fw->TEXT_LABEL,
             'name' => 'labels',
             'type' => 'textarea',
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_LABEL_TIP,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_LABEL_TIP,
             'params' => ['class' => 'form-control input-xlarge']
         ];
-        $cfg[\K::f3()->TEXT_MARKER][] = [
-            'title' => \K::f3()->TEXT_LABEL_COLOR,
+        $cfg[\K::$fw->TEXT_MARKER][] = [
+            'title' => \K::$fw->TEXT_LABEL_COLOR,
             'name' => 'label_color',
             'type' => 'colorpicker'
         ];
-        $cfg[\K::f3()->TEXT_MARKER][] = [
-            'title' => \K::f3()->TEXT_ICONS,
+        $cfg[\K::$fw->TEXT_MARKER][] = [
+            'title' => \K::$fw->TEXT_ICONS,
             'name' => 'icons',
             'type' => 'textarea',
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_ICONS_TIP,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_ICONS_TIP,
             'params' => ['class' => 'form-control input-xlarge']
         ];
-        $cfg[\K::f3()->TEXT_MARKER][] = [
-            'title' => \K::f3()->TEXT_FIELDS_IN_POPUP,
+        $cfg[\K::$fw->TEXT_MARKER][] = [
+            'title' => \K::$fw->TEXT_FIELDS_IN_POPUP,
             'name' => 'fields_in_popup',
             'type' => 'textarea',
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_FIELDS_IN_POPUP_TIP,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_FIELDS_IN_POPUP_TIP,
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
-        $cfg[\K::f3()->TEXT_DIRECTIONS][] = [
-            'title' => \K::f3()->TEXT_MODE,
+        $cfg[\K::$fw->TEXT_DIRECTIONS][] = [
+            'title' => \K::$fw->TEXT_MODE,
             'name' => 'travel_mode',
             'type' => 'dropdown',
             'choices' => [
@@ -112,47 +112,47 @@ class Fieldtype_google_map_directions
                 'TRANSIT' => 'TRANSIT',
                 'WALKING' => 'WALKING'
             ],
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_MODE_TIP,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_MODE_TIP,
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $cfg[\K::f3()->TEXT_DIRECTIONS][] = [
-            'title' => \K::f3()->TEXT_OPTIMIZE_WAYPOINTS,
+        $cfg[\K::$fw->TEXT_DIRECTIONS][] = [
+            'title' => \K::$fw->TEXT_OPTIMIZE_WAYPOINTS,
             'name' => 'optimizeWaypoints',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_DIRECTIONS][] = [
-            'title' => \K::f3()->TEXT_PROVIDE_ROUTE_ALTERNATIVES,
+        $cfg[\K::$fw->TEXT_DIRECTIONS][] = [
+            'title' => \K::$fw->TEXT_PROVIDE_ROUTE_ALTERNATIVES,
             'name' => 'provideRouteAlternatives',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_DIRECTIONS][] = [
-            'title' => \K::f3()->TEXT_AVOID_FERRIES,
+        $cfg[\K::$fw->TEXT_DIRECTIONS][] = [
+            'title' => \K::$fw->TEXT_AVOID_FERRIES,
             'name' => 'avoidFerries',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_DIRECTIONS][] = [
-            'title' => \K::f3()->TEXT_AVOID_HIGHWAYS,
+        $cfg[\K::$fw->TEXT_DIRECTIONS][] = [
+            'title' => \K::$fw->TEXT_AVOID_HIGHWAYS,
             'name' => 'avoidHighways',
             'type' => 'checkbox'
         ];
-        $cfg[\K::f3()->TEXT_DIRECTIONS][] = [
-            'title' => \K::f3()->TEXT_AVOID_TOLLS,
+        $cfg[\K::$fw->TEXT_DIRECTIONS][] = [
+            'title' => \K::$fw->TEXT_AVOID_TOLLS,
             'name' => 'avoidTolls',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_DISTANCE][] = [
-            'title' => \K::f3()->TEXT_CALCULATE_TOTAL_DISTANCE,
+        $cfg[\K::$fw->TEXT_DISTANCE][] = [
+            'title' => \K::$fw->TEXT_CALCULATE_TOTAL_DISTANCE,
             'name' => 'calculate_total_distance',
             'type' => 'checkbox'
         ];
 
-        $cfg[\K::f3()->TEXT_DISTANCE][] = [
-            'title' => \K::f3()->TEXT_DISPLAY_AS,
+        $cfg[\K::$fw->TEXT_DISTANCE][] = [
+            'title' => \K::$fw->TEXT_DISPLAY_AS,
             'name' => 'unit_system',
             'type' => 'dropdown',
-            'choices' => ['kilometers' => \K::f3()->TEXT_KILOMETERS, 'miles' => \K::f3()->TEXT_MILES],
+            'choices' => ['kilometers' => \K::$fw->TEXT_KILOMETERS, 'miles' => \K::$fw->TEXT_MILES],
             'params' => ['class' => 'form-control input-medium']
         ];
 
@@ -166,12 +166,12 @@ class Fieldtype_google_map_directions
             $choices[$fields['id']] = $fields['name'];
         }
 
-        $cfg[\K::f3()->TEXT_DISTANCE][] = [
-            'title' => \K::f3()->TEXT_SAVE_VALUE,
+        $cfg[\K::$fw->TEXT_DISTANCE][] = [
+            'title' => \K::$fw->TEXT_SAVE_VALUE,
             'name' => 'save_value_in',
             'type' => 'dropdown',
             'choices' => $choices,
-            'tooltip' => \K::f3()->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_SAVE_VALUE_TIP,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_SAVE_VALUE_TIP,
             'params' => ['class' => 'form-control input-medium']
         ];
 
@@ -547,7 +547,7 @@ class Fieldtype_google_map_directions
                         $(".google-map-distance").remove()
                         $("#goolge_map_container' . $field_id . '").after("<div class=\'google-map-distance\' style=\'width: 100%; max-width:' . $map_width . '\'>' . ($cfg->get(
                     'unit_system'
-                ) == 'kilometers' ? \K::f3()->TEXT_TOTAL_DISTANCE_IN_KILOMETERS : \K::f3(
+                ) == 'kilometers' ? \K::$fw->TEXT_TOTAL_DISTANCE_IN_KILOMETERS : \K::f3(
                 )->TEXT_TOTAL_DISTANCE_IN_MILES) . ': "+distance+"</div>")
                             
                         ' . ($cfg->get('save_value_in') > 0 ? '
@@ -655,7 +655,7 @@ class Fieldtype_google_map_directions
 
                             if (isset($result['error_message'])) {
                                 $alerts->add(
-                                    \K::f3()->TEXT_FIELD . ' "' . $fields['name'] . '": ' . $result['error_message'],
+                                    \K::$fw->TEXT_FIELD . ' "' . $fields['name'] . '": ' . $result['error_message'],
                                     'error'
                                 );
                             } else {
