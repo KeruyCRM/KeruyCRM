@@ -151,13 +151,6 @@ class Controller
             \K::fw()->reroute('/set/install/index');
         }
 
-        \K::keruy()->{'qwerty.123'} = 123;
-        \K::keruy()->refSync('asdf', \K::keruy()->{'qwerty.123'});
-        \K::keruy()->asdf = 456;
-
-        var_export(\K::$fw->{'qwerty'});
-
-        die;
         $this->_setSession();
 
         \K::security()->checkCsrfToken();
@@ -275,9 +268,7 @@ class Controller
         $cfg = \K::model()->db_fetch_all('app_configuration', null, [\K::$fw->TTL_APP, 'app_configuration']);
 
         foreach ($cfg as $v) {
-            $v = $v->cast();
-
-            \K::$fw->{$v['configuration_name']} = $v['configuration_value'];
+            \K::$fw->{$v->configuration_name} = $v->configuration_value;
         }
     }
 
