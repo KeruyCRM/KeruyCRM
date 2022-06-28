@@ -878,7 +878,7 @@ class Users
 
                 if (isset($password_hashed)) {
                     //app_session_register('app_logged_users_id', $user['id']);
-                    \K::sessionSet('app_logged_users_id', $user['id']);
+                    \K::sessionSet('app_logged_users_id', $user['id'], true);
 
                     \Models\Users\Users_login_log::success($username, $user['id']);
 
@@ -891,7 +891,7 @@ class Users
                     }
                 } elseif ($hasher->CheckPassword($password, $user['password'])) {
                     //app_session_register('app_logged_users_id', $user['id']);
-                    \K::sessionSet('app_logged_users_id', $user['id']);
+                    \K::sessionSet('app_logged_users_id', $user['id'], true);
 
                     //login log
                     if (\K::$fw->CFG_2STEP_VERIFICATION_ENABLED != 1) {

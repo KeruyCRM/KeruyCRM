@@ -152,6 +152,7 @@ class Controller
         }
 
         $this->_setSession();
+        $this->_extractSession();
 
         \K::security()->checkCsrfToken();
         \K::security()->initCsrfToken();
@@ -204,17 +205,14 @@ class Controller
         if (\K::fw()->get('PARAMS.moduleName') == 'module') {
             \K::$fw->app_module_path = \K::$fw->app_module . '/' . \K::$fw->app_action;
         } else {
-            \K::$fw->app_module_path = \K::fw()->get('PARAMS.moduleName') . '/' . \K::keruy(
-                )->app_module . '/' . \K::$fw->app_action;
+            \K::$fw->app_module_path = \K::fw()->get('PARAMS.moduleName') . '/' . \K::$fw->app_module . '/' . \K::$fw->app_action;
         }
 
-        \K::$fw->app_title = (strlen(\K::$fw->CFG_APP_SHORT_NAME) > 0 ? \K::keruy(
-        )->CFG_APP_SHORT_NAME : \K::$fw->CFG_APP_NAME);
+        \K::$fw->app_title = (strlen(\K::$fw->CFG_APP_SHORT_NAME) > 0 ? \K::$fw->CFG_APP_SHORT_NAME : \K::$fw->CFG_APP_NAME);
 
         \K::$fw->app_module_action = ($_GET['action'] ?? (isset($_POST['action']) ? $_POST['action'] : ''));
 
-        \K::keruy(
-        )->app_redirect_to = ($_GET['redirect_to'] ?? (isset($_POST['redirect_to']) ? $_POST['redirect_to'] : ''));
+        \K::$fw->app_redirect_to = ($_GET['redirect_to'] ?? (isset($_POST['redirect_to']) ? $_POST['redirect_to'] : ''));
 
         \K::$fw->app_path = ($_GET['path'] ?? (isset($_POST['path']) ? $_POST['path'] : ''));
 
@@ -250,8 +248,21 @@ class Controller
         echo '<PRE style="white-space: pre-wrap;">' . PHP_EOL . \K::model()->db->log() . '</PRE>';
     }
 
+    public function _extractSession()
+    {
+        foreach (\K::fw()->SESSION as $key => $value) {
+            \K::fw()->{$key} = $value;
+            \K::fw()->SESSION[$key] = &\K::fw()->{$key};
+        }
+    }
+
     private function _setSession()
     {
+        /*
+    if (!$SESS_LIFE = get_cfg_var('session.gc_maxlifetime')) {
+        $SESS_LIFE = 1440;
+    }
+        */
         new \DB\SQL\Session(\K::model()->db, 'app_sessions_new', false, function ($session) {
             if (K::keruy()->SESSION_CHECK_IP and $session->ip() !== \K::$fw->IP) {
                 return false;
@@ -291,71 +302,92 @@ class Controller
 
     private function _setCfgSession()
     {
-        if (!\K::sessionExists('uploadify_attachments')) {
-            \K::sessionSet('uploadify_attachments', []);
+        if (!\K::app_session_is_registered('uploadify_attachments')) {
+            \K::$fw->uploadify_attachments = [];
+            \K::app_session_register('uploadify_attachments');
         }
 
-        if (!\K::sessionExists('uploadify_attachments_queue')) {
-            \K::sessionSet('uploadify_attachments_queue', []);
+        if (!\K::app_session_is_registered('uploadify_attachments_queue')) {
+            \K::$fw->uploadify_attachments_queue = [];
+            \K::app_session_register('uploadify_attachments_queue');
         }
 
-        if (!\K::sessionExists('app_send_to')) {
-            \K::sessionSet('app_send_to', []);
+        // create the alerts object
+        /*if (!app_session_is_registered('alerts') || !is_object($alerts)) {
+            app_session_register('alerts');
+            $alerts = new alerts;
+        }*/
+
+        if (!\K::app_session_is_registered('app_send_to')) {
+            \K::app_session_register('app_send_to');
+            \K::$fw->app_send_to = [];
         }
 
-        if (!\K::sessionExists('app_session_token')) {
-            \K::sessionSet('app_session_token', \K::security()->genAppSessionToken());
+        if (!\K::app_session_is_registered('app_session_token')) {
+            \K::$fw->app_session_token = \K::security()->genAppSessionToken();
+            \K::app_session_register('app_session_token');
         }
 
-        if (!\K::sessionExists('app_current_users_filter')) {
-            \K::sessionSet('app_current_users_filter', []);
+        if (!\K::app_session_is_registered('app_current_users_filter')) {
+            \K::$fw->app_current_users_filter = [];
+            \K::app_session_register('app_current_users_filter');
         }
 
-        if (!\K::sessionExists('app_previously_logged_user')) {
-            \K::sessionSet('app_previously_logged_user', 0);
+        if (!\K::app_session_is_registered('app_previously_logged_user')) {
+            \K::$fw->app_previously_logged_user = 0;
+            \K::app_session_register('app_previously_logged_user');
         }
 
-        if (!\K::sessionExists('two_step_verification_info')) {
-            \K::sessionSet('two_step_verification_info', []);
+        if (!\K::app_session_is_registered('two_step_verification_info')) {
+            \K::$fw->two_step_verification_info = [];
+            \K::app_session_register('two_step_verification_info');
         }
 
-        if (!\K::sessionExists('app_email_verification_code')) {
-            \K::sessionSet('app_email_verification_code', '');
+        if (!\K::app_session_is_registered('app_email_verification_code')) {
+            \K::$fw->app_email_verification_code = '';
+            \K::app_session_register('app_email_verification_code');
         }
 
-        if (!\K::sessionExists('app_force_print_template')) {
-            \K::sessionSet('app_force_print_template', false);
+        if (!\K::app_session_is_registered('app_force_print_template')) {
+            \K::app_session_register('app_force_print_template');
+            \K::$fw->app_force_print_template = false;
         }
     }
 
     private function _setCfgSession2()
     {
-        if (!\K::sessionExists('app_current_version')) {
-            \K::sessionSet('app_current_version', '');
+        if (!\K::app_session_is_registered('app_current_version')) {
+            \K::$fw->app_current_version = '';
+            \K::app_session_register('app_current_version');
         }
 
         if (\K::$fw->CFG_DISABLE_CHECK_FOR_UPDATES == 1) {
             \K::$fw->app_current_version = '';
         }
 
-        if (!\K::sessionExists('app_selected_items')) {
-            \K::sessionSet('app_selected_items', []);
+        if (!\K::app_session_is_registered('app_selected_items')) {
+            \K::$fw->app_selected_items = [];
+            \K::app_session_register('app_selected_items');
         }
 
-        if (!\K::sessionExists('listing_page_keeper')) {
-            \K::sessionSet('listing_page_keeper', []);
+        if (!\K::app_session_is_registered('listing_page_keeper')) {
+            \K::$fw->listing_page_keeper = [];
+            \K::app_session_register('listing_page_keeper');
         }
 
-        if (!\K::sessionExists('user_roles_dropdown_change_holder')) {
-            \K::sessionSet('user_roles_dropdown_change_holder', []);
+        if (!\K::app_session_is_registered('user_roles_dropdown_change_holder')) {
+            \K::$fw->user_roles_dropdown_change_holder = [];
+            \K::app_session_register('user_roles_dropdown_change_holder');
         }
 
-        if (!\K::sessionExists('app_subentity_form_items')) {
-            \K::sessionSet('app_subentity_form_items', []);
+        if (!\K::app_session_is_registered('app_subentity_form_items')) {
+            \K::$fw->app_subentity_form_items = [];
+            \K::app_session_register('app_subentity_form_items');
         }
 
-        if (!\K::sessionExists('app_subentity_form_items_deleted')) {
-            \K::sessionSet('app_subentity_form_items_deleted', []);
+        if (!\K::app_session_is_registered('app_subentity_form_items_deleted')) {
+            \K::$fw->app_subentity_form_items_deleted = [];
+            \K::app_session_register('app_subentity_form_items_deleted');
         }
     }
 

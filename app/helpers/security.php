@@ -8,8 +8,7 @@ class Security extends \Prefab
 
     public function initCsrfToken()
     {
-        echo $this->generateToken() . PHP_EOL;
-        \K::fw()->set('csrf_token', $this->generateToken());
+        \K::$fw->form_csrf_token = $this->generateToken();
     }
 
     public function checkCsrfToken()
@@ -21,7 +20,7 @@ class Security extends \Prefab
 
             if (
                 !\K::sessionExists('app_session_token', $app_session_token)
-                or !\K::fw()->exists('POST.csrf_token', $postToken)
+                or !\K::fw()->exists('POST.form_csrf_token', $postToken)
                 or !$this->validateToken($postToken)) {
                 \K::fw()->error(400, 'Invalid CSRF token');
             } else {

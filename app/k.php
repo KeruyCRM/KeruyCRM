@@ -1,7 +1,7 @@
 <?php
 
 class K
-{
+{// 'K' !!!
     public static $fw;
 
     public static function keruy()
@@ -52,27 +52,33 @@ class K
         return \Helpers\Security::instance();
     }
 
-    public static function sessionExists($key, &$val = null)
+    public static function app_session_is_registered($key)
     {
-        return self::fw()->exists('SESSION.' . $key, $val);
+        return self::fw()->exists('SESSION.' . $key);
+    }
+
+    public static function app_session_register($key, $val = null)
+    {
+        if (self::fw()->exists($key)) {
+            self::fw()->SESSION[$key] = &self::fw()->{$key};
+        } else {
+            self::fw()->set('SESSION.' . $key, $val);
+        }
+    }
+
+    public static function app_session_unregister($key)
+    {
+        self::fw()->clear('SESSION.' . $key);
+    }
+
+    public static function app_session_table_reset()
+    {
+        //db_query("delete from app_sessions where expiry < '" . strtotime("-1 day") . "'");
     }
 
     public static function sessionGet($key, $args = null)
     {
         return self::fw()->get('SESSION.' . $key, $args);
-    }
-
-    public static function sessionSet($key, $val, $initRef = false, $ttl = 0)
-    {
-        self::fw()->set('SESSION.' . $key, $val, $ttl);
-        if ($initRef) {
-            self::fw()->refSync($key, self::fw()->{'SESSION.' . $key});
-        }
-    }
-
-    public static function sessionClear($key)
-    {
-        self::fw()->clear('SESSION.' . $key);
     }
 
     public static function cookieExists($key, &$val = null)

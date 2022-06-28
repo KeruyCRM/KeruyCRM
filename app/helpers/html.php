@@ -27,18 +27,18 @@ class Html
     {
         // check to see if we have an array variable for a field name
         if (strstr($name, '[')) {
-            $name = str_replace(['[]', '][', '[', ']'], ['', 'K', 'K', ''], $name);
+            $name = str_replace(['[]', '][', '[', ']'], ['', '_', '_', ''], $name);
         }
 
         // remove illegal characters
-        $name = preg_replace(['/^[^A-Za-z]+/', '/[^A-Za-z0-9\:_\.\-]/'], ['', 'K'], $name);
+        $name = preg_replace(['/^[^A-Za-z]+/', '/[^A-Za-z0-9\:_\.\-]/'], ['', '_'], $name);
 
         return $name;
     }
 
     public static function form_tag($name, $action, $attributes = [])
     {
-        global $app_session_token;
+        //global $app_session_token;
 
         $default = ['name' => $name, 'id' => self::generate_id_from_name($name), 'method' => 'post'];
 
@@ -47,7 +47,7 @@ class Html
                 $attributes
             ) . '> ' . self::input_hidden_tag(
                 'form_session_token',
-                $app_session_token
+                \K::$fw->app_session_token
             );
     }
 
