@@ -199,10 +199,10 @@ class Fieldtype_mysql_query
     {
         global $app_not_formula_fields_cache, $fieldtype_mysql_query_force, $app_fields_cache, $app_formula_fields_cache, $app_user;
 
-        $cfg = new fields_types_cfg($fields['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
         //skip query if not dinamic
-        if ($cfg->get('dinamic_query') != 1 and $fieldtype_mysql_query_force != true) {
+        if ($cfg->get('dinamic_query') != 1 and \K::$fw->fieldtype_mysql_query_force != true) {
             return $prefix . '.field_' . $fields['id'];
         }
 
@@ -222,7 +222,7 @@ class Fieldtype_mysql_query
 
         if (isset($app_formula_fields_cache[$cfg->get('entity_id')])) {
             foreach ($app_formula_fields_cache[$cfg->get('entity_id')] as $formula_field) {
-                $formula_cfg = fields_types::parse_configuration($formula_field['configuration']);
+                $formula_cfg = \Models\Fields_types::parse_configuration($formula_field['configuration']);
 
                 if (strlen($formula_cfg['formula'])) {
                     $formulas_fields[$formula_field['id']] = '(' . $formula_cfg['formula'] . ')';
@@ -230,16 +230,16 @@ class Fieldtype_mysql_query
             }
         }
 
-        $mysql_query = fieldtype_formula::prepare_formula_fields($formulas_fields, $mysql_query);
+        $mysql_query = \Tools\FieldsTypes\Fieldtype_formula::prepare_formula_fields($formulas_fields, $mysql_query);
 
         //prepare [TODAY]
-        $mysql_query = str_replace('[TODAY]', get_date_timestamp(date('Y-m-d')), $mysql_query);
+        $mysql_query = str_replace('[TODAY]', \Helpers\App::get_date_timestamp(date('Y-m-d')), $mysql_query);
         $mysql_query = str_replace('[current_user_id]', $app_user['id'], $mysql_query);
 
         $entities_id = $cfg->get('entity_id');
 
         //prepare fields entity query
-        foreach ($app_not_formula_fields_cache[$cfg->get('entity_id')] as $fields_id) {
+        foreach (\K::$fw->app_not_formula_fields_cache[$cfg->get('entity_id')] as $fields_id) {
             $fields_type = isset(
                 $app_fields_cache[$cfg->get(
                     'entity_id'
@@ -256,7 +256,7 @@ class Fieldtype_mysql_query
                 ) and $app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_days_difference') {
                 $mysql_query = str_replace(
                     '[' . $fields_id . ']',
-                    fieldtype_days_difference::prepare_query($app_fields_cache[$entities_id][$fields_id], 'msq', true),
+                    \Tools\FieldsTypes\Fieldtype_days_difference::prepare_query($app_fields_cache[$entities_id][$fields_id], 'msq', true),
                     $mysql_query
                 );
             } elseif (strstr(
@@ -265,7 +265,7 @@ class Fieldtype_mysql_query
                 ) and $app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_hours_difference') {
                 $mysql_query = str_replace(
                     '[' . $fields_id . ']',
-                    fieldtype_hours_difference::prepare_query($app_fields_cache[$entities_id][$fields_id], 'msq', true),
+                    \Tools\FieldsTypes\Fieldtype_hours_difference::prepare_query($app_fields_cache[$entities_id][$fields_id], 'msq', true),
                     $mysql_query
                 );
             } elseif (strstr(
@@ -274,7 +274,7 @@ class Fieldtype_mysql_query
                 ) and $app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_years_difference') {
                 $mysql_query = str_replace(
                     '[' . $fields_id . ']',
-                    fieldtype_years_difference::prepare_query($app_fields_cache[$entities_id][$fields_id], 'msq', true),
+                    \Tools\FieldsTypes\Fieldtype_years_difference::prepare_query($app_fields_cache[$entities_id][$fields_id], 'msq', true),
                     $mysql_query
                 );
             } elseif (strstr(
@@ -283,7 +283,7 @@ class Fieldtype_mysql_query
                 ) and $app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_months_difference') {
                 $mysql_query = str_replace(
                     '[' . $fields_id . ']',
-                    fieldtype_months_difference::prepare_query(
+                    \Tools\FieldsTypes\Fieldtype_months_difference::prepare_query(
                         $app_fields_cache[$entities_id][$fields_id],
                         'msq',
                         true
@@ -296,21 +296,21 @@ class Fieldtype_mysql_query
         }
 
         //handle get_vallue()
-        $mysql_query = fieldtype_formula::perpare_choices_get_value_function(
+        $mysql_query = \Tools\FieldsTypes\Fieldtype_formula::perpare_choices_get_value_function(
             $cfg->get('entity_id'),
             $mysql_query,
             'msq'
         );
 
         //handle functions in ext
-        if (strstr($mysql_query, '{') and is_ext_installed()) {
+        if (strstr($mysql_query, '{') and \Helpers\App::is_ext_installed()) {
             $mysql_query = functions::prepare_formula_query($cfg->get('entity_id'), $mysql_query, 100, 'msq');
             //echo $mysql_query;
             //exit();
         }
 
         //prepare fields for current entity
-        foreach ($app_not_formula_fields_cache[$fields['entities_id']] as $fields_id) {
+        foreach (\K::$fw->app_not_formula_fields_cache[$fields['entities_id']] as $fields_id) {
             $fields_type = isset($app_fields_cache[$fields['entities_id']][$fields_id]['type']) ? $app_fields_cache[$fields['entities_id']][$fields_id]['type'] : '';
             if (in_array(
                 $fields_type,

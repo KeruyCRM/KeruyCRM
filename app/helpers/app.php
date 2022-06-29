@@ -1270,7 +1270,7 @@ class App
 
     public static function is_ext_installed()
     {
-        return defined('CFG_PLUGIN_EXT_INSTALLED');
+        return \K::fw()->exists('CFG_PLUGIN_EXT_INSTALLED');
     }
 
     public static function is_cron()

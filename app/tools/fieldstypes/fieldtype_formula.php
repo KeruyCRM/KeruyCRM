@@ -294,29 +294,29 @@ class Fieldtype_formula
         $prepare_field_sum = false,
         $check_needed = false
     ) {
-        global $app_not_formula_fields_cache, $app_formula_fields_cache, $app_entities_cache, $app_currencies_cache, $app_fields_cache, $app_user, $app_global_vars;
+        //global $app_not_formula_fields_cache, $app_formula_fields_cache, $app_entities_cache, $app_currencies_cache, $app_fields_cache, $app_user, $app_global_vars;
 
         //get available fields for formula
         $available_fields = [];
-        if (isset($app_not_formula_fields_cache[$entities_id])) {
-            $available_fields = $app_not_formula_fields_cache[$entities_id];
+        if (isset(\K::$fw->app_not_formula_fields_cache[$entities_id])) {
+            $available_fields = \K::$fw->app_not_formula_fields_cache[$entities_id];
         }
 
         //print_rr($app_formula_fields_cache);
         //get formulas    
-        if (isset($app_formula_fields_cache[$entities_id])) {
+        if (isset(\K::$fw->app_formula_fields_cache[$entities_id])) {
             $formulas_fields = [];
 
-            foreach ($app_formula_fields_cache[$entities_id] as $fields) {
-                $cfg = fields_types::parse_configuration($fields['configuration']);
+            foreach (\K::$fw->app_formula_fields_cache[$entities_id] as $fields) {
+                $cfg = \Models\Fields_types::parse_configuration($fields['configuration']);
 
                 if (strlen($cfg['formula'])) {
                     $formulas_fields[$fields['id']] = '(' . $cfg['formula'] . ')';
                 }
             }
 
-            foreach ($app_formula_fields_cache[$entities_id] as $fields) {
-                $cfg = new fields_types_cfg($fields['configuration']);
+            foreach (\K::$fw->app_formula_fields_cache[$entities_id] as $fields) {
+                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                 $formula = $cfg->get('formula');
 
@@ -337,11 +337,11 @@ class Fieldtype_formula
                         if (strstr(
                                 $formula,
                                 '[' . $fields_id . ']'
-                            ) and $app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_mysql_query') {
+                            ) and \K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_mysql_query') {
                             $formula = str_replace(
                                 '[' . $fields_id . ']',
-                                fieldtype_mysql_query::prepare_query(
-                                    $app_fields_cache[$entities_id][$fields_id],
+                                \Tools\FieldsTypes\Fieldtype_mysql_query::prepare_query(
+                                    \K::$fw->app_fields_cache[$entities_id][$fields_id],
                                     'e',
                                     true
                                 ),
@@ -350,11 +350,11 @@ class Fieldtype_formula
                         } elseif (strstr(
                                 $formula,
                                 '[' . $fields_id . ']'
-                            ) and $app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_days_difference') {
+                            ) and \K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_days_difference') {
                             $formula = str_replace(
                                 '[' . $fields_id . ']',
                                 fieldtype_days_difference::prepare_query(
-                                    $app_fields_cache[$entities_id][$fields_id],
+                                    \K::$fw->app_fields_cache[$entities_id][$fields_id],
                                     'e',
                                     true
                                 ),
@@ -363,11 +363,11 @@ class Fieldtype_formula
                         } elseif (strstr(
                                 $formula,
                                 '[' . $fields_id . ']'
-                            ) and $app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_hours_difference') {
+                            ) and \K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_hours_difference') {
                             $formula = str_replace(
                                 '[' . $fields_id . ']',
                                 fieldtype_hours_difference::prepare_query(
-                                    $app_fields_cache[$entities_id][$fields_id],
+                                    \K::$fw->app_fields_cache[$entities_id][$fields_id],
                                     'e',
                                     true
                                 ),
@@ -376,11 +376,11 @@ class Fieldtype_formula
                         } elseif (strstr(
                                 $formula,
                                 '[' . $fields_id . ']'
-                            ) and $app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_years_difference') {
+                            ) and \K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_years_difference') {
                             $formula = str_replace(
                                 '[' . $fields_id . ']',
                                 fieldtype_years_difference::prepare_query(
-                                    $app_fields_cache[$entities_id][$fields_id],
+                                    \K::$fw->app_fields_cache[$entities_id][$fields_id],
                                     'e',
                                     true
                                 ),
@@ -389,11 +389,11 @@ class Fieldtype_formula
                         } elseif (strstr(
                                 $formula,
                                 '[' . $fields_id . ']'
-                            ) and $app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_months_difference') {
+                            ) and \K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_months_difference') {
                             $formula = str_replace(
                                 '[' . $fields_id . ']',
                                 fieldtype_months_difference::prepare_query(
-                                    $app_fields_cache[$entities_id][$fields_id],
+                                    \K::$fw->app_fields_cache[$entities_id][$fields_id],
                                     'e',
                                     true
                                 ),
@@ -411,20 +411,42 @@ class Fieldtype_formula
                     $formula = self::prepare_parent_entity_item_value($entities_id, $formula);
 
                     //prepare [TODAY]
-                    //TODO BOOST str_replace by array => array
-                    $formula = str_replace('[TODAY]', get_date_timestamp(date('Y-m-d')), $formula);
+
+                    /*$formula = str_replace('[TODAY]', get_date_timestamp(date('Y-m-d')), $formula);
 
                     $formula = str_replace('[id]', 'e.id', $formula);
                     $formula = str_replace('[date_added]', 'e.date_added', $formula);
                     $formula = str_replace('[date_updated]', 'e.date_updated', $formula);
                     $formula = str_replace('[created_by]', 'e.created_by', $formula);
                     $formula = str_replace('[parent_item_id]', 'e.parent_item_id', $formula);
-                    $formula = str_replace('[current_user_id]', $app_user['id'], $formula);
+                    $formula = str_replace('[current_user_id]', \K::$fw->app_user['id'], $formula);*/
+
+                    $formula = str_replace(
+                        [
+                            '[TODAY]',
+                            '[id]',
+                            '[date_added]',
+                            '[date_updated]',
+                            '[created_by]',
+                            '[parent_item_id]',
+                            '[current_user_id]'
+                        ],
+                        [
+                            \Helpers\App::get_date_timestamp(date('Y-m-d')),
+                            'e.id',
+                            'e.date_added',
+                            'e.date_updated',
+                            'e.created_by',
+                            'e.parent_item_id',
+                            \K::$fw->app_user['id']
+                        ],
+                        $formula
+                    );
 
                     //preapre [currecny code]
-                    if (is_ext_installed() and isset($app_currencies_cache)) {
-                        foreach ($app_currencies_cache as $currecny) {
-                            $formula = str_replace('[' . $currecny['code'] . ']', $currecny['value'], $formula);
+                    if (\Helpers\App::is_ext_installed() and \K::fw()->exists('app_currencies_cache')) {
+                        foreach (\K::$fw->app_currencies_cache as $currency) {
+                            $formula = str_replace('[' . $currency['code'] . ']', $currency['value'], $formula);
                         }
                     }
 
@@ -446,7 +468,7 @@ class Fieldtype_formula
                     } else {
                         echo '<div class="alert alert-danger">' . sprintf(
                                 \K::$fw->TEXT_ERROR_FORMULA_CALCULATION,
-                                $app_entities_cache[$entities_id]['name'],
+                                \K::$fw->app_entities_cache[$entities_id]['name'],
                                 $fields['name'],
                                 $fields['id'],
                                 $cfg->get('formula')
@@ -492,7 +514,7 @@ class Fieldtype_formula
             $listing_sql_query_select
         );
 
-        $listing_sql_query_select = $app_global_vars->apply_to_text($listing_sql_query_select);
+        $listing_sql_query_select = \K::$fw->app_global_vars->apply_to_text($listing_sql_query_select);
 
         return $listing_sql_query_select;
     }
