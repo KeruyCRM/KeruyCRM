@@ -40,8 +40,7 @@ class Fieldtype_google_map_directions
                 ),
             'name' => 'address_pattern',
             'type' => 'textarea',
-            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_ADDRESS_TIP . '<br>' . \K::f3(
-                )->TEXT_ADDRESS_PATTERN_INFO,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_ADDRESS_TIP . '<br>' . \K::$fw->TEXT_ADDRESS_PATTERN_INFO,
             'params' => ['class' => 'form-control input-xlarge required']
         ];
 
@@ -547,8 +546,7 @@ class Fieldtype_google_map_directions
                         $(".google-map-distance").remove()
                         $("#goolge_map_container' . $field_id . '").after("<div class=\'google-map-distance\' style=\'width: 100%; max-width:' . $map_width . '\'>' . ($cfg->get(
                     'unit_system'
-                ) == 'kilometers' ? \K::$fw->TEXT_TOTAL_DISTANCE_IN_KILOMETERS : \K::f3(
-                )->TEXT_TOTAL_DISTANCE_IN_MILES) . ': "+distance+"</div>")
+                ) == 'kilometers' ? \K::$fw->TEXT_TOTAL_DISTANCE_IN_KILOMETERS : \K::$fw->TEXT_TOTAL_DISTANCE_IN_MILES) . ': "+distance+"</div>")
                             
                         ' . ($cfg->get('save_value_in') > 0 ? '
                             $.ajax({

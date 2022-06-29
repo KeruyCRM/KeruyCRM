@@ -149,8 +149,7 @@ class Fieldtype_access_group
                         'width'
                     ) . ' chosen-select field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),
                 'multiple' => 'multiple',
-                'data-placeholder' => ($cfg->get('default_text') ? $cfg->get('default_text') : \K::f3(
-                )->TEXT_SELECT_SOME_VALUES)
+                'data-placeholder' => ($cfg->get('default_text') ? $cfg->get('default_text') : \K::$fw->TEXT_SELECT_SOME_VALUES)
             ];
             return select_tag(
                     'fields[' . $field['id'] . '][]',

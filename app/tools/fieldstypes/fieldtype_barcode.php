@@ -155,8 +155,7 @@ class Fieldtype_barcode
             'name' => 'template',
             'type' => 'input',
             'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING_TIP_ICON,
-            'tooltip' => \K::$fw->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING_TIP . '<br>' . \K::f3(
-                )->TEXT_ENTER_TEXT_PATTERN_DATE_INFO,
+            'tooltip' => \K::$fw->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING_TIP . '<br>' . \K::$fw->TEXT_ENTER_TEXT_PATTERN_DATE_INFO,
             'params' => ['class' => 'form-control input-large']
         ];
 

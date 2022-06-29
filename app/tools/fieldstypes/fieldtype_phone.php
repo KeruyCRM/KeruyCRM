@@ -220,8 +220,7 @@ END";
         }
 
         if ($cfg->get('show_history')) {
-            $phone_number .= '&nbsp;&nbsp;<a title="' . \K::f3(
-                )->TEXT_EXT_HISTORY . '" href="javascript: open_dialog(\'' . url_for(
+            $phone_number .= '&nbsp;&nbsp;<a title="' . \K::$fw->TEXT_EXT_HISTORY . '" href="javascript: open_dialog(\'' . url_for(
                     'items/call_history',
                     'path=' . $options['path'] . '&phone=' . preg_replace('/\D/', '', $options['value'])
                 ) . '\')"><i class="fa fa-history" aria-hidden="true"></i></a>';

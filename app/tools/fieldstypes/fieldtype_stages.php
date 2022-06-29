@@ -84,10 +84,8 @@ class Fieldtype_stages
             'choices' => $choises,
             'params' => ['class' => 'form-control input-large'],
             'tooltip' => '
-            <span form_display_rules="fields_configuration_display_type:consistently">' . \K::f3(
-                )->TEXT_FIELDTYPE_STAGES_SHOW_CONSISTENTLY_TIP . '</span>
-            <span form_display_rules="fields_configuration_display_type:branching">' . \K::f3(
-                )->TEXT_FIELDTYPE_STAGES_SHOW_BRANCHING_TIP . '</span>'
+            <span form_display_rules="fields_configuration_display_type:consistently">' . \K::$fw->TEXT_FIELDTYPE_STAGES_SHOW_CONSISTENTLY_TIP . '</span>
+            <span form_display_rules="fields_configuration_display_type:branching">' . \K::$fw->TEXT_FIELDTYPE_STAGES_SHOW_BRANCHING_TIP . '</span>'
         ];
 
         $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [

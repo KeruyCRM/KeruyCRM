@@ -73,11 +73,9 @@ class Fieldtype_mapbbcode
         }
 
         if ($cfg->get('hide_coordinates') == 1) {
-            $html .= '<a class="btn btn-default" href="javascript: mapbb' . $map_id . '_edit();"><i class="fa fa-map-marker" aria-hidden="true"></i> ' . \K::f3(
-                )->TEXT_OPEN_MAP_EDITOR . '</a>';
+            $html .= '<a class="btn btn-default" href="javascript: mapbb' . $map_id . '_edit();"><i class="fa fa-map-marker" aria-hidden="true"></i> ' . \K::$fw->TEXT_OPEN_MAP_EDITOR . '</a>';
         } else {
-            $html .= '<a href="javascript: mapbb' . $map_id . '_edit();"><i class="fa fa-map-marker" aria-hidden="true"></i> ' . \K::f3(
-                )->TEXT_OPEN_MAP_EDITOR . '</a>';
+            $html .= '<a href="javascript: mapbb' . $map_id . '_edit();"><i class="fa fa-map-marker" aria-hidden="true"></i> ' . \K::$fw->TEXT_OPEN_MAP_EDITOR . '</a>';
         }
 
         $html .= '				

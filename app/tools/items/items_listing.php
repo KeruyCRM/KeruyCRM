@@ -199,20 +199,16 @@ class Items_listing
                     ['class' => 'select_all_items_current_page']
                 ) . '</span>    
                 <div class="btn-group">
-                    <button class="btn dropdown-toggle btn-select-all" type="button" data-toggle="dropdown" data-hover="dropdown" title="' . \K::f3(
-                )->TEXT_SELECT_ALL . '" aria-expanded="false"><i class="fa fa-angle-down"></i></button>
+                    <button class="btn dropdown-toggle btn-select-all" type="button" data-toggle="dropdown" data-hover="dropdown" title="' . \K::$fw->TEXT_SELECT_ALL . '" aria-expanded="false"><i class="fa fa-angle-down"></i></button>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a href="javascript: handle_itmes_select_all(\'' . $listing_container . '\')">' . \K::f3(
-                )->TEXT_SELECT_ALL_RECORDS . '</a>
+                            <a href="javascript: handle_itmes_select_all(\'' . $listing_container . '\')">' . \K::$fw->TEXT_SELECT_ALL_RECORDS . '</a>
                         </li>
                         <li>
-                            <a href="javascript: handle_itmes_select_currnt_page(\'' . $listing_container . '\')">' . \K::f3(
-                )->TEXT_ON_CURRENT_PAGE_ONLY . '</a>
+                            <a href="javascript: handle_itmes_select_currnt_page(\'' . $listing_container . '\')">' . \K::$fw->TEXT_ON_CURRENT_PAGE_ONLY . '</a>
                         </li>
                         <li>
-                            <a href="javascript: handle_itmes_select_reset(\'' . $listing_container . '\')">' . \K::f3(
-                )->TEXT_RESET_SELECTION . '</a>
+                            <a href="javascript: handle_itmes_select_reset(\'' . $listing_container . '\')">' . \K::$fw->TEXT_RESET_SELECTION . '</a>
                         </li>
                     </ul>
                 </div>

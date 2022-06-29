@@ -19,11 +19,11 @@ class Functions
     static public function get_choices()
     {
         $choices = [];
-        $choices['SUM'] = TEXT_EXT_FUNCTION_SUM;
-        $choices['COUNT'] = TEXT_EXT_FUNCTION_COUNT;
-        $choices['MIN'] = TEXT_EXT_FUNCTION_MIN;
-        $choices['MAX'] = TEXT_EXT_FUNCTION_MAX;
-        $choices['SELECT'] = TEXT_EXT_FUNCTION_SELECT;
+        $choices['SUM'] = \K::$fw->TEXT_EXT_FUNCTION_SUM;
+        $choices['COUNT'] = \K::$fw->TEXT_EXT_FUNCTION_COUNT;
+        $choices['MIN'] = \K::$fw->TEXT_EXT_FUNCTION_MIN;
+        $choices['MAX'] = \K::$fw->TEXT_EXT_FUNCTION_MAX;
+        $choices['SELECT'] = \K::$fw->TEXT_EXT_FUNCTION_SELECT;
 
         return $choices;
     }

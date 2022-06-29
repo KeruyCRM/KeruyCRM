@@ -40,8 +40,7 @@ class Fieldtype_formula
             'type' => 'checkbox'
         ];
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::f3(
-                )->TEXT_CALCULATE_AVERAGE_VALUE,
+            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
@@ -70,7 +69,7 @@ class Fieldtype_formula
 
     public function render($field, $obj, $params = [])
     {
-        return '<p class="form-control-static">' . $obj['field_' . $field['id']] . '</p>' . input_hidden_tag(
+        return '<p class="form-control-static">' . $obj['field_' . $field['id']] . '</p>' . \Helpers\Html::input_hidden_tag(
                 'fields[' . $field['id'] . ']',
                 $obj['field_' . $field['id']]
             );

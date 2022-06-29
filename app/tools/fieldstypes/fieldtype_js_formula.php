@@ -41,8 +41,7 @@ class Fieldtype_js_formula
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::f3(
-                )->TEXT_CALCULATE_AVERAGE_VALUE,
+            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];

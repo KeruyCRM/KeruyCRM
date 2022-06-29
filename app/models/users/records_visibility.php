@@ -60,8 +60,7 @@ class Records_visibility
             false
         );
         while ($fields = db_fetch_array($fields_query)) {
-            $choices['current_user-' . $fields['id']] = \K::f3(
-                )->TEXT_CURRENT_USER . ' => ' . $app_entities_cache[$entities_id]['name'] . ': ' . fields_types::get_option(
+            $choices['current_user-' . $fields['id']] = \K::$fw->TEXT_CURRENT_USER . ' => ' . $app_entities_cache[$entities_id]['name'] . ': ' . fields_types::get_option(
                     $fields['type'],
                     'name',
                     $fields['name']

@@ -41,10 +41,8 @@ class Fieldtype_input_dynamic_mask
             'name' => 'mask',
             'type' => 'input',
             'tooltip' => \K::$fw->TEXT_INPUT_FIELD_MASK_TIP . '<br>' .
-                \K::$fw->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_INFO . '<br>' . \K::f3(
-                )->TEXT_EXAMPLE . ': aa-9{1,4} <br><br>' .
-                \K::$fw->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_OPTIONAL_INFO . '<br>' . \K::f3(
-                )->TEXT_EXAMPLE . ': 999[-999]',
+                \K::$fw->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_INFO . '<br>' . \K::$fw->TEXT_EXAMPLE . ': aa-9{1,4} <br><br>' .
+                \K::$fw->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_OPTIONAL_INFO . '<br>' . \K::$fw->TEXT_EXAMPLE . ': 999[-999]',
             'params' => ['class' => 'form-control']
         ];
 

@@ -75,8 +75,7 @@ class Fieldtype_subentity_form
                     <label class="col-md-3 control-label"></label>
                     <div class="col-md-9">
                         <div class="help-block" id="help_blcok_row">' . \K::$fw->TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_ROW . '</div>
-                        <div class="help-block" id="help_blcok_windows">' . \K::f3(
-                )->TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_NEW_WINDOW . '</div>
+                        <div class="help-block" id="help_blcok_windows">' . \K::$fw->TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_NEW_WINDOW . '</div>
                     </div>			
 	        </div>
                 

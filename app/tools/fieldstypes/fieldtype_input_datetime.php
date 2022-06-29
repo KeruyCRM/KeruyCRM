@@ -33,8 +33,7 @@ class Fieldtype_input_datetime
             'title' => \K::$fw->TEXT_DATE_FORMAT,
             'name' => 'date_format',
             'type' => 'input',
-            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->CFG_APP_DATETIME_FORMAT . ', ' . \K::f3(
-                )->TEXT_DATE_FORMAT_INFO,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->CFG_APP_DATETIME_FORMAT . ', ' . \K::$fw->TEXT_DATE_FORMAT_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 
