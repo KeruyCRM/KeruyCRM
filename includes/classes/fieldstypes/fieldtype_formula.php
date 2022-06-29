@@ -423,8 +423,8 @@ class fieldtype_formula
 
                     //preapre [currecny code]
                     if (is_ext_installed() and isset($app_currencies_cache)) {
-                        foreach ($app_currencies_cache as $currecny) {
-                            $formula = str_replace('[' . $currecny['code'] . ']', $currecny['value'], $formula);
+                        foreach ($app_currencies_cache as $currency) {
+                            $formula = str_replace('[' . $currency['code'] . ']', $currency['value'], $formula);
                         }
                     }
 
