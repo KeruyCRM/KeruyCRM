@@ -154,6 +154,7 @@ class Controller
         $this->_setSession();
         $this->_extractSession();
 
+        //TODO
         \K::security()->checkCsrfToken();
 
         $this->_setCfgIni();
@@ -241,6 +242,23 @@ class Controller
 
         //check if maintenance mode enabled
         \Tools\Maintenance_mode::check();
+
+        //set skin
+        if (strlen(\K::$fw->CFG_APP_SKIN) > 0) {
+            \K::$fw->app_skin = \K::$fw->CFG_APP_SKIN . '/' . \K::$fw->CFG_APP_SKIN . '.css';
+        } elseif (\K::fw()->exists('app_user')) {
+            if (strlen(\K::$fw->app_user['skin']) > 0) {
+                \K::$fw->app_skin = \K::$fw->app_user['skin'] . '/' . \K::$fw->app_user['skin'] . '.css';
+            } else {
+                \K::$fw->app_skin = 'default/default.css';
+            }
+        } elseif (\K::cookieExists('user_skin')) {
+            \K::$fw->app_skin = \K::cookieGet('user_skin') . '/' . \K::cookieGet('user_skin') . '.css';
+        } else {
+            \K::$fw->app_skin = 'default/default.css';
+        }
+
+        \K::$fw->app_users_cache = \Models\Users\Users::get_cache();
     }
 
     public function beforeroute()

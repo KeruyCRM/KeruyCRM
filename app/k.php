@@ -81,9 +81,9 @@ class K
         return self::fw()->get('SESSION.' . $key, $args);
     }
 
-    public static function cookieExists($key, &$val = null)
+    public static function cookieExists($key)
     {
-        return self::fw()->exists('COOKIE.' . $key, $val);
+        return self::fw()->exists('COOKIE.' . $key);
     }
 
     public static function cookieGet($key, $args = null)

@@ -15,8 +15,7 @@ class Public_registration
         if ($previous_item_info['field_5'] == 0) {
             $item_query = db_query("select e.* from app_entity_1 e where e.id='" . $user_id . "' and e.field_5=1");
             if ($item = db_fetch_array($item_query)) {
-                $to_name = (\K::f3(
-                )->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? $item['field_7'] . ' ' . $item['field_8'] : $item['field_8'] . ' ' . $item['field_7']);
+                $to_name = (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? $item['field_7'] . ' ' . $item['field_8'] : $item['field_8'] . ' ' . $item['field_7']);
 
                 $options = [
                     'to' => $item['field_9'],

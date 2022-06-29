@@ -16,28 +16,27 @@ class Users
         $include_public_profile = false;
 
         //include public profile for page where it needs only
-        if (isset($_GET['module'])) {
-            if (in_array($_GET['module'], ['items/listing', 'items/info', 'items/comments_listing'])) {
-                $include_public_profile = true;
-            }
+        //if (isset($_GET['module'])) {
+        if (in_array(\K::$fw->app_module_path, ['items/listing', 'items/info', 'items/comments_listing'])) {
+            $include_public_profile = true;
         }
+        //}
 
         $public_profile_fields = [];
 
         //get public profile fields
         //if (defined('CFG_PUBLIC_USER_PROFILE_FIELDS') and $include_public_profile) {
-        if (strlen(\K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS) > 0 and $include_public_profile) {
+        if (\K::fw()->exists('CFG_PUBLIC_USER_PROFILE_FIELDS')
+            and strlen(\K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS) > 0
+            and $include_public_profile) {
             $fields_query = db_query(
-                "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserverd_types_list(
-                ) . ") and f.id in (" . \K::f3(
-                )->CFG_PUBLIC_USER_PROFILE_FIELDS . ") and  f.entities_id='1' and f.forms_tabs_id=t.id order by  field(f.id," . \K::f3(
-                )->CFG_PUBLIC_USER_PROFILE_FIELDS . ")"
+                "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\fields_types::get_reserverd_types_list(
+                ) . ") and f.id in (" . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ") and  f.entities_id='1' and f.forms_tabs_id=t.id order by  field(f.id," . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ")"
             );
             while ($v = db_fetch_array($fields_query)) {
                 $public_profile_fields[] = $v;
             }
         }
-        //}
 
         $cache = [];
 
@@ -94,8 +93,7 @@ class Users
             if ($field_heading_id and $field_heading_id != 12) {
                 $name = items::get_heading_field_value($field_heading_id, $users);
             } else {
-                $name = (\K::f3(
-                )->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? $users['field_7'] . ' ' . $users['field_8'] : $users['field_8'] . ' ' . $users['field_7']);
+                $name = (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? $users['field_7'] . ' ' . $users['field_8'] : $users['field_8'] . ' ' . $users['field_7']);
             }
 
             $cache[$users['id']] = [
@@ -103,9 +101,7 @@ class Users
                 'email' => $users['field_9'],
                 'photo' => $photo,
                 'group_id' => (int)$users['field_6'],
-                'group_name' => ($users['group_id'] > 0 ? $users['group_name'] : (defined(
-                    'TEXT_ADMINISTRATOR'
-                ) ? \K::$fw->TEXT_ADMINISTRATOR : 'Administrator')),
+                'group_name' => ($users['group_id'] > 0 ? $users['group_name'] : \K::$fw->TEXT_ADMINISTRATOR),
                 'profile' => $profile_fields
             ];
         }
