@@ -98,7 +98,6 @@ class fieldtype_formula
         if (strlen($cfg->get('number_format')) > 0 and strlen($value) > 0) {
             $format = explode('/', str_replace('*', '', $cfg->get('number_format')));
 
-
             $value = number_format($value, $format[0], $format[1], $format[2]);
         } elseif (strstr($value, '.')) {
             $value = number_format((float)$value, 2, '.', '');
@@ -201,7 +200,6 @@ class fieldtype_formula
 
         $text_pattern_where_sql = '';
 
-
         //check custom listing fields
 
         if (isset($check_needed['fields_in_query'])) {
@@ -236,7 +234,6 @@ class fieldtype_formula
 
             $text_pattern_where_sql = " and listing_status=1";
         }
-
 
         //check if fomula used in filters
         if (!$check_formula_needed and isset($check_needed['reports_id'])) {
@@ -411,15 +408,36 @@ class fieldtype_formula
                     $formula = self::prepare_parent_entity_item_value($entities_id, $formula);
 
                     //prepare [TODAY]
-                    $formula = str_replace('[TODAY]', get_date_timestamp(date('Y-m-d')), $formula);
+                    /*$formula = str_replace('[TODAY]', get_date_timestamp(date('Y-m-d')), $formula);
 
                     $formula = str_replace('[id]', 'e.id', $formula);
                     $formula = str_replace('[date_added]', 'e.date_added', $formula);
                     $formula = str_replace('[date_updated]', 'e.date_updated', $formula);
                     $formula = str_replace('[created_by]', 'e.created_by', $formula);
                     $formula = str_replace('[parent_item_id]', 'e.parent_item_id', $formula);
-                    $formula = str_replace('[current_user_id]', $app_user['id'], $formula);
+                    $formula = str_replace('[current_user_id]', $app_user['id'], $formula);*/
 
+                    $formula = str_replace(
+                        [
+                            '[TODAY]',
+                            '[id]',
+                            '[date_added]',
+                            '[date_updated]',
+                            '[created_by]',
+                            '[parent_item_id]',
+                            '[current_user_id]'
+                        ],
+                        [
+                            get_date_timestamp(date('Y-m-d')),
+                            'e.id',
+                            'e.date_added',
+                            'e.date_updated',
+                            'e.created_by',
+                            'e.parent_item_id',
+                            $app_user['id']
+                        ],
+                        $formula
+                    );
 
                     //preapre [currecny code]
                     if (is_ext_installed() and isset($app_currencies_cache)) {
