@@ -203,7 +203,7 @@ class fields_types
     public static function skip_import_field_types()
     {
         //skip reserved
-        $skip_fields = fields_types::get_reserverd_types_list();
+        $skip_fields = self::get_reserverd_types_list();
 
         //skip not allowed
         $skip_fields .= ",'fieldtype_nested_calculations','fieldtype_access_group','fieldtype_user_roles','fieldtype_users_approve','fieldtype_autostatus','fieldtype_google_map','fieldtype_mysql_query','fieldtype_formula','fieldtype_days_difference','fieldtype_hours_difference','fieldtype_users','fieldtype_input_numeric_comments','fieldtype_input_file','fieldtype_attachments','fieldtype_related_records','fieldtype_parent_value'";
@@ -216,45 +216,45 @@ class fields_types
 
     public static function get_types_for_filters_list()
     {
-        return "'" . implode("','", fields_types::get_types_for_filters()) . "'";
+        return "'" . implode("','", self::get_types_for_filters()) . "'";
     }
 
     public static function get_users_types_list()
     {
-        return "'" . implode("','", fields_types::get_users_types()) . "'";
+        return "'" . implode("','", self::get_users_types()) . "'";
     }
 
     public static function get_reserverd_types_list()
     {
-        return "'" . implode("','", fields_types::get_reserved_types()) . "'";
+        return "'" . implode("','", self::get_reserved_types()) . "'";
     }
 
     public static function get_attachments_types_list()
     {
-        return "'" . implode("','", fields_types::get_attachments_types()) . "'";
+        return "'" . implode("','", self::get_attachments_types()) . "'";
     }
 
     public static function get_reserverd_data_types_list()
     {
-        return "'" . implode("','", fields_types::get_reserved_data_types()) . "'";
+        return "'" . implode("','", self::get_reserved_data_types()) . "'";
     }
 
     public static function get_type_list_excluded_in_form()
     {
         return "'" . implode(
                 "','",
-                fields_types::get_types_excluded_in_form()
-            ) . "'," . fields_types::get_reserverd_types_list();
+                self::get_types_excluded_in_form()
+            ) . "'," . self::get_reserverd_types_list();
     }
 
     public static function get_type_list_excluded_in_sorting()
     {
-        return "'" . implode("','", fields_types::get_types_excluded_in_sorting()) . "'";
+        return "'" . implode("','", self::get_types_excluded_in_sorting()) . "'";
     }
 
     public static function get_types_for_search_list()
     {
-        return "'" . implode("','", fields_types::get_types_for_search()) . "'";
+        return "'" . implode("','", self::get_types_for_search()) . "'";
     }
 
     public static function get_reserved_filed_name_by_type($type)
@@ -701,7 +701,7 @@ class fields_types
         $obj = db_find('app_fields', $id);
 
         if (strlen($obj['configuration']) > 0) {
-            $configuration = fields_types::parse_configuration($obj['configuration']);
+            $configuration = self::parse_configuration($obj['configuration']);
         }
 
         //print_r($configuration);;        
@@ -909,7 +909,6 @@ class fields_types
 	                ';
                         break;
                 }
-
 
                 if ($v['type'] == 'hidden') {
                     $html .= input_hidden_tag(
