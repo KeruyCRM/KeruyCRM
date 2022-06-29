@@ -6,11 +6,6 @@ class Security extends \Prefab
 {
     private $_DELIMITER = '::';
 
-    public function initCsrfToken()
-    {
-        \K::$fw->form_csrf_token = $this->generateToken();
-    }
-
     public function checkCsrfToken()
     {
         if (\K::$fw->VERB == 'POST') {
@@ -19,8 +14,8 @@ class Security extends \Prefab
             }
 
             if (
-                !\K::sessionExists('app_session_token', $app_session_token)
-                or !\K::fw()->exists('POST.form_csrf_token', $postToken)
+                !\K::app_session_is_registered('app_token')
+                or !\K::fw()->exists('POST.form_session_token', $postToken)
                 or !$this->validateToken($postToken)) {
                 \K::fw()->error(400, 'Invalid CSRF token');
             } else {
@@ -37,17 +32,13 @@ class Security extends \Prefab
             $timeSend = $explode[1];
             $tokenSend = $explode[2];
 
-            if (!\K::sessionExists('app_session_token', $app_session_token)) {
-                return false;
-            }
-
-            $timeDecode = $this->decrypt36($timeSend, $saltSend . $this->_DELIMITER . $app_session_token);
+            $timeDecode = $this->decrypt36($timeSend, $saltSend . $this->_DELIMITER . \K::$fw->app_token);
 
             if ($timeDecode + \K::$fw->TOKEN_LIFE < time()) {
                 return false;
             }
 
-            $hash = hash_hmac('sha256', $saltSend . $this->_DELIMITER . $timeSend, $app_session_token, true);
+            $hash = hash_hmac('sha256', $saltSend . $this->_DELIMITER . $timeSend, \K::$fw->app_token, true);
             $base64 = base64_encode($hash);
             $purified = $this->purified($base64);
             $tokenNew = substr($purified, 0, \K::$fw->TOKEN_LENGTH);
@@ -58,37 +49,33 @@ class Security extends \Prefab
         }
     }
 
-    public function genAppSessionToken()
+    public function getAppToken()
     {
-        $app_session_token = '';
+        $app_token = '';
         try {
             $bytesWithMargin = random_bytes(\K::$fw->TOKEN_LENGTH * 3);
 
             $base64 = base64_encode($bytesWithMargin);
             $purified = $this->purified($base64);
-            $app_session_token = substr($purified, 0, \K::$fw->TOKEN_LENGTH);
+            $app_token = substr($purified, 0, \K::$fw->TOKEN_LENGTH);
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
 
-        return $app_session_token;
+        return $app_token;
     }
 
-    private function generateToken()
+    public function getAppSessionToken()
     {
         $token = '';
         $salt = '';
         $time = '';
         try {
-            if (!\K::sessionExists('app_session_token', $app_session_token)) {
-                $app_session_token = \K::sessionSet('app_session_token', $this->genAppSessionToken());
-            }
+            $salt = $this->getAppToken();
 
-            $salt = $this->genAppSessionToken();
+            $time = $this->encrypt36(time(), $salt . $this->_DELIMITER . \K::$fw->app_token);
 
-            $time = $this->encrypt36(time(), $salt . $this->_DELIMITER . $app_session_token);
-
-            $hash = hash_hmac('sha256', $salt . $this->_DELIMITER . $time, $app_session_token, true);
+            $hash = hash_hmac('sha256', $salt . $this->_DELIMITER . $time, \K::$fw->app_token, true);
             $base64 = base64_encode($hash);
             $purified = $this->purified($base64);
             $token = substr($purified, 0, \K::$fw->TOKEN_LENGTH);

@@ -11,7 +11,7 @@ class Email_verification
         }
 
         //if (!app_session_is_registered('app_logged_users_id')) {
-        if (!\K::sessionExists('app_logged_users_id')) {
+        if (!\K::app_session_is_registered('app_logged_users_id')) {
             return true;
         }
 

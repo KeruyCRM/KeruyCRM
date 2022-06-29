@@ -155,7 +155,6 @@ class Controller
         $this->_extractSession();
 
         \K::security()->checkCsrfToken();
-        \K::security()->initCsrfToken();
 
         $this->_setCfgIni();
 
@@ -195,6 +194,7 @@ class Controller
         \Models\Custom_php::include();
 
         $this->_setCfgSession();
+        \K::$fw->app_session_token = \K::security()->getAppSessionToken();
 
         \K::$fw->app_plugin_path = '';
         \K::$fw->app_module = \K::fw()->get('PARAMS.controllerName');
@@ -205,10 +205,14 @@ class Controller
         if (\K::fw()->get('PARAMS.moduleName') == 'module') {
             \K::$fw->app_module_path = \K::$fw->app_module . '/' . \K::$fw->app_action;
         } else {
-            \K::$fw->app_module_path = \K::fw()->get('PARAMS.moduleName') . '/' . \K::$fw->app_module . '/' . \K::$fw->app_action;
+            \K::$fw->app_module_path = \K::fw()->get(
+                    'PARAMS.moduleName'
+                ) . '/' . \K::$fw->app_module . '/' . \K::$fw->app_action;
         }
 
-        \K::$fw->app_title = (strlen(\K::$fw->CFG_APP_SHORT_NAME) > 0 ? \K::$fw->CFG_APP_SHORT_NAME : \K::$fw->CFG_APP_NAME);
+        \K::$fw->app_title = (strlen(
+            \K::$fw->CFG_APP_SHORT_NAME
+        ) > 0 ? \K::$fw->CFG_APP_SHORT_NAME : \K::$fw->CFG_APP_NAME);
 
         \K::$fw->app_module_action = ($_GET['action'] ?? (isset($_POST['action']) ? $_POST['action'] : ''));
 
@@ -264,10 +268,10 @@ class Controller
     }
         */
         new \DB\SQL\Session(\K::model()->db, 'app_sessions_new', false, function ($session) {
-            if (K::keruy()->SESSION_CHECK_IP and $session->ip() !== \K::$fw->IP) {
+            if (K::$fw->SESSION_CHECK_IP and $session->ip() !== \K::$fw->IP) {
                 return false;
             }
-            if (K::keruy()->SESSION_CHECK_BROWSER and $session->agent() !== \K::$fw->AGENT) {
+            if (K::$fw->SESSION_CHECK_BROWSER and $session->agent() !== \K::$fw->AGENT) {
                 return false;
             }
             return true;
@@ -323,10 +327,15 @@ class Controller
             \K::$fw->app_send_to = [];
         }
 
-        if (!\K::app_session_is_registered('app_session_token')) {
+        if (!\K::app_session_is_registered('app_token')) {
+            \K::$fw->app_token = \K::security()->getAppToken();
+            \K::app_session_register('app_token');
+        }
+
+        /*if (!\K::app_session_is_registered('app_session_token')) {
             \K::$fw->app_session_token = \K::security()->genAppSessionToken();
             \K::app_session_register('app_session_token');
-        }
+        }*/
 
         if (!\K::app_session_is_registered('app_current_users_filter')) {
             \K::$fw->app_current_users_filter = [];
@@ -466,7 +475,10 @@ class Controller
     {
         //TODO AUTOlogin https://github.com/symfony/symfony/blob/4.4/src/Symfony/Component/Security/Http/RememberMe/TokenBasedRememberMeServices.php#L101
 
-        if (!\K::sessionExists('app_logged_users_id') and !in_array(!\K::$fw->module, $this->allowed_modules)) {
+        if (!\K::app_session_is_registered('app_logged_users_id') and !in_array(
+                !\K::$fw->module,
+                $this->allowed_modules
+            )) {
             //allows redirect user to current page after login if there is no any actions
 
             if (!\K::fw()->exists('GET.action') and !\K::fw()->exists('POST.action') and !\K::$fw->AJAX) {
@@ -488,7 +500,7 @@ class Controller
                 //redirect_to('users/login');
                 \K::fw()->reroute('@Login');
             }
-        } elseif (\K::sessionExists('app_logged_users_id')) {
+        } elseif (\K::app_session_is_registered('app_logged_users_id')) {
             $user_query = \Models\Users\Users::getGroupAndAccessByUserId(\K::$fw->app_logged_users_id);
 
             if (isset($user_query[0])) {
