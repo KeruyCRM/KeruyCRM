@@ -60,6 +60,22 @@ class Model extends \Prefab
         return $this->db->count();
     }
 
+    public function quote($val, $type = \PDO::PARAM_STR)
+    {
+        return $this->db->quote($val, $type);
+    }
+
+    public function quoteToString($array)
+    {
+        $array_map = array_map(['self', 'quote'], $array);
+        return implode(',', $array_map);
+    }
+
+    public function quotekey($key, $split = true)
+    {
+        return $this->db->quotekey($key, $split);
+    }
+
     public function db_fetch_all($table, $column = null, $ttl = null)
     {
         return $this->db_fetch($table, [], [], $column, $ttl);
@@ -111,7 +127,7 @@ class Model extends \Prefab
         );
     }
 
-    function db_delete_row($table, $value, $column = 'id')
+    public function db_delete_row($table, $value, $column = 'id')
     {
         $mapper = $this->mapper($table);
         return $mapper->erase([$column . ' = ?', $value]);

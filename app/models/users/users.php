@@ -14,6 +14,7 @@ class Users
     static public function get_cache()
     {
         $include_public_profile = false;
+        echo \Models\fields_types::get_reserverd_types_list();die;
 
         //include public profile for page where it needs only
         //if (isset($_GET['module'])) {
@@ -29,9 +30,9 @@ class Users
         if (\K::fw()->exists('CFG_PUBLIC_USER_PROFILE_FIELDS')
             and strlen(\K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS) > 0
             and $include_public_profile) {
-            $fields_query = db_query(
-                "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\fields_types::get_reserverd_types_list(
-                ) . ") and f.id in (" . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ") and  f.entities_id='1' and f.forms_tabs_id=t.id order by  field(f.id," . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ")"
+            $fields_query = \K::model()->db_query(
+                'select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (' . \Models\fields_types::get_reserverd_types_list(
+                ) . ') and f.id in (' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ') and  f.entities_id = 1 and f.forms_tabs_id = t.id order by field(f.id,' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ')'
             );
             while ($v = db_fetch_array($fields_query)) {
                 $public_profile_fields[] = $v;

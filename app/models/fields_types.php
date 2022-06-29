@@ -1,6 +1,8 @@
 <?php
 
-class fields_types
+namespace Models;
+
+class Fields_types
 {
 
     public static function get_reserved_types()
@@ -203,7 +205,7 @@ class fields_types
     public static function skip_import_field_types()
     {
         //skip reserved
-        $skip_fields = fields_types::get_reserverd_types_list();
+        $skip_fields = self::get_reserverd_types_list();
 
         //skip not allowed
         $skip_fields .= ",'fieldtype_nested_calculations','fieldtype_access_group','fieldtype_user_roles','fieldtype_users_approve','fieldtype_autostatus','fieldtype_google_map','fieldtype_mysql_query','fieldtype_formula','fieldtype_days_difference','fieldtype_hours_difference','fieldtype_users','fieldtype_input_numeric_comments','fieldtype_input_file','fieldtype_attachments','fieldtype_related_records','fieldtype_parent_value'";
@@ -216,45 +218,53 @@ class fields_types
 
     public static function get_types_for_filters_list()
     {
-        return "'" . implode("','", fields_types::get_types_for_filters()) . "'";
+        return \K::model()->quoteToString(self::get_types_for_filters());
+        //return "'" . implode("','", self::get_types_for_filters()) . "'";
     }
 
     public static function get_users_types_list()
     {
-        return "'" . implode("','", fields_types::get_users_types()) . "'";
+        return \K::model()->quoteToString(self::get_users_types());
+        //return "'" . implode("','", self::get_users_types()) . "'";
     }
 
     public static function get_reserverd_types_list()
     {
-        return "'" . implode("','", fields_types::get_reserved_types()) . "'";
+        return \K::model()->quoteToString(self::get_reserved_types());
+        //return "'" . implode("','", self::get_reserved_types()) . "'";
     }
 
     public static function get_attachments_types_list()
     {
-        return "'" . implode("','", fields_types::get_attachments_types()) . "'";
+        return \K::model()->quoteToString(self::get_attachments_types());
+        //return "'" . implode("','", self::get_attachments_types()) . "'";
     }
 
     public static function get_reserverd_data_types_list()
     {
-        return "'" . implode("','", fields_types::get_reserved_data_types()) . "'";
+        return \K::model()->quoteToString(self::get_reserved_data_types());
+        //return "'" . implode("','", self::get_reserved_data_types()) . "'";
     }
 
     public static function get_type_list_excluded_in_form()
     {
-        return "'" . implode(
+        return \K::model()->quoteToString(self::get_types_excluded_in_form()) . ',' . self::get_reserverd_types_list();
+        /*return "'" . implode(
                 "','",
-                fields_types::get_types_excluded_in_form()
-            ) . "'," . fields_types::get_reserverd_types_list();
+                self::get_types_excluded_in_form()
+            ) . "'," . self::get_reserverd_types_list();*/
     }
 
     public static function get_type_list_excluded_in_sorting()
     {
-        return "'" . implode("','", fields_types::get_types_excluded_in_sorting()) . "'";
+        return \K::model()->quoteToString(self::get_types_excluded_in_sorting());
+        //return "'" . implode("','", self::get_types_excluded_in_sorting()) . "'";
     }
 
     public static function get_types_for_search_list()
     {
-        return "'" . implode("','", fields_types::get_types_for_search()) . "'";
+        return \K::model()->quoteToString(self::get_types_for_search());
+        //return "'" . implode("','", self::get_types_for_search()) . "'";
     }
 
     public static function get_reserved_filed_name_by_type($type)
@@ -282,239 +292,239 @@ class fields_types
 
         switch ($fieldtype) {
             case 'fieldtype_input':
-                $tooltip = TEXT_FIELDTYPE_INPUT_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_TOOLTIP;
                 break;
             case 'fieldtype_input_numeric':
-                $tooltip = TEXT_FIELDTYPE_INPUT_NUMERIC_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_NUMERIC_TOOLTIP;
                 break;
             case 'fieldtype_input_numeric_comments':
-                $tooltip = TEXT_FIELDTYPE_INPUT_NUMERIC_COMMENTS_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_NUMERIC_COMMENTS_TOOLTIP;
                 break;
             case 'fieldtype_input_url':
-                $tooltip = TEXT_FIELDTYPE_INPUT_URL_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_URL_TOOLTIP;
                 break;
             case 'fieldtype_input_date':
-                $tooltip = TEXT_FIELDTYPE_INPUT_DATE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_DATE_TOOLTIP;
                 break;
             case 'fieldtype_input_datetime':
-                $tooltip = TEXT_FIELDTYPE_INPUT_DATETIME_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_DATETIME_TOOLTIP;
                 break;
             case 'fieldtype_input_file':
-                $tooltip = TEXT_FIELDTYPE_INPUT_FILE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_FILE_TOOLTIP;
                 break;
             case 'fieldtype_attachments':
-                $tooltip = TEXT_FIELDTYPE_ATTACHMENTS_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_ATTACHMENTS_TOOLTIP;
                 break;
             case 'fieldtype_image':
-                $tooltip = TEXT_FIELDTYPE_IMAGE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_IMAGE_TOOLTIP;
                 break;
             case 'fieldtype_textarea':
-                $tooltip = TEXT_FIELDTYPE_TEXTAREA_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_TEXTAREA_TOOLTIP;
                 break;
             case 'fieldtype_textarea_wysiwyg':
-                $tooltip = TEXT_FIELDTYPE_TEXTAREA_WYSIWYG_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_TEXTAREA_WYSIWYG_TOOLTIP;
                 break;
             case 'fieldtype_text_pattern':
-                $tooltip = TEXT_FIELDTYPE_TEXT_PATTERN_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_TEXT_PATTERN_TOOLTIP;
                 break;
             case 'fieldtype_boolean_checkbox':
             case 'fieldtype_boolean':
-                $tooltip = TEXT_FIELDTYPE_BOOLEAN_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_BOOLEAN_TOOLTIP;
                 break;
             case 'fieldtype_dropdown':
-                $tooltip = TEXT_FIELDTYPE_DROPDOWN_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_DROPDOWN_TOOLTIP;
                 break;
             case 'fieldtype_dropdown_multiple':
-                $tooltip = TEXT_FIELDTYPE_DROPDOWN_MULTIPLE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_DROPDOWN_MULTIPLE_TOOLTIP;
                 break;
             case 'fieldtype_dropdown_multilevel':
-                $tooltip = TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_TOOLTIP;
                 break;
             case 'fieldtype_checkboxes':
-                $tooltip = TEXT_FIELDTYPE_CHECKBOXES_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_CHECKBOXES_TOOLTIP;
                 break;
             case 'fieldtype_radioboxes':
-                $tooltip = TEXT_FIELDTYPE_RADIOBOXES_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_RADIOBOXES_TOOLTIP;
                 break;
             case 'fieldtype_formula':
-                $tooltip = TEXT_FIELDTYPE_FORMULA_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_FORMULA_TOOLTIP;
                 break;
             case 'fieldtype_users':
-                $tooltip = TEXT_FIELDTYPE_USERS_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_USERS_TOOLTIP;
                 break;
             case 'fieldtype_grouped_users':
-                $tooltip = TEXT_FIELDTYPE_GROUPEDUSERS_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_GROUPEDUSERS_TOOLTIP;
                 break;
             case 'fieldtype_entity':
-                $tooltip = TEXT_FIELDTYPE_ENTITY_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_ENTITY_TOOLTIP;
                 break;
             case 'fieldtype_progress':
-                $tooltip = TEXT_FIELDTYPE_PROGRESS_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_PROGRESS_TOOLTIP;
                 break;
             case 'fieldtype_related_records':
-                $tooltip = TEXT_FIELDTYPE_RELATED_RECORDS_TOOLTIP . TEXT_FIELDTYPE_RELATED_RECORDS_TOOLTIP_EXTRA;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_RELATED_RECORDS_TOOLTIP . \K::$fw->TEXT_FIELDTYPE_RELATED_RECORDS_TOOLTIP_EXTRA;
                 break;
             case 'fieldtype_input_masked':
-                $tooltip = TEXT_FIELDTYPE_INPUT_MASKED_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_MASKED_TOOLTIP;
                 break;
             case 'fieldtype_input_vpic':
-                $tooltip = TEXT_FIELDTYPE_INPUT_VPIC_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_VPIC_TOOLTIP;
                 break;
             case 'fieldtype_mapbbcode':
-                $tooltip = TEXT_FIELDTYPE_MAPBBCODE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_MAPBBCODE_TOOLTIP;
                 break;
             case 'fieldtype_barcode':
-                $tooltip = TEXT_FIELDTYPE_BARCODE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_BARCODE_TOOLTIP;
                 break;
             case 'fieldtype_qrcode':
-                $tooltip = TEXT_FIELDTYPE_QRCODE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_QRCODE_TOOLTIP;
                 break;
             case 'fieldtype_input_email':
-                $tooltip = TEXT_FIELDTYPE_INPUT_EMAIL_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_EMAIL_TOOLTIP;
                 break;
             case 'fieldtype_section':
-                $tooltip = TEXT_FIELDTYPE_SECTION_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_SECTION_TOOLTIP;
                 break;
             case 'fieldtype_random_value':
-                $tooltip = TEXT_FIELDTYPE_RANDOM_VALUE_TOOLTIP . ' ' . TEXT_FIELDTYPE_RANDOM_VALUE_UNIQUE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_RANDOM_VALUE_TOOLTIP . ' ' . \K::$fw->TEXT_FIELDTYPE_RANDOM_VALUE_UNIQUE_TOOLTIP;
                 break;
             case 'fieldtype_autostatus':
-                $tooltip = TEXT_FIELDTYPE_AUTOSTATUS_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_AUTOSTATUS_TOOLTIP;
                 break;
             case 'fieldtype_js_formula':
-                $tooltip = TEXT_FIELDTYPE_JS_FORMULA_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_JS_FORMULA_TOOLTIP;
                 break;
             case 'fieldtype_todo_list':
-                $tooltip = TEXT_FIELDTYPE_TODO_LIST_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_TODO_LIST_TOOLTIP;
                 break;
             case 'fieldtype_parent_value':
-                $tooltip = TEXT_FIELDTYPE_PARENT_VALUE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_PARENT_VALUE_TOOLTIP;
                 break;
             case 'fieldtype_mysql_query':
-                $tooltip = TEXT_FIELDTYPE_MYSQL_QUERY_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_TOOLTIP;
                 break;
             case 'fieldtype_image_map':
-                $tooltip = TEXT_FIELDTYPE_IMAGE_MAP_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_IMAGE_MAP_TOOLTIP;
                 break;
             case 'fieldtype_mind_map':
-                $tooltip = TEXT_FIELDTYPE_MIND_MAP_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_MIND_MAP_TOOLTIP;
                 break;
             case 'fieldtype_days_difference':
-                $tooltip = TEXT_FIELDTYPE_DAYS_DIFFERENCE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_DAYS_DIFFERENCE_TOOLTIP;
                 break;
             case 'fieldtype_hours_difference':
-                $tooltip = TEXT_FIELDTYPE_HOURS_DIFFERENCE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_HOURS_DIFFERENCE_TOOLTIP;
                 break;
             case 'fieldtype_auto_increment':
-                $tooltip = TEXT_FIELDTYPE_AUTO_INCREMENT_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_AUTO_INCREMENT_TOOLTIP;
                 break;
             case 'fieldtype_text_pattern_static':
-                $tooltip = TEXT_FIELDTYPE_TEXT_PATTERN_STATIC_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_TEXT_PATTERN_STATIC_TOOLTIP;
                 break;
             case 'fieldtype_years_difference':
-                $tooltip = TEXT_FIELDTYPE_YEARS_DIFFERENCE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_YEARS_DIFFERENCE_TOOLTIP;
                 break;
             case 'fieldtype_phone':
-                $tooltip = TEXT_FIELDTYPE_PHONE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_PHONE_TOOLTIP;
                 break;
             case 'fieldtype_google_map':
-                $tooltip = TEXT_FIELDTYPE_GOOGLE_MAP_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_TOOLTIP;
                 break;
             case 'fieldtype_input_protected':
-                $tooltip = TEXT_FIELDTYPE_INPUT_PROTECTED_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_PROTECTED_TOOLTIP;
                 break;
             case 'fieldtype_tags':
-                $tooltip = TEXT_FIELDTYPE_TAGS_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_TAGS_TOOLTIP;
                 break;
             case 'fieldtype_entity_ajax':
-                $tooltip = TEXT_FIELDTYPE_ENTITY_AJAX_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_ENTITY_AJAX_TOOLTIP;
                 break;
             case 'fieldtype_user_roles':
-                $tooltip = TEXT_FIELDTYPE_USER_ROLES_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_USER_ROLES_TOOLTIP;
                 break;
             case 'fieldtype_entity_multilevel':
-                $tooltip = TEXT_FIELDTYPE_ENTITY_MULTILEVEL_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_ENTITY_MULTILEVEL_TOOLTIP;
                 break;
             case 'fieldtype_months_difference':
-                $tooltip = TEXT_FIELDTYPE_MONTHS_DIFFERENCE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_MONTHS_DIFFERENCE_TOOLTIP;
                 break;
             case 'fieldtype_users_approve':
-                $tooltip = TEXT_FIELDTYPE_USERS_APPROVE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_USERS_APPROVE_TOOLTIP;
                 break;
             case 'fieldtype_google_map_directions':
-                $tooltip = TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_TOOLTIP;
                 break;
             case 'fieldtype_dynamic_date':
-                $tooltip = TEXT_FIELDTYPE_DYNAMIC_DATE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_DYNAMIC_DATE_TOOLTIP;
                 break;
             case 'fieldtype_access_group':
-                $tooltip = TEXT_FIELDTYPE_ACCESS_GROUP_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_ACCESS_GROUP_TOOLTIP;
                 break;
             case 'fieldtype_signature':
-                $tooltip = TEXT_FIELDTYPE_SIGNATURE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_SIGNATURE_TOOLTIP;
                 break;
             case 'fieldtype_stages':
-                $tooltip = TEXT_FIELDTYPE_STAGES_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_STAGES_TOOLTIP;
                 break;
             case 'fieldtype_iframe':
-                $tooltip = TEXT_FIELDTYPE_IFRAME_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_IFRAME_TOOLTIP;
                 break;
             case 'fieldtype_time':
-                $tooltip = TEXT_FIELDTYPE_TIME_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_TIME_TOOLTIP;
                 break;
             case 'fieldtype_digital_signature':
-                $tooltip = TEXT_FIELDTYPE_DIGITAL_SIGNATURE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_DIGITAL_SIGNATURE_TOOLTIP;
                 break;
             case 'fieldtype_ajax_request':
-                $tooltip = TEXT_FIELDTYPE_AJAX_REQUEST_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_AJAX_REQUEST_TOOLTIP;
                 break;
             case 'fieldtype_users_ajax':
-                $tooltip = TEXT_FIELDTYPE_USERS_AJAX_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_USERS_AJAX_TOOLTIP;
                 break;
             case 'fieldtype_items_by_query':
-                $tooltip = TEXT_FIELDTYPE_ITEMS_BY_QUERY_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_ITEMS_BY_QUERY_TOOLTIP;
                 break;
             case 'fieldtype_php_code':
-                $tooltip = TEXT_FIELDTYPE_PHP_CODE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_PHP_CODE_TOOLTIP;
                 break;
             case 'fieldtype_process_button':
-                $tooltip = TEXT_FIELDTYPE_PROCESS_BUTTON_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_PROCESS_BUTTON_TOOLTIP;
                 break;
             case 'fieldtype_video':
-                $tooltip = TEXT_FIELDTYPE_VIDEO_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_VIDEO_TOOLTIP;
                 break;
             case 'fieldtype_input_encrypted':
-                $tooltip = TEXT_FIELDTYPE_INPUT_ENCRYPTED_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_ENCRYPTED_TOOLTIP;
                 break;
             case 'fieldtype_textarea_encrypted':
-                $tooltip = TEXT_FIELDTYPE_INPUT_ENCRYPTED_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_ENCRYPTED_TOOLTIP;
                 break;
             case 'fieldtype_jalali_calendar':
-                $tooltip = TEXT_FIELDTYPE_JALALI_CALENDAR_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_JALALI_CALENDAR_TOOLTIP;
                 break;
             case 'fieldtype_subentity_form':
-                $tooltip = TEXT_FIELDTYPE_SUBENTITY_FORM_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_SUBENTITY_FORM_TOOLTIP;
                 break;
             case 'fieldtype_input_ip':
-                $tooltip = TEXT_FIELDTYPE_INPUT_IP_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_IP_TOOLTIP;
                 break;
             case 'fieldtype_input_dynamic_mask':
-                $tooltip = TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_INPUT_DYNAMIC_MASK_TOOLTIP;
                 break;
             case 'fieldtype_nested_calculations':
-                $tooltip = TEXT_FIELDTYPE_NESTED_CALCULATIONS_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_NESTED_CALCULATIONS_TOOLTIP;
                 break;
             case 'fieldtype_image_ajax':
-                $tooltip = TEXT_FIELDTYPE_IMAGE_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_IMAGE_TOOLTIP;
                 break;
             case 'fieldtype_color':
-                $tooltip = TEXT_FIELDTYPE_COLOR_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_COLOR_TOOLTIP;
                 break;
             case 'fieldtype_image_map_nested':
-                $tooltip = TEXT_FIELDTYPE_IMAGE_MAP_NESTED_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_IMAGE_MAP_NESTED_TOOLTIP;
                 break;
             case 'fieldtype_yandex_map':
-                $tooltip = TEXT_FIELDTYPE_YANDEX_MAP_TOOLTIP;
+                $tooltip = \K::$fw->TEXT_FIELDTYPE_YANDEX_MAP_TOOLTIP;
                 break;
         }
 
@@ -523,7 +533,7 @@ class fields_types
 
     public static function get_choices()
     {
-        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_INPUT_FIELDS] = [
+        $fieldtypes[\K::$fw->TEXT_FIELDS_TYPES_GROUP_INPUT_FIELDS] = [
             'fieldtype_input',
             'fieldtype_input_masked',
             'fieldtype_input_dynamic_mask',
@@ -537,7 +547,7 @@ class fields_types
             'fieldtype_phone',
         ];
 
-        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_NUMERIC] = [
+        $fieldtypes[\K::$fw->TEXT_FIELDS_TYPES_GROUP_NUMERIC] = [
             'fieldtype_input_numeric',
             'fieldtype_input_numeric_comments',
             'fieldtype_formula',
@@ -548,7 +558,7 @@ class fields_types
             'fieldtype_nested_calculations',
         ];
 
-        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_DATES] = [
+        $fieldtypes[\K::$fw->TEXT_FIELDS_TYPES_GROUP_DATES] = [
             'fieldtype_input_date',
             'fieldtype_input_datetime',
             'fieldtype_jalali_calendar',
@@ -560,7 +570,7 @@ class fields_types
             'fieldtype_hours_difference',
         ];
 
-        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_TEXT] = [
+        $fieldtypes[\K::$fw->TEXT_FIELDS_TYPES_GROUP_TEXT] = [
             'fieldtype_textarea',
             'fieldtype_textarea_wysiwyg',
             'fieldtype_textarea_encrypted',
@@ -568,14 +578,14 @@ class fields_types
             'fieldtype_text_pattern_static',
         ];
 
-        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_UPLOAD] = [
+        $fieldtypes[\K::$fw->TEXT_FIELDS_TYPES_GROUP_UPLOAD] = [
             'fieldtype_attachments',
             'fieldtype_input_file',
             'fieldtype_image',
             'fieldtype_image_ajax',
         ];
 
-        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_LIST] = [
+        $fieldtypes[\K::$fw->TEXT_FIELDS_TYPES_GROUP_LIST] = [
             'fieldtype_dropdown',
             'fieldtype_dropdown_multiple',
             'fieldtype_dropdown_multilevel',
@@ -588,7 +598,7 @@ class fields_types
             'fieldtype_color',
         ];
 
-        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_USERS] = [
+        $fieldtypes[\K::$fw->TEXT_FIELDS_TYPES_GROUP_USERS] = [
             'fieldtype_users',
             'fieldtype_users_ajax',
             'fieldtype_grouped_users',
@@ -598,7 +608,7 @@ class fields_types
             'fieldtype_digital_signature',
         ];
 
-        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_ENTITY] = [
+        $fieldtypes[\K::$fw->TEXT_FIELDS_TYPES_GROUP_ENTITY] = [
             'fieldtype_entity',
             'fieldtype_entity_ajax',
             'fieldtype_entity_multilevel',
@@ -608,7 +618,7 @@ class fields_types
             'fieldtype_subentity_form'
         ];
 
-        $fieldtypes[TEXT_MAPS] = [
+        $fieldtypes[\K::$fw->TEXT_MAPS] = [
             'fieldtype_mapbbcode',
             'fieldtype_yandex_map',
             'fieldtype_google_map',
@@ -618,7 +628,7 @@ class fields_types
             'fieldtype_mind_map',
         ];
 
-        $fieldtypes[TEXT_FIELDS_TYPES_GROUP_SPECIAL_FIELDS] = [
+        $fieldtypes[\K::$fw->TEXT_FIELDS_TYPES_GROUP_SPECIAL_FIELDS] = [
             'fieldtype_section',
             'fieldtype_random_value',
             'fieldtype_auto_increment',
@@ -632,6 +642,7 @@ class fields_types
             'fieldtype_signature',
         ];
 
+        $choices = [];
         foreach ($fieldtypes as $group => $fields) {
             foreach ($fields as $class) {
                 $fieldtype = new $class;
@@ -701,7 +712,7 @@ class fields_types
         $obj = db_find('app_fields', $id);
 
         if (strlen($obj['configuration']) > 0) {
-            $configuration = fields_types::parse_configuration($obj['configuration']);
+            $configuration = self::parse_configuration($obj['configuration']);
         }
 
         //print_r($configuration);;        
@@ -839,7 +850,7 @@ class fields_types
                             ) . (strlen($value) ? $value . '&nbsp;&nbsp;&nbsp;<label>' . input_checkbox_tag(
                                     'delete_file[' . $v['name'] . ']',
                                     $value
-                                ) . ' ' . TEXT_DELETE . '</label>' : '');
+                                ) . ' ' . \K::$fw->TEXT_DELETE . '</label>' : '');
                         $field .= input_hidden_tag('fields_configuration[' . $v['name'] . ']', $value);
                         break;
                     case 'textarea':
@@ -909,7 +920,6 @@ class fields_types
 	                ';
                         break;
                 }
-
 
                 if ($v['type'] == 'hidden') {
                     $html .= input_hidden_tag(
@@ -1175,14 +1185,13 @@ class fields_types
         global $app_entities_cache;
 
         $choices = [];
-        $choices[0] = TEXT_NO;
-        $choices[1] = TEXT_YES;
+        $choices[0] = \K::$fw->TEXT_NO;
+        $choices[1] = \K::$fw->TEXT_YES;
 
         if ($app_entities_cache[$entity_id]['parent_id'] > 0) {
-            $choices[2] = TEXT_UNIQUE_FOR_EACH_PARENT_RECORD;
+            $choices[2] = \K::$fw->TEXT_UNIQUE_FOR_EACH_PARENT_RECORD;
         }
 
         return $choices;
     }
-
 }
