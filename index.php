@@ -17,25 +17,23 @@ $fw->AUTOLOAD = 'app/';
 \K::$fw->URI_ADMIN = '/' . \K::$fw->FOLDER_ADMIN;
 \K::$fw->URL_ADMIN = \K::$fw->DOMAIN . \K::$fw->FOLDER_ADMIN;
 
-\K::$fw->LOCALES = 'app/languages/';
-
-\K::$fw->FALLBACK = 'en';
-
-\K::$fw->mset([
-    'PROJECT_VERSION' => '2.0.0 alpha',
-    'TYPE_DATABASE' => 'mysql',//sqlite?
-    'TTL_SCHEMA' => 3600,
-    'TTL_APP' => 3600,
-    'TOKEN_LIFE' => 600,
-    'TOKEN_LENGTH' => 32,
-    'SESSION_CHECK_IP' => false,
-    'SESSION_CHECK_BROWSER' => true,
-    'CFG_VERIFICATION_CODE_LENGTH' => 6,
-]);
+\K::$fw->PROJECT_VERSION = '2.0.0 alpha';
 
 if (file_exists('config/database.php')) {
     include 'config/database.php';
 }
+include 'config/server.php';
+include 'config/security.php';
+
+\K::$fw->LOCALES = 'app/languages/';
+
+$plugins = \K::fw()->split(\K::$fw->AVAILABLE_PLUGINS);
+foreach ($plugins as $plugin) {
+    \K::$fw->PREFIX = strtoupper($plugin) . '_';
+    \K::$fw->LOCALES = 'app/languages/' . $plugin . '/';
+}
+
+\K::$fw->FALLBACK = 'en';
 
 \K::$fw->route(
     'GET|POST @mainRouterAction: /@moduleName/@controllerName/@actionName',

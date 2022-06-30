@@ -267,10 +267,9 @@ class Fields
     public static function get_heading_id($entity_id)
     {
         //global $app_heading_fields_id_cache;
-        $app_heading_fields_id_cache = \K::$fw->app_heading_fields_id_cache;
 
-        if (isset($app_heading_fields_id_cache[$entity_id])) {
-            return $app_heading_fields_id_cache[$entity_id];
+        if (isset(\K::$fw->app_heading_fields_id_cache[$entity_id])) {
+            return \K::$fw->app_heading_fields_id_cache[$entity_id];
         } else {
             return false;
         }

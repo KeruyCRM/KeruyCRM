@@ -16,8 +16,8 @@ class Fieldtype_formula
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::$fw->TEXT_FORMULA . fields::get_available_fields_helper(
-                    $_POST['entities_id'],
+            'title' => \K::$fw->TEXT_FORMULA . \Models\Fields::get_available_fields_helper(
+                    \K::fw()->get('POST.entities_id'),
                     'fields_configuration_formula'
                 ),
             'name' => 'formula',
@@ -28,19 +28,21 @@ class Fieldtype_formula
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
             'name' => 'number_format',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
             'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
             'name' => 'calclulate_totals',
             'type' => 'checkbox'
         ];
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
+            'title' => \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO
+                ) . \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
@@ -95,7 +97,7 @@ class Fieldtype_formula
         }
 
         //return value using number format
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if (strlen($cfg->get('number_format')) > 0 and strlen($value) > 0) {
             $format = explode('/', str_replace('*', '', $cfg->get('number_format')));

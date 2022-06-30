@@ -2,6 +2,8 @@
 
 namespace Models\Users;
 
+use Tools\Items\Items;
+
 class Users
 {
     static public function output_heading_from_item($item)
@@ -34,8 +36,8 @@ class Users
                 ) . ') and f.id in (' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ') and  f.entities_id = 1 and f.forms_tabs_id = t.id order by field(f.id,' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ')'
             );
             //while ($v = db_fetch_array($fields_query)) {
-            foreach ($fields_query as $v){
-                //TODO require forech?
+            foreach ($fields_query as $v) {
+                //TODO require foreach?
                 $public_profile_fields[] = $v;
             }
         }
@@ -47,12 +49,13 @@ class Users
             $listing_sql_query_select = \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(1, '');
         }
 
-        $field_heading_id = fields::get_heading_id(1);
+        $field_heading_id = \Models\Fields::get_heading_id(1);
 
-        $users_query = db_query(
-            "select e.* " . $listing_sql_query_select . ", a.name as group_name, a.id as group_id from app_entity_1 e left join app_access_groups a on a.id=e.field_6 order by e.field_8, e.field_7"
+        $users_query = \K::model()->db_query(
+            'select e.* ' . $listing_sql_query_select . ', a.name as group_name, a.id as group_id from app_entity_1 e left join app_access_groups a on a.id = e.field_6 order by e.field_8, e.field_7'
         );
-        while ($users = db_fetch_array($users_query)) {
+        //while ($users = db_fetch_array($users_query)) {
+        foreach ($users_query as $users) {
             $profile_fields = [];
 
             //generate public profile data
@@ -73,19 +76,22 @@ class Users
                     ];
 
                     //fix notice in cron
-                    if (!defined('TEXT_' . strtoupper($field['type']) . '_TITLE') and defined('IS_CRON')) {
+                    /*if (!defined('TEXT_' . strtoupper($field['type']) . '_TITLE') and defined('IS_CRON')) {
                         define('TEXT_' . strtoupper($field['type']) . '_TITLE', '');
+                    }*/
+                    if(!\K::fw()->exists('TEXT_' . strtoupper($field['type']) . '_TITLE')){
+                        \K::fw()->set('TEXT_' . strtoupper($field['type']) . '_TITLE', '');
                     }
 
                     $profile_fields[] = [
-                        'name' => fields_types::get_option($field['type'], 'name', $field['name']),
-                        'value' => fields_types::output($output_options)
+                        'name' => \Models\Fields_types::get_option($field['type'], 'name', $field['name']),
+                        'value' => \Models\Fields_types::output($output_options)
                     ];
                 }
             }
 
             if (strlen($users['field_10']) > 0) {
-                $file = attachments::parse_filename($users['field_10']);
+                $file = \Tools\Attachments::parse_filename($users['field_10']);
 
                 $photo = $file['file_sha1'];
             } else {
@@ -93,7 +99,7 @@ class Users
             }
 
             if ($field_heading_id and $field_heading_id != 12) {
-                $name = items::get_heading_field_value($field_heading_id, $users);
+                $name = \Tools\Items\Items::get_heading_field_value($field_heading_id, $users);
             } else {
                 $name = (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? $users['field_7'] . ' ' . $users['field_8'] : $users['field_8'] . ' ' . $users['field_7']);
             }

@@ -34,14 +34,14 @@ class Security extends \Prefab
 
             $timeDecode = $this->decrypt36($timeSend, $saltSend . $this->_DELIMITER . \K::$fw->app_token);
 
-            if ($timeDecode + \K::$fw->TOKEN_LIFE < time()) {
+            if ($timeDecode + \K::$fw->CFG_TOKEN_LIFE < time()) {
                 return false;
             }
 
             $hash = hash_hmac('sha256', $saltSend . $this->_DELIMITER . $timeSend, \K::$fw->app_token, true);
             $base64 = base64_encode($hash);
             $purified = $this->purified($base64);
-            $tokenNew = substr($purified, 0, \K::$fw->TOKEN_LENGTH);
+            $tokenNew = substr($purified, 0, \K::$fw->CFG_TOKEN_LENGTH);
 
             return hash_equals($tokenNew, $tokenSend);
         } catch (\Exception $e) {
@@ -53,11 +53,11 @@ class Security extends \Prefab
     {
         $app_token = '';
         try {
-            $bytesWithMargin = random_bytes(\K::$fw->TOKEN_LENGTH * 3);
+            $bytesWithMargin = random_bytes(\K::$fw->CFG_TOKEN_LENGTH * 3);
 
             $base64 = base64_encode($bytesWithMargin);
             $purified = $this->purified($base64);
-            $app_token = substr($purified, 0, \K::$fw->TOKEN_LENGTH);
+            $app_token = substr($purified, 0, \K::$fw->CFG_TOKEN_LENGTH);
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
@@ -78,7 +78,7 @@ class Security extends \Prefab
             $hash = hash_hmac('sha256', $salt . $this->_DELIMITER . $time, \K::$fw->app_token, true);
             $base64 = base64_encode($hash);
             $purified = $this->purified($base64);
-            $token = substr($purified, 0, \K::$fw->TOKEN_LENGTH);
+            $token = substr($purified, 0, \K::$fw->CFG_TOKEN_LENGTH);
         } catch (\Exception $e) {
             echo $e->getMessage();
         }

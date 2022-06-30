@@ -154,6 +154,9 @@ class Controller
         $this->_setSession();
         $this->_extractSession();
 
+        echo \K::$fw->TEXT_CHECKING_ENVIRONMENT . PHP_EOL;
+        echo \K::$fw->EXT_TEXT_EXT_NEW;
+
         //TODO
         \K::security()->checkCsrfToken();
 
@@ -286,10 +289,10 @@ class Controller
     }
         */
         new \DB\SQL\Session(\K::model()->db, 'app_sessions_new', false, function ($session) {
-            if (K::$fw->SESSION_CHECK_IP and $session->ip() !== \K::$fw->IP) {
+            if (K::$fw->CFG_SESSION_CHECK_IP and $session->ip() !== \K::$fw->IP) {
                 return false;
             }
-            if (K::$fw->SESSION_CHECK_BROWSER and $session->agent() !== \K::$fw->AGENT) {
+            if (K::$fw->CFG_SESSION_CHECK_BROWSER and $session->agent() !== \K::$fw->AGENT) {
                 return false;
             }
             return true;

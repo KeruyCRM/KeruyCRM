@@ -252,16 +252,16 @@ class Items
 
     public static function get_heading_field($entity_id, $item_id, $item_info = null)
     {
-        global $app_users_cache;
+        //global $app_users_cache;
 
         if ($entity_id == 1) {
-            return (isset($app_users_cache[$item_id]) ? $app_users_cache[$item_id]['name'] : '');
+            return (isset(\K::$fw->app_users_cache[$item_id]) ? \K::$fw->app_users_cache[$item_id]['name'] : '');
         }
 
-        $heading_field_id = fields::get_heading_id($entity_id);
+        $heading_field_id = \Models\Fields::get_heading_id($entity_id);
 
         if ($heading_field_id and !$item_info) {
-            $item_info = db_find('app_entity_' . $entity_id, $item_id);
+            $item_info = \K::model()->db_find('app_entity_' . $entity_id, $item_id);
         }
 
         return ($heading_field_id > 0 ? self::get_heading_field_value($heading_field_id, $item_info) : $item_id);
