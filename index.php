@@ -29,7 +29,7 @@ include 'config/security.php';
 
 $plugins = \K::fw()->split(\K::$fw->AVAILABLE_PLUGINS);
 foreach ($plugins as $plugin) {
-    \K::$fw->PREFIX = strtoupper($plugin) . '_';
+    \K::$fw->PREFIX = 'TEXT_' . strtoupper($plugin) . '_';
     \K::$fw->LOCALES = 'app/languages/' . $plugin . '/';
 }
 
