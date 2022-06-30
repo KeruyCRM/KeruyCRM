@@ -109,8 +109,8 @@ class timer
                 TEXT_EXT_TIMER_RESET_MSG
             ) . '" title="' . addslashes(TEXT_EXT_TIMER_RESET) . '"><i class="fa fa-refresh"></i></button></li>
           <li><button class="btn btn-sm btn-default button-timer-close" data-warn-msg="' . addslashes(
-                TEXT_EXT_TIMER_COLOSE_MSG
-            ) . '">' . TEXT_EXT_TIMER_COLOSE . ' <i class="fa fa-times"></i></button></li>
+                TEXT_EXT_TIMER_CLOSE_MSG
+            ) . '">' . TEXT_EXT_TIMER_CLOSE . ' <i class="fa fa-times"></i></button></li>
         </ul>
       </div>          
     ';

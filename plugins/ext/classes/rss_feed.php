@@ -172,8 +172,8 @@ class rss_feed
         $choices = [
             'entity' => TEXT_ENTITY,
             'entity_calendar' => TEXT_EXT_CALENDAR_REPORT,
-            'public_calendar' => TEXT_EXT_СALENDAR_PUBLIC,
-            'personal_calendar' => TEXT_EXT_СALENDAR_PERSONAL,
+            'public_calendar' => TEXT_EXT_CALENDAR_PUBLIC,
+            'personal_calendar' => TEXT_EXT_CALENDAR_PERSONAL,
             'chat_messages' => TEXT_EXT_MENU_CHAT
         ];
 

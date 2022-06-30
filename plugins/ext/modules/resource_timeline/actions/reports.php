@@ -165,7 +165,7 @@ switch ($app_module_action) {
             <div class="col-md-9">
           	   ' . input_tag('column_width', $obj['column_width'], ['class' => 'form-control input-large']) . '
                     ' . tooltip_text(
-                TEXT_EXT_ENTER_COLUMN_WIDHT_IN_PP_BY_COMMA . '<br>' . TEXT_EXAMPLE . ': 30%,50,80'
+                TEXT_EXT_ENTER_COLUMN_WIDTH_IN_PP_BY_COMMA . '<br>' . TEXT_EXAMPLE . ': 30%,50,80'
             ) . '
             </div>
           </div>

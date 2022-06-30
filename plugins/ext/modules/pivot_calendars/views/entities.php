@@ -39,9 +39,9 @@ echo button_tag(
                 <th><?php
                     echo TEXT_BACKGROUND_COLOR ?></th>
                 <th><?php
-                    echo TEXT_EXT_СALENDAR_START_DATE ?></th>
+                    echo TEXT_EXT_CALENDAR_START_DATE ?></th>
                 <th><?php
-                    echo TEXT_EXT_СALENDAR_END_DATE ?></th>
+                    echo TEXT_EXT_CALENDAR_END_DATE ?></th>
             </tr>
             </thead>
             <tbody>

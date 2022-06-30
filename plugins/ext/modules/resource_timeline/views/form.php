@@ -52,7 +52,7 @@ echo form_tag(
 
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="in_menu"><?php
-                        echo tooltip_icon(TEXT_EXT_DISPLYA_IN_MAIN_MENU_TIP) . TEXT_EXT_DISPLYA_IN_MAIN_MENU ?></label>
+                        echo tooltip_icon(TEXT_EXT_DISPLAY_IN_MAIN_MENU_TIP) . TEXT_EXT_DISPLAY_IN_MAIN_MENU ?></label>
                     <div class="col-md-9">
                         <div class="checkbox-list"><label class="checkbox-inline"><?php
                                 echo input_checkbox_tag('in_menu', '1', ['checked' => $obj['in_menu']]) ?></label></div>

@@ -11,7 +11,7 @@ if (!$chat_conversation = db_fetch_array($chat_conversation_query)) {
     echo "
 		<script>
 			if(is_app_caht_timer){ clearInterval(app_caht_timer); is_app_caht_timer = false; }
-			$('#chat_messages').html('<div class=\"alert alert-warning\">" . TEXT_EXT_CHAT_CONVERSATION_IS_NOT_FOUD . "</div>')
+			$('#chat_messages').html('<div class=\"alert alert-warning\">" . TEXT_EXT_CHAT_CONVERSATION_IS_NOT_FOUND . "</div>')
 		</script>";
 
     exit();

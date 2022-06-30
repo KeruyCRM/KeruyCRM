@@ -1,8 +1,8 @@
 <h3 class="page-title"><?php
-    echo TEXT_EXT_SAMRT_INPUT_RULES ?></h3>
+    echo TEXT_EXT_SMART_INPUT_RULES ?></h3>
 
 <p><?php
-    echo TEXT_EXT_SAMRT_INPUT_RULES_INFO ?></p>
+    echo TEXT_EXT_SMART_INPUT_RULES_INFO ?></p>
 
 <?php
 echo button_tag(TEXT_BUTTON_CREATE, url_for('ext/modules/smart_input_rules_form'), true) ?>

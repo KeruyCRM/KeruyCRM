@@ -14,8 +14,8 @@ switch ($_GET['type']) {
         $page_description = TEXT_EXT_FILE_STORAGE_MODULES_DESCRIPTION;
         break;
     case 'smart_input':
-        $page_title = TEXT_EXT_SAMRT_INPUT;
-        $page_description = TEXT_EXT_SMART_INTPUT_MODULES_DESCRIPTION;
+        $page_title = TEXT_EXT_SMART_INPUT;
+        $page_description = TEXT_EXT_SMART_INPUT_MODULES_DESCRIPTION;
         break;
     case 'mailing':
         $page_title = TEXT_EXT_MAILING_SERVICES;

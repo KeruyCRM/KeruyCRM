@@ -26,7 +26,7 @@ class items_redirects
                 "select c.id, c.name from app_ext_calendar c, app_entities e where e.id=c.entities_id and e.id={$entities['id']} order by c.name"
             );
             while ($v = db_fetch_array($reports_query)) {
-                $choices[$entities['name'] . ': ' . TEXT_EXT_СALENDAR]['calendarreport' . $v['id']] = $v['name'];
+                $choices[$entities['name'] . ': ' . TEXT_EXT_CALENDAR]['calendarreport' . $v['id']] = $v['name'];
             }
         }
 

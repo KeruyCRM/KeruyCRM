@@ -95,7 +95,7 @@ switch (true) {
     case strstr($section_report, 'calendar_personal'):
         echo '<h3 class="page-title"><a href="' . url_for(
                 'ext/calendar/personal'
-            ) . '">' . TEXT_EXT_MY_СALENDAR . '</a>' . icalendar::get_url(
+            ) . '">' . TEXT_EXT_MY_CALENDAR . '</a>' . icalendar::get_url(
                 CFG_PERSONAL_CALENDAR_ICAL,
                 'personal'
             ) . '</h3>';
@@ -104,7 +104,7 @@ switch (true) {
     case strstr($section_report, 'calendar_public'):
         echo '<h3 class="page-title"><a href="' . url_for(
                 'ext/calendar/public'
-            ) . '">' . TEXT_EXT_СALENDAR . '</a> ' . icalendar::get_url(CFG_PUBLIC_CALENDAR_ICAL, 'public') . '</h3>';
+            ) . '">' . TEXT_EXT_CALENDAR . '</a> ' . icalendar::get_url(CFG_PUBLIC_CALENDAR_ICAL, 'public') . '</h3>';
         require(component_path('ext/calendar/public'));
         break;
     case strstr($section_report, 'calendarreport'):

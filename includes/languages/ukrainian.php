@@ -727,7 +727,7 @@ define('TEXT_MENU_REVIEWS', 'Відгуки');
 
 define('TEXT_NO_NUMERIC_FIELDS', 'Числові поля відсутні.');
 define(
-    'TEXT_EXTENSION_LICENSE_KEY_IFNO',
+    'TEXT_EXTENSION_LICENSE_KEY_INFO',
     'При покупці Додатку вам потрібно ввести доменне ім’я <span class="label label-sm label-warning">%s</span>, щоб отримати ключ продукту.'
 );
 define('TEXT_URL_PREFIX', 'Префікс');

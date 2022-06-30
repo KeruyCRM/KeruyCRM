@@ -22,7 +22,7 @@ $exclude_fiedls_types = "'fieldtype_action','fieldtype_related_records','fieldty
     echo TEXT_EXT_CHART_CONFIGURE_LISTING ?></h3>
 
 <div><?php
-    echo TEXT_EXT_CHART_CONFIGURE_LISTING_IFNO ?></div>
+    echo TEXT_EXT_CHART_CONFIGURE_LISTING_INFO ?></div>
 
 <table style="width: 100%; max-width: 960px;">
     <tr>

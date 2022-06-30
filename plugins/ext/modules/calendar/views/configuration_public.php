@@ -1,5 +1,5 @@
 <h3 class="page-title"><?php
-    echo TEXT_EXT_СALENDAR_PUBLIC ?></h3>
+    echo TEXT_EXT_CALENDAR_PUBLIC ?></h3>
 
 <?php
 echo form_tag(
@@ -143,7 +143,7 @@ echo form_tag(
                     echo TEXT_ACCESS ?></h3>
 
                 <p><?php
-                    echo TEXT_EXT_СALENDAR_PUBLIC_ACCESS ?></p>
+                    echo TEXT_EXT_CALENDAR_PUBLIC_ACCESS ?></p>
 
                 <?php
                 foreach (access_groups::get_choices(false) as $group_id => $group_name): ?>
@@ -167,7 +167,7 @@ echo form_tag(
 
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="enable_ical"><?php
-                        echo tooltip_icon(TEXT_EXT_ENALBE_ICAL_URL_TIP) . TEXT_EXT_ENALBE_ICAL_URL ?></label>
+                        echo tooltip_icon(TEXT_EXT_ENABLE_ICAL_URL_TIP) . TEXT_EXT_ENABLE_ICAL_URL ?></label>
                     <div class="col-md-9">
                         <?php
                         echo select_tag(

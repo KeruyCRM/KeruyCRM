@@ -8,7 +8,7 @@ require(component_path('entities/navigation')) ?>
             ) . '">' . TEXT_EXT_EMAIL_SENDING_RULES . '</a> <i class="fa fa-angle-right"></i> ' . TEXT_EXT_HTML_BLOCKS ?></h3>
 
     <p><?php
-        echo TEXT_EXT_EMAIL_SENDING_HTNL_BLOCK_INFO ?></p>
+        echo TEXT_EXT_EMAIL_SENDING_HTML_BLOCK_INFO ?></p>
 
 <?php
 echo button_tag(

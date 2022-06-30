@@ -43,10 +43,10 @@ class sms
         $choices[TEXT_EXT_ADDING_NEW_RECORD]['insert_send_to_user_number'] = TEXT_EXT_SEND_TO_USER_NUMBER;
         $choices[TEXT_EXT_ADDING_NEW_RECORD]['insert_send_to_number_in_entity'] = TEXT_EXT_SEND_TO_RELATED_ENTITY;
 
-        $choices[TEXT_EXT_ADDITING_RECORD]['edit_send_to_number'] = TEXT_EXT_SEND_TO_NUMBER;
-        $choices[TEXT_EXT_ADDITING_RECORD]['edit_send_to_record_number'] = TEXT_EXT_SEND_TO_RECORD_NUMBER;
-        $choices[TEXT_EXT_ADDITING_RECORD]['edit_send_to_user_number'] = TEXT_EXT_SEND_TO_USER_NUMBER;
-        $choices[TEXT_EXT_ADDITING_RECORD]['edit_send_to_number_in_entity'] = TEXT_EXT_SEND_TO_RELATED_ENTITY;
+        $choices[TEXT_EXT_EDITING_RECORD]['edit_send_to_number'] = TEXT_EXT_SEND_TO_NUMBER;
+        $choices[TEXT_EXT_EDITING_RECORD]['edit_send_to_record_number'] = TEXT_EXT_SEND_TO_RECORD_NUMBER;
+        $choices[TEXT_EXT_EDITING_RECORD]['edit_send_to_user_number'] = TEXT_EXT_SEND_TO_USER_NUMBER;
+        $choices[TEXT_EXT_EDITING_RECORD]['edit_send_to_number_in_entity'] = TEXT_EXT_SEND_TO_RELATED_ENTITY;
 
         $choices[TEXT_EXT_SEND_BY_DATE]['schedule_send_to_number'] = TEXT_EXT_SEND_TO_NUMBER;
         $choices[TEXT_EXT_SEND_BY_DATE]['schedule_send_to_record_number'] = TEXT_EXT_SEND_TO_RECORD_NUMBER;
@@ -65,7 +65,7 @@ class sms
                 $html = '<span class="label label-success">' . TEXT_EXT_ADDING_NEW_RECORD . '</label>';
                 break;
             case strstr($type, 'edit'):
-                $html = '<span class="label label-info">' . TEXT_EXT_ADDITING_RECORD . '</span>';
+                $html = '<span class="label label-info">' . TEXT_EXT_EDITING_RECORD . '</span>';
                 break;
             case strstr($type, 'schedule'):
                 $html = '<span class="label label-default">' . TEXT_EXT_SEND_BY_DATE . '</span>';

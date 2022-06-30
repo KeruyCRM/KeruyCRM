@@ -28,7 +28,7 @@ echo button_tag(TEXT_BUTTON_CREATE, url_for('ext/funnelchart/form')) ?>
         <tbody>
         <?php
 
-        $choices_type = ['funnel' => TEXT_EXT_FUNNEL_CHART, 'bars' => TEXT_EXT_BARS_CAHRT, 'table' => TEXT_EXT_TABLE];
+        $choices_type = ['funnel' => TEXT_EXT_FUNNEL_CHART, 'bars' => TEXT_EXT_BARS_CHART, 'table' => TEXT_EXT_TABLE];
 
         $fields_cahce = fields::get_name_cache();
 

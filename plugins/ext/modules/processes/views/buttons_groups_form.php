@@ -1,5 +1,5 @@
 <?php
-echo ajax_modal_template_header(TEXT_EXT_PROCESS_IFNO) ?>
+echo ajax_modal_template_header(TEXT_EXT_PROCESS_INFO) ?>
 
 <?php
 echo form_tag(

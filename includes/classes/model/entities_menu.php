@@ -118,7 +118,7 @@ class entities_menu
 
             $reports_query = db_query("select id, name from app_ext_calendar order by name");
             while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_СALENDAR]['calendarreport' . $v['id']] = $v['name'];
+                $choices[TEXT_EXT_CALENDAR]['calendarreport' . $v['id']] = $v['name'];
             }
 
             $reports_query = db_query("select id, name from app_ext_pivot_calendars order by sort_order, name");

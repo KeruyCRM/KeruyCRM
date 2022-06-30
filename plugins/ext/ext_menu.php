@@ -36,13 +36,13 @@ if ($app_user['group_id'] == 0) {
     ];
 
     $s = [];
-    $s[] = ['title' => TEXT_EXT_СALENDAR_PERSONAL, 'url' => url_for('ext/calendar/configuration_personal')];
-    $s[] = ['title' => TEXT_EXT_СALENDAR_PUBLIC, 'url' => url_for('ext/calendar/configuration_public')];
+    $s[] = ['title' => TEXT_EXT_CALENDAR_PERSONAL, 'url' => url_for('ext/calendar/configuration_personal')];
+    $s[] = ['title' => TEXT_EXT_CALENDAR_PUBLIC, 'url' => url_for('ext/calendar/configuration_public')];
     $s[] = ['title' => TEXT_EXT_CALENDAR_REPORT, 'url' => url_for('ext/calendar/configuration_reports')];
     $s[] = ['title' => TEXT_EXT_PIVOT_СALENDAR, 'url' => url_for('ext/pivot_calendars/reports')];
     $s[] = ['title' => TEXT_EXT_RESOURCE_TIMELINE, 'url' => url_for('ext/resource_timeline/reports')];
     $app_plugin_menu['extension'][] = [
-        'title' => TEXT_EXT_СALENDAR,
+        'title' => TEXT_EXT_CALENDAR,
         'url' => url_for('ext/calendar/configuration_personal'),
         'submenu' => $s
     ];
@@ -95,7 +95,7 @@ if ($app_user['group_id'] == 0) {
 
     $ss = [];
     $ss[] = ['title' => TEXT_EXT_SMS_MODULES, 'url' => url_for('ext/modules/modules', 'type=sms')];
-    $ss[] = ['title' => TEXT_EXT_SMS_SENDIGN_RULES, 'url' => url_for('ext/modules/sms_rules')];
+    $ss[] = ['title' => TEXT_EXT_SMS_SENDING_RULES, 'url' => url_for('ext/modules/sms_rules')];
     $s[] = ['title' => TEXT_EXT_SMS_MODULES, 'url' => url_for('ext/modules/modules', 'type=sms'), 'submenu' => $ss];
 
     $ss = [];
@@ -108,10 +108,10 @@ if ($app_user['group_id'] == 0) {
     ];
 
     $ss = [];
-    $ss[] = ['title' => TEXT_EXT_SAMRT_INPUT, 'url' => url_for('ext/modules/modules', 'type=smart_input')];
-    $ss[] = ['title' => TEXT_EXT_SAMRT_INPUT_RULES, 'url' => url_for('ext/modules/smart_input_rules')];
+    $ss[] = ['title' => TEXT_EXT_SMART_INPUT, 'url' => url_for('ext/modules/modules', 'type=smart_input')];
+    $ss[] = ['title' => TEXT_EXT_SMART_INPUT_RULES, 'url' => url_for('ext/modules/smart_input_rules')];
     $s[] = [
-        'title' => TEXT_EXT_SAMRT_INPUT,
+        'title' => TEXT_EXT_SMART_INPUT,
         'url' => url_for('ext/modules/modules', 'type=smart_input'),
         'submenu' => $ss
     ];

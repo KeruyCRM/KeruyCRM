@@ -20,9 +20,9 @@ echo button_tag(TEXT_BUTTON_CREATE, url_for('ext/calendar/configuration_reports_
             <th><?php
                 echo TEXT_IN_MENU ?></th>
             <th><?php
-                echo TEXT_EXT_СALENDAR_START_DATE ?></th>
+                echo TEXT_EXT_CALENDAR_START_DATE ?></th>
             <th><?php
-                echo TEXT_EXT_СALENDAR_END_DATE ?></th>
+                echo TEXT_EXT_CALENDAR_END_DATE ?></th>
         </tr>
         </thead>
         <tbody>

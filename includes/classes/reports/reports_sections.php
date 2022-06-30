@@ -99,11 +99,11 @@ class reports_sections
 
         if (is_ext_installed()) {
             if (calendar::user_has_personal_access()) {
-                $choices[TEXT_EXT_СALENDAR]['calendar_personal'] = TEXT_EXT_СALENDAR_PERSONAL;
+                $choices[TEXT_EXT_CALENDAR]['calendar_personal'] = TEXT_EXT_CALENDAR_PERSONAL;
             }
 
             if (calendar::user_has_public_access()) {
-                $choices[TEXT_EXT_СALENDAR]['calendar_public'] = TEXT_EXT_СALENDAR_PUBLIC;
+                $choices[TEXT_EXT_CALENDAR]['calendar_public'] = TEXT_EXT_CALENDAR_PUBLIC;
             }
 
 
@@ -120,7 +120,7 @@ class reports_sections
                 );
             }
             while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_СALENDAR]['calendarreport' . $v['id']] = $v['name'];
+                $choices[TEXT_EXT_CALENDAR]['calendarreport' . $v['id']] = $v['name'];
             }
 
             //pivot calendar preport

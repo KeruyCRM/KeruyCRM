@@ -14,7 +14,7 @@ echo form_tag('form_ics', icalendar::generate_url($_GET['type'], $_GET['id'] ?? 
         ['class' => 'form-control textarea-small select-all', 'readonly' => 'readonly']
     ) ?>
     <?php
-    echo tooltip_text(TEXT_EXT_ENALBE_ICAL_GMT_TIP) ?>
+    echo tooltip_text(TEXT_EXT_ENABLE_ICAL_GMT_TIP) ?>
 </div>
 
 <?php

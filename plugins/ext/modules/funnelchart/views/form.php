@@ -27,7 +27,7 @@ echo form_tag(
                 <?php
                 $choices = [
                     'funnel' => TEXT_EXT_FUNNEL_CHART,
-                    'bars' => TEXT_EXT_BARS_CAHRT,
+                    'bars' => TEXT_EXT_BARS_CHART,
                     'table' => TEXT_EXT_TABLE
                 ];
                 ?>

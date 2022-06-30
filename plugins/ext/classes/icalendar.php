@@ -97,7 +97,7 @@ class icalendar
         // create the ical object
         $icalobj = new ZCiCal();
 
-        $this->set_calname(TEXT_EXT_MY_СALENDAR, $icalobj);
+        $this->set_calname(TEXT_EXT_MY_CALENDAR, $icalobj);
 
         $events_query = db_query(
             "select * from app_ext_calendar_events where event_type='personal' and users_id='" . db_input(

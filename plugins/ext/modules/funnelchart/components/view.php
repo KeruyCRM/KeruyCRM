@@ -244,7 +244,7 @@ if ($app_module_path == 'ext/funnelchart/view') {
 						<label class="btn btn-default ' . ($funnelchart_type[$reports['id']] == 'funnel' ? 'active' : '') . '">
 						<input name="funnelchart_view_mode" type="radio" value="funnel" class="toggle funnelchart_view_mode">' . TEXT_EXT_FUNNEL_CHART . '</label>
 						<label class="btn btn-default ' . ($funnelchart_type[$reports['id']] == 'bars' ? 'active' : '') . '">
-						<input name="funnelchart_view_mode" type="radio" value="bars" class="toggle funnelchart_view_mode">' . TEXT_EXT_BARS_CAHRT . '</label>
+						<input name="funnelchart_view_mode" type="radio" value="bars" class="toggle funnelchart_view_mode">' . TEXT_EXT_BARS_CHART . '</label>
 						<label class="btn btn-default ' . ($funnelchart_type[$reports['id']] == 'table' ? 'active' : '') . '">
 						<input name="funnelchart_view_mode" type="radio" value="table" class="toggle funnelchart_view_mode">' . TEXT_EXT_TABLE . '</label>
 					</div>

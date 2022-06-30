@@ -1,8 +1,8 @@
 <h3 class="page-title"><?php
-    echo TEXT_EXT_SMS_SENDIGN_RULES ?></h3>
+    echo TEXT_EXT_SMS_SENDING_RULES ?></h3>
 
 <p><?php
-    echo TEXT_EXT_SMS_SENDIGN_RULES_INFO ?></p>
+    echo TEXT_EXT_SMS_SENDING_RULES_INFO ?></p>
 
 <?php
 echo button_tag(TEXT_BUTTON_CREATE, url_for('ext/modules/sms_rules_form'), true) ?>

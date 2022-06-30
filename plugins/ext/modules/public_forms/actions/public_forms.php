@@ -136,8 +136,8 @@ switch ($app_module_action) {
   						    	
   			<div class="form-group">
 			  	<label class="col-md-3 control-label" for="hidden_fields">' . tooltip_icon(
-                TEXT_EXT_FB_HIDEN_FIELDS_INFO
-            ) . TEXT_EXT_FB_HIDEN_FIELDS . '</label>
+                TEXT_EXT_FB_HIDDEN_FIELDS_INFO
+            ) . TEXT_EXT_FB_HIDDEN_FIELDS . '</label>
 			    <div class="col-md-9">' . select_tag(
                 'hidden_fields[]',
                 $choices,
@@ -189,7 +189,7 @@ switch ($app_module_action) {
 			
 			  <h3 class="form-section form-section-desc">' . TEXT_EXT_PB_CUSTOMER_NOTIFICATION . '</h3>
 			
-			  <p>' . TEXT_EXT_PB_CUSTOMER_NOTIFICATION_IFNO . '</p>
+			  <p>' . TEXT_EXT_PB_CUSTOMER_NOTIFICATION_INFO . '</p>
 			
 			  <div class="form-group">
 			  	<label class="col-md-3 control-label" for="customer_name">' . tooltip_icon(

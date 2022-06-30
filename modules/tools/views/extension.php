@@ -30,7 +30,7 @@
             <div class="pricing-footer">
                 <p style="padding: 7px 0;">
                     <?php
-                    echo sprintf(TEXT_EXTENSION_LICENSE_KEY_IFNO, str_replace('www.', '', $_SERVER['HTTP_HOST'])) ?>
+                    echo sprintf(TEXT_EXTENSION_LICENSE_KEY_INFO, str_replace('www.', '', $_SERVER['HTTP_HOST'])) ?>
                 </p>
 
                 <?php

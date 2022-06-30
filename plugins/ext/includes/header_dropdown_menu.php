@@ -36,7 +36,7 @@ if (defined('CFG_PLUGIN_EXT_INSTALLED')) {
                 <li class="external">
                     <a href="<?php
                     echo url_for('ext/calendar/personal') ?>"><?php
-                        echo TEXT_EXT_MY_СALENDAR ?><i class="fa fa-angle-right"></i></a>
+                        echo TEXT_EXT_MY_CALENDAR ?><i class="fa fa-angle-right"></i></a>
                 </li>
             </ul>
         </li>

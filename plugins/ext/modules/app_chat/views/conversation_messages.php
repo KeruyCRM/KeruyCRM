@@ -132,7 +132,7 @@ require(component_path('ext/app_chat/messages.js'));
 
     $('.btn-chat-delete-conversation').click(function () {
 
-        if (confirm('<?php echo htmlspecialchars(TEXT_EXT_DELETE_CONVERSATION_CONFIGM) ?>')) {
+        if (confirm('<?php echo htmlspecialchars(TEXT_EXT_DELETE_CONVERSATION_CONFIRM) ?>')) {
             $('.chat-user').removeClass('selected')
 
             //reset timer

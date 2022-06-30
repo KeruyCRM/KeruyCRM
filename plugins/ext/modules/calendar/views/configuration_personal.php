@@ -1,5 +1,5 @@
 <h3 class="page-title"><?php
-    echo TEXT_EXT_СALENDAR_PERSONAL ?></h3>
+    echo TEXT_EXT_CALENDAR_PERSONAL ?></h3>
 
 <?php
 echo form_tag(
@@ -151,13 +151,13 @@ echo form_tag(
                             ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
                         ) ?>
                         <?php
-                        echo tooltip_text(TEXT_EXT_СALENDAR_PERSONAL_ACCESS) ?>
+                        echo tooltip_text(TEXT_EXT_CALENDAR_PERSONAL_ACCESS) ?>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="enable_ical"><?php
-                        echo tooltip_icon(TEXT_EXT_ENALBE_ICAL_URL_TIP) . TEXT_EXT_ENALBE_ICAL_URL ?></label>
+                        echo tooltip_icon(TEXT_EXT_ENABLE_ICAL_URL_TIP) . TEXT_EXT_ENABLE_ICAL_URL ?></label>
                     <div class="col-md-9">
                         <?php
                         echo select_tag(

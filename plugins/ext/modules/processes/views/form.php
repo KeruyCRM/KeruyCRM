@@ -1,5 +1,5 @@
 <?php
-echo ajax_modal_template_header(TEXT_EXT_PROCESS_IFNO) ?>
+echo ajax_modal_template_header(TEXT_EXT_PROCESS_INFO) ?>
 
 <?php
 echo form_tag(
@@ -124,7 +124,7 @@ $default_selector = ['1' => TEXT_YES, '0' => TEXT_NO]; ?>
 
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="users_groups"><?php
-                        echo tooltip_icon(TEXT_EXT_PROCESS_BUTTON_ACCESS_IFNO) . TEXT_USERS_GROUPS ?></label>
+                        echo tooltip_icon(TEXT_EXT_PROCESS_BUTTON_ACCESS_INFO) . TEXT_USERS_GROUPS ?></label>
                     <div class="col-md-9">
                         <?php
                         echo select_tag(
@@ -223,8 +223,8 @@ $default_selector = ['1' => TEXT_YES, '0' => TEXT_NO]; ?>
                 <div class="form-group">
                     <label class="col-md-3 control-label" for="preview_prcess_actions"><?php
                         echo tooltip_icon(
-                                TEXT_EXT_PREVIEW_PRCESS_ACTIONS_INFO
-                            ) . TEXT_EXT_PREVIEW_PRCESS_ACTIONS ?></label>
+                                TEXT_EXT_PREVIEW_PROCESS_ACTIONS_INFO
+                            ) . TEXT_EXT_PREVIEW_PROCESS_ACTIONS ?></label>
                     <div class="col-md-9">
                         <div class="checkbox-list"><label class="checkbox-inline"><?php
                                 echo input_checkbox_tag(

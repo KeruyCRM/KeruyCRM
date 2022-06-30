@@ -1,5 +1,5 @@
 <?php
-echo ajax_modal_template_header(TEXT_EXT_СALENDAR_REPORTS) ?>
+echo ajax_modal_template_header(TEXT_EXT_CALENDAR_REPORTS) ?>
 
 <?php
 echo form_tag(

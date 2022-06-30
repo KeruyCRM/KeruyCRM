@@ -145,7 +145,7 @@ switch ($app_module_action) {
         $choices['comments_section'] = TEXT_EXT_COMMENTS_SECTION;
         $choices['run_after_insert'] = TEXT_EXT_RUN_PROCESS_AFTER_RECORD_INSERT;
         $choices['run_after_update'] = TEXT_EXT_RUN_PROCESS_AFTER_RECORD_UPDATE;
-        $choices['run_before_delete'] = TEXT_EXT_RUN_PROCESS_BEFOR_RECORD_DELETE;
+        $choices['run_before_delete'] = TEXT_EXT_RUN_PROCESS_BEFORE_RECORD_DELETE;
         $choices['run_on_schedule'] = TEXT_EXT_RUN_PROCESS_ON_SCHEDULE;
 
 

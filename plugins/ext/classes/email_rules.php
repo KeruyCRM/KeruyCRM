@@ -71,11 +71,11 @@ class email_rules
         $choices[TEXT_EXT_ADDING_NEW_RECORD]['insert_send_to_assigned_email'] = TEXT_EXT_SEND_TO_ASSIGNED_EMAIL;
         $choices[TEXT_EXT_ADDING_NEW_RECORD]['insert_send_by_visibility_rules'] = TEXT_EXT_SEND_BY_VISIBILITY_RULES;
 
-        $choices[TEXT_EXT_ADDITING_RECORD]['edit_send_to_users'] = TEXT_EXT_SEND_TO_USERS;
-        $choices[TEXT_EXT_ADDITING_RECORD]['edit_send_to_assigned_users'] = TEXT_EXT_SEND_TO_ASSIGNED_USERS;
-        $choices[TEXT_EXT_ADDITING_RECORD]['edit_send_to_email'] = TEXT_EXT_SEND_TO_EMAIL;
-        $choices[TEXT_EXT_ADDITING_RECORD]['edit_send_to_assigned_email'] = TEXT_EXT_SEND_TO_ASSIGNED_EMAIL;
-        $choices[TEXT_EXT_ADDITING_RECORD]['edit_send_by_visibility_rules'] = TEXT_EXT_SEND_BY_VISIBILITY_RULES;
+        $choices[TEXT_EXT_EDITING_RECORD]['edit_send_to_users'] = TEXT_EXT_SEND_TO_USERS;
+        $choices[TEXT_EXT_EDITING_RECORD]['edit_send_to_assigned_users'] = TEXT_EXT_SEND_TO_ASSIGNED_USERS;
+        $choices[TEXT_EXT_EDITING_RECORD]['edit_send_to_email'] = TEXT_EXT_SEND_TO_EMAIL;
+        $choices[TEXT_EXT_EDITING_RECORD]['edit_send_to_assigned_email'] = TEXT_EXT_SEND_TO_ASSIGNED_EMAIL;
+        $choices[TEXT_EXT_EDITING_RECORD]['edit_send_by_visibility_rules'] = TEXT_EXT_SEND_BY_VISIBILITY_RULES;
 
         $choices[TEXT_EXT_NEW_COMMENT]['comment_send_to_users'] = TEXT_EXT_SEND_TO_USERS;
         $choices[TEXT_EXT_NEW_COMMENT]['comment_send_to_assigned_users'] = TEXT_EXT_SEND_TO_ASSIGNED_USERS;
@@ -110,7 +110,7 @@ class email_rules
             case 'edit_send_to_email':
             case 'edit_send_to_assigned_email':
             case 'edit_send_by_visibility_rules':
-                $text .= '<span class="label label-info">' . TEXT_EXT_ADDITING_RECORD . '</span>';
+                $text .= '<span class="label label-info">' . TEXT_EXT_EDITING_RECORD . '</span>';
                 break;
             case 'comment_send_to_users':
             case 'comment_send_to_assigned_users':

@@ -2100,7 +2100,7 @@ class processes
                         $related_entity_info = db_find('app_entities', $entity_id);
                         if ($related_entity_info['parent_id'] == 0 or $related_entity_info['parent_id'] == $entity_info['parent_id']) {
                             $choices['insert_item_related_entity_' . $entity_id] = sprintf(
-                                TEXT_EXT_PROCESS_ACTION_INSERT_ITEM_RELATDENTITY,
+                                TEXT_EXT_PROCESS_ACTION_INSERT_ITEM_RELATED_ENTITY,
                                 $fields['name']
                             );
                         }

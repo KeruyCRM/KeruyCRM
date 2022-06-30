@@ -5,7 +5,7 @@
  */
 if (calendar::user_has_personal_access()) {
     $app_plugin_menu['account_menu'][] = [
-        'title' => TEXT_EXT_MY_СALENDAR,
+        'title' => TEXT_EXT_MY_CALENDAR,
         'url' => url_for('ext/calendar/personal'),
         'class' => 'fa-calendar'
     ];
@@ -20,7 +20,7 @@ if (calendar::user_has_public_access()) {
 
     if (($events_count = count($events)) > 0) {
         $app_plugin_menu['menu'][] = [
-            'title' => TEXT_EXT_СALENDAR,
+            'title' => TEXT_EXT_CALENDAR,
             'url' => url_for('ext/calendar/public'),
             'class' => 'fa-calendar',
             'badge' => 'badge-info',
@@ -28,7 +28,7 @@ if (calendar::user_has_public_access()) {
         ];
     } else {
         $app_plugin_menu['menu'][] = [
-            'title' => TEXT_EXT_СALENDAR,
+            'title' => TEXT_EXT_CALENDAR,
             'url' => url_for('ext/calendar/public'),
             'class' => 'fa-calendar'
         ];

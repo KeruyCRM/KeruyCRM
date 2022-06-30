@@ -59,7 +59,7 @@ echo form_tag(
 
         <ul class="nav nav-tabs">
             <li class="active"><a href="#receiving_mail" data-toggle="tab"><?php
-                    echo TEXT_EXT_RECIVING_MAIL ?></a></li>
+                    echo TEXT_EXT_RECEIVING_MAIL ?></a></li>
             <li><a href="#sending_mail" data-toggle="tab"><?php
                     echo TEXT_EXT_SENDING_MAIL ?></a></li>
             <li><a href="#sending_autoreply" data-toggle="tab"><?php
