@@ -375,7 +375,7 @@ class Users
 
         try {
             $mail->CharSet = "UTF-8";
-            $mail->setLanguage(\K::$fw->APP_LANGUAGE_SHORT_CODE);
+            $mail->setLanguage(\K::$fw->TEXT_APP_LANGUAGE_SHORT_CODE);
 
             if (\K::$fw->CFG_EMAIL_USE_SMTP == 1) {
                 $mail->isSMTP();                          // Set mailer to use SMTP

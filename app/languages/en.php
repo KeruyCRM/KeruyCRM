@@ -10,11 +10,11 @@
  * rtl - the writing direction is right-to-left
  */
 return [
-    'TEXT_CHECKING_ENVIRONMENT' => 'TEXT_CHECKING_ENVIRONMENT...',
+    /*'TEXT_CHECKING_ENVIRONMENT' => 'TEXT_CHECKING_ENVIRONMENT...',
     'APP_LANGUAGE' => 'Language',
     'APP_LANGUAGE_NAME' => 'English',
     'APP_LANGUAGE_COUNTRY' => 'gb',
 
     'APP_LANGUAGE_SHORT_CODE' => 'en',
-    'APP_LANGUAGE_TEXT_DIRECTION' => 'ltr',
+    'APP_LANGUAGE_TEXT_DIRECTION' => 'ltr',*/
 ];

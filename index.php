@@ -25,6 +25,10 @@ if (file_exists('config/database.php')) {
 include 'config/server.php';
 include 'config/security.php';
 
+\K::$fw->LANGUAGE = 'xx';
+\K::$fw->FALLBACK = 'xx';
+
+\K::$fw->PREFIX = 'TEXT_';
 \K::$fw->LOCALES = 'app/languages/';
 
 $plugins = \K::fw()->split(\K::$fw->AVAILABLE_PLUGINS);
@@ -32,8 +36,6 @@ foreach ($plugins as $plugin) {
     \K::$fw->PREFIX = 'TEXT_' . strtoupper($plugin) . '_';
     \K::$fw->LOCALES = 'app/languages/' . $plugin . '/';
 }
-
-\K::$fw->FALLBACK = 'xx';
 
 \K::$fw->route(
     'GET|POST @mainRouterAction: /@moduleName/@controllerName/@actionName',

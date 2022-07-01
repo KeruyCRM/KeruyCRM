@@ -26,7 +26,7 @@ class Install
     public function index()
     {
         $this->f3->nextAction = $this->f3->DOMAIN . 'set/install/checking_environment/' . $this->f3->APP_LANGUAGE_SHORT_CODE;
-        $this->f3->urlToImg = $this->f3->DOMAIN . $this->f3->UI . 'img/flag/' . $this->f3->APP_LANGUAGE_COUNTRY . '.png';
+        $this->f3->urlToImg = $this->f3->DOMAIN . $this->f3->UI . 'img/flag/' . $this->f3->TEXT_APP_LANGUAGE_COUNTRY . '.png';
 
         $this->f3->subTemplate = 'install/index.php';
         echo \View::instance()->render('install.php');

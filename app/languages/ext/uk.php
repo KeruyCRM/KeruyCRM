@@ -344,10 +344,10 @@ return [
     'PAYMENT_NOTIFICATION' => 'Оповіщення про платіж',
     'VERSION' => 'Версія',
     'SMS_MODULES' => 'Модулі СМС',
-    'SMS_MODULES_DESCRIPTION' => 'На цій сторінці ви зможете встановити кілька модулів СМС розсилки. Для будь-якої сутності, на сторінці "' . link_to(
+    'SMS_MODULES_DESCRIPTION' => 'На цій сторінці ви зможете встановити кілька модулів СМС розсилки. Для будь-якої сутності, на сторінці "' . /*link_to(
             'Правила відправки СМС',
             url_for('ext/modules/sms_rules')
-        ) . '", у вас є можливість підключити встановлені модулі. <a href="https://keruy.com.ua/index.php?p=58" target="_blank">Детальніше</a>.',
+        ). */ '", у вас є можливість підключити встановлені модулі. <a href="https://keruy.com.ua/index.php?p=58" target="_blank">Детальніше</a>.',
     'SMS_SETTINGS' => 'Налаштування CMC',
     'ENABLE_SMS_NOTIFICATION' => 'Включити сповіщення по CMC',
     'SMS_MODULE' => 'Модуль СМС',
@@ -391,10 +391,10 @@ return [
     'FILE_STORAGE_MODULES' => 'Модулі зберігання файлів',
     'FILE_STORAGE_RULES' => 'Правила зберігання файлів',
     'MODULE' => 'Модуль',
-    'FILE_STORAGE_MODULES_DESCRIPTION' => 'Ви можете встановити кілька модулів для зберігання файлів. На сторінці "' . link_to(
+    'FILE_STORAGE_MODULES_DESCRIPTION' => 'Ви можете встановити кілька модулів для зберігання файлів. На сторінці "' . /*link_to(
             'Правила зберігання файлів',
             url_for('ext/modules/file_storage_rules')
-        ) . '", у Вас є можливість підключити встановлені модулі. <a href="https://keruy.com.ua/index.php?p=59" target="_blank">Детальніше</a>.',
+        ) . */'", у Вас є можливість підключити встановлені модулі. <a href="https://keruy.com.ua/index.php?p=59" target="_blank">Детальніше</a>.',
     'FILE_STORAGE_RULES_INFO' => 'Якщо для певного поля створено правило, то файли при завантаженні, поміщаються в чергу на відправку в сховище. Для переміщення файлів в сховище, запустіть <a href="https://keruy.com.ua/index.php?p=70" target="_blank"><u>завдання за розкладом</u></a>, наприклад, кожні 5 хвилин:',
     'DESIGN_CSS_NOTE' => 'Введіть свої CSS стилі',
     'SPACE_TO_RESET' => 'Введіть пробіл для скидання дати',
