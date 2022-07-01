@@ -107,8 +107,8 @@ define(
     'TEXT_EXT_FUNCTIONS_DESCRIPTION',
     'На цій сторінці ви можете створити додаткові функції які можна використовувати в полях з типом "формула". Щоб вставити функцію у формулу використовуйте фігурні дужки. Наприклад: {12}+[5] де 12 це ID функції. <a href="https://keruy.com.ua/index.php?p=48" target="_blank">Детальніше.</a>'
 );
-define('TEXT_BUTTON_ADD_NEW_FUNCTION', 'Додати функцію');
-define('TEXT_HEADING_FUNCTION_INFO', 'Інформація про функцію');
+define('TEXT_EXT_BUTTON_ADD_NEW_FUNCTION', 'Додати функцію');
+define('TEXT_EXT_HEADING_FUNCTION_INFO', 'Інформація про функцію');
 define('TEXT_EXT_FUNCTION_SUM', 'SUM -  обчислює суму значень');
 define('TEXT_EXT_FUNCTION_COUNT', 'COUNT - підраховує кількість записів');
 define('TEXT_EXT_FUNCTION_MIN', 'MIN - повертає найменше значення');

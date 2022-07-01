@@ -1,5 +1,5 @@
 <?php
-echo ajax_modal_template_header(TEXT_HEADING_FUNCTION_INFO) ?>
+echo ajax_modal_template_header(TEXT_EXT_HEADING_FUNCTION_INFO) ?>
 
 <?php
 echo form_tag(

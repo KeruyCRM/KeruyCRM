@@ -1418,7 +1418,7 @@ define(
 );
 define('TEXT_ICON', 'Іконка');
 define('TEXT_HIDDEN_FIELDS', 'Приховані поля');
-define('TEXT_HIDDEN_FIELDS_IN_FORM', 'Приховані поля не відображаються у формі');
+define('TEXT_HIDDEN_FIELDS_TIP', 'Приховані поля не відображаються у формі');
 define('TEXT_NAV_ITEM_PAGE_CONFIG', 'Налаштування сторінки запису');
 define('TEXT_COLUMNS_SIZE', 'Розміри стовпчиків');
 define(

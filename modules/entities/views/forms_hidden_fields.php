@@ -1,5 +1,5 @@
 <?php
-echo ajax_modal_template_header(TEXT_HIDDEN_FIELDS_IN_FORM) ?>
+echo ajax_modal_template_header(TEXT_HIDDEN_FIELDS_TIP) ?>
 
 <?php
 $entities_id = _GET('entities_id');

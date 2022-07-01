@@ -139,7 +139,7 @@ echo form_tag(
   					
   			<div class="form-group">
 			  	<label class="col-md-3 control-label" for="hidden_fields">' . tooltip_icon(
-                        TEXT_HIDDEN_FIELDS_IN_FORM
+                        TEXT_HIDDEN_FIELDS_TIP
                     ) . TEXT_HIDDEN_FIELDS . '</label>
 			    <div class="col-md-9">' . select_tag(
                         'CFG[PUBLIC_REGISTRATION_HIDDEN_FIELDS][]',

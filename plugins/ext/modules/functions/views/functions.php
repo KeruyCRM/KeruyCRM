@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-md-9">
         <?php
-        echo button_tag(TEXT_BUTTON_ADD_NEW_FUNCTION, url_for('ext/functions/form')) ?>
+        echo button_tag(TEXT_EXT_BUTTON_ADD_NEW_FUNCTION, url_for('ext/functions/form')) ?>
     </div>
     <div class="col-md-3">
         <?php

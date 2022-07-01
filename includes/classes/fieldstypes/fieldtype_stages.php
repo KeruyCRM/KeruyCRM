@@ -57,7 +57,7 @@ class fieldtype_stages
 
         $cfg[TEXT_SETTINGS][] = [
             'title' => TEXT_HIDE_DROPDOWN,
-            'tooltip_icon' => TEXT_HIDDEN_FIELDS_IN_FORM,
+            'tooltip_icon' => TEXT_HIDDEN_FIELDS_TIP,
             'name' => 'hide_in_form',
             'type' => 'checkbox'
         ];
