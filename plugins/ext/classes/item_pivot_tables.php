@@ -365,7 +365,7 @@ class item_pivot_tables
 
         // previous button - not displayed on first page
         if ($this->current_page_number > 1) {
-            $html .= '<li><a href="#" onClick="load_item_pivot_tables(' . $this->reports['id'] . ',' . ($this->current_page_number - 1) . '); return false;"  title=" ' . PREVNEXT_TITLE_PREVIOUS_PAGE . ' "><i class="fa fa-angle-left"></i></a></li>';
+            $html .= '<li><a href="#" onClick="load_item_pivot_tables(' . $this->reports['id'] . ',' . ($this->current_page_number - 1) . '); return false;"  title=" ' . TEXT_PREVNEXT_TITLE_PREVIOUS_PAGE . ' "><i class="fa fa-angle-left"></i></a></li>';
         } else {
             $html .= '<li class="active"><a href="#" onClick="return false"><i class="fa fa-angle-left"></i></a></li>';
         }
@@ -384,7 +384,7 @@ class item_pivot_tables
         // previous window of pages
         if ($cur_window_num > 1) {
             $html .= '<li><a href="#" onClick="load_item_pivot_tables(' . $this->reports['id'] . ',' . (($cur_window_num - 1) * $max_page_links) . '); return false;" title=" ' . sprintf(
-                    PREVNEXT_TITLE_PREV_SET_OF_NO_PAGE,
+                    TEXT_PREVNEXT_TITLE_PREV_SET_OF_NO_PAGE,
                     $max_page_links
                 ) . ' ">...</a></li>';
         }
@@ -395,7 +395,7 @@ class item_pivot_tables
                 $html .= '<li class="active"><a href="#"  onClick="return false">' . $jump_to_page . '</a></li>';
             } else {
                 $html .= '<li><a href="#" onClick="load_item_pivot_tables(' . $this->reports['id'] . ',' . $jump_to_page . '); return false;" title=" ' . sprintf(
-                        PREVNEXT_TITLE_PAGE_NO,
+                        TEXT_PREVNEXT_TITLE_PAGE_NO,
                         $jump_to_page
                     ) . ' ">' . $jump_to_page . '</a></li>';
             }
@@ -404,14 +404,14 @@ class item_pivot_tables
         // next window of pages
         if ($cur_window_num < $max_window_num) {
             $html .= '<li><a href="#"  onClick="load_item_pivot_tables(' . $this->reports['id'] . ',' . ($cur_window_num * $max_page_links + 1) . ')" title=" ' . sprintf(
-                    PREVNEXT_TITLE_NEXT_SET_OF_NO_PAGE,
+                    TEXT_PREVNEXT_TITLE_NEXT_SET_OF_NO_PAGE,
                     $max_page_links
                 ) . ' ">...</a></li>';
         }
 
         // next button
         if (($this->current_page_number < $this->number_of_pages) && ($this->number_of_pages != 1)) {
-            $html .= '<li><a href="#"  onClick="load_item_pivot_tables(' . $this->reports['id'] . ',' . ($this->current_page_number + 1) . '); return false;" title=" ' . PREVNEXT_TITLE_NEXT_PAGE . ' "><i class="fa fa-angle-right"></i></a></li>';
+            $html .= '<li><a href="#"  onClick="load_item_pivot_tables(' . $this->reports['id'] . ',' . ($this->current_page_number + 1) . '); return false;" title=" ' . TEXT_PREVNEXT_TITLE_NEXT_PAGE . ' "><i class="fa fa-angle-right"></i></a></li>';
         } else {
             $html .= '<li class="active"><a href="#"  onClick="return false"><i class="fa fa-angle-right"></i></a></li>';
         }

@@ -5,14 +5,14 @@
  * See Language Code Reference
  * http://www.w3schools.com/tags/ref_language_codes.asp
  */
-define('APP_LANGUAGE_SHORT_CODE', 'uk');
+define('TEXT_APP_LANGUAGE_SHORT_CODE', 'uk');
 
 /**
  * Set the text direction: (ltr or rtl)
  * ltr - the writing direction is left-to-right. This is default
  * rtl - the writing direction is right-to-left
  */
-define('APP_LANGUAGE_TEXT_DIRECTION', 'ltr');
+define('TEXT_APP_LANGUAGE_TEXT_DIRECTION', 'ltr');
 
 define('TEXT_FIELDTYPE_INPUT_TITLE', 'Поле для вводу');
 define('TEXT_FIELDTYPE_INPUT_NUMERIC_TITLE', 'Числове поле');
@@ -281,11 +281,11 @@ define(
     'TEXT_DISPLAY_NUMBER_OF_ITEMS',
     'Відображено <nobr><strong>%s</strong> - <strong>%s</strong></nobr> <nobr>(всього <strong>%s</strong></nobr> елементів)'
 );
-define('PREVNEXT_TITLE_PREVIOUS_PAGE', 'Попередня сторінка');
-define('PREVNEXT_TITLE_NEXT_PAGE', 'Наступна сторінка');
-define('PREVNEXT_TITLE_PAGE_NO', 'Сторінка %d');
-define('PREVNEXT_TITLE_PREV_SET_OF_NO_PAGE', 'Попередні %d сторінок');
-define('PREVNEXT_TITLE_NEXT_SET_OF_NO_PAGE', 'Наступні %d сторінок');
+define('TEXT_PREVNEXT_TITLE_PREVIOUS_PAGE', 'Попередня сторінка');
+define('TEXT_PREVNEXT_TITLE_NEXT_PAGE', 'Наступна сторінка');
+define('TEXT_PREVNEXT_TITLE_PAGE_NO', 'Сторінка %d');
+define('TEXT_PREVNEXT_TITLE_PREV_SET_OF_NO_PAGE', 'Попередні %d сторінок');
+define('TEXT_PREVNEXT_TITLE_NEXT_SET_OF_NO_PAGE', 'Наступні %d сторінок');
 define('TEXT_WARN_DELETE_SUCCESS', 'Запис <b>%s</b> було успішно видалено');
 define('TEXT_WIDTH', 'Ширина');
 define('TEXT_HEIGHT', 'Висота');

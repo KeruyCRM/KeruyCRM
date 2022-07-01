@@ -79,12 +79,12 @@ $choices = [
             htmlspecialchars($reports['name'])
         ) . ' (' . format_date(time()) . ')</h4>\',name:\'' . app_remove_special_characters(
             $reports['name']
-        ) . '.pdf\',locale:\'' . APP_LANGUAGE_SHORT_CODE . '\',skin:\'' . $skin . '\'})">' . TEXT_EXPORT . '  <i class="fa fa-file-pdf-o"></i></button>
+        ) . '.pdf\',locale:\'' . TEXT_APP_LANGUAGE_SHORT_CODE . '\',skin:\'' . $skin . '\'})">' . TEXT_EXPORT . '  <i class="fa fa-file-pdf-o"></i></button>
     	<button type="button" class="gantt-control" onclick="gantt.exportToPNG({header:\'<h4>&nbsp;&nbsp;&nbsp;&nbsp;' . addslashes(
             htmlspecialchars($reports['name'])
         ) . ' (' . format_date(time()) . ')</h4>\',name:\'' . app_remove_special_characters(
             $reports['name']
-        ) . '.png\',locale:\'' . APP_LANGUAGE_SHORT_CODE . '\',skin:\'' . $skin . '\'})"><i class="fa fa-picture-o"></i></button>
+        ) . '.png\',locale:\'' . TEXT_APP_LANGUAGE_SHORT_CODE . '\',skin:\'' . $skin . '\'})"><i class="fa fa-picture-o"></i></button>
       ';
 
     echo $html;
@@ -113,7 +113,7 @@ $choices = [
         critical_path: true,
     });
 
-    gantt.i18n.setLocale('<?php echo APP_LANGUAGE_SHORT_CODE ?>');
+    gantt.i18n.setLocale('<?php echo TEXT_APP_LANGUAGE_SHORT_CODE ?>');
 
     gantt.config.date_grid = "<?php echo ganttchart::get_date_grid_format($reports) ?>";
     gantt.config.date_format = "%Y-%m-%d %H:%i:%s"

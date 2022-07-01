@@ -194,7 +194,7 @@ class pivot_tables
 
     function get_localization()
     {
-        $file = 'js/webdatarocks/' . $this->version . '/languages/' . APP_LANGUAGE_SHORT_CODE . '.json';
+        $file = 'js/webdatarocks/' . $this->version . '/languages/' . TEXT_APP_LANGUAGE_SHORT_CODE . '.json';
         if (is_file($file)) {
             return $file;
         } else {

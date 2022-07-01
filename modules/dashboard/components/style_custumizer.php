@@ -39,7 +39,7 @@
         </div>
 
         <?php
-        if (APP_LANGUAGE_TEXT_DIRECTION == 'ltr'): ?>
+        if (TEXT_APP_LANGUAGE_TEXT_DIRECTION == 'ltr'): ?>
             <div class="theme-option">
 			<span>
 				 <?php

@@ -333,7 +333,7 @@ switch ($app_module_action) {
 
             $html = '
 			<!DOCTYPE html>		
-      <html lang=' . APP_LANGUAGE_SHORT_CODE . '" dir="' . APP_LANGUAGE_TEXT_DIRECTION . '">
+      <html lang=' . TEXT_APP_LANGUAGE_SHORT_CODE . '" dir="' . TEXT_APP_LANGUAGE_TEXT_DIRECTION . '">
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 			

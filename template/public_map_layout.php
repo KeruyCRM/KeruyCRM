@@ -5,8 +5,8 @@
 <html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
 <html lang="<?php
-echo APP_LANGUAGE_SHORT_CODE ?>" dir="<?php
-echo APP_LANGUAGE_TEXT_DIRECTION ?>">
+echo TEXT_APP_LANGUAGE_SHORT_CODE ?>" dir="<?php
+echo TEXT_APP_LANGUAGE_TEXT_DIRECTION ?>">
 <!--<![endif]-->
 <!-- BEGIN HEAD -->
 <head>
@@ -34,9 +34,9 @@ echo APP_LANGUAGE_TEXT_DIRECTION ?>">
         var CKEDITOR_holders = new Array();
 
         var app_cfg_first_day_of_week = <?php echo CFG_APP_FIRST_DAY_OF_WEEK ?>;
-        var app_language_short_code = '<?php echo APP_LANGUAGE_SHORT_CODE ?>';
+        var app_language_short_code = '<?php echo TEXT_APP_LANGUAGE_SHORT_CODE ?>';
         var app_cfg_ckeditor_images = '<?php echo url_for("dashboard/ckeditor_image")?>';
-        var app_language_text_direction = '<?php echo APP_LANGUAGE_TEXT_DIRECTION ?>'
+        var app_language_text_direction = '<?php echo TEXT_APP_LANGUAGE_TEXT_DIRECTION ?>'
 
     </script>
 

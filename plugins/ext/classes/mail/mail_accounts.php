@@ -23,7 +23,7 @@ class mail_accounts
 
         try {
             $mail->CharSet = "UTF-8";
-            $mail->setLanguage(APP_LANGUAGE_SHORT_CODE);
+            $mail->setLanguage(TEXT_APP_LANGUAGE_SHORT_CODE);
 
             if ($account['use_smtp'] == 1) {
                 $mail->isSMTP();                          // Set mailer to use SMTP

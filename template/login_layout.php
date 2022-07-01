@@ -5,8 +5,8 @@
 <html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
 <html lang="<?php
-echo APP_LANGUAGE_SHORT_CODE ?>" dir="<?php
-echo APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
+echo TEXT_APP_LANGUAGE_SHORT_CODE ?>" dir="<?php
+echo TEXT_APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
 <!--<![endif]-->
 <!-- BEGIN HEAD -->
 <head>

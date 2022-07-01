@@ -26,7 +26,7 @@ class app_recaptcha
     static function render_js()
     {
         if (self::is_enabled()) {
-            return '<script src="https://www.google.com/recaptcha/api.js?hl=' . APP_LANGUAGE_SHORT_CODE . '"></script>';
+            return '<script src="https://www.google.com/recaptcha/api.js?hl=' . TEXT_APP_LANGUAGE_SHORT_CODE . '"></script>';
         } else {
             return '';
         }

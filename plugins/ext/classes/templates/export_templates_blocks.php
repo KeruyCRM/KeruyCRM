@@ -1198,8 +1198,8 @@ class export_templates_blocks
 
         //number of rows
         $number_of_rows = count($output);
-        $number_of_rows_text = (isset($app_num2str->data[APP_LANGUAGE_SHORT_CODE]) ? $app_num2str->convert(
-            APP_LANGUAGE_SHORT_CODE,
+        $number_of_rows_text = (isset($app_num2str->data[TEXT_APP_LANGUAGE_SHORT_CODE]) ? $app_num2str->convert(
+            TEXT_APP_LANGUAGE_SHORT_CODE,
             $number_of_rows,
             false
         ) : $app_num2str->convert('en', $number_of_rows, false));
@@ -1449,8 +1449,8 @@ class export_templates_blocks
 
         //number of rows
         $number_of_rows = count($output);
-        $number_of_rows_text = (isset($app_num2str->data[APP_LANGUAGE_SHORT_CODE]) ? $app_num2str->convert(
-            APP_LANGUAGE_SHORT_CODE,
+        $number_of_rows_text = (isset($app_num2str->data[TEXT_APP_LANGUAGE_SHORT_CODE]) ? $app_num2str->convert(
+            TEXT_APP_LANGUAGE_SHORT_CODE,
             $number_of_rows,
             false
         ) : $app_num2str->convert('en', $number_of_rows, false));

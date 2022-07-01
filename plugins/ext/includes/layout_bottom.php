@@ -16,7 +16,7 @@ if (in_array(
     <script type="text/javascript" src="js/fullcalendar-3.10.0/fullcalendar.min.js"></script>
     <script type="text/javascript" src="js/fullcalendar-scheduler-1.9.4/scheduler.min.js"></script>
     <?php
-    if (is_file($language_file_path = 'js/fullcalendar-3.10.0/locale/' . APP_LANGUAGE_SHORT_CODE . '.js')) {
+    if (is_file($language_file_path = 'js/fullcalendar-3.10.0/locale/' . TEXT_APP_LANGUAGE_SHORT_CODE . '.js')) {
         echo '<script type="text/javascript" src="' . $language_file_path . '"></script>';
     }
     ?>
