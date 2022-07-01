@@ -33,7 +33,7 @@ foreach ($plugins as $plugin) {
     \K::$fw->LOCALES = 'app/languages/' . $plugin . '/';
 }
 
-\K::$fw->FALLBACK = 'en';
+\K::$fw->FALLBACK = 'xx';
 
 \K::$fw->route(
     'GET|POST @mainRouterAction: /@moduleName/@controllerName/@actionName',
