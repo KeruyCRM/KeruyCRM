@@ -20,12 +20,12 @@ class Fields_types_options_cfg
         }
     }
 
-    public function get($key, $defautl = '')
+    public function get($key, $default = '')
     {
         if (isset($this->cfg[$key])) {
             return $this->cfg[$key];
         } else {
-            return $defautl;
+            return $default;
         }
     }
 }
