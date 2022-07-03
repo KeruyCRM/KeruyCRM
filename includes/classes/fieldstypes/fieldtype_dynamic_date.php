@@ -286,7 +286,7 @@ class fieldtype_dynamic_date
         $formula = fieldtype_formula::prepare_formula_fields($formulas_fields, $formula);
 
         //handle get_vallue()
-        $formula = fieldtype_formula::perpare_choices_get_value_function($field_info['entities_id'], $formula);
+        $formula = fieldtype_formula::prepare_choices_get_value_function($field_info['entities_id'], $formula);
 
         //prepare parent items values
         $formula = fieldtype_formula::prepare_parent_entity_item_value($field_info['entities_id'], $formula);

@@ -282,7 +282,7 @@ class fieldtype_mysql_query
         }
 
         //handle get_vallue()
-        $mysql_query = fieldtype_formula::perpare_choices_get_value_function(
+        $mysql_query = fieldtype_formula::prepare_choices_get_value_function(
             $cfg->get('entity_id'),
             $mysql_query,
             'msq'

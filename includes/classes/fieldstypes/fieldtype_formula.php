@@ -403,7 +403,7 @@ class fieldtype_formula
                     }
 
                     //handle get_vallue()
-                    $formula = self::perpare_choices_get_value_function($entities_id, $formula);
+                    $formula = self::prepare_choices_get_value_function($entities_id, $formula);
 
                     //prepare parent items values
                     $formula = self::prepare_parent_entity_item_value($entities_id, $formula);
@@ -597,7 +597,7 @@ class fieldtype_formula
         return $formula;
     }
 
-    public static function perpare_choices_get_value_function($entities_id, $formula, $prefix = 'e')
+    public static function prepare_choices_get_value_function($entities_id, $formula, $prefix = 'e')
     {
         global $app_fields_cache;
 
