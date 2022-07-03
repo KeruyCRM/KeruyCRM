@@ -154,9 +154,6 @@ class Controller
         $this->_setSession();
         $this->_extractSession();
 
-        echo \K::$fw->TEXT_INSTALLATION_HEADING . PHP_EOL;
-        echo \K::$fw->TEXT_EXT_NEW_PLUGIN_VERSION;
-
         //TODO
         \K::security()->checkCsrfToken();
 

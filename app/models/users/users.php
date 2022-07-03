@@ -79,7 +79,7 @@ class Users
                     /*if (!defined('TEXT_' . strtoupper($field['type']) . '_TITLE') and defined('IS_CRON')) {
                         define('TEXT_' . strtoupper($field['type']) . '_TITLE', '');
                     }*/
-                    if(!\K::fw()->exists('TEXT_' . strtoupper($field['type']) . '_TITLE')){
+                    if (!\K::fw()->exists('TEXT_' . strtoupper($field['type']) . '_TITLE')) {
                         \K::fw()->set('TEXT_' . strtoupper($field['type']) . '_TITLE', '');
                     }
 
@@ -875,8 +875,6 @@ class Users
         );
 
         if ($user) {
-            $user = $user->cast();
-
             if ($user['field_5'] == 1) {
                 $hasher = new \Libs\PasswordHash(11, false);
 

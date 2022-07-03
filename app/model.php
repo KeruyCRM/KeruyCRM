@@ -81,22 +81,31 @@ class Model extends \Prefab
         return $this->db_fetch($table, [], [], $column, $ttl);
     }
 
-    public function db_fetch($table, $filter = [], $option = [], $column = null, $ttl = null)
+    public function db_fetch($table, $filter = [], $options = [], $column = null, $ttl = null)
     {
         $mapper = $this->mapper($table, $column);
         return $mapper->find(
             $filter,
-            $option,
+            $options,
             $ttl
         );
     }
 
-    public function db_fetch_one($table, $filter = [], $option = [], $column = null, $ttl = null)
+    public function db_fetch_one($table, $filter = [], $options = [], $column = null, $ttl = null)
     {
         $mapper = $this->mapper($table, $column);
         return $mapper->findone(
             $filter,
-            $option,
+            $options,
+            $ttl
+        )->cast();
+    }
+
+    public function db_fetch_count($table, $filter = [], $ttl = null)
+    {
+        $mapper = $this->mapper($table);
+        return $mapper->count(
+            $filter,
             $ttl
         );
     }

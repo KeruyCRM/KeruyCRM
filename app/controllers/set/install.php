@@ -159,7 +159,7 @@ class Install
         $db_config = "<?php
 
 // define database connection
-\$f3->mset([
+\K::fw()->mset([
   'DB_host' => '{$this->f3->DB_host}',
   'DB_port' => '{$this->f3->DB_port}',
   'DB_username' => '{$this->f3->DB_username}',

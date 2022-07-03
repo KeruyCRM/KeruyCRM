@@ -135,43 +135,63 @@ class Fieldtype_formula
 
     public static function check_formula_query_needed($formula_fields_id, $entities_id, $check_needed)
     {
-        global $mysql_formula_reports_info_holder;
+        //global $mysql_formula_reports_info_holder;
 
         //print_rr($mysql_formula_reports_info_holder);
 
         $check_formula_needed = false;
+        $reports_info = [];
 
         //check if formula field is in listing
         if (isset($check_needed['reports_id'])) {
-            if (!isset($mysql_formula_reports_info_holder[$check_needed['reports_id']])) {
-                if (is_mobile()) {
-                    if (listing_types::has_mobile($entities_id)) {
+            if (!isset(\K::$fw->mysql_formula_reports_info_holder[$check_needed['reports_id']])) {
+                if (\Helpers\App::is_mobile()) {
+                    if (\Models\Listing_types::has_mobile($entities_id)) {
                         $reports_info['listing_type'] = 'mobile';
                     }
                 }
 
                 if (!isset($reports_info)) {
-                    $reports_info_query = db_query(
+                    /*$reports_info_query = db_query(
                         "select id, entities_id, fields_in_listing, listing_type from app_reports where id='" . $check_needed['reports_id'] . "'"
                     );
-                    $reports_info = db_fetch_array($reports_info_query);
+                    $reports_info = db_fetch_array($reports_info_query);*/
+                    $reports_info = \K::model()->db_fetch_one('app_reports', [
+                        'id = ?',
+                        $check_needed['reports_id']
+                    ], [], 'id,entities_id,fields_in_listing,listing_type');
                 }
 
                 if (!strlen($reports_info['listing_type'])) {
-                    $reports_info['listing_type'] = listing_types::get_default($entities_id);
+                    $reports_info['listing_type'] = \Models\Listing_types::get_default($entities_id);
                 }
 
                 //prepare fields in listing for List and Grid
                 if (in_array($reports_info['listing_type'], ['list', 'grid', 'mobile'])) {
                     $fields_in_listing = [];
-                    $listing_type_query = db_query(
+                    /*$listing_type_query = db_query(
                         "select id from app_listing_types where entities_id='" . $entities_id . "' and type='" . $reports_info['listing_type'] . "' and is_active=1"
-                    );
-                    if ($listing_type = db_fetch_array($listing_type_query)) {
-                        $listing_sections_query = db_query(
+                    );*/
+
+                    $listing_type = \K::model()->db_fetch_one('app_listing_types', [
+                        'entities_id = ? and type = ? and is_active = 1',
+                        $entities_id,
+                        $reports_info['listing_type']
+                    ], [], 'id');
+                    //if ($listing_type = db_fetch_array($listing_type_query)) {
+                    if ($listing_type) {
+                        /*$listing_sections_query = db_query(
                             "select fields from app_listing_sections where listing_types_id={$listing_type['id']} order by sort_order, name"
-                        );
-                        while ($listing_sections = db_fetch_array($listing_sections_query)) {
+                        );*/
+                        $listing_sections_query = \K::model()->db_fetch('app_listing_sections', [
+                            'listing_types_id = ?',
+                            $listing_type['id']
+                        ], ['order' => 'sort_order,name'], 'fields');
+
+                        //while ($listing_sections = db_fetch_array($listing_sections_query)) {
+                        foreach ($listing_sections_query as $listing_sections) {
+                            $listing_sections = $listing_sections->cast();
+
                             if (strlen($listing_sections['fields'])) {
                                 $fields_in_listing = array_merge(
                                     $fields_in_listing,
@@ -184,11 +204,19 @@ class Fieldtype_formula
                     $reports_info['fields_in_listing'] = implode(',', $fields_in_listing);
                 } elseif (in_array($reports_info['listing_type'], ['tree_table'])) {
                     $fields_in_listing = [];
-                    $listing_type_query = db_query(
+                    /*$listing_type_query = db_query(
                         "select settings from app_listing_types where entities_id='" . $entities_id . "' and type='" . $reports_info['listing_type'] . "'"
-                    );
-                    if ($listing_type = db_fetch_array($listing_type_query)) {
-                        $settings = new settings($listing_type['settings']);
+                    );*/
+
+                    $listing_type = \K::model()->db_fetch_one('app_listing_types', [
+                        'entities_id = ? and type = ?',
+                        $entities_id,
+                        $reports_info['listing_type']
+                    ], [], 'settings');
+
+                    //if ($listing_type = db_fetch_array($listing_type_query)) {
+                    if ($listing_type) {
+                        $settings = new \Tools\Settings($listing_type['settings']);
 
                         if (is_array($settings->get('fields_in_listing'))) {
                             $reports_info['fields_in_listing'] = implode(',', $settings->get('fields_in_listing'));
@@ -196,9 +224,9 @@ class Fieldtype_formula
                     }
                 }
 
-                $mysql_formula_reports_info_holder[$check_needed['reports_id']] = $reports_info;
+                \K::$fw->mysql_formula_reports_info_holder[$check_needed['reports_id']] = $reports_info;
             } else {
-                $reports_info = $mysql_formula_reports_info_holder[$check_needed['reports_id']];
+                $reports_info = \K::$fw->mysql_formula_reports_info_holder[$check_needed['reports_id']];
             }
         }
 
@@ -227,37 +255,59 @@ class Fieldtype_formula
             }
 
             $text_pattern_where_sql = " and id in (" . $reports_info['fields_in_listing'] . ")";
-        } //check default listig settings
+        } //check default listing settings
         else {
-            $check_query = db_query(
+            /*$check_query = db_query(
                 "select id from app_fields where id='" . $formula_fields_id . "' and listing_status=1"
-            );
-            if ($check = db_fetch_array($check_query)) {
+            );*/
+            $check = \K::model()->db_fetch_one('app_fields', [
+                'id = ? and listing_status = 1',
+                $formula_fields_id
+            ], [], 'id');
+
+            //if ($check = db_fetch_array($check_query)) {
+            if ($check) {
                 $check_formula_needed = true;
             }
 
-            $text_pattern_where_sql = " and listing_status=1";
+            $text_pattern_where_sql = " and listing_status = 1";
         }
 
-        //check if fomula used in filters
+        //check if formula used in filters
         if (!$check_formula_needed and isset($check_needed['reports_id'])) {
-            $check_query = db_query(
+            /*$check_query = db_query(
                 "select count(*) as total from app_reports_filters where reports_id='" . $check_needed['reports_id'] . "' and fields_id='" . $formula_fields_id . "'"
-            );
-            $check = db_fetch_array($check_query);
+            );*/
 
-            if ($check['total'] > 0) {
+            $total = \K::model()->db_fetch_count('app_reports_filters', [
+                'reports_id = ? and fields_id = ?',
+                $check_needed['reports_id'],
+                $formula_fields_id
+            ]);
+            //$check = db_fetch_array($check_query);
+
+            if ($total > 0) {
                 $check_formula_needed = true;
             }
         }
 
-        //check if text pattersn using formulas
+        //check if text pattern using formulas
         if (!$check_formula_needed and strlen($text_pattern_where_sql)) {
-            $fields_query = db_query(
+            /*$fields_query = db_query(
                 "select configuration from app_fields where entities_id='" . $entities_id . "' {$text_pattern_where_sql} and type='fieldtype_text_pattern'"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
-                $cfg = new fields_types_cfg($fields['configuration']);
+            );*/
+
+            $fields_query = \K::model()->db_fetch('app_fields', [
+                'entities_id = ? ' . $text_pattern_where_sql . ' and type = ?',
+                $entities_id,
+                'fieldtype_text_pattern'
+            ], [], 'configuration');
+
+            //while ($fields = db_fetch_array($fields_query)) {
+            foreach ($fields_query as $fields) {
+                $fields = $fields->cast();
+
+                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
                 $pattern = $cfg->get('pattern');
 
                 if (strstr($pattern, '[' . $formula_fields_id . ']')) {
@@ -268,11 +318,20 @@ class Fieldtype_formula
 
         //check mysql query
         if (!$check_formula_needed) {
-            $fields_query = db_query(
+            /*$fields_query = db_query(
                 "select configuration from app_fields where entities_id='" . $entities_id . "' and type='fieldtype_items_by_query'"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
-                $cfg = new fields_types_cfg($fields['configuration']);
+            );*/
+            $fields_query = \K::model()->db_fetch('app_fields', [
+                'entities_id = ? and type = ?',
+                $entities_id,
+                'fieldtype_items_by_query'
+            ], [], 'configuration');
+
+            //while ($fields = db_fetch_array($fields_query)) {
+            foreach ($fields_query as $fields) {
+                $fields = $fields->cast();
+
+                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                 if (strstr($cfg->get('where_query'), '[' . $formula_fields_id . ']')) {
                     $check_formula_needed = true;
@@ -285,8 +344,8 @@ class Fieldtype_formula
 
     /**
      *  function to prepare sql
-     *  by default funciton reurn string with formulas query
-     *  $prepare_field_sum with ture retusn fields sum (using in graph report)
+     *  by default function return string with formulas query
+     *  $prepare_field_sum with ture return fields sum (using in graph report)
      *  $listing_sql_query_select as array return list of sql query in array (using in listing total calculation)
      */
     public static function prepare_query_select(

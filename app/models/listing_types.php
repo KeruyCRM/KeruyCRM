@@ -1,6 +1,8 @@
 <?php
 
-class listing_types
+namespace Models;
+
+class Listing_types
 {
 
     static function get_types()
@@ -12,19 +14,19 @@ class listing_types
     {
         switch ($type) {
             case 'table':
-                $title = TEXT_TABLE;
+                $title = \K::$fw->TEXT_TABLE;
                 break;
             case 'tree_table':
-                $title = TEXT_TREE_TABLE;
+                $title = \K::$fw->TEXT_TREE_TABLE;
                 break;
             case 'list':
-                $title = TEXT_LIST;
+                $title = \K::$fw->TEXT_LIST;
                 break;
             case 'grid':
-                $title = TEXT_GRID;
+                $title = \K::$fw->TEXT_GRID;
                 break;
             case 'mobile':
-                $title = TEXT_MOBILE;
+                $title = \K::$fw->TEXT_MOBILE;
                 break;
         }
 
@@ -53,10 +55,16 @@ class listing_types
 
     static function get_default($entities_id)
     {
-        $info_query = db_query(
+        /*$info_query = db_query(
             "select * from app_listing_types where entities_id='" . $entities_id . "' and is_default=1 and is_active=1"
         );
-        if ($info = db_fetch_array($info_query)) {
+        if ($info = db_fetch_array($info_query)) {*/
+        $info = \K::model()->db_fetch_one('app_listing_types', [
+            'entities_id = ? and is_default = 1 and is_active = 1',
+            $entities_id
+        ], [], 'type');
+
+        if ($info) {
             return $info['type'];
         } else {
             return 'table';
@@ -65,10 +73,17 @@ class listing_types
 
     static function has_mobile($entities_id)
     {
-        $check_query = db_query(
+        /*$check_query = db_query(
             "select id from app_listing_types where is_active=1 and type='mobile' and entities_id='" . $entities_id . "'"
-        );
-        if ($check = db_fetch_array($check_query)) {
+        );*/
+        $check_query = \K::model()->db_fetch_one('app_listing_types', [
+            'is_active = 1 and type = ? and entities_id = ?',
+            'mobile',
+            $entities_id
+        ], [], 'id');
+        //if ($check = db_fetch_array($check_query)) {
+
+        if ($check_query) {
             return true;
         } else {
             return false;

@@ -48,12 +48,12 @@ class Users_cfg
 
     public static function get_value_by_users_id($users_id, $key, $default = '')
     {
-        $cfg_query = \K::model()->db_fetch_one(
+        $cfg = \K::model()->db_fetch_one(
             'app_users_configuration',
             ['users_id = ? and configuration_name = ?', $users_id, $key]
         );
 
-        if ($cfg = $cfg_query->cast()) {
+        if ($cfg) {
             return $cfg['configuration_value'];
         } else {
             return $default;

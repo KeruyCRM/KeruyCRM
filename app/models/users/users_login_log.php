@@ -63,8 +63,7 @@ class Users_login_log
 
             \K::model()->db_query("ALTER TABLE app_entity_1 ADD field_{$field_id} INT NOT NULL;");
         } else {
-            //$field_id = $fields['id'];
-            $field_id = $fields->id;
+            $field_id = $fields['id'];
         }
 
         //update

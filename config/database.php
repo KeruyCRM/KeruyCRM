@@ -1,7 +1,7 @@
 <?php
 
 // define database connection
-\K::$fw->mset([
+\K::fw()->mset([
     'DB_host' => 'localhost',
     'DB_port' => '',
     'DB_username' => 'root',
