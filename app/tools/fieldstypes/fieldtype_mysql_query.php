@@ -308,7 +308,7 @@ class Fieldtype_mysql_query
         }
 
         //handle get_value()
-        $mysql_query = \Tools\FieldsTypes\Fieldtype_formula::perpare_choices_get_value_function(
+        $mysql_query = \Tools\FieldsTypes\Fieldtype_formula::prepare_choices_get_value_function(
             $cfg->get('entity_id'),
             $mysql_query,
             'msq'

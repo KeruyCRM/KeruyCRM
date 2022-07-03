@@ -104,7 +104,7 @@ class Fieldtype_js_formula
                     $prepared_fields[] = $field_id;
                     //echo $field_id;
 
-                    $field_cfg = new settings($app_fields_cache[$field['entities_id']][$field_id]['configuration']);
+                    $field_cfg = new \Tools\Settings($app_fields_cache[$field['entities_id']][$field_id]['configuration']);
 
                     if ((int)$field_cfg->get('use_global_list') > 0) {
                         $field_use_global_list[] = $field_id;

@@ -52,7 +52,7 @@ class Attachments
         if ($field = db_fetch_array($field_query)) {
             $cfg = new \Tools\Fields_types_cfg($field['configuration']);
         } else {
-            $cfg = new settings('');
+            $cfg = new \Tools\Settings('');
         }
 
         if (is_array($attachments_list) and count($attachments_list) > 0) {

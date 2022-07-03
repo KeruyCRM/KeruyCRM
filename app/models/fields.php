@@ -134,7 +134,7 @@ class Fields
     {
         $app_entities_cache = \K::$fw->app_entities_cache;
 
-        $cfg = new settings($cfg, [
+        $cfg = new \Tools\Settings($cfg, [
             'include_paretns' => 0,
         ]);
 
@@ -390,7 +390,7 @@ class Fields
         );
         //while ($v = db_fetch_array($fields_query)) {
         foreach ($fields_query as $v) {
-            $cfg = new settings($v['configuration']);
+            $cfg = new \Tools\Settings($v['configuration']);
             if ($cfg->get('is_unique') > 0) {
                 $html .= '
                     "fields[' . $v['id'] . ']": { 

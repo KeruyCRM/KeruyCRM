@@ -16,7 +16,7 @@ class Items_filters
     {
         global $sql_query_having;
 
-        $cfg = new settings($cfg, [
+        $cfg = new \Tools\Settings($cfg, [
             'report_type' => '',
             'report_id' => 0,
         ]);

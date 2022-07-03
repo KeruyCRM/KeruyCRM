@@ -465,7 +465,7 @@ class Fieldtype_formula
                     }
 
                     //handle get_vallue()
-                    $formula = self::perpare_choices_get_value_function($entities_id, $formula);
+                    $formula = self::prepare_choices_get_value_function($entities_id, $formula);
 
                     //prepare parent items values
                     $formula = self::prepare_parent_entity_item_value($entities_id, $formula);
@@ -660,19 +660,25 @@ class Fieldtype_formula
         return $formula;
     }
 
-    public static function perpare_choices_get_value_function($entities_id, $formula, $prefix = 'e')
+    public static function prepare_choices_get_value_function($entities_id, $formula, $prefix = 'e')
     {
-        global $app_fields_cache;
+        //global $app_fields_cache;
 
         if (preg_match_all("/get_value\([^)]*\)/", $formula, $matches)) {
             foreach ($matches[0] as $get_value_function) {
                 $field_id = str_replace(['get_value(' . $prefix . '.field_', ')'], '', $get_value_function);
 
-                $field_query = db_query(
+                /*$field_query = db_query(
                     "select type,configuration from app_fields where id='" . db_input($field_id) . "'"
-                );
-                if ($field = db_fetch_array($field_query)) {
-                    $cfg = new settings($field['configuration']);
+                );*/
+                $field = \K::model()->db_fetch_one('app_fields', [
+                    'id = ?',
+                    $field_id
+                ], [], 'type,configuration');
+
+                //if ($field = db_fetch_array($field_query)) {
+                if($field){
+                    $cfg = new \Tools\Settings($field['configuration']);
 
                     if (($list_id = $cfg->get('use_global_list')) > 0) {
                         switch ($field['type']) {
@@ -723,11 +729,11 @@ class Fieldtype_formula
             foreach ($matches[1] as $key => $entity_field_id) {
                 $select_field_id = $matches[2][$key];
 
-                if (!isset($app_fields_cache[$entities_id][$entity_field_id])) {
+                if (!isset(\K::$fw->app_fields_cache[$entities_id][$entity_field_id])) {
                     continue;
                 }
 
-                $cfg = new settings($app_fields_cache[$entities_id][$entity_field_id]['configuration']);
+                $cfg = new \Tools\Settings(\K::$fw->app_fields_cache[$entities_id][$entity_field_id]['configuration']);
                 $select_entity_id = (int)$cfg->get('entity_id');
 
                 if ($select_entity_id == 0) {

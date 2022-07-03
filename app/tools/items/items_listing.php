@@ -40,9 +40,9 @@ class Items_listing
             "select settings from app_listing_types where  type='" . $this->listing_type . "' and entities_id='" . $this->entities_id . "' and is_active=1"
         );
         if ($listing_types = db_fetch_array($listing_types_query)) {
-            $this->settings = new settings($listing_types['settings']);
+            $this->settings = new \Tools\Settings($listing_types['settings']);
         } else {
-            $this->settings = new settings('');
+            $this->settings = new \Tools\Settings('');
         }
 
         if (!strlen($this->fields_in_listing) and is_array($this->settings->get('fields_in_listing'))) {

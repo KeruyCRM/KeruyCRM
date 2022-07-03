@@ -22,7 +22,7 @@ class Fieldtype_subentity_form
             ) . "' and type='fieldtype_subentity_form' " . ($_POST['id'] > 0 ? " and id!='" . _POST('id') . "'" : '')
         );
         while ($fields = db_fetch_array($fields_query)) {
-            $fields_cfg = new settings($fields['configuration']);
+            $fields_cfg = new \Tools\Settings($fields['configuration']);
             $exclude_entities[] = $fields_cfg->get('entity_id');
         }
 

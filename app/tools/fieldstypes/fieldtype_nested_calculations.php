@@ -121,7 +121,7 @@ class Fieldtype_nested_calculations
                     $item_id = tree_table::get_top_parent_item_id($entities_id, $parent_id);
                 }
 
-                $cfg = new settings($field['configuration']);
+                $cfg = new \Tools\Settings($field['configuration']);
 
                 $calc_function = $cfg->get('calc_function');
                 $calc_field_id = $cfg->get('calc_field_id');

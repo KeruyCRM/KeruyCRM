@@ -99,7 +99,7 @@ class Fieldtype_input_url
 
     public function output($options)
     {
-        $cfg = new settings($options['field']['configuration']);
+        $cfg = new \Tools\Settings($options['field']['configuration']);
 
         $url = $options['value'];
         $url_text = \K::$fw->TEXT_VIEW;

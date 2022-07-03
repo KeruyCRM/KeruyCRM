@@ -32,7 +32,7 @@ class Items_search
         //set search by Name by default
         if ($id = fields::get_heading_id($this->entities_id)) {
             if ($app_fields_cache[$this->entities_id][$id]['type'] == 'fieldtype_text_pattern') {
-                $cfg = new settings($app_fields_cache[$this->entities_id][$id]['configuration']);
+                $cfg = new \Tools\Settings($app_fields_cache[$this->entities_id][$id]['configuration']);
                 $pattern = $cfg->get('pattern');
                 if (preg_match_all('/\[(\d+)\]/', $pattern, $output_array)) {
                     foreach ($output_array[1] as $id) {
@@ -97,7 +97,7 @@ class Items_search
                                     case 'fieldtype_entity_multilevel':
                                     case 'fieldtype_users':
                                     case 'fieldtype_users_ajax':
-                                        $cfg = new settings(
+                                        $cfg = new \Tools\Settings(
                                             $app_fields_cache[$this->entities_id][$field['id']]['configuration']
                                         );
 

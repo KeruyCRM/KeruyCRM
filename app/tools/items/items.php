@@ -1348,7 +1348,7 @@ class Items
         $unique_for_each_parent = false
     ) {
         $field_info = db_find('app_fields', $fields_id);
-        $cfg = new settings($field_info['configuration']);
+        $cfg = new \Tools\Settings($field_info['configuration']);
 
         switch ($field_info['type']) {
             case 'fieldtype_input_datetime':

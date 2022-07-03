@@ -322,7 +322,7 @@ class Functions
         }
 
         //handle get_vallue()
-        $formula = fieldtype_formula::perpare_choices_get_value_function(
+        $formula = fieldtype_formula::prepare_choices_get_value_function(
             $entities_id,
             $formula,
             'func' . $table_prefix
