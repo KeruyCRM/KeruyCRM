@@ -22,12 +22,12 @@ class fields_types_cfg
         }
     }
 
-    function get($key, $defautl = '')
+    function get($key, $default = '')
     {
         if (isset($this->cfg[$key])) {
             return $this->cfg[$key];
         } else {
-            return $defautl;
+            return $default;
         }
     }
 }
@@ -51,12 +51,12 @@ class fields_types_options_cfg
         }
     }
 
-    function get($key, $defautl = '')
+    function get($key, $default = '')
     {
         if (isset($this->cfg[$key])) {
             return $this->cfg[$key];
         } else {
-            return $defautl;
+            return $default;
         }
     }
 }
