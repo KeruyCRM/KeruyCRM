@@ -96,7 +96,7 @@ class fieldtype_input_email
         } elseif ($cfg->get('display_as_link') == 1) {
             $html = '<a href="mailto:' . $options['value'] . '" target="_blank">' . $options['value'] . '</a>';
 
-            if (is_ext_installed() and \K::$fw->CFG_MAIL_INTEGRATION and mail_accounts_users::has_access()) {
+            if (\Helpers\App::is_ext_installed() and \K::$fw->CFG_MAIL_INTEGRATION and mail_accounts_users::has_access()) {
                 $html = '<a href="javascript: open_dialog(\'' . url_for(
                         'ext/mail/create',
                         'mail_to=' . $options['value'] . '&path=' . $options['field']['entities_id'] . '-' . $options['item']['id']

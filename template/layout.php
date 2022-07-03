@@ -266,7 +266,7 @@ if ($app_module_path == 'items/info') {
 require('js/mapbbcode-master/includes.js.php'); ?>
 
 <?php
-if (is_ext_installed()) {
+if (\Helpers\App::is_ext_installed()) {
     echo smart_input::render_js_includes();
 }
 ?>

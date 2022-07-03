@@ -77,7 +77,7 @@ class Entities
             \K::model()->db_delete_row('app_ext_timer', $id, 'entities_id');
         }
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             export_templates::delete_by_entity_id($id);
         }
     }
@@ -99,7 +99,7 @@ class Entities
     public static function insert_reserved_fields($id, $forms_tabs_id)
     {
         $sort_order = 0;
-        foreach (fields_types::get_reserved_types() as $type) {
+        foreach (\Models\Fields_types::get_reserved_types() as $type) {
             $sql_data = [
                 'forms_tabs_id' => $forms_tabs_id,
                 'entities_id' => $id,
@@ -109,7 +109,7 @@ class Entities
                 'listing_sort_order' => $sort_order,
                 'type' => $type
             ];
-            db_perform('app_fields', $sql_data);
+            \K::model()->db_perform('app_fields', $sql_data);
 
             $sort_order++;
         }
@@ -219,9 +219,8 @@ class Entities
     public static function get_name_by_id($id)
     {
         //global $app_entities_cache;
-        $app_entities_cache = \K::$fw->app_entities_cache;
 
-        return (isset($app_entities_cache[$id]) ? $app_entities_cache[$id]['name'] : '');
+        return (isset(\K::$fw->app_entities_cache[$id]) ? \K::$fw->app_entities_cache[$id]['name'] : '');
     }
 
     public static function get_name_cache()
@@ -299,7 +298,7 @@ class Entities
                 'path' => $path,
             ];
 
-            $tree = entities::get_tree(
+            $tree = self::get_tree(
                 $entities['id'],
                 $tree,
                 $level + 1,
@@ -315,12 +314,11 @@ class Entities
     public static function get_parents($entities_id, $parents = [])
     {
         //global $app_entities_cache;
-        $app_entities_cache = \K::$fw->app_entities_cache;
 
         ////$entities_query = db_query("select * from app_entities where id='" . $entities_id . "'");
         ////if($entities = db_fetch_array($entities_query))
-        if (isset($app_entities_cache[$entities_id])) {
-            $entities = $app_entities_cache[$entities_id];
+        if (isset(\K::$fw->app_entities_cache[$entities_id])) {
+            $entities = \K::$fw->app_entities_cache[$entities_id];
 
             if ($entities['parent_id'] > 0) {
                 $parents[] = $entities['parent_id'];

@@ -588,7 +588,7 @@ class Fieldtype_formula
                 $use_field_id = $matches[2][$key];
 
                 //get parent entities
-                $parents = entities::get_parents($entities_id);
+                $parents = \Models\Entities::get_parents($entities_id);
 
                 //print_rr($parents);
 
@@ -615,7 +615,7 @@ class Fieldtype_formula
                         $slq .= " e.parent_item_id";
                     }
 
-                    //buld query for all next parents
+                    //build query for all next parents
                     foreach ($parents as $parent_entity_id) {
                         if ($app_entities_cache[$entities_id]['parent_id'] == $parent_entity_id) {
                             $slq .= "(select parent_item_id from app_entity_{$parent_entity_id} where id=e.parent_item_id";

@@ -63,7 +63,7 @@ class Fieldtype_phone
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             $modules = new modules('telephony');
             $choices = $modules->get_active_modules();
 

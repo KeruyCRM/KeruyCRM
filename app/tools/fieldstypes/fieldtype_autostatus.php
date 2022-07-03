@@ -47,7 +47,7 @@ class Fieldtype_autostatus
             'type' => 'html'
         ];
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             $processes_chocies = [];
             $processes_chocies[0] = '';
             $processes_query = db_query(
@@ -170,7 +170,7 @@ class Fieldtype_autostatus
                         );
 
                         //run process
-                        if (is_ext_installed() and ($process_id = (int)$cfg->get(
+                        if (\Helpers\App::is_ext_installed() and ($process_id = (int)$cfg->get(
                                 'run_process_for_choice_' . $choices['id']
                             )) > 0 and $choices['id'] != $item_info['field_' . $fields['id']]) {
                             $process_info_query = db_query("select * from app_ext_processes where id={$process_id}");

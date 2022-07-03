@@ -461,7 +461,7 @@ class Subentity_form
                 //autoupdate all field types
                 fields_types::update_items_fields($current_entity_id, $item_id);
 
-                if (is_ext_installed()) {
+                if (\Helpers\App::is_ext_installed()) {
                     //run actions after item update
                     $processes = new processes($current_entity_id);
                     $processes->run_after_update($item_id);
@@ -481,7 +481,7 @@ class Subentity_form
 
                 items::send_new_item_nofitication($current_entity_id, $item_id);
 
-                if (is_ext_installed()) {
+                if (\Helpers\App::is_ext_installed()) {
                     //subscribe
                     $modules = new modules('mailing');
                     $mailing = new mailing($current_entity_id, $item_id);

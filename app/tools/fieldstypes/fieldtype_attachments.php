@@ -353,7 +353,7 @@ class Fieldtype_attachments
 
             //check if field using file storage
             if (isset($options['field']['id'])) {
-                if (is_ext_installed() and $options['field']['id'] > 0) {
+                if (\Helpers\App::is_ext_installed() and $options['field']['id'] > 0) {
                     $use_file_storage = file_storage::check($options['field']['id']);
                 }
             }

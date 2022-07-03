@@ -73,7 +73,7 @@ class Access_groups
         ];
 
         //extra access available in extension
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             $access_choices += [
                 'update_selected' => \K::$fw->TEXT_UPDATE_SELECTED_ACCESS,
                 'copy' => \K::$fw->TEXT_COPY_RECORDS,

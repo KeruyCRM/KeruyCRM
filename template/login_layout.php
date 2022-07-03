@@ -148,7 +148,7 @@ echo 'content-' . $app_action ?>">
 <!-- END PAGE LEVEL SCRIPTS -->
 
 <?php
-if (is_ext_installed()) {
+if (\Helpers\App::is_ext_installed()) {
     echo smart_input::render_js_includes();
 }
 ?>

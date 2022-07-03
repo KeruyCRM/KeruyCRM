@@ -56,7 +56,7 @@ class entities_menu
             $choices[TEXT_REPORTS_GROUPS]['dashboard' . $v['id']] = $v['name'];
         }
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //get common reports
             $reports_query = db_query(
                 "select r.id, r.name from app_reports r, app_entities e, app_entities_access ea  where r.entities_id = e.id and e.id=ea.entities_id and r.reports_type = 'common' order by r.dashboard_sort_order, name"

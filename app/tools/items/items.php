@@ -49,7 +49,7 @@ class Items
         }
 
         //run process before delete
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //run actions before delete records
             $processes = new processes($entities_id);
             $processes->run_before_delete($items_id);
@@ -70,7 +70,7 @@ class Items
         attachments::delete_attachments($entities_id, $items_id);
 
         //handle actions before delete
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //subscribe
             $modules = new modules('mailing');
             $mailing = new mailing($entities_id, $items_id);
@@ -118,7 +118,7 @@ class Items
             fieldtype_nested_calculations::update_items_fields($entities_id, $parent_item_id, 0);
         }
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //delete timers
             db_query(
                 "delete from app_ext_timer where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'"
@@ -1433,7 +1433,7 @@ class Items
             $app_send_to = self::get_send_to($current_entity_id, $item_id);
         }
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //sending sms
             $modules = new modules('sms');
             $sms = new sms($current_entity_id, $item_id);
@@ -1637,7 +1637,7 @@ class Items
 
         fields_types::update_items_fields($entity_id, $item_id);
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //sending sms
             $modules = new modules('sms');
             $sms = new sms($entity_id, $item_id);
@@ -1713,7 +1713,7 @@ class Items
 
         fields_types::update_items_fields($entity_id, $item_id);
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //sending sms
             $modules = new modules('sms');
             $sms = new sms($entity_id, $item_id);

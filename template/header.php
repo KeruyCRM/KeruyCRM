@@ -13,7 +13,7 @@
         <!-- END LOGO -->
 
         <?php
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             echo global_search::render();
         }
         ?>
@@ -29,7 +29,7 @@
 
             <?php
 
-            if (is_ext_installed()) {
+            if (\Helpers\App::is_ext_installed()) {
                 echo currencies::exchange_rate_widget();
             }
 
@@ -70,7 +70,7 @@
 
             echo users_notifications::render();
 
-            if (is_ext_installed()) {
+            if (\Helpers\App::is_ext_installed()) {
                 echo mail_accounts::render_dropdown_notification();
             }
             ?>

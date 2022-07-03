@@ -15,7 +15,7 @@ class Fieldtype_process_button
     {
         $cfg = [];
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             $choices = [];
             $choices[''] = '';
             $processes_query = db_query(

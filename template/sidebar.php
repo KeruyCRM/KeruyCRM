@@ -34,7 +34,7 @@
                 <li>
 
                     <?php
-                    if (is_ext_installed()) {
+                    if (\Helpers\App::is_ext_installed()) {
                         echo global_search::render('search-form-sidebar');
                     }
                     ?>

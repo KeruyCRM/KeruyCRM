@@ -118,7 +118,7 @@ class Fieldtype_input_numeric
             'params' => ['class' => 'form-control input-small']
         ];
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             if (count(currencies::get_choices())) {
                 $cfg[\K::$fw->TEXT_VALUE][] = [
                     'title' => \K::$fw->TEXT_EXT_CURRENCIES,

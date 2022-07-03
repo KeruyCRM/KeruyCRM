@@ -151,7 +151,7 @@ class Fieldtype_users_approve
         $choices = [];
         $choices[0] = '';
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             $processes_query = db_query(
                 "select id, name from app_ext_processes where entities_id='" . $params['entities_id'] . "' order by sort_order, name"
             );

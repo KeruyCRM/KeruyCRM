@@ -143,7 +143,7 @@ class Fieldtype_stages
             'type' => 'html'
         ];
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             $processes_chocies = [];
             $processes_chocies[0] = '';
             $processes_query = db_query(
