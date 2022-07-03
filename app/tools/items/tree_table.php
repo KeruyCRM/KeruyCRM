@@ -201,7 +201,7 @@ class Tree_table
             return '';
         }
 
-        $settings = new settings($listing_types['settings']);
+        $settings = new \Tools\Settings($listing_types['settings']);
 
         //check position
         if ($settings->get('display_nested_records') != $position) {
@@ -223,7 +223,7 @@ class Tree_table
         $listing = new class {
             function __construct()
             {
-                $this->settings = new settings('');
+                $this->settings = new \Tools\Settings('');
             }
 
             function get_listing_type()
