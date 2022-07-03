@@ -650,7 +650,7 @@ class reports
                     $listing_order_fields[] = '(e.field_' . $field_id . '+0) ' . $order_cause;
                 } elseif (in_array($field_info['type'], ['fieldtype_mysql_query'])) {
                     $cfg = new fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
-                    if ($cfg->get('dinamic_query') != 1 and preg_match(
+                    if ($cfg->get('dynamic_query') != 1 and preg_match(
                             '/sum|min|max|count/',
                             $cfg->get('select_query')
                         )) {

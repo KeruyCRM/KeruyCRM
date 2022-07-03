@@ -18,7 +18,7 @@ class fieldtype_mysql_query
             'title' => tooltip_icon(
                     TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY_INFO
                 ) . TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
-            'name' => 'dinamic_query',
+            'name' => 'dynamic_query',
             'type' => 'checkbox'
         ];
 
@@ -135,7 +135,7 @@ class fieldtype_mysql_query
 
         $sql = reports::prepare_numeric_sql_filters($filters, '');
 
-        if (count($sql) > 0 and $cfg->get('dinamic_query') == 1) {
+        if (count($sql) > 0 and $cfg->get('dynamic_query') == 1) {
             $sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
         } elseif (count($sql) > 0) {
             $sql_query[] = implode(' and ', $sql);
@@ -164,7 +164,7 @@ class fieldtype_mysql_query
                 $cfg = new fields_types_cfg($fields['configuration']);
 
                 //skip query if not dinamic
-                if ($cfg->get('dinamic_query') != 1 and $fieldtype_mysql_query_force != true) {
+                if ($cfg->get('dynamic_query') != 1 and $fieldtype_mysql_query_force != true) {
                     continue;
                 }
 
@@ -187,7 +187,7 @@ class fieldtype_mysql_query
         $cfg = new fields_types_cfg($fields['configuration']);
 
         //skip query if not dinamic
-        if ($cfg->get('dinamic_query') != 1 and $fieldtype_mysql_query_force != true) {
+        if ($cfg->get('dynamic_query') != 1 and $fieldtype_mysql_query_force != true) {
             return $prefix . '.field_' . $fields['id'];
         }
 
@@ -326,7 +326,7 @@ class fieldtype_mysql_query
             foreach ($app_mysql_query_fields_cache[$entities_id] as $fields) {
                 $cfg = new fields_types_cfg($fields['configuration']);
 
-                if ($cfg->get('dinamic_query') != 1) {
+                if ($cfg->get('dynamic_query') != 1) {
                     $update_fields[] = $fields['id'];
                 }
             }
