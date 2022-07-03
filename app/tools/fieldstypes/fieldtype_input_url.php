@@ -78,7 +78,7 @@ class Fieldtype_input_url
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control input-large fieldtype_input_url field_' . $field['id'] .

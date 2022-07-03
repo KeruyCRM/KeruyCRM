@@ -94,7 +94,7 @@ class Fieldtype_attachments
             $field['configuration'] = '';
         }
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $field_id = $field['id'];
 
@@ -328,7 +328,7 @@ class Fieldtype_attachments
         //notify when changed
         if (isset($options['is_new_item'])) {
             if (!$options['is_new_item']) {
-                $cfg = new fields_types_cfg($options['field']['configuration']);
+                $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
                 if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
                     $app_changed_fields[] = [
@@ -376,7 +376,7 @@ class Fieldtype_attachments
 
                 return implode('<br>', $html);
             } elseif (isset($options['is_ipages'])) {
-                $cfg = new fields_types_cfg(
+                $cfg = new \Tools\Fields_types_cfg(
                     (isset($options['field']['configuration']) ? $options['field']['configuration'] : '')
                 );
 
@@ -497,7 +497,7 @@ class Fieldtype_attachments
             } else {
                 $is_listing = (isset($options['is_listing']) ? true : false);
 
-                $cfg = new fields_types_cfg(
+                $cfg = new \Tools\Fields_types_cfg(
                     (isset($options['field']['configuration']) ? $options['field']['configuration'] : '')
                 );
 

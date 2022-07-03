@@ -80,7 +80,7 @@ class Fieldtype_dropdown_multilevel
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $display_choices_values = $cfg->get('display_choices_values');
 
@@ -240,7 +240,7 @@ class Fieldtype_dropdown_multilevel
     {
         $is_export = isset($options['is_export']);
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         //render global list value
         if ($cfg->get('use_global_list') > 0) {
@@ -252,7 +252,7 @@ class Fieldtype_dropdown_multilevel
 
     public static function output_export_template($field, $is_export = false)
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $html = '';
 
@@ -290,7 +290,7 @@ class Fieldtype_dropdown_multilevel
     {
         $is_export = isset($options['is_export']);
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         $value = $options['value'];
 
@@ -322,7 +322,7 @@ class Fieldtype_dropdown_multilevel
             $listing_order_fields_id = [];
         }
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $html = '';
         $export_array = [];
@@ -390,7 +390,7 @@ class Fieldtype_dropdown_multilevel
 
     public static function output_listing($options, $is_export = false)
     {
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         $html = '';
         $export_array = [];
@@ -442,7 +442,7 @@ class Fieldtype_dropdown_multilevel
 
     public static function output_info_box($options, $is_export = false)
     {
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         $html = '';
         $export_array = [];
@@ -527,7 +527,7 @@ class Fieldtype_dropdown_multilevel
 
     public function get_js_tree_handler($field, $choices_tree_level, $values_array, $display_choices_values = '')
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $js_tree = ($cfg->get('use_global_list') ? global_lists::get_js_level_tree(
             $cfg->get('use_global_list'),

@@ -136,7 +136,7 @@ class Fieldtype_entity
 
         $parent_entity_item_id = $params['parent_entity_item_id'];
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $entity_info = db_find('app_entities', $cfg->get('entity_id'));
         $field_entity_info = db_find('app_entities', $field['entities_id']);
@@ -245,7 +245,7 @@ class Fieldtype_entity
 
         $parent_entity_item_id = $params['parent_entity_item_id'];
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $entity_info = db_find('app_entities', $cfg->get('entity_id'));
         $field_entity_info = db_find('app_entities', $field['entities_id']);
@@ -357,7 +357,7 @@ class Fieldtype_entity
             return '';
         }
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         //prepare sql if not export
         $items_info_formula_sql = '';

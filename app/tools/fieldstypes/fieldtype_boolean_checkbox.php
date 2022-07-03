@@ -51,7 +51,7 @@ class Fieldtype_boolean_checkbox
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $attributes = ['class' => 'single-checkbox field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')];
 
@@ -72,7 +72,7 @@ class Fieldtype_boolean_checkbox
 
     public static function get_boolean_value($field, $value)
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         switch ($value) {
             case '1':
@@ -100,7 +100,7 @@ class Fieldtype_boolean_checkbox
         $options['value'] = (($options['value'] == 1 or $options['value'] == 'true') ? 'true' : 'false');
 
         if (!$options['is_new_item']) {
-            $cfg = new fields_types_cfg($options['field']['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
                 $app_changed_fields[] = [

@@ -39,7 +39,7 @@ class Fieldtype_textarea_wysiwyg
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control editor field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),

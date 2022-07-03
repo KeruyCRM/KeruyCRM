@@ -121,7 +121,7 @@ class Fieldtype_stages
         //confirmation text
 
         $field = db_find('app_fields', _post::int('id'));
-        $field_cfg = new fields_types_cfg($field['configuration']);
+        $field_cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         if ($field_cfg->get('use_global_list') > 0) {
             $choices = global_lists::get_choices($field_cfg->get('use_global_list'), false);
@@ -178,7 +178,7 @@ class Fieldtype_stages
     {
         global $app_module_path;
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get(
@@ -227,7 +227,7 @@ class Fieldtype_stages
         global $app_changed_fields, $app_choices_cache, $app_global_choices_cache;
 
         if (!$options['is_new_item']) {
-            $cfg = new fields_types_cfg($options['field']['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] > 0 and $options['value'] != $options['current_field_value'] and $cfg->get(
                     'notify_when_changed'
@@ -248,7 +248,7 @@ class Fieldtype_stages
 
     public function output($options)
     {
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         //render global list value
         if ($cfg->get('use_global_list') > 0) {

@@ -96,7 +96,7 @@ class Fieldtype_input_dynamic_mask
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get('width') .

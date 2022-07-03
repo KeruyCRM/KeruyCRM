@@ -101,7 +101,7 @@ class Fieldtype_years_difference
 
     public function output($options)
     {
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         $value = $options['value'];
 
@@ -164,7 +164,7 @@ END;";
         if (isset($app_fields_cache[$entities_id])) {
             foreach ($app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_years_difference') {
-                    $cfg = new fields_types_cfg($fields['configuration']);
+                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                     //skip dynamic query
                     if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {
@@ -186,7 +186,7 @@ END;";
 
     public static function prepare_query($fields, $prefix = 'e', $single_select = false, $force_query = false)
     {
-        $cfg = new fields_types_cfg($fields['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
         //skip dynamic query
         if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1 and !$force_query) {
@@ -222,7 +222,7 @@ END;";
         if (isset($app_fields_cache[$entities_id])) {
             foreach ($app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_years_difference') {
-                    $cfg = new fields_types_cfg($fields['configuration']);
+                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                     //skip dynamic query
                     if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {

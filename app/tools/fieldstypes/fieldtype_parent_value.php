@@ -80,7 +80,7 @@ class Fieldtype_parent_value
                     ) . "' and type='fieldtype_parent_value'"
                 );
                 while ($fields = db_fetch_array($fields_query)) {
-                    $cfg = new fields_types_cfg($fields['configuration']);
+                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                     if (strlen($cfg->get('field_id'))) {
                         $select_fields[] = $cfg->get('field_id');
@@ -108,7 +108,7 @@ class Fieldtype_parent_value
             if (isset($parent_items_values_cache[$parent_item_id])) {
                 $item = $parent_items_values_cache[$parent_item_id];
 
-                $cfg = new fields_types_cfg($options['field']['configuration']);
+                $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
                 if (strlen($cfg->get('field_id'))) {
                     $field_query = db_query("select * from app_fields where id='" . $cfg->get('field_id') . "'");

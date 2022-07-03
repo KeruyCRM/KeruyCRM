@@ -110,7 +110,7 @@ class Fieldtype_todo_list
                 ['<', '>'],
                 $options['value']) : $html_listing);
         } else {
-            $cfg = new fields_types_cfg($options['field']['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
             //get default filed acess cfg
             $fields_access_schema = users::get_fields_access_schema(

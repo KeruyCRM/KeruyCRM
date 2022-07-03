@@ -112,7 +112,7 @@ class Fieldtype_signature
     {
         global $app_users_cache, $app_user, $app_path, $app_module_path;
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         //print_rr($options);
 

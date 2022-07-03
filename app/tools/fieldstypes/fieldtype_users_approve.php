@@ -176,7 +176,7 @@ class Fieldtype_users_approve
     {
         global $app_users_cache, $app_user;
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $entities_id = $field['entities_id'];
 
@@ -238,7 +238,7 @@ class Fieldtype_users_approve
     {
         global $app_users_cache, $app_user;
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $entities_id = $field['entities_id'];
 
@@ -290,7 +290,7 @@ class Fieldtype_users_approve
     {
         global $app_send_to, $app_send_to_new_assigned;
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if ($cfg->get('disable_notification') != 1) {
             if (is_array($options['value'])) {
@@ -337,7 +337,7 @@ class Fieldtype_users_approve
             return '';
         }
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         //print_rr($options);
 

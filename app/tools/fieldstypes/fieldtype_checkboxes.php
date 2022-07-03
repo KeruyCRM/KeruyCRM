@@ -57,7 +57,7 @@ class Fieldtype_checkboxes
     {
         $attributes = ['class' => 'field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')];
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         //use global lists if exsit
         if ($cfg->get('use_global_list') > 0) {
@@ -115,7 +115,7 @@ class Fieldtype_checkboxes
     {
         $is_export = isset($options['is_export']);
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         //render global list value
         if ($cfg->get('use_global_list') > 0) {

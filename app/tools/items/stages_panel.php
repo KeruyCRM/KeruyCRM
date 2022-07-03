@@ -51,7 +51,7 @@ class Stages_panel
                 }
             }
 
-            $cfg = new fields_types_cfg($field['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
             //check if panel type is enabled
             if (!strlen($cfg->get('panel_type'))) {
@@ -192,7 +192,7 @@ class Stages_panel
 
     public static function render_css($field)
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $css = '';
 

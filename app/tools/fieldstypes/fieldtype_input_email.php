@@ -67,7 +67,7 @@ class fieldtype_input_email
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get('width') .
@@ -89,7 +89,7 @@ class fieldtype_input_email
 
     public function output($options)
     {
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if (isset($options['is_export'])) {
             return $options['value'];

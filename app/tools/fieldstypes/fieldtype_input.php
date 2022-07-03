@@ -79,7 +79,7 @@ class Fieldtype_input
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get('width') .
@@ -105,7 +105,7 @@ class Fieldtype_input
         global $app_changed_fields;
 
         if (!$options['is_new_item']) {
-            $cfg = new fields_types_cfg($options['field']['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
                 $app_changed_fields[] = [

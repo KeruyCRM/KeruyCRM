@@ -179,7 +179,7 @@ class Fieldtype_barcode
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get('width') .
@@ -235,7 +235,7 @@ class Fieldtype_barcode
     public function output($options)
     {
         if (isset($options['is_print']) and strlen($options['value'])) {
-            $cfg = new fields_types_cfg($options['field']['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
             $height = (strlen($cfg->get('height')) ? $cfg->get('height') : 30);
 
@@ -377,7 +377,7 @@ class Fieldtype_barcode
         if (isset($app_fields_cache[$entities_id])) {
             foreach ($app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_barcode' and !strlen($item_info['field_' . $fields['id']])) {
-                    $cfg = new fields_types_cfg($fields['configuration']);
+                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                     //skip empyt template
                     if (!strlen($cfg->get('template'))) {

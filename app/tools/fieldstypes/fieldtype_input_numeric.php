@@ -139,7 +139,7 @@ class Fieldtype_input_numeric
 
         $value = $obj['field_' . $field['id']];
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         //handle default value
         if ($params['is_new_item'] == true and strlen($cfg->get('default_value')) > 0) {
@@ -269,7 +269,7 @@ class Fieldtype_input_numeric
         global $app_changed_fields;
 
         if (!$options['is_new_item']) {
-            $cfg = new fields_types_cfg($options['field']['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
                 $app_changed_fields[] = [
@@ -295,7 +295,7 @@ class Fieldtype_input_numeric
             return $options['value'];
         }
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if (strlen($cfg->get('number_format')) > 0 and strlen($options['value']) > 0 and is_numeric(
                 $options['value']
@@ -329,7 +329,7 @@ class Fieldtype_input_numeric
 
     public static function number_format($value, $configuration)
     {
-        $cfg = new fields_types_cfg($configuration);
+        $cfg = new \Tools\Fields_types_cfg($configuration);
 
         if (strlen($cfg->get('number_format')) > 0) {
             $format = explode('/', str_replace('*', '', $cfg->get('number_format')));

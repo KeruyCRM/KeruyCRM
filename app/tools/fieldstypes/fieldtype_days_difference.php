@@ -206,7 +206,7 @@ END;";
         if (isset($app_fields_cache[$entities_id])) {
             foreach ($app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_days_difference') {
-                    $cfg = new fields_types_cfg($fields['configuration']);
+                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                     //skip dynamic query
                     if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {

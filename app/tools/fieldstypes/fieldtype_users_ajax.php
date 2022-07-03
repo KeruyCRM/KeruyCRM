@@ -197,7 +197,7 @@ class Fieldtype_users_ajax
     {
         global $app_module_path, $app_layout, $current_path_array, $app_action, $app_session_token, $app_users_cache, $app_user;
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $html_on_change = '';
 
@@ -357,7 +357,7 @@ class Fieldtype_users_ajax
     {
         global $app_send_to, $app_send_to_new_assigned;
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if ($cfg->get('disable_notification') != 1) {
             if (is_array($options['value'])) {
@@ -391,7 +391,7 @@ class Fieldtype_users_ajax
             return '';
         }
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         //return just name if export
         if (isset($options['is_export']) or isset($options['is_email'])) {

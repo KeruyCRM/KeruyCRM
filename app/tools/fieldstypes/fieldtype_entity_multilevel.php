@@ -91,7 +91,7 @@ class fieldtype_entity_multilevel
                     "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in ('fieldtype_entity','fieldtype_entity_ajax','fieldtype_entity_multilevel') and  f.entities_id='" . $_POST['entities_id'] . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
                 );
                 while ($fields = db_fetch_array($fields_query)) {
-                    $field_cfg = new fields_types_cfg($fields['configuration']);
+                    $field_cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                     if ($field_cfg->get('entity_id') == $app_entities_cache[$entities_id]['parent_id']) {
                         $choices[$fields['id']] = $fields['name'];
@@ -199,7 +199,7 @@ class fieldtype_entity_multilevel
     {
         global $app_module_path, $app_layout, $app_action, $app_entities_cache, $app_user;
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $entities_levels = array_reverse(entities::get_parents($cfg->get('entity_id')));
 
@@ -489,7 +489,7 @@ class fieldtype_entity_multilevel
             return '';
         }
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         $fields_in_popup_cfg = '';
 

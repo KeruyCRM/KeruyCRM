@@ -68,7 +68,7 @@ class Fieldtype_input_numeric_comments
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         if ($params['form'] == 'comment') {
             $value = '';
@@ -145,7 +145,7 @@ class Fieldtype_input_numeric_comments
             return $options['value'];
         }
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if (strlen($cfg->get('number_format')) > 0 and strlen($options['value']) > 0) {
             $format = explode('/', str_replace('*', '', $cfg->get('number_format')));

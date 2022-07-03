@@ -66,7 +66,7 @@ class Fieldtype_user_roles
     {
         global $app_users_cache, $app_user;
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $entities_id = $field['entities_id'];
 
@@ -169,7 +169,7 @@ class Fieldtype_user_roles
         //reset holder
         $user_roles_dropdown_change_holder = [];
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $entities_id = $field['entities_id'];
 
@@ -243,7 +243,7 @@ class Fieldtype_user_roles
     {
         global $app_send_to, $app_send_to_new_assigned;
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if ($cfg->get('disable_notification') != 1) {
             if (is_array($options['value'])) {

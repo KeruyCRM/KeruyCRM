@@ -104,7 +104,7 @@ class Fieldtype_created_by
     {
         global $app_fields_cache;
 
-        $cfg = new fields_types_cfg($app_fields_cache[$entities_id]['fieldtype_created_by']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($app_fields_cache[$entities_id]['fieldtype_created_by']['configuration']);
 
         return ($cfg->get('disable_notification') == 1 ? false : true);
     }

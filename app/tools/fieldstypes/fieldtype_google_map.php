@@ -90,7 +90,7 @@ class Fieldtype_google_map
     {
         global $is_google_map_script;
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         //skip
         if (!strlen($cfg->get('address_pattern')) or !strlen(
@@ -200,7 +200,7 @@ class Fieldtype_google_map
                 if ($fields['type'] == 'fieldtype_google_map') {
                     $fields_id = $fields['id'];
 
-                    $cfg = new fields_types_cfg($fields['configuration']);
+                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                     //skip if no pattern setup
                     if (!strlen($cfg->get('address_pattern'))) {

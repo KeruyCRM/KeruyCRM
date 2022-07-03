@@ -120,7 +120,7 @@ class Fieldtype_autostatus
             ) . "' and type='fieldtype_autostatus'"
         );
         while ($fields = db_fetch_array($fields_query)) {
-            $cfg = new fields_types_cfg($fields['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
             foreach (fields_choices::get_tree($fields['id'], 0, [], 0, '', '', true) as $choices) {
                 $reports_info_query = db_query(

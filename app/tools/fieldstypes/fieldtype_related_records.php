@@ -172,7 +172,7 @@ class Fieldtype_related_records
         global $current_path_array, $current_entity_id, $current_item_id, $current_path, $app_user;
 
         //output count of related items 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if ($cfg->get('display_in_listing') == 'list') {
             $related_records = new related_records($options['field']['entities_id'], $options['item']['id']);
@@ -197,7 +197,7 @@ class Fieldtype_related_records
         if (strlen($filters['filters_values']) > 0) {
             $field = db_find('app_fields', $filters['fields_id']);
 
-            $cfg = new fields_types_cfg($field['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
             $table_info = related_records::get_related_items_table_name(
                 $options['entities_id'],
@@ -271,7 +271,7 @@ class Fieldtype_related_records
             ) . "' and f.forms_tabs_id=t.id  order by t.sort_order, t.name, f.sort_order, f.name"
         );
         while ($field = db_fetch_array($fields_query)) {
-            $cfg = new fields_types_cfg($field['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
             if ($cfg->get('display_in_listing', 'count') != 'count') {
                 continue;

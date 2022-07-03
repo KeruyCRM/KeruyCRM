@@ -113,7 +113,7 @@ class Fieldtype_mysql_query
         }
 
         //return value using number format
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if (strlen($cfg->get('number_format')) > 0 and strlen($value) > 0) {
             $format = explode('/', str_replace('*', '', $cfg->get('number_format')));
@@ -133,7 +133,7 @@ class Fieldtype_mysql_query
     {
         global $sql_query_having, $app_fields_cache;
 
-        $cfg = new fields_types_cfg(
+        $cfg = new \Tools\Fields_types_cfg(
             $app_fields_cache[$options['entities_id']][$options['filters']['fields_id']]['configuration']
         );
 
@@ -176,7 +176,7 @@ class Fieldtype_mysql_query
 
         if (isset($app_mysql_query_fields_cache[$entities_id])) {
             foreach ($app_mysql_query_fields_cache[$entities_id] as $fields) {
-                $cfg = new fields_types_cfg($fields['configuration']);
+                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                 //skip query if not dinamic
                 if ($cfg->get('dynamic_query') != 1 and $fieldtype_mysql_query_force != true) {
@@ -355,7 +355,7 @@ class Fieldtype_mysql_query
 
         if (isset($app_mysql_query_fields_cache[$entities_id])) {
             foreach ($app_mysql_query_fields_cache[$entities_id] as $fields) {
-                $cfg = new fields_types_cfg($fields['configuration']);
+                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                 if ($cfg->get('dynamic_query') != 1) {
                     $update_fields[] = $fields['id'];

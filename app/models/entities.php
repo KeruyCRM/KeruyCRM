@@ -198,7 +198,7 @@ class Entities
                 ) . "' and type in ('fieldtype_entity','fieldtype_related_records')"
             );
             while ($fields = db_fetch_array($fields_query)) {
-                $cfg = new fields_types_cfg($fields['configuration']);
+                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
                 if ($cfg->get('entity_id') == $id) {
                     $relationship[] = entities::get_name_by_id($fields['entities_id']) . ': ' . $fields['name'];
                 }

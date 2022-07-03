@@ -72,7 +72,7 @@ class Fieldtype_video
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get(
@@ -94,7 +94,7 @@ class Fieldtype_video
             return '';
         }
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         //return vidoe url
         if (isset($options['is_export']) or isset($options['is_email'])) {

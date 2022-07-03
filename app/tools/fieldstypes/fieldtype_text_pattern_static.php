@@ -70,7 +70,7 @@ class Fieldtype_text_pattern_static
             ) . "' and type='fieldtype_text_pattern_static'"
         );
         while ($fields = db_fetch_array($fields_query)) {
-            $cfg = new fields_types_cfg($fields['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
             if (!$item_info) {
                 $item_info_query = db_query(

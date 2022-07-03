@@ -52,7 +52,7 @@ class Fieldtype_php_code
 
     public function output($options)
     {
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if ($cfg->get('dynamic_query') == 1) {
             return self::run_code(
@@ -71,7 +71,7 @@ class Fieldtype_php_code
         global $app_fields_cache;
 
         foreach ($app_fields_cache[$entities_id] as $field_id => $field) {
-            $cfg = new fields_types_cfg($field['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
             if ($field['type'] == 'fieldtype_php_code' and $cfg->get('dynamic_query') != 1) {
                 $output_value = self::run_code($entities_id, $items_id, $field_id, $item_info);
@@ -89,7 +89,7 @@ class Fieldtype_php_code
     {
         global $app_entities_cache, $app_fields_cache, $current_field_value, $parent_item_holder, $app_user;
 
-        $cfg = new fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
 
         $is_dynamic_query = false;
 

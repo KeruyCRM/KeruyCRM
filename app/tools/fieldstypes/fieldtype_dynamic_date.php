@@ -104,7 +104,7 @@ class Fieldtype_dynamic_date
                 if (strlen($value)) {
                     $field_query = db_query("select id, name, configuration from app_fields where id='" . $value . "'");
                     if ($field = db_fetch_array($field_query)) {
-                        $field_cfg = new fields_types_cfg($field['configuration']);
+                        $field_cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
                         if ($field_cfg->get('use_global_list') > 0) {
                             $choices = global_lists::get_choices($field_cfg->get('use_global_list'), false);
@@ -139,7 +139,7 @@ class Fieldtype_dynamic_date
 
     public function output($options)
     {
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if (isset($options['is_export']) and strlen($options['value']) > 0 and $options['value'] != 0) {
             return format_date($options['value'], $cfg->get('date_format'));
@@ -262,7 +262,7 @@ class Fieldtype_dynamic_date
     {
         global $app_not_formula_fields_cache, $app_formula_fields_cache, $app_user, $app_fields_cache;
 
-        $cfg = new fields_types_cfg($field_info['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field_info['configuration']);
 
         $formula = $cfg->get('formula');
 

@@ -86,7 +86,7 @@ class Fieldtype_process_button
     {
         global $buttons_css_holder;
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         $html = '';
         $buttons_css = '';

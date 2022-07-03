@@ -212,7 +212,7 @@ class Fields
         //check formulas
         $use_in_formula = [];
         foreach ($app_fields_cache[$entity_id] as $field) {
-            $cfg = new fields_types_cfg($field['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
             if (strlen($cfg->get('formula')) and strstr($cfg->get('formula'), '[' . $id . ']')) {
                 $use_in_formula[] = $field['name'];
@@ -296,7 +296,7 @@ class Fields
         );
         //while ($v = db_fetch_array($fields_query)) {
         foreach ($fields_query as $v) {
-            $cfg = new fields_types_cfg($v['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($v['configuration']);
 
             $attributes = [];
 
@@ -670,7 +670,7 @@ class Fields
             //$field_info = db_fetch_array($field_info_query)
             $field_info = $field_info_query[0];
 
-            $cfg = new fields_types_cfg($field_info['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($field_info['configuration']);
             if ($cfg->get('use_global_list') > 0) {
                 $choices_query = \K::model()->db_query(
                     "select * from app_global_lists_choices where lists_id = :lists_id and length(bg_color)>0",
@@ -910,7 +910,7 @@ class Fields
         );
         //while ($fields = db_fetch_array($fields_query)) {
         foreach ($fields_query as $fields) {
-            $cfg = new fields_types_cfg($fields['configuration']);
+            $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
             if ($cfg->get('is_unique')) {
                 $list[] = $fields['id'];
             }

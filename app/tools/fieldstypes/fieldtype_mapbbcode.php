@@ -47,7 +47,7 @@ class Fieldtype_mapbbcode
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'rows' => '3',

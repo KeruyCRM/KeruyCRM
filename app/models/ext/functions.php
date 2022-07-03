@@ -175,7 +175,7 @@ class Functions
                 switch ($field['type']) {
                     case 'fieldtype_related_records':
 
-                        $cfg = new fields_types_cfg($field['configuration']);
+                        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
                         $related_entities_id = $cfg->get('entity_id');
 
                         $table_info = related_records::get_related_items_table_name(

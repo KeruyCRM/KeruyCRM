@@ -42,7 +42,7 @@ class Fieldtype_ajax_request
     {
         global $app_fields_cache, $app_session_token, $app_items_form_name;
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         $html = '<div id="ajax_request_field_' . $field['id'] . '" class="form-control-static"></div>';
 
@@ -123,7 +123,7 @@ class Fieldtype_ajax_request
                     case 'fieldtype_stages':
                     case 'fieldtype_users_approve':
                     case 'fieldtype_tags':
-                        $fields_cfg = new fields_types_cfg($fields['configuration']);
+                        $fields_cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                         if ($fields_cfg->get('display_as') == 'checkboxes') {
                             $html .= '

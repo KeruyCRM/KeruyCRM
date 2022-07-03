@@ -93,7 +93,7 @@ class Fieldtype_nested_calculations
             return $options['value'];
         }
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if (strlen($cfg->get('number_format')) > 0 and strlen($options['value']) > 0 and is_numeric(
                 $options['value']

@@ -155,7 +155,7 @@ class Fieldtype_input_datetime
                 if (strlen($value)) {
                     $field_query = db_query("select id, name, configuration from app_fields where id='" . $value . "'");
                     if ($field = db_fetch_array($field_query)) {
-                        $field_cfg = new fields_types_cfg($field['configuration']);
+                        $field_cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
                         if ($field_cfg->get('use_global_list') > 0) {
                             $choices = global_lists::get_choices($field_cfg->get('use_global_list'), false);
@@ -180,7 +180,7 @@ class Fieldtype_input_datetime
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
         if (strlen($obj['field_' . $field['id']]) > 0 and $obj['field_' . $field['id']] != 0) {
             switch ($cfg->get('date_format_in_calendar')) {
@@ -267,7 +267,7 @@ class Fieldtype_input_datetime
     {
         global $app_changed_fields;
 
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         switch ($cfg->get('date_format_in_calendar')) {
             case 'yyyy-mm-dd hh':
@@ -296,7 +296,7 @@ class Fieldtype_input_datetime
 
     public function output($options)
     {
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         if (isset($options['is_export']) and strlen($options['value']) > 0 and $options['value'] != 0) {
             return format_date_time($options['value'], $cfg->get('date_format'));

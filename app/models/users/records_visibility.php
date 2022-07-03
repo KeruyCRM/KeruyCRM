@@ -30,7 +30,7 @@ class Records_visibility
             ) . "')"
         );
         while ($users_fields = db_fetch_array($users_fields_query)) {
-            $users_cfg = new fields_types_cfg($users_fields['configuration']);
+            $users_cfg = new \Tools\Fields_types_cfg($users_fields['configuration']);
 
             $fields_query = db_query(
                 "select id, name, type, configuration from app_fields where entities_id='" . $entities_id . "' and type in ('" . implode(
@@ -39,7 +39,7 @@ class Records_visibility
                 ) . "')"
             );
             while ($fields = db_fetch_array($fields_query)) {
-                $cfg = new fields_types_cfg($fields['configuration']);
+                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
                 //echo $users_fields['name'] . ' ' . $cfg->get('use_global_list') . '==' . $fields['name'] . ': ' . $users_cfg->get('use_global_list') . '<br>';
 
                 if (($cfg->get('entity_id') == $users_cfg->get('entity_id') and $cfg->get(
@@ -132,7 +132,7 @@ class Records_visibility
                                     $fields_id
                                 ) . "' and cv.value = " . $app_user['group_id'] . ")>0 ";
                         } elseif ($app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_grouped_users') {
-                            $cfg = new fields_types_cfg($app_fields_cache[$entities_id][$fields_id]['configuration']);
+                            $cfg = new \Tools\Fields_types_cfg($app_fields_cache[$entities_id][$fields_id]['configuration']);
 
                             if ($cfg->get('use_global_list') > 0) {
                                 $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id=e.id and cv.fields_id='" . db_input(
