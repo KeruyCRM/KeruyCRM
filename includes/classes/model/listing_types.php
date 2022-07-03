@@ -54,7 +54,7 @@ class listing_types
     static function get_default($entities_id)
     {
         $info_query = db_query(
-            "select * from app_listing_types where entities_id='" . $entities_id . "' and is_default=1 and is_active=1"
+            "select type from app_listing_types where entities_id='" . $entities_id . "' and is_default=1 and is_active=1"
         );
         if ($info = db_fetch_array($info_query)) {
             return $info['type'];
