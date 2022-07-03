@@ -19,7 +19,7 @@ class Fieldtype_years_difference
             'title' => tooltip_icon(
                     \K::$fw->TEXT_FIELDTYPE_DAYS_DIFFERENCE_DYNAMIC_INFO
                 ) . \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
-            'name' => 'dinamic_query',
+            'name' => 'dynamic_query',
             'type' => 'dropdown',
             'choices' => ['0' => \K::$fw->TEXT_NO, '1' => \K::$fw->TEXT_YES],
             'params' => ['class' => 'form-control input-small']
@@ -167,7 +167,7 @@ END;";
                     $cfg = new fields_types_cfg($fields['configuration']);
 
                     //skip dynamic query
-                    if (isset($cfg->cfg['dinamic_query']) and $cfg->get('dinamic_query') != 1) {
+                    if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {
                         continue;
                     }
 
@@ -189,7 +189,7 @@ END;";
         $cfg = new fields_types_cfg($fields['configuration']);
 
         //skip dynamic query
-        if (isset($cfg->cfg['dinamic_query']) and $cfg->get('dinamic_query') != 1 and !$force_query) {
+        if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1 and !$force_query) {
             return $prefix . '.field_' . $fields['id'];
         }
 
@@ -225,7 +225,7 @@ END;";
                     $cfg = new fields_types_cfg($fields['configuration']);
 
                     //skip dynamic query
-                    if (isset($cfg->cfg['dinamic_query']) and $cfg->get('dinamic_query') != 1) {
+                    if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {
                         $item_info_query = db_query(
                             "select " . self::prepare_query(
                                 $fields,

@@ -19,7 +19,7 @@ class Fieldtype_mysql_query
             'title' => tooltip_icon(
                     \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY_INFO
                 ) . \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
-            'name' => 'dinamic_query',
+            'name' => 'dynamic_query',
             'type' => 'checkbox'
         ];
 
@@ -142,7 +142,7 @@ class Fieldtype_mysql_query
 
         $sql = reports::prepare_numeric_sql_filters($filters, '');
 
-        if (count($sql) > 0 and $cfg->get('dinamic_query') == 1) {
+        if (count($sql) > 0 and $cfg->get('dynamic_query') == 1) {
             $sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
         } elseif (count($sql) > 0) {
             $sql_query[] = implode(' and ', $sql);
@@ -179,7 +179,7 @@ class Fieldtype_mysql_query
                 $cfg = new fields_types_cfg($fields['configuration']);
 
                 //skip query if not dinamic
-                if ($cfg->get('dinamic_query') != 1 and $fieldtype_mysql_query_force != true) {
+                if ($cfg->get('dynamic_query') != 1 and $fieldtype_mysql_query_force != true) {
                     continue;
                 }
 
@@ -202,7 +202,7 @@ class Fieldtype_mysql_query
         $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
         //skip query if not dinamic
-        if ($cfg->get('dinamic_query') != 1 and \K::$fw->fieldtype_mysql_query_force != true) {
+        if ($cfg->get('dynamic_query') != 1 and \K::$fw->fieldtype_mysql_query_force != true) {
             return $prefix . '.field_' . $fields['id'];
         }
 
@@ -307,7 +307,7 @@ class Fieldtype_mysql_query
             }
         }
 
-        //handle get_vallue()
+        //handle get_value()
         $mysql_query = \Tools\FieldsTypes\Fieldtype_formula::perpare_choices_get_value_function(
             $cfg->get('entity_id'),
             $mysql_query,
@@ -357,7 +357,7 @@ class Fieldtype_mysql_query
             foreach ($app_mysql_query_fields_cache[$entities_id] as $fields) {
                 $cfg = new fields_types_cfg($fields['configuration']);
 
-                if ($cfg->get('dinamic_query') != 1) {
+                if ($cfg->get('dynamic_query') != 1) {
                     $update_fields[] = $fields['id'];
                 }
             }

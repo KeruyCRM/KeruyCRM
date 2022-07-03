@@ -33,7 +33,7 @@ class Fieldtype_php_code
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => tooltip_icon(\K::$fw->TEXT_FIELDTYPE_PHP_CODE_RUN_DYNAMIC_INFO) . \K::$fw->TEXT_RUN_DYNAMIC,
-            'name' => 'dinamic_query',
+            'name' => 'dynamic_query',
             'type' => 'checkbox'
         ];
 
@@ -54,7 +54,7 @@ class Fieldtype_php_code
     {
         $cfg = new fields_types_cfg($options['field']['configuration']);
 
-        if ($cfg->get('dinamic_query') == 1) {
+        if ($cfg->get('dynamic_query') == 1) {
             return self::run_code(
                 $options['field']['entities_id'],
                 $options['item']['id'],
@@ -73,7 +73,7 @@ class Fieldtype_php_code
         foreach ($app_fields_cache[$entities_id] as $field_id => $field) {
             $cfg = new fields_types_cfg($field['configuration']);
 
-            if ($field['type'] == 'fieldtype_php_code' and $cfg->get('dinamic_query') != 1) {
+            if ($field['type'] == 'fieldtype_php_code' and $cfg->get('dynamic_query') != 1) {
                 $output_value = self::run_code($entities_id, $items_id, $field_id, $item_info);
 
                 db_query(
@@ -91,10 +91,10 @@ class Fieldtype_php_code
 
         $cfg = new fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
 
-        $is_dinamic_query = false;
+        $is_dynamic_query = false;
 
         if (!$item_info) {
-            $is_dinamic_query = true;
+            $is_dynamic_query = true;
 
             $item_info_query = db_query(
                 "select e.* " . fieldtype_formula::prepare_query_select(
@@ -145,7 +145,7 @@ class Fieldtype_php_code
             $php_code = str_replace('[' . $fiels_id . ']', $fields_value, $php_code);
         }
 
-        if ($cfg->get('debug_mode') == 1 and !$is_dinamic_query) {
+        if ($cfg->get('debug_mode') == 1 and !$is_dynamic_query) {
             print_rr($fields_values);
             print_rr(htmlspecialchars($php_code));
         }

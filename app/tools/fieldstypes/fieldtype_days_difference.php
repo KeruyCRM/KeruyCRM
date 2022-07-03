@@ -16,10 +16,10 @@ class Fieldtype_days_difference
         $cfg = [];
 
         $cfg[] = [
-            'title' => tooltip_icon(
+            'title' => \Helpers\App::tooltip_icon(
                     \K::$fw->TEXT_FIELDTYPE_DAYS_DIFFERENCE_DYNAMIC_INFO
                 ) . \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
-            'name' => 'dinamic_query',
+            'name' => 'dynamic_query',
             'type' => 'dropdown',
             'choices' => ['0' => \K::$fw->TEXT_NO, '1' => \K::$fw->TEXT_YES],
             'params' => ['class' => 'form-control input-small']
@@ -59,13 +59,13 @@ class Fieldtype_days_difference
             'name' => 'exclude_days',
             'default' => '',
             'type' => 'dropdown',
-            'choices' => app_get_mysql_days_choices(),
+            'choices' => \Helpers\App::app_get_mysql_days_choices(),
             'params' => ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
         ];
         $cfg[] = ['title' => \K::$fw->TEXT_EXCLUDE_HOLIDAYS, 'name' => 'exclude_holidays', 'type' => 'checkbox'];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
             'name' => 'calclulate_totals',
             'type' => 'checkbox'
         ];
@@ -105,7 +105,7 @@ class Fieldtype_days_difference
 
     public function output($options)
     {
-        $cfg = new fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
 
         $value = $options['value'];
 
@@ -209,7 +209,7 @@ END;";
                     $cfg = new fields_types_cfg($fields['configuration']);
 
                     //skip dynamic query
-                    if (isset($cfg->cfg['dinamic_query']) and $cfg->get('dinamic_query') != 1) {
+                    if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {
                         continue;
                     }
 
@@ -228,10 +228,10 @@ END;";
 
     public static function prepare_query($fields, $prefix = 'e', $single_select = false, $force_query = false)
     {
-        $cfg = new fields_types_cfg($fields['configuration']);
+        $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
         //skip dynamic query
-        if (isset($cfg->cfg['dinamic_query']) and $cfg->get('dinamic_query') != 1 and !$force_query) {
+        if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1 and !$force_query) {
             return $prefix . '.field_' . $fields['id'];
         }
 
@@ -262,10 +262,10 @@ END;";
         if (isset($app_fields_cache[$entities_id])) {
             foreach ($app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_days_difference') {
-                    $cfg = new fields_types_cfg($fields['configuration']);
+                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                     //skip dynamic query
-                    if (isset($cfg->cfg['dinamic_query']) and $cfg->get('dinamic_query') != 1) {
+                    if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {
                         $item_info_query = db_query(
                             "select " . self::prepare_query(
                                 $fields,
