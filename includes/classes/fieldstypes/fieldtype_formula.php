@@ -136,6 +136,7 @@ class fieldtype_formula
         //print_rr($mysql_formula_reports_info_holder);
 
         $check_formula_needed = false;
+        $reports_info = [];
 
         //check if formula field is in listing
         if (isset($check_needed['reports_id'])) {
@@ -223,7 +224,7 @@ class fieldtype_formula
             }
 
             $text_pattern_where_sql = " and id in (" . $reports_info['fields_in_listing'] . ")";
-        } //check default listig settings
+        } //check default listing settings
         else {
             $check_query = db_query(
                 "select id from app_fields where id='" . $formula_fields_id . "' and listing_status=1"
