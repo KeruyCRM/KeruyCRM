@@ -1,10 +1,10 @@
 <?php
 
-class filters_preivew
+class filters_preview
 {
 
     public $reports_id;
-    public $include_paretn_filters;
+    public $include_parent_filters;
     public $redirect_to;
     public $count_filters;
     public $path;
@@ -16,7 +16,7 @@ class filters_preivew
     {
         $this->reports_id = $report_id;
 
-        $this->include_paretn_filters = $include_paretn_filters;
+        $this->include_parent_filters = $include_paretn_filters;
 
         $this->redirect_to = 'report';
 
@@ -71,7 +71,7 @@ class filters_preivew
 
         $count += $filters['total'];
 
-        if ($this->include_paretn_filters) {
+        if ($this->include_parent_filters) {
             foreach (reports::get_parent_reports($this->reports_id) as $parent_reports_id) {
                 $filters_query = db_query(
                     "select count(*) as total from app_reports_filters rf, app_fields f  where rf.fields_id=f.id and rf.reports_id='" . db_input(
@@ -184,7 +184,7 @@ class filters_preivew
   			</li>
         ';
 
-        if ($this->include_paretn_filters) {
+        if ($this->include_parent_filters) {
             foreach (reports::get_parent_reports($this->reports_id) as $parent_reports_id) {
                 $report_info = db_find('app_reports', $parent_reports_id);
 
@@ -294,7 +294,7 @@ class filters_preivew
 
         $html .= $this->render_filters_by_report($this->reports_id);
 
-        if ($this->include_paretn_filters) {
+        if ($this->include_parent_filters) {
             foreach (reports::get_parent_reports($this->reports_id) as $parent_reports_id) {
                 $html .= $this->render_filters_by_report($parent_reports_id, true);
             }

@@ -11,7 +11,7 @@ if ($check == 0) {
     echo '<h3 class="page-title">' . $pivot_tables['name'] . '</h3>';
 
     if ($pivot_tables['filters_panel'] == 'default') {
-        $filters_preivew = new filters_preivew($fiters_reports_id);
+        $filters_preivew = new filters_preview($fiters_reports_id);
         $filters_preivew->redirect_to = 'pivot_table' . $pivot_tables['id'];
         $filters_preivew->has_listing_configuration = false;
 

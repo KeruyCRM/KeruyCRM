@@ -31,7 +31,7 @@ echo '
 
     $include_paretn_filters = (isset($_GET['path']) ? false : true);
 
-    $filters_preivew = new filters_preivew($fiters_reports_id, $include_paretn_filters);
+    $filters_preivew = new filters_preview($fiters_reports_id, $include_paretn_filters);
     $filters_preivew->redirect_to = 'ganttreport' . $reports['id'];
     $filters_preivew->has_listing_configuration = false;
 

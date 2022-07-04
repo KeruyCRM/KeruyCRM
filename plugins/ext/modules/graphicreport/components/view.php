@@ -290,13 +290,13 @@ foreach ($yaxis as $id => $data) {
 //include filters
 
 if ($app_module_path == 'ext/graphicreport/view') {
-    $filters_preivew = new filters_preivew($fiters_reports_id);
+    $filters_preivew = new filters_preview($fiters_reports_id);
     $filters_preivew->redirect_to = 'graphicreport' . $reports['id'];
     $filters_preivew->has_listing_configuration = false;
 
     if (isset($_GET['path'])) {
         $filters_preivew->path = $_GET['path'];
-        $filters_preivew->include_paretn_filters = false;
+        $filters_preivew->include_parent_filters = false;
     }
 
     echo $filters_preivew->render();

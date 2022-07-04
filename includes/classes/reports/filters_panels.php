@@ -1075,7 +1075,7 @@ class filters_panels
 
         if ($panels = db_fetch_array($panels_query) or $common_filters = db_fetch_array(
                 $common_filters_query
-            ) or filters_preivew::has_default_panel_access($entity_cfg)) {
+            ) or filters_preview::has_default_panel_access($entity_cfg)) {
             return true;
         } else {
             return false;

@@ -33,8 +33,8 @@ if ($reports_info['reports_type'] == 'entity_menu') {
 
 if ($reports_info['reports_type'] != 'common') {
     if ($reports_info['reports_type'] == 'entity_menu') {
-        if (filters_preivew::has_default_panel_access($entity_cfg)) {
-            $filters_preivew = new filters_preivew($reports_info['id']);
+        if (filters_preview::has_default_panel_access($entity_cfg)) {
+            $filters_preivew = new filters_preview($reports_info['id']);
 
             if (!in_array($app_user['group_id'], explode(',', $entity_cfg->get('listing_config_access'))) and strlen(
                     $entity_cfg->get('listing_config_access')
@@ -48,7 +48,7 @@ if ($reports_info['reports_type'] != 'common') {
         $filters_panels = new filters_panels($reports_info['entities_id'], $reports_info['id'], $listing_container);
         echo $filters_panels->render_horizontal();
     } else {
-        $filters_preivew = new filters_preivew($reports_info['id']);
+        $filters_preivew = new filters_preview($reports_info['id']);
         echo $filters_preivew->render();
     }
 }
@@ -182,7 +182,7 @@ if ($reports_info['reports_type'] != 'common') {
             echo render_listing_search_form($reports_info["entities_id"], $listing_container, $reports_info['id']) ?>
 
             <?php
-            if (!filters_preivew::has_default_panel_access(
+            if (!filters_preview::has_default_panel_access(
                     $entity_cfg
                 ) and $reports_info['reports_type'] == 'entity_menu' and (in_array(
                         $app_user['group_id'],

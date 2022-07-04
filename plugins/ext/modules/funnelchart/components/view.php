@@ -39,12 +39,12 @@ if (!isset($funnelchart_type[$reports['id']])) {
 //start display report
 
 if ($app_module_path == 'ext/funnelchart/view') {
-    $filters_preivew = new filters_preivew($fiters_reports_id);
+    $filters_preivew = new filters_preview($fiters_reports_id);
     $filters_preivew->redirect_to = 'funnelchart' . $reports['id'];
 
     if (isset($_GET['path'])) {
         $filters_preivew->path = $_GET['path'];
-        $filters_preivew->include_paretn_filters = false;
+        $filters_preivew->include_parent_filters = false;
     }
 
     echo $filters_preivew->render();

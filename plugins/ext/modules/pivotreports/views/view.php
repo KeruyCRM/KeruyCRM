@@ -29,7 +29,7 @@ if ($check == 0) {
 
     //print_rr($pivotreports);
 
-    $filters_preivew = new filters_preivew($fiters_reports_id);
+    $filters_preivew = new filters_preview($fiters_reports_id);
     $filters_preivew->redirect_to = 'pivotreports' . $_GET['id'];
     $filters_preivew->has_listing_configuration = false;
 

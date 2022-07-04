@@ -16,8 +16,8 @@ echo input_hidden_tag('entity_items_listing_path', $_GET['path']);
 ?>
 
 <?php
-if (filters_preivew::has_default_panel_access($entity_cfg)) {
-    $filters_preivew = new filters_preivew($reports_info['id'], false);
+if (filters_preview::has_default_panel_access($entity_cfg)) {
+    $filters_preivew = new filters_preview($reports_info['id'], false);
     $filters_preivew->path = $current_path;
     $filters_preivew->redirect_to = 'listing';
 
@@ -169,7 +169,7 @@ $listing_switches = (isset($force_filters_reports_id) ? '' : listing_types::rend
             echo render_listing_search_form($entity_info['id'], $listing_container, $reports_info['id']) ?>
 
             <?php
-            if (!filters_preivew::has_default_panel_access(
+            if (!filters_preview::has_default_panel_access(
                     $entity_cfg
                 ) and !isset($force_filters_reports_id) and (in_array(
                         $app_user['group_id'],

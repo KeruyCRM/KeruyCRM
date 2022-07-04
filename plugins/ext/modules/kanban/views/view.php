@@ -42,7 +42,7 @@ if (users::has_access(
 }
 
 
-$filters_preivew = new filters_preivew($fiters_reports_id);
+$filters_preivew = new filters_preview($fiters_reports_id);
 $filters_preivew->redirect_to = 'kanban' . $_GET['id'];
 $filters_preivew->has_listing_configuration = true;
 $filters_preivew->has_listing_configuration_fields = false;
@@ -50,7 +50,7 @@ $filters_preivew->has_listing_configuration_fields = false;
 
 if (isset($_GET['path'])) {
     $filters_preivew->path = $_GET['path'];
-    $filters_preivew->include_paretn_filters = false;
+    $filters_preivew->include_parent_filters = false;
 }
 
 echo $filters_preivew->render();
