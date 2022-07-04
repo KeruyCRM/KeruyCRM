@@ -52,7 +52,7 @@ class filters_panels
         $this->custom_panel_css = '.' . $type;
     }
 
-    function set_items_listing_funciton_name($name)
+    function set_items_listing_function_name($name)
     {
         $this->load_items_listing_funciton_name = $name;
     }

@@ -163,10 +163,10 @@ class hot_reports
         $html = '';
         $report_info_query = db_query("select * from app_reports where id='" . db_input($id) . "'");
         if ($report_info = db_fetch_array($report_info_query)) {
-            $cahce_filename = 'user-' . $app_user['id'] . '-report-' . $report_info['id'];
+            $cache_filename = 'user-' . $app_user['id'] . '-report-' . $report_info['id'];
             $cache_lifetime = (($report_info['in_header'] and $report_info['in_header_autoupdate']) ? 60 : CFG_CACHE_REPORTS_IN_HEADER_LIFETIME);
 
-            if (!app_read_cache($html, $cahce_filename, $cache_lifetime, CFG_USE_CACHE_REPORTS_IN_HEADER)) {
+            if (!app_read_cache($html, $cache_filename, $cache_lifetime, CFG_USE_CACHE_REPORTS_IN_HEADER)) {
                 $entity_cfg = entities::get_cfg($report_info['entities_id']);
 
                 $items_info = $this->get_items($report_info);
@@ -232,7 +232,7 @@ class hot_reports
 					</ul>            
 	      ';
 
-                app_write_cache($html, $cahce_filename, CFG_USE_CACHE_REPORTS_IN_HEADER);
+                app_write_cache($html, $cache_filename, CFG_USE_CACHE_REPORTS_IN_HEADER);
             }
         }
 

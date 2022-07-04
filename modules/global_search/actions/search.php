@@ -90,7 +90,7 @@ switch ($app_module_action) {
                         ];
 
 
-                        $where_sql = reports::add_search_qeury($field, $entities['entities_id'], $where_sql);
+                        $where_sql = reports::add_search_query($field, $entities['entities_id'], $where_sql);
                     }
                 }
 

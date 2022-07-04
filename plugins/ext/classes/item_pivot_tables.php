@@ -187,7 +187,7 @@ class item_pivot_tables
                         0
                     );
                     $filters_panels->set_type($type);
-                    $filters_panels->set_items_listing_funciton_name('load_item_pivot_tables');
+                    $filters_panels->set_items_listing_function_name('load_item_pivot_tables');
                     $filters_panels_html .= '<div class="' . $type . '">' . $filters_panels->render_horizontal(
                         ) . '</div>';
 

@@ -111,7 +111,7 @@ class reports
 
         //check if parent reports was not set
         if ($reports_info['parent_id'] == 0 and $reports_type != 'entity') {
-            reports::auto_create_parent_reports($reports_info['id']);
+            self::auto_create_parent_reports($reports_info['id']);
 
             $reports_info = db_find('app_reports', $reports_info['id']);
         }
@@ -160,7 +160,7 @@ class reports
                 "id='" . db_input($reports_id) . "' and created_by='" . $app_logged_users_id . "'"
             );
 
-            reports::auto_create_parent_reports($insert_id);
+            self::auto_create_parent_reports($insert_id);
         }
     }
 
@@ -289,7 +289,7 @@ class reports
                         $filters['type'],
                         ['fieldtype_tags']
                     )) {
-                    $sql_query = self::add_search_qeury($filters, $reports_info['entities_id'], $sql_query);
+                    $sql_query = self::add_search_query($filters, $reports_info['entities_id'], $sql_query);
                 } elseif (strlen($filters['filters_values']) > 0) {
                     $sql_query = fields_types::reports_query(
                         [
@@ -363,7 +363,7 @@ class reports
         return $listing_sql_query;
     }
 
-    public static function add_search_qeury($field, $current_entity_id, $main_sql_query)
+    public static function add_search_query($field, $current_entity_id, $main_sql_query)
     {
         global $search_keywords, $sql_query_having;
 
@@ -1424,7 +1424,7 @@ class reports
             db_perform('app_reports', $sql_data);
             $insert_id = db_insert_id();
 
-            reports::auto_create_parent_reports($insert_id);
+            self::auto_create_parent_reports($insert_id);
 
             return $insert_id;
         } else {

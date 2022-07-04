@@ -207,7 +207,7 @@ class api
                                         'filters_values' => $filters['filters_values'],
                                         'filters_condition' => 'include'
                                     ];
-                                    $sql_query = reports::add_search_qeury(
+                                    $sql_query = reports::add_search_query(
                                         $obj,
                                         $field_info['entities_id'],
                                         $sql_query

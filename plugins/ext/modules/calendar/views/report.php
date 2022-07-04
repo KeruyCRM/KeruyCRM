@@ -33,7 +33,7 @@ if ($reports['filters_panel'] == 'default') {
     $type = 'calendar_report_' . $reports['id'];
     $filters_panels = new filters_panels($reports['entities_id'], $fiters_reports_id, '', 0);
     $filters_panels->set_type($type);
-    $filters_panels->set_items_listing_funciton_name('refetch_calendar_events');
+    $filters_panels->set_items_listing_function_name('refetch_calendar_events');
     echo '
         <div class="' . $type . '">' . $filters_panels->render_horizontal() . '</div>
         <script>
