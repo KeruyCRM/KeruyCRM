@@ -12,7 +12,7 @@ class Filters_preview
     public $path;
     public $has_listing_configuration;
     public $has_listing_configuration_fields;
-    public $filters_panels_fields;
+    //public $filters_panels_fields;
 
     function __construct($report_id, $include_parent_filters = true)
     {

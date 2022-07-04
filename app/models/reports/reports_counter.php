@@ -11,7 +11,7 @@ class Reports_counter
 
     function __construct()
     {
-        global $app_path;
+        //global $app_path;
 
         $this->reports_query = false;
         $this->title = false;
@@ -20,12 +20,12 @@ class Reports_counter
 
         $this->common_filter_reports_id = false;
 
-        $this->redirect_to = (strlen($app_path) > 0 ? 'listing' : 'report');
+        $this->redirect_to = (strlen(\K::$fw->app_path) > 0 ? 'listing' : 'report');
     }
 
     function render()
     {
-        global $app_path, $app_current_users_filter, $app_module_path;
+        //global $app_path, $app_current_users_filter, $app_module_path;
 
         $html = '';
 
@@ -65,8 +65,8 @@ class Reports_counter
                 $click_url = url_for(
                     'reports/common_filters',
                     'action=use&redirect_to=' . $this->redirect_to . '&reports_id=' . $this->common_filter_reports_id . '&use_filters=' . $reports['id'] . (strlen(
-                        $app_path
-                    ) ? '&path=' . $app_path : '')
+                        \K::$fw->app_path
+                    ) ? '&path=' . \K::$fw->app_path : '')
                 );
             } else {
                 $click_url = url_for('reports/view', 'reports_id=' . $reports['id']);
@@ -74,11 +74,11 @@ class Reports_counter
 
             $is_selected = false;
 
-            if (isset($app_current_users_filter[$this->common_filter_reports_id]) and in_array(
-                    $app_module_path,
+            if (isset(\K::$fw->app_current_users_filter[$this->common_filter_reports_id]) and in_array(
+                    \K::$fw->app_module_path,
                     ['items/items', 'reports/view']
                 )) {
-                $is_selected = ($app_current_users_filter[$this->common_filter_reports_id] == $reports['name'] ? true : false);
+                $is_selected = (\K::$fw->app_current_users_filter[$this->common_filter_reports_id] == $reports['name'] ? true : false);
             }
 
             //Hide counter if there are no records
@@ -140,7 +140,7 @@ class Reports_counter
         }
 
         if (strlen($html)) {
-            $html = ($this->title != '' ? '<h3 class="page-title">' . (!$this->title ? TEXT_STATISTICS : $this->title) . '</h3>' : '') .
+            $html = ($this->title != '' ? '<h3 class="page-title">' . (!$this->title ? \K::$fw->TEXT_STATISTICS : $this->title) . '</h3>' : '') .
                 '<div class="row stats-overview-cont">
                         <div class="col-md-12">
                             <div class="row">
@@ -171,7 +171,7 @@ class Reports_counter
         $listing_sql_query = '';
         $listing_sql_query_join = '';
         $listing_sql_query_having = '';
-        $sql_query_having = [];
+        $sql_query_having = [];//TODO WTF
 
         //prepare formulas query
         $listing_sql_query_select = fieldtype_formula::prepare_query_select(
@@ -282,21 +282,21 @@ class Reports_counter
     //build counter reports query with common reports
     function reports_query()
     {
-        global $app_logged_users_id, $app_user, $app_users_cfg;
+        //global $app_logged_users_id, $app_user, $app_users_cfg;
 
         $where_sql = '';
 
         //check hidden common reports
-        if (strlen($app_users_cfg->get('hidden_common_reports')) > 0) {
-            $where_sql = " and r.id not in (" . $app_users_cfg->get('hidden_common_reports') . ")";
+        if (strlen(\K::$fw->app_users_cfg->get('hidden_common_reports')) > 0) {
+            $where_sql = " and r.id not in (" . \K::$fw->app_users_cfg->get('hidden_common_reports') . ")";
         }
 
         //get common reports list
         $common_reports_list = [];
         $reports_query = db_query(
             "select r.* from app_reports r, app_entities e, app_entities_access ea  where r.entities_id = e.id and e.id=ea.entities_id and length(ea.access_schema)>0 and ea.access_groups_id='" . db_input(
-                $app_user['group_id']
-            ) . "' and (find_in_set(" . $app_user['group_id'] . ",r.users_groups) or find_in_set(" . $app_user['id'] . ",r.assigned_to)) and r.in_dashboard_counter=1 and r.reports_type = 'common' " . $where_sql . " order by r.dashboard_sort_order, r.name"
+                \K::$fw->app_user['group_id']
+            ) . "' and (find_in_set(" . \K::$fw->app_user['group_id'] . ",r.users_groups) or find_in_set(" . \K::$fw->app_user['id'] . ",r.assigned_to)) and r.in_dashboard_counter=1 and r.reports_type = 'common' " . $where_sql . " order by r.dashboard_sort_order, r.name"
         );
         while ($reports = db_fetch_array($reports_query)) {
             $common_reports_list[] = $reports['id'];
@@ -304,7 +304,7 @@ class Reports_counter
 
         //create reports query inclue common reports
         $reports_query = "select r.*,e.name as entities_name,e.parent_id as entities_parent_id from app_reports r, app_entities e where e.id=r.entities_id and ((r.created_by='" . db_input(
-                $app_logged_users_id
+                \K::$fw->app_logged_users_id
             ) . "' and r.reports_type='standard' and  r.in_dashboard_counter=1)  " . (count(
                 $common_reports_list
             ) > 0 ? " or r.id in(" . implode(

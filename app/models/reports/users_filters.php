@@ -1,5 +1,7 @@
 <?php
+
 namespace Models\Reports;
+
 class Users_filters
 {
     public $reports_id;
@@ -11,12 +13,12 @@ class Users_filters
 
     function count()
     {
-        global $app_user;
+        //global $app_user;
 
         $count_query = db_query(
             "select count(*) as total from app_users_filters where reports_id='" . db_input(
                 $this->reports_id
-            ) . "' and users_id='" . db_input($app_user['id']) . "'"
+            ) . "' and users_id='" . db_input(\K::$fw->app_user['id']) . "'"
         );
         $count = db_fetch_array($count_query);
 
@@ -25,7 +27,7 @@ class Users_filters
 
     function get_choices($add_empty = false)
     {
-        global $app_user;
+        //global $app_user;
 
         $choices = [];
 
@@ -36,7 +38,7 @@ class Users_filters
         $filters_query = db_query(
             "select * from app_users_filters where reports_id='" . db_input(
                 $this->reports_id
-            ) . "' and users_id='" . db_input($app_user['id']) . "' order by name"
+            ) . "' and users_id='" . db_input(\K::$fw->app_user['id']) . "' order by name"
         );
         while ($filters = db_fetch_array($filters_query)) {
             $choices[$filters['id']] = $filters['name'];
@@ -58,7 +60,7 @@ class Users_filters
 
     function set_reports_filters($filters_id, $reports_id)
     {
-        global $app_user;
+        //global $app_user;
 
         $reports_filters_query = db_query(
             "select rf.*, f.name, f.type from app_reports_filters rf, app_fields f  where rf.fields_id=f.id and rf.reports_id='" . db_input(
@@ -80,11 +82,11 @@ class Users_filters
 
     function set_current_users_filter($filters_id)
     {
-        global $app_current_users_filter;
+        //global $app_current_users_filter;
 
         $users_filters = db_find('app_users_filters', $filters_id);
 
-        $app_current_users_filter[$this->reports_id] = $users_filters['name'];
+        \K::$fw->app_current_users_filter[$this->reports_id] = $users_filters['name'];
     }
 
     function use_filters($filters_id)

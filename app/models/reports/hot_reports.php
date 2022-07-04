@@ -15,17 +15,17 @@ class Hot_reports
     //render reports header navitagion menu
     function render()
     {
-        global $app_user;
+        //global $app_user;
 
         $html = '';
 
         $reports_query = db_query($this->reports_query());
         while ($reports = db_fetch_array($reports_query)) {
             $html_cache = '';
-            $cache_filename = 'user-' . $app_user['id'] . '-report-' . $reports['id'];
-            $cache_lifetime = (($reports['in_header'] and $reports['in_header_autoupdate']) ? 60 : CFG_CACHE_REPORTS_IN_HEADER_LIFETIME);
+            $cache_filename = 'user-' . \K::$fw->app_user['id'] . '-report-' . $reports['id'];
+            $cache_lifetime = (($reports['in_header'] and $reports['in_header_autoupdate']) ? 60 : \K::$fw->CFG_CACHE_REPORTS_IN_HEADER_LIFETIME);
 
-            app_read_cache($html_cache, $cache_filename, $cache_lifetime, CFG_USE_CACHE_REPORTS_IN_HEADER);
+            app_read_cache($html_cache, $cache_filename, $cache_lifetime, \K::$fw->CFG_USE_CACHE_REPORTS_IN_HEADER);
 
             //set off $this->render_dropdown($reports['id']) to speed up
             $html .= '
@@ -74,7 +74,7 @@ class Hot_reports
         $listing_sql_query = '';
         $listing_sql_query_join = '';
         $listing_sql_query_having = '';
-        $sql_query_having = [];
+        $sql_query_having = [];//TODO WTF?
 
         //prepare formulas query
         $listing_sql_query_select = fieldtype_formula::prepare_query_select(
@@ -158,15 +158,15 @@ class Hot_reports
     //render reports nav menu dropdown
     function render_dropdown($id)
     {
-        global $app_user;
+        //global $app_user;
 
         $html = '';
         $report_info_query = db_query("select * from app_reports where id='" . db_input($id) . "'");
         if ($report_info = db_fetch_array($report_info_query)) {
-            $cahce_filename = 'user-' . $app_user['id'] . '-report-' . $report_info['id'];
-            $cache_lifetime = (($report_info['in_header'] and $report_info['in_header_autoupdate']) ? 60 : CFG_CACHE_REPORTS_IN_HEADER_LIFETIME);
+            $cache_filename = 'user-' . \K::$fw->app_user['id'] . '-report-' . $report_info['id'];
+            $cache_lifetime = (($report_info['in_header'] and $report_info['in_header_autoupdate']) ? 60 : \K::$fw->CFG_CACHE_REPORTS_IN_HEADER_LIFETIME);
 
-            if (!app_read_cache($html, $cahce_filename, $cache_lifetime, CFG_USE_CACHE_REPORTS_IN_HEADER)) {
+            if (!app_read_cache($html, $cache_filename, $cache_lifetime, \K::$fw->CFG_USE_CACHE_REPORTS_IN_HEADER)) {
                 $entity_cfg = entities::get_cfg($report_info['entities_id']);
 
                 $items_info = $this->get_items($report_info);
@@ -183,7 +183,7 @@ class Hot_reports
                 if ($items_info['items_count'] == 0) {
                     $items_html .= '
 	          <li>
-	  					<a onClick="return false;">' . TEXT_NO_RECORDS_FOUND . '</a>
+	  					<a onClick="return false;">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</a>
 	  				</li>
 	        ';
                 }
@@ -193,7 +193,7 @@ class Hot_reports
                     $external_html = '
 	          <li class="external">
 							<a href="' . url_for('reports/view', 'reports_id=' . $report_info['id']) . '">' . sprintf(
-                            TEXT_DISPLAY_NUMBER_OF_ITEMS_OPEN_REPORT,
+                            \K::$fw->TEXT_DISPLAY_NUMBER_OF_ITEMS_OPEN_REPORT,
                             count($items_info['items_array'])
                         ) . '</a>
 						</li>
@@ -232,7 +232,7 @@ class Hot_reports
 					</ul>            
 	      ';
 
-                app_write_cache($html, $cahce_filename, CFG_USE_CACHE_REPORTS_IN_HEADER);
+                app_write_cache($html, $cache_filename, \K::$fw->CFG_USE_CACHE_REPORTS_IN_HEADER);
             }
         }
 
@@ -242,21 +242,21 @@ class Hot_reports
     //build hot reports query with common reports
     function reports_query()
     {
-        global $app_logged_users_id, $app_user, $app_users_cfg;
+        //global $app_logged_users_id, $app_user, $app_users_cfg;
 
         $where_sql = '';
 
         //check hidden common reports
-        if (strlen($app_users_cfg->get('hidden_common_reports')) > 0) {
-            $where_sql = " and r.id not in (" . $app_users_cfg->get('hidden_common_reports') . ")";
+        if (strlen(\K::$fw->app_users_cfg->get('hidden_common_reports')) > 0) {
+            $where_sql = " and r.id not in (" . \K::$fw->app_users_cfg->get('hidden_common_reports') . ")";
         }
 
         //get common reports list
         $common_reports_list = [];
         $reports_query = db_query(
             "select r.* from app_reports r, app_entities e, app_entities_access ea  where r.entities_id = e.id and e.id=ea.entities_id and length(ea.access_schema)>0 and ea.access_groups_id='" . db_input(
-                $app_user['group_id']
-            ) . "' and (find_in_set(" . $app_user['group_id'] . ",r.users_groups) or find_in_set(" . $app_user['id'] . ",r.assigned_to)) and r.in_header=1 and r.reports_type = 'common' " . $where_sql . " order by r.dashboard_sort_order, r.name"
+                \K::$fw->app_user['group_id']
+            ) . "' and (find_in_set(" . \K::$fw->app_user['group_id'] . ",r.users_groups) or find_in_set(" . \K::$fw->app_user['id'] . ",r.assigned_to)) and r.in_header=1 and r.reports_type = 'common' " . $where_sql . " order by r.dashboard_sort_order, r.name"
         );
         while ($reports = db_fetch_array($reports_query)) {
             $common_reports_list[] = $reports['id'];
@@ -264,7 +264,7 @@ class Hot_reports
 
         //create reports query inclue common reports
         $reports_query = "select r.*,e.name as entities_name,e.parent_id as entities_parent_id from app_reports r, app_entities e where e.id=r.entities_id and ((r.created_by='" . db_input(
-                $app_logged_users_id
+                \K::$fw->app_logged_users_id
             ) . "' and r.reports_type='standard' and  r.in_header=1)  " . (count(
                 $common_reports_list
             ) > 0 ? " or r.id in(" . implode(

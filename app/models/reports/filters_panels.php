@@ -4,12 +4,11 @@ namespace Models\Reports;
 
 class Filters_panels
 {
-
     public $entities_id, $reports_id, $listing_container, $vertical_width, $fields_access_schema, $parent_entity_item_id;
 
     function __construct($entities_id, $reports_id, $listing_container, $parent_entity_item_id = false)
     {
-        global $app_user;
+        //global $app_user;
 
         $this->entities_id = $entities_id;
         $this->reports_id = $reports_id;
@@ -18,7 +17,10 @@ class Filters_panels
 
         $this->vertical_width = $this->get_vertical_width();
 
-        $this->fields_access_schema = users::get_fields_access_schema($entities_id, $app_user['group_id']);
+        $this->fields_access_schema = \Models\Users\Users::get_fields_access_schema(
+            $entities_id,
+            \K::$fw->app_user['group_id']
+        );
 
         $this->type = '';
         $this->load_items_listing_funciton_name = 'load_items_listing';
@@ -28,14 +30,14 @@ class Filters_panels
 
     static function get_fields_list($entities_id)
     {
-        global $app_user;
+        //global $app_user;
 
         $list = [];
 
         $panels_query = db_query(
-            "select * from app_filters_panels where length(type)=0 and (length(users_groups)=0 or find_in_set(" . $app_user['group_id'] . ",users_groups)) and is_active=1 and entities_id='" . $entities_id . "' order by sort_order"
+            "select * from app_filters_panels where length(type)=0 and (length(users_groups)=0 or find_in_set(" . \K::$fw->app_user['group_id'] . ",users_groups)) and is_active=1 and entities_id='" . $entities_id . "' order by sort_order"
         );
-        $count_panels = db_num_rows($panels_query);
+        //$count_panels = db_num_rows($panels_query);
         while ($panels = db_fetch_array($panels_query)) {
             $fields_query = db_query(
                 "select * from app_filters_panels_fields where panels_id='" . $panels['id'] . "' order by sort_order"
@@ -54,21 +56,21 @@ class Filters_panels
         $this->custom_panel_css = '.' . $type;
     }
 
-    function set_items_listing_funciton_name($name)
+    function set_items_listing_function_name($name)
     {
         $this->load_items_listing_funciton_name = $name;
     }
 
     function render_horizontal()
     {
-        global $app_user, $app_module_path;
+        //global $app_user, $app_module_path;
 
         $html = '<div class="filters-panels horizontal-filters-panels">';
 
         $panels_query = db_query(
-            "select f.* from app_filters_panels f where (select count(*) from app_filters_panels_fields fp where fp.panels_id=f.id)>0 and f.position='horizontal' and f.type='" . $this->type . "' and (length(f.users_groups)=0 or find_in_set(" . $app_user['group_id'] . ",f.users_groups)) and f.is_active=1 and f.entities_id='" . $this->entities_id . "' order by f.sort_order"
+            "select f.* from app_filters_panels f where (select count(*) from app_filters_panels_fields fp where fp.panels_id=f.id)>0 and f.position='horizontal' and f.type='" . $this->type . "' and (length(f.users_groups)=0 or find_in_set(" . \K::$fw->app_user['group_id'] . ",f.users_groups)) and f.is_active=1 and f.entities_id='" . $this->entities_id . "' order by f.sort_order"
         );
-        $count_panels = db_num_rows($panels_query);
+        //$count_panels = db_num_rows($panels_query);
         while ($panels = db_fetch_array($panels_query)) {
             $html .= '<ul class="list-inline filters-panels-' . $panels['id'] . '">';
 
@@ -84,7 +86,7 @@ class Filters_panels
                 }
 
                 //skip filter by parent in main listing
-                if ($app_module_path == 'items/items' and $fields['type'] == 'fieldtype_parent_item_id') {
+                if (\K::$fw->app_module_path == 'items/items' and $fields['type'] == 'fieldtype_parent_item_id') {
                     continue;
                 }
 
@@ -92,11 +94,11 @@ class Filters_panels
             }
 
             if ($panels['is_active_filters'] == 0) {
-                $html .= '<li><br><a href="javascript: apply_panel_filters(' . $panels['id'] . ')" class="btn btn-info" title="' . TEXT_SEARCH . '"><i class="fa fa-search" aria-hidden="true"></i> ' . TEXT_SEARCH . '</a></li>';
+                $html .= '<li><br><a href="javascript: apply_panel_filters(' . $panels['id'] . ')" class="btn btn-info" title="' . \K::$fw->TEXT_SEARCH . '"><i class="fa fa-search" aria-hidden="true"></i> ' . \K::$fw->TEXT_SEARCH . '</a></li>';
             }
 
-            $html .= '<li class="hidden-in-mobile"><br><a href="javascript: reset_panel_filters' . $this->custom_panel_id . '(' . $panels['id'] . ')" class="btn btn-default" title="' . TEXT_RESET_FILTERS . '"><i class="fa fa-refresh" aria-hidden="true"></i></a></li>';
-            $html .= '<li class="display-in-mobile"><a href="javascript: reset_panel_filters' . $this->custom_panel_id . '(' . $panels['id'] . ')" class="btn btn-default btn-reset-filters" >' . TEXT_RESET_FILTERS . ' <i class="fa fa-refresh" aria-hidden="true"></i></a></li>';
+            $html .= '<li class="hidden-in-mobile"><br><a href="javascript: reset_panel_filters' . $this->custom_panel_id . '(' . $panels['id'] . ')" class="btn btn-default" title="' . \K::$fw->TEXT_RESET_FILTERS . '"><i class="fa fa-refresh" aria-hidden="true"></i></a></li>';
+            $html .= '<li class="display-in-mobile"><a href="javascript: reset_panel_filters' . $this->custom_panel_id . '(' . $panels['id'] . ')" class="btn btn-default btn-reset-filters" >' . \K::$fw->TEXT_RESET_FILTERS . ' <i class="fa fa-refresh" aria-hidden="true"></i></a></li>';
 
             $html .= '</ul>';
         }
@@ -110,10 +112,10 @@ class Filters_panels
 
     function get_vertical_width()
     {
-        global $app_user;
+        //global $app_user;
 
         $panels_query = db_query(
-            "select max(width) as max_width from app_filters_panels where position='vertical' and (length(users_groups)=0 or find_in_set(" . $app_user['group_id'] . ",users_groups)) and is_active=1 and entities_id='" . $this->entities_id . "' order by sort_order"
+            "select max(width) as max_width from app_filters_panels where position='vertical' and (length(users_groups)=0 or find_in_set(" . \K::$fw->app_user['group_id'] . ",users_groups)) and is_active=1 and entities_id='" . $this->entities_id . "' order by sort_order"
         );
         $panels = db_fetch_array($panels_query);
 
@@ -122,7 +124,7 @@ class Filters_panels
 
     function render_vertical()
     {
-        global $app_user, $app_module_path;
+        //global $app_user, $app_module_path;
 
         if ($this->vertical_width == 0) {
             return '';
@@ -133,7 +135,7 @@ class Filters_panels
 				';
 
         $panels_query = db_query(
-            "select * from app_filters_panels where position='vertical' and (length(users_groups)=0 or find_in_set(" . $app_user['group_id'] . ",users_groups)) and is_active=1 and entities_id='" . $this->entities_id . "' order by sort_order"
+            "select * from app_filters_panels where position='vertical' and (length(users_groups)=0 or find_in_set(" . \K::$fw->app_user['group_id'] . ",users_groups)) and is_active=1 and entities_id='" . $this->entities_id . "' order by sort_order"
         );
         while ($panels = db_fetch_array($panels_query)) {
             $html .= '
@@ -152,7 +154,7 @@ class Filters_panels
                 }
 
                 //skip filter by parent in main listing
-                if ($app_module_path == 'items/items' and $fields['type'] == 'fieldtype_parent_item_id') {
+                if (\K::$fw->app_module_path == 'items/items' and $fields['type'] == 'fieldtype_parent_item_id') {
                     continue;
                 }
 
@@ -161,8 +163,8 @@ class Filters_panels
 
             $html .= '
 						<div class="buttons">
-							' . ($panels['is_active_filters'] == 0 ? '<a href="javascript: apply_panel_filters(' . $panels['id'] . ')" class="btn btn-info" title="' . TEXT_SEARCH . '"><i class="fa fa-search" aria-hidden="true"></i> ' . TEXT_SEARCH . '</a>' : '') . '
-							<a href="javascript: reset_panel_filters(' . $panels['id'] . ')" class="btn btn-default" title="' . TEXT_RESET_FILTERS . '"><i class="fa fa-refresh" aria-hidden="true"></i> ' . TEXT_RESET . '</a>
+							' . ($panels['is_active_filters'] == 0 ? '<a href="javascript: apply_panel_filters(' . $panels['id'] . ')" class="btn btn-info" title="' . \K::$fw->TEXT_SEARCH . '"><i class="fa fa-search" aria-hidden="true"></i> ' . \K::$fw->TEXT_SEARCH . '</a>' : '') . '
+							<a href="javascript: reset_panel_filters(' . $panels['id'] . ')" class="btn btn-default" title="' . \K::$fw->TEXT_RESET_FILTERS . '"><i class="fa fa-refresh" aria-hidden="true"></i> ' . \K::$fw->TEXT_RESET . '</a>
 						</div>
 					</div>';
         }
@@ -175,7 +177,7 @@ class Filters_panels
 
     function render_fields($panel_field, $panel_info)
     {
-        global $app_module_path, $app_entities_cache;
+        //global $app_module_path, $app_entities_cache;
 
         $field_info_query = db_query("select * from app_fields where id='" . $panel_field['fields_id'] . "'");
         if (!$field_info = db_fetch_array($field_info_query)) {
@@ -188,7 +190,7 @@ class Filters_panels
         $reports_id = filters_panels::get_report_id_by_field_id($this->reports_id, $field_info['id']);
 
         //skip parent filters if parent item selected
-        if ($app_module_path == 'items/items' and $field_info['entities_id'] != $this->entities_id) {
+        if (\K::$fw->app_module_path == 'items/items' and $field_info['entities_id'] != $this->entities_id) {
             return '';
         }
 
@@ -211,7 +213,7 @@ class Filters_panels
 
         $html = '				
 				<div class="heading">
-					' . $field_name . ': <a href="javascript:delete_field_fielter_value' . $this->custom_panel_id . '(' . $field_info['id'] . ')" title="' . TEXT_RESET . '"><i class="fa fa-times" aria-hidden="true"></i></a>						
+					' . $field_name . ': <a href="javascript:delete_field_fielter_value' . $this->custom_panel_id . '(' . $field_info['id'] . ')" title="' . \K::$fw->TEXT_RESET . '"><i class="fa fa-times" aria-hidden="true"></i></a>						
 			    </div>';
 
         switch ($field_info['type']) {
@@ -252,7 +254,7 @@ class Filters_panels
                         [
                             'class' => 'form-control jalali-datepicker filters-panels-date-fields' . $panels_id_str . ' filters-panels-date-field-' . $field_info['id'],
                             'data-field-id' => $field_info['id'],
-                            'placeholder' => TEXT_DATE_FROM
+                            'placeholder' => \K::$fw->TEXT_DATE_FROM
                         ]
                     ) . '
                                         <span class="input-group-addon" style="width: 1px; padding:0;">									
@@ -263,7 +265,7 @@ class Filters_panels
                         [
                             'class' => 'form-control jalali-datepicker filters-panels-date-fields' . $panels_id_str . ' filters-panels-date-field-' . $field_info['id'],
                             'data-field-id' => $field_info['id'],
-                            'placeholder' => TEXT_DATE_TO
+                            'placeholder' => \K::$fw->TEXT_DATE_TO
                         ]
                     ) . '			
                                 </div>
@@ -293,7 +295,7 @@ class Filters_panels
                         [
                             'class' => 'form-control filters-panels-date-fields' . $panels_id_str . ' filters-panels-date-field-' . $field_info['id'],
                             'data-field-id' => $field_info['id'],
-                            'placeholder' => TEXT_DATE_FROM
+                            'placeholder' => \K::$fw->TEXT_DATE_FROM
                         ]
                     ) . '
 								<span class="input-group-addon" style="width: 1px; padding:0;">									
@@ -304,7 +306,7 @@ class Filters_panels
                         [
                             'class' => 'form-control filters-panels-date-fields' . $panels_id_str . ' filters-panels-date-field-' . $field_info['id'],
                             'data-field-id' => $field_info['id'],
-                            'placeholder' => TEXT_DATE_TO
+                            'placeholder' => \K::$fw->TEXT_DATE_TO
                         ]
                     ) . '			
 							</div>
@@ -398,7 +400,7 @@ class Filters_panels
                 break;
 
             case 'fieldtype_user_status':
-                $choices = ['1' => TEXT_ACTIVE, '0' => TEXT_INACTIVE];
+                $choices = ['1' => \K::$fw->TEXT_ACTIVE, '0' => \K::$fw->TEXT_INACTIVE];
                 break;
 
             case 'fieldtype_user_roles':
@@ -433,7 +435,7 @@ class Filters_panels
                 $choices = [];
 
                 if ($field_info['type'] == 'fieldtype_parent_item_id') {
-                    $field_entity_id = $app_entities_cache[$field_info['entities_id']]['parent_id'];
+                    $field_entity_id = \K::$fw->app_entities_cache[$field_info['entities_id']]['parent_id'];
                 } else {
                     $cfg = new settings($field_info['configuration']);
                     $field_entity_id = $cfg->get('entity_id');
@@ -477,13 +479,15 @@ class Filters_panels
                         $panel_field['width']
                     ) . ',		                      
                 "language":{
-                  "noResults" : function () { return "' . addslashes(TEXT_NO_RESULTS_FOUND) . '"; },
-                            "searching" : function () { return "' . addslashes(TEXT_SEARCHING) . '"; },
-                            "errorLoading" : function () { return "' . addslashes(TEXT_RESULTS_COULD_NOT_BE_LOADED) . '"; },
-                            "loadingMore" : function () { return "' . addslashes(TEXT_LOADING_MORE_RESULTS) . '"; }		    				
+                  "noResults" : function () { return "' . addslashes(\K::$fw->TEXT_NO_RESULTS_FOUND) . '"; },
+                            "searching" : function () { return "' . addslashes(\K::$fw->TEXT_SEARCHING) . '"; },
+                            "errorLoading" : function () { return "' . addslashes(
+                        \K::$fw->TEXT_RESULTS_COULD_NOT_BE_LOADED
+                    ) . '"; },
+                            "loadingMore" : function () { return "' . addslashes(\K::$fw->TEXT_LOADING_MORE_RESULTS) . '"; }		    				
                 },	
                 allowClear: true,
-                placeholder: \'' . addslashes(TEXT_SELECT_SOME_VALUES) . '\',
+                placeholder: \'' . addslashes(\K::$fw->TEXT_SELECT_SOME_VALUES) . '\',
                 ajax: {
                         url: "' . url_for(
                         'items/select2_entities_filter',
@@ -542,10 +546,10 @@ class Filters_panels
                 $choices[''] = '';
                 $choices['true'] = (strlen($cfg->get('text_boolean_true')) > 0 ? $cfg->get(
                     'text_boolean_true'
-                ) : TEXT_BOOLEAN_TRUE);
+                ) : \K::$fw->TEXT_BOOLEAN_TRUE);
                 $choices['false'] = (strlen($cfg->get('text_boolean_true')) > 0 ? $cfg->get(
                     'text_boolean_false'
-                ) : TEXT_BOOLEAN_FALSE);
+                ) : \K::$fw->TEXT_BOOLEAN_FALSE);
 
                 $panel_field['display_type'] = 'dropdown';
                 $panel_field['width'] = 'input-small';
@@ -1014,7 +1018,7 @@ class Filters_panels
 
     static function get_position_choices()
     {
-        return ['horizontal' => TEXT_HORIZONTAL, 'vertical' => TEXT_VERTICAL];
+        return ['horizontal' => \K::$fw->TEXT_HORIZONTAL, 'vertical' => \K::$fw->TEXT_VERTICAL];
     }
 
     static function get_position_name($type)
@@ -1027,10 +1031,10 @@ class Filters_panels
     static function get_field_width_choices()
     {
         return [
-            'input-small' => TEXT_INPUT_SMALL,
-            'input-medium' => TEXT_INPUT_MEDIUM,
-            'input-large' => TEXT_INPUT_LARGE,
-            'input-xlarge' => TEXT_INPUT_XLARGE
+            'input-small' => \K::$fw->TEXT_INPUT_SMALL,
+            'input-medium' => \K::$fw->TEXT_INPUT_MEDIUM,
+            'input-large' => \K::$fw->TEXT_INPUT_LARGE,
+            'input-xlarge' => \K::$fw->TEXT_INPUT_XLARGE
         ];
     }
 
@@ -1049,10 +1053,10 @@ class Filters_panels
     static function get_field_display_type_name($key)
     {
         $choices = [];
-        $choices['dropdown'] = TEXT_FIELDTYPE_DROPDOWN_TITLE;
-        $choices['dropdown_multiple'] = TEXT_FIELDTYPE_DROPDOWN_MULTIPLE_TITLE;
-        $choices['checkboxes'] = TEXT_FIELDTYPE_CHECKBOXES_TITLE;
-        $choices['radioboxes'] = TEXT_FIELDTYPE_RADIOBOXES_TITLE;
+        $choices['dropdown'] = \K::$fw->TEXT_FIELDTYPE_DROPDOWN_TITLE;
+        $choices['dropdown_multiple'] = \K::$fw->TEXT_FIELDTYPE_DROPDOWN_MULTIPLE_TITLE;
+        $choices['checkboxes'] = \K::$fw->TEXT_FIELDTYPE_CHECKBOXES_TITLE;
+        $choices['radioboxes'] = \K::$fw->TEXT_FIELDTYPE_RADIOBOXES_TITLE;
 
         return isset($choices[$key]) ? $choices[$key] : '';
     }
@@ -1126,7 +1130,7 @@ class Filters_panels
 
     static function exclude_values_not_in_listing_sql($panel_field_id, $reports_id)
     {
-        global $app_fields_cache, $sql_query_having;
+        //global $app_fields_cache, $sql_query_having;
 
         $sql = "";
 
@@ -1136,7 +1140,7 @@ class Filters_panels
         );
         if ($panel_field = db_fetch_array($panel_field_query)) {
             $current_entity_id = $panel_field['entities_id'];
-            $field = $app_fields_cache[$current_entity_id][$panel_field['fields_id']];
+            $field = \K::$fw->app_fields_cache[$current_entity_id][$panel_field['fields_id']];
 
             $cfg = new settings($field['configuration']);
             $field_entity_id = $cfg->get('entity_id');
@@ -1145,8 +1149,10 @@ class Filters_panels
 
             $formulas_sql = false;
 
-            if (isset($sql_query_having[$current_entity_id])) {
-                $listing_sql_query .= reports::prepare_filters_having_query($sql_query_having[$current_entity_id]);
+            if (isset(\K::$fw->sql_query_having[$current_entity_id])) {
+                $listing_sql_query .= reports::prepare_filters_having_query(
+                    \K::$fw->sql_query_having[$current_entity_id]
+                );
 
                 $formulas_sql = fieldtype_formula::prepare_query_select($current_entity_id, '');
             }

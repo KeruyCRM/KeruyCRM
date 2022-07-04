@@ -47,7 +47,7 @@ class Reports
 
     public static function create_default_entity_report($entity_id, $reports_type, $path_array = [])
     {
-        global $app_logged_users_id;
+        //global $app_logged_users_id;
 
         $where_str = '';
 
@@ -67,7 +67,7 @@ class Reports
         $reports_info_query = db_query(
             "select * from app_reports where entities_id='" . db_input(
                 $entity_id
-            ) . "' and reports_type='" . $reports_type . "' and created_by='" . $app_logged_users_id . "' " . $where_str
+            ) . "' and reports_type='" . $reports_type . "' and created_by='" . \K::$fw->app_logged_users_id . "' " . $where_str
         );
         if (!$reports_info = db_fetch_array($reports_info_query)) {
             $default_reports_query = db_query(
@@ -82,7 +82,7 @@ class Reports
                 'in_menu' => 0,
                 'in_dashboard' => 0,
                 'listing_order_fields' => (isset($default_reports['listing_order_fields']) ? $default_reports['listing_order_fields'] : ''),
-                'created_by' => $app_logged_users_id,
+                'created_by' => \K::$fw->app_logged_users_id,
                 'parent_entity_id' => $parent_entity_id,
                 'parent_item_id' => $parent_item_id,
             ];
@@ -114,7 +114,7 @@ class Reports
 
         //check if parent reports was not set
         if ($reports_info['parent_id'] == 0 and $reports_type != 'entity') {
-            reports::auto_create_parent_reports($reports_info['id']);
+            self::auto_create_parent_reports($reports_info['id']);
 
             $reports_info = db_find('app_reports', $reports_info['id']);
         }
@@ -137,7 +137,7 @@ class Reports
 
     public static function auto_create_parent_reports($reports_id)
     {
-        global $app_logged_users_id;
+        //global $app_logged_users_id;
 
         $report_info = db_find('app_reports', $reports_id);
         $entity_info = db_find('app_entities', $report_info['entities_id']);
@@ -149,7 +149,7 @@ class Reports
                 'reports_type' => 'parent',
                 'in_menu' => 0,
                 'in_dashboard' => 0,
-                'created_by' => $app_logged_users_id,
+                'created_by' => \K::$fw->app_logged_users_id,
             ];
 
             db_perform('app_reports', $sql_data);
@@ -160,10 +160,10 @@ class Reports
                 'app_reports',
                 ['parent_id' => $insert_id],
                 'update',
-                "id='" . db_input($reports_id) . "' and created_by='" . $app_logged_users_id . "'"
+                "id='" . db_input($reports_id) . "' and created_by='" . \K::$fw->app_logged_users_id . "'"
             );
 
-            reports::auto_create_parent_reports($insert_id);
+            self::auto_create_parent_reports($insert_id);
         }
     }
 
@@ -236,7 +236,7 @@ class Reports
         $is_parent_report = false,
         $exclude_fields = []
     ) {
-        global $sql_query_having, $app_entities_cache;
+        //global $sql_query_having, $app_entities_cache;
 
         $reports_info_query = db_query("select * from app_reports where id='" . db_input($reports_id) . "'");
         if ($reports_info = db_fetch_array($reports_info_query)) {
@@ -292,7 +292,7 @@ class Reports
                         $filters['type'],
                         ['fieldtype_tags']
                     )) {
-                    $sql_query = self::add_search_qeury($filters, $reports_info['entities_id'], $sql_query);
+                    $sql_query = self::add_search_query($filters, $reports_info['entities_id'], $sql_query);
                 } elseif (strlen($filters['filters_values']) > 0) {
                     $sql_query = fields_types::reports_query(
                         [
@@ -312,9 +312,9 @@ class Reports
             }
 
             //add having queries for paretn report only
-            if ($is_parent_report and isset($sql_query_having[$reports_info['entities_id']])) {
+            if ($is_parent_report and isset(\K::$fw->sql_query_having[$reports_info['entities_id']])) {
                 $listing_sql_query .= reports::prepare_filters_having_query(
-                    $sql_query_having[$reports_info['entities_id']]
+                    \K::$fw->sql_query_having[$reports_info['entities_id']]
                 );
             }
 
@@ -354,7 +354,7 @@ class Reports
                             ) . ' ' . reports::add_filters_query($reports_info['parent_id'], '') . ')';
                     }
                 }
-            } elseif ($app_entities_cache[$reports_info['entities_id']]['parent_id'] > 0 and in_array(
+            } elseif (\K::$fw->app_entities_cache[$reports_info['entities_id']]['parent_id'] > 0 and in_array(
                     $reports_info['reports_type'],
                     ['default', 'common']
                 )) //check access for report type 'default' where parent_id=0
@@ -366,17 +366,15 @@ class Reports
         return $listing_sql_query;
     }
 
-    public static function add_search_qeury($field, $current_entity_id, $main_sql_query)
+    public static function add_search_query($field, $current_entity_id, $main_sql_query)
     {
-        global $search_keywords, $sql_query_having;
+        //global $search_keywords, $sql_query_having;
 
         $filters_values = $field['filters_values'];
 
-        //print_rr($field);
-
         $sql_query = [];
 
-        if (app_parse_search_string($filters_values, $search_keywords)) {
+        if (app_parse_search_string($filters_values, \K::$fw->search_keywords)) {
             $sql_query = [];
 
             /**
@@ -385,8 +383,8 @@ class Reports
             {
                 //handle search by ID
                 if ($field['type'] == 'fieldtype_id') {
-                    if (is_numeric($search_keywords[0])) {
-                        $sql_query[] = "e.id='" . db_input($search_keywords[0]) . "'";
+                    if (is_numeric(\K::$fw->search_keywords[0])) {
+                        $sql_query[] = "e.id='" . db_input(\K::$fw->search_keywords[0]) . "'";
                     }
                 } //handle search by phone
                 elseif ($field['type'] == 'fieldtype_phone') {
@@ -411,12 +409,12 @@ class Reports
                                 'use_global_list'
                             ) . "' and name like '%" . str_replace(['and', 'or'],
                                 ' ',
-                                implode('', $search_keywords)) . "%'))>0";
+                                implode('', \K::$fw->search_keywords)) . "%'))>0";
                     } else {
                         $sql_query[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where  cv.items_id=e.id and cv.fields_id='" . $field['fields_id'] . "' and cv.value in (select id from app_fields_choices fc where fc.fields_id='" . $field['fields_id'] . "' and name like '%" . str_replace(
                                 ['and', 'or'],
                                 ' ',
-                                implode('', $search_keywords)
+                                implode('', \K::$fw->search_keywords)
                             ) . "%'))>0";
                     }
                 } //handle search by entity
@@ -428,19 +426,19 @@ class Reports
                             ) . " as es where es.id='" . (int)$filters_values . "'";
 
                         $where_str .= " or (";
-                        for ($i = 0, $n = sizeof($search_keywords); $i < $n; $i++) {
-                            switch ($search_keywords[$i]) {
+                        for ($i = 0, $n = sizeof(\K::$fw->search_keywords); $i < $n; $i++) {
+                            switch (\K::$fw->search_keywords[$i]) {
                                 case '(':
                                 case ')':
-                                    $where_str .= " " . $search_keywords[$i] . " ";
+                                    $where_str .= " " . \K::$fw->search_keywords[$i] . " ";
                                     break;
                                 case 'and':
                                 case 'or':
-                                    $search_type = $search_keywords[$i];
+                                    $search_type = \K::$fw->search_keywords[$i];
                                     $where_str .= " " . $search_type . " ";
                                     break;
                                 default:
-                                    $keyword = $search_keywords[$i];
+                                    $keyword = \K::$fw->search_keywords[$i];
 
                                     $where_str .= "es.field_" . $heading_field_id . " like '%" . db_input(
                                             $keyword
@@ -458,19 +456,19 @@ class Reports
                         ) . "' and cv.value in (" . $where_str . "))>0";
                 } elseif (in_array($field['type'], ['fieldtype_input_encrypted', 'fieldtype_textarea_encrypted'])) {
                     $where_str = "(";
-                    for ($i = 0, $n = sizeof($search_keywords); $i < $n; $i++) {
-                        switch ($search_keywords[$i]) {
+                    for ($i = 0, $n = sizeof(\K::$fw->search_keywords); $i < $n; $i++) {
+                        switch (\K::$fw->search_keywords[$i]) {
                             case '(':
                             case ')':
-                                $where_str .= " " . $search_keywords[$i] . " ";
+                                $where_str .= " " . \K::$fw->search_keywords[$i] . " ";
                                 break;
                             case 'and':
                             case 'or':
-                                $search_type = ($field['filters_condition'] == 'search_type_match' ? 'and' : $search_keywords[$i]);
+                                $search_type = ($field['filters_condition'] == 'search_type_match' ? 'and' : \K::$fw->search_keywords[$i]);
                                 $where_str .= " " . $search_type . " ";
                                 break;
                             default:
-                                $keyword = $search_keywords[$i];
+                                $keyword = \K::$fw->search_keywords[$i];
 
                                 $where_str .= "field_" . $field['fields_id'] . " like '%" . db_input($keyword) . "%'";
 
@@ -479,22 +477,22 @@ class Reports
                     }
                     $where_str .= ")";
 
-                    $sql_query_having[$current_entity_id][] = $where_str;
-                } elseif (isset($search_keywords) && (sizeof($search_keywords) > 0)) {
+                    \K::$fw->sql_query_having[$current_entity_id][] = $where_str;
+                } elseif (isset(\K::$fw->search_keywords) && (sizeof(\K::$fw->search_keywords) > 0)) {
                     $where_str = "(";
-                    for ($i = 0, $n = sizeof($search_keywords); $i < $n; $i++) {
-                        switch ($search_keywords[$i]) {
+                    for ($i = 0, $n = sizeof(\K::$fw->search_keywords); $i < $n; $i++) {
+                        switch (\K::$fw->search_keywords[$i]) {
                             case '(':
                             case ')':
-                                $where_str .= " " . $search_keywords[$i] . " ";
+                                $where_str .= " " . \K::$fw->search_keywords[$i] . " ";
                                 break;
                             case 'and':
                             case 'or':
-                                $search_type = ($field['filters_condition'] == 'search_type_match' ? 'and' : $search_keywords[$i]);
+                                $search_type = ($field['filters_condition'] == 'search_type_match' ? 'and' : \K::$fw->search_keywords[$i]);
                                 $where_str .= " " . $search_type . " ";
                                 break;
                             default:
-                                $keyword = $search_keywords[$i];
+                                $keyword = \K::$fw->search_keywords[$i];
 
                                 $where_str .= "e.field_" . $field['fields_id'] . " like '%" . db_input($keyword) . "%'";
 
@@ -520,7 +518,7 @@ class Reports
 
     public static function add_order_query($reports_order_fields, $entities_id)
     {
-        global $app_heading_fields_cache, $app_fields_cache;
+        //global $app_heading_fields_cache, $app_fields_cache;
 
         $listing_sql_query_join = '';
         $listing_sql_query = '';
@@ -615,20 +613,20 @@ class Reports
                         //if entity is Users then order by firstname/lastname
                         if ($entity_info['id'] == 1) {
                             $listing_sql_query_join .= " left join app_entity_{$entity_info['id']} {$alias} on {$alias}.id=e.field_" . $field_id;
-                            $listing_order_fields[] = (CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? "{$alias}.field_7 {$order_cause}, {$alias}.field_8 {$order_cause}" : "{$alias}.field_8 {$order_cause}, {$alias}.field_7 {$order_cause}");
+                            $listing_order_fields[] = (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? "{$alias}.field_7 {$order_cause}, {$alias}.field_8 {$order_cause}" : "{$alias}.field_8 {$order_cause}, {$alias}.field_7 {$order_cause}");
                         } //if exist haeading field then order by heading
                         elseif ($heading_id = fields::get_heading_id($entity_info['id'])) {
-                            if ($app_heading_fields_cache[$heading_id]['type'] == 'fieldtype_id') {
+                            if (\K::$fw->app_heading_fields_cache[$heading_id]['type'] == 'fieldtype_id') {
                                 $listing_order_fields[] = 'e.field_' . $field_id . ' ' . $order_cause;
                             } elseif (in_array(
-                                $app_heading_fields_cache[$heading_id]['type'],
+                                \K::$fw->app_heading_fields_cache[$heading_id]['type'],
                                 ['fieldtype_created_by', 'fieldtype_date_added', 'fieldtype_date_updated']
                             )) {
                                 $listing_sql_query_join .= " left join app_entity_{$entity_info['id']} {$alias} on {$alias}.id=e.field_" . $field_id;
                                 $listing_order_fields[] = "{$alias}." . str_replace(
                                         'fieldtype_',
                                         '',
-                                        $app_heading_fields_cache[$heading_id]['type']
+                                        \K::$fw->app_heading_fields_cache[$heading_id]['type']
                                     ) . ' ' . $order_cause;
                             } else {
                                 $listing_sql_query_join .= " left join app_entity_{$entity_info['id']} {$alias} on {$alias}.id=e.field_" . $field_id;
@@ -650,7 +648,7 @@ class Reports
                 ])) {
                     $listing_order_fields[] = '(e.field_' . $field_id . '+0) ' . $order_cause;
                 } elseif (in_array($field_info['type'], ['fieldtype_mysql_query'])) {
-                    $cfg = new fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
+                    $cfg = new fields_types_cfg(\K::$fw->app_fields_cache[$entities_id][$field_id]['configuration']);
                     if ($cfg->get('dynamic_query') != 1 and preg_match(
                             '/sum|min|max|count/',
                             $cfg->get('select_query')
@@ -673,7 +671,7 @@ class Reports
                     $entity_info = db_find('app_entities', $field_info['entities_id']);
                     if ($entity_info['parent_id'] > 0) {
                         if ($heading_id = fields::get_heading_id($entity_info['parent_id'])) {
-                            switch ($app_fields_cache[$entity_info['parent_id']][$heading_id]['type']) {
+                            switch (\K::$fw->app_fields_cache[$entity_info['parent_id']][$heading_id]['type']) {
                                 case 'fieldtype_id':
                                     $listing_order_fields[] = 'e.parent_item_id ' . $order_cause;
                                     break;
@@ -834,7 +832,7 @@ class Reports
 
                 $values = strlen($values[0]) > 0 ? $values[0] : 0;
 
-                switch (CFG_APP_FIRST_DAY_OF_WEEK) {
+                switch (\K::$fw->CFG_APP_FIRST_DAY_OF_WEEK) {
                     case '0':
                         $myslq_date_format = '%Y-%V';
                         break;
@@ -997,7 +995,7 @@ class Reports
         $count_filters = 0;
         $html = '<ul class="dropdown-menu" role="menu">';
         $html .= '<li>' . link_to_modalbox(
-                TEXT_FILTERS_FOR_ENTITY_SHORT . ': <b>' . $entity_info['name'] . '</b>',
+                \K::$fw->TEXT_FILTERS_FOR_ENTITY_SHORT . ': <b>' . $entity_info['name'] . '</b>',
                 url_for(
                     'reports/filters_form',
                     'reports_id=' . $report_id . '&redirect_to=' . $redirect_to . $url_params
@@ -1045,7 +1043,7 @@ class Reports
             </li>
             <li class="divider"></li>
             <li>
-      				' . link_to('<i class="fa fa-trash-o"></i> ' . TEXT_BUTTON_REMOVE_FILTER, $delete_url) . '
+      				' . link_to('<i class="fa fa-trash-o"></i> ' . \K::$fw->TEXT_BUTTON_REMOVE_FILTER, $delete_url) . '
       			</li>
           </ul>
         </li>
@@ -1057,7 +1055,7 @@ class Reports
       <li class="divider"></li>
 			<li>
 				' . link_to_modalbox(
-                '<i class="fa fa-plus-circle"></i> ' . TEXT_BUTTON_ADD_NEW_REPORT_FILTER,
+                '<i class="fa fa-plus-circle"></i> ' . \K::$fw->TEXT_BUTTON_ADD_NEW_REPORT_FILTER,
                 url_for(
                     'reports/filters_form',
                     'reports_id=' . $report_id . '&redirect_to=' . $redirect_to . $url_params
@@ -1067,7 +1065,7 @@ class Reports
       ' . ($count_filters > 0 ? '      
       <li>
 				' . link_to(
-                    '<i class="fa fa-trash-o"></i> ' . TEXT_BUTTON_REMOVE_ALL_FILTERS,
+                    '<i class="fa fa-trash-o"></i> ' . \K::$fw->TEXT_BUTTON_REMOVE_ALL_FILTERS,
                     url_for(
                         'reports/filters',
                         'action=delete&id=all&reports_id=' . $report_id . '&redirect_to=' . $redirect_to . $url_params
@@ -1085,7 +1083,7 @@ class Reports
         $separator = '<br>',
         $filters_condition = ''
     ) {
-        global $app_choices_cache, $app_users_cache, $app_global_choices_cache;
+        //global $app_choices_cache, $app_users_cache, $app_global_choices_cache;
 
         $field_info = db_find('app_fields', $fields_id);
 
@@ -1103,7 +1101,7 @@ class Reports
                 $html = implode($separator, $list);
                 break;
             case 'fieldtype_user_status':
-                $html = ($filters_values == 1 ? TEXT_ACTIVE : TEXT_INACTIVE);
+                $html = ($filters_values == 1 ? \K::$fw->TEXT_ACTIVE : \K::$fw->TEXT_INACTIVE);
                 break;
             case 'fieldtype_parent_item_id':
 
@@ -1125,7 +1123,7 @@ class Reports
                 break;
             case 'fieldtype_related_records':
                 $filters_values = (strlen($filters_values) ? explode(',', $filters_values) : [0 => '']);
-                $html = ($filters_values[0] == 'include' ? TEXT_FILTERS_DISPLAY_WITH_RELATED_RECORDS : TEXT_FILTERS_DISPLAY_WITHOUT_RELATED_RECORDS);
+                $html = ($filters_values[0] == 'include' ? \K::$fw->TEXT_FILTERS_DISPLAY_WITH_RELATED_RECORDS : \K::$fw->TEXT_FILTERS_DISPLAY_WITHOUT_RELATED_RECORDS);
                 break;
             case 'fieldtype_entity_multilevel':
             case 'fieldtype_entity_ajax':
@@ -1151,7 +1149,7 @@ class Reports
                     $items_query = db_query($items_info_sql);
                     if ($item = db_fetch_array($items_query)) {
                         if ($cfg['entity_id'] == 1) {
-                            $output[] = $app_users_cache[$item['id']]['name'];
+                            $output[] = \K::$fw->app_users_cache[$item['id']]['name'];
                         } elseif ($field_heading_id > 0) {
                             $output[] = items::get_heading_field_value($field_heading_id, $item);
                         } else {
@@ -1178,7 +1176,7 @@ class Reports
                 $list = [];
                 foreach (explode(',', $filters_values) as $id) {
                     if ($id == 'current_user_group_id') {
-                        $list[] = TEXT_CURRENT_USER_GROUP;
+                        $list[] = \K::$fw->TEXT_CURRENT_USER_GROUP;
                     } else {
                         $list[] = access_groups::get_name_by_id($id);
                     }
@@ -1203,12 +1201,12 @@ class Reports
                 $list = [];
                 foreach (explode(',', $filters_values) as $id) {
                     if ($cfg->get('use_global_list') > 0) {
-                        if (isset($app_global_choices_cache[$id])) {
-                            $list[] = $app_global_choices_cache[$id]['name'];
+                        if (isset(\K::$fw->app_global_choices_cache[$id])) {
+                            $list[] = \K::$fw->app_global_choices_cache[$id]['name'];
                         }
                     } else {
-                        if (isset($app_choices_cache[$id])) {
-                            $list[] = $app_choices_cache[$id]['name'];
+                        if (isset(\K::$fw->app_choices_cache[$id])) {
+                            $list[] = \K::$fw->app_choices_cache[$id]['name'];
                         }
                     }
                 }
@@ -1241,16 +1239,16 @@ class Reports
                     } else {
                         switch ($filters_condition) {
                             case 'filter_by_days':
-                                $html = TEXT_FILTER_BY_DAYS;
+                                $html = \K::$fw->TEXT_FILTER_BY_DAYS;
                                 break;
                             case 'filter_by_week':
-                                $html = TEXT_FILTER_BY_WEEK;
+                                $html = \K::$fw->TEXT_FILTER_BY_WEEK;
                                 break;
                             case 'filter_by_month':
-                                $html = TEXT_FILTER_BY_MONTH;
+                                $html = \K::$fw->TEXT_FILTER_BY_MONTH;
                                 break;
                             case 'filter_by_year':
-                                $html = TEXT_FILTER_BY_YEAR;
+                                $html = \K::$fw->TEXT_FILTER_BY_YEAR;
                                 break;
                         }
 
@@ -1258,25 +1256,25 @@ class Reports
                     }
                 } elseif ($field_info['type'] == 'fieldtype_jalali_calendar') {
                     if (strlen($values[1]) > 0) {
-                        $html = TEXT_DATE_FROM . ': ' . $values[1] . ' ';
+                        $html = \K::$fw->TEXT_DATE_FROM . ': ' . $values[1] . ' ';
                     }
 
                     if (strlen($values[2]) > 0) {
-                        $html .= TEXT_DATE_TO . ': ' . $values[2] . ' ';
+                        $html .= \K::$fw->TEXT_DATE_TO . ': ' . $values[2] . ' ';
                     }
                 } else {
                     if (strlen($values[1]) > 0) {
                         $value = ($field_info['type'] == 'fieldtype_input_date' ? format_date(
                             get_date_timestamp($values[1])
                         ) : format_date_time(get_date_timestamp($values[1])));
-                        $html = TEXT_DATE_FROM . ': ' . $value . ' ';
+                        $html = \K::$fw->TEXT_DATE_FROM . ': ' . $value . ' ';
                     }
 
                     if (strlen($values[2]) > 0) {
                         $value = ($field_info['type'] == 'fieldtype_input_date' ? format_date(
                             get_date_timestamp($values[2])
                         ) : format_date_time(get_date_timestamp($values[2])));
-                        $html .= TEXT_DATE_TO . ': ' . $value . ' ';
+                        $html .= \K::$fw->TEXT_DATE_TO . ': ' . $value . ' ';
                     }
                 }
 
@@ -1288,12 +1286,12 @@ class Reports
             case 'fieldtype_users_ajax':
                 $list = [];
                 foreach (explode(',', $filters_values) as $id) {
-                    if (isset($app_users_cache[$id])) {
-                        $list[] = $app_users_cache[$id]['name'];
+                    if (isset(\K::$fw->app_users_cache[$id])) {
+                        $list[] = \K::$fw->app_users_cache[$id]['name'];
                     }
 
                     if ($id == 'current_user_id') {
-                        $list[] = TEXT_CURRENT_USER;
+                        $list[] = \K::$fw->TEXT_CURRENT_USER;
                     }
                 }
 
@@ -1308,25 +1306,25 @@ class Reports
     {
         switch ($condition) {
             case 'include':
-                return TEXT_CONDITION_INCLUDE;
+                return \K::$fw->TEXT_CONDITION_INCLUDE;
                 break;
             case 'exclude':
-                return TEXT_CONDITION_EXCLUDE;
+                return \K::$fw->TEXT_CONDITION_EXCLUDE;
                 break;
             case 'empty_value':
-                return TEXT_CONDITION_EMPTY_VALUE;
+                return \K::$fw->TEXT_CONDITION_EMPTY_VALUE;
                 break;
             case 'not_empty_value':
-                return TEXT_CONDITION_NOT_EMPTY_VALUE;
+                return \K::$fw->TEXT_CONDITION_NOT_EMPTY_VALUE;
                 break;
             case 'filter_by_overdue':
-                return TEXT_FILTER_BY_OVERDUE_DATE;
+                return \K::$fw->TEXT_FILTER_BY_OVERDUE_DATE;
                 break;
             case 'filter_by_overdue_with_time':
-                return TEXT_OVERDUE_DATE_WITH_TIME;
+                return \K::$fw->TEXT_OVERDUE_DATE_WITH_TIME;
                 break;
             default:
-                return TEXT_CONDITION_INCLUDE;
+                return \K::$fw->TEXT_CONDITION_INCLUDE;
                 break;
         }
     }
@@ -1406,7 +1404,7 @@ class Reports
 
     static function auto_create_report_by_type($entities_id, $reports_type)
     {
-        global $app_user;
+        //global $app_user;
 
         $reports_info_query = db_query(
             "select * from app_reports where entities_id='" . db_input(
@@ -1421,13 +1419,13 @@ class Reports
                 'in_menu' => 0,
                 'in_dashboard' => 0,
                 'listing_order_fields' => '',
-                'created_by' => $app_user['id'],
+                'created_by' => \K::$fw->app_user['id'],
             ];
 
             db_perform('app_reports', $sql_data);
             $insert_id = db_insert_id();
 
-            reports::auto_create_parent_reports($insert_id);
+            self::auto_create_parent_reports($insert_id);
 
             return $insert_id;
         } else {

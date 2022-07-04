@@ -16,7 +16,7 @@ class Reports_groups
 
         $menu[] = [
             'id' => 0,
-            'title' => TEXT_MENU_DASHBOARD,
+            'title' => \K::$fw->TEXT_MENU_DASHBOARD,
             'url' => url_for('dashboard/dashboard'),
             'class' => 'fa-home',
             'icon_color' => '',
@@ -24,7 +24,7 @@ class Reports_groups
         ];
 
         $reports_query = db_query(
-            "select * from app_reports_groups where created_by = '" . $app_user['id'] . "' and is_common=0 and in_dashboard=1 order by sort_order, name"
+            "select * from app_reports_groups where created_by = '" . \K::$fw->app_user['id'] . "' and is_common=0 and in_dashboard=1 order by sort_order, name"
         );
         while ($v = db_fetch_array($reports_query)) {
             $menu[] = [
@@ -38,7 +38,7 @@ class Reports_groups
         }
 
         $reports_query = db_query(
-            "select * from app_reports_groups where (find_in_set(" . $app_user['group_id'] . ",users_groups) or find_in_set({$app_user['id']},assigned_to)) and is_common=1 and in_dashboard=1 order by sort_order, name"
+            "select * from app_reports_groups where (find_in_set(" . \K::$fw->app_user['group_id'] . ",users_groups) or find_in_set(" . \K::$fw->app_user['id'] . ",assigned_to)) and is_common=1 and in_dashboard=1 order by sort_order, name"
         );
         while ($v = db_fetch_array($reports_query)) {
             $menu[] = [
