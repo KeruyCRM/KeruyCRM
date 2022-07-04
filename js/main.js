@@ -339,7 +339,7 @@ function keruycrm_app_init()
   	  	
   })
   
-  //displya rules
+  //display rules
   form_display_rules()
   
   //tree table view
@@ -691,7 +691,7 @@ function appHandleUniform()
    $('textarea.code').tabOverride();
    $.fn.tabOverride.tabSize(2).untabKey(90, ['ctrl'])
    
-   //displya rules
+   //display rules
     form_display_rules()
     
    //code mirror

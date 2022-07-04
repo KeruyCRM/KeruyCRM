@@ -1,6 +1,6 @@
 <?php
-
-class users_filters
+namespace Models\Reports;
+class Users_filters
 {
     public $reports_id;
 
@@ -23,13 +23,13 @@ class users_filters
         return $count['total'];
     }
 
-    function get_choices($add_mepty = false)
+    function get_choices($add_empty = false)
     {
         global $app_user;
 
         $choices = [];
 
-        if ($add_mepty) {
+        if ($add_empty) {
             $choices[''] = '';
         }
 

@@ -1,13 +1,14 @@
 <?php
 
-class default_filters
-{
+namespace Models\Reports;
 
-    static function get_reports_id($entities_id, $reports_type, $auto_create_parent = true)
+class Default_filters
+{
+    static function get_reports_id($entities_id, $reports_type)
     {
         global $app_logged_users_id;
 
-        //create default fitler
+        //create default filter
         $reports_info_query = db_query(
             "select id from app_reports where entities_id='" . db_input(
                 $entities_id

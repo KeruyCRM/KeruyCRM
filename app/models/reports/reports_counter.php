@@ -1,8 +1,9 @@
 <?php
 
-class reports_counter
-{
+namespace Models\Reports;
 
+class Reports_counter
+{
     public $reports_query;
     public $title;
     public $parent_item_id;
@@ -313,5 +314,4 @@ class reports_counter
 
         return $reports_query;
     }
-
 }

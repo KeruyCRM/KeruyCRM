@@ -1,6 +1,8 @@
 <?php
 
-class filters_panels
+namespace Models\Reports;
+
+class Filters_panels
 {
 
     public $entities_id, $reports_id, $listing_container, $vertical_width, $fields_access_schema, $parent_entity_item_id;
@@ -101,9 +103,7 @@ class filters_panels
 
         $html .= '</div>';
 
-
         $html .= $this->render_js();
-
 
         return $html;
     }
@@ -359,7 +359,6 @@ class filters_panels
 
                 return $html;
 
-
                 break;
 
             case 'fieldtype_image_map':
@@ -467,7 +466,6 @@ class filters_panels
                         $html .= select_tag('values[]', $choices, $filters_values, $attributes);
                         break;
                 }
-
 
                 $html .= '
     <script>
@@ -706,7 +704,6 @@ class filters_panels
                     ';
                 break;
         }
-
 
         if ($panel_info['position'] == 'vertical') {
             $panel_field['width'] = '';
@@ -1146,7 +1143,6 @@ class filters_panels
 
             $listing_sql_query = reports::add_filters_query($reports_id, '', 'e', false, [$field['id']]);
 
-
             $formulas_sql = false;
 
             if (isset($sql_query_having[$current_entity_id])) {
@@ -1154,7 +1150,6 @@ class filters_panels
 
                 $formulas_sql = fieldtype_formula::prepare_query_select($current_entity_id, '');
             }
-
 
             if ($field['type'] == 'fieldtype_parent_item_id') {
                 if ($formulas_sql) {
@@ -1188,5 +1183,4 @@ class filters_panels
 
         return $sql;
     }
-
 }

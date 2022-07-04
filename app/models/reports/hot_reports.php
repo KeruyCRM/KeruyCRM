@@ -1,13 +1,15 @@
 <?php
 
-class hot_reports
+namespace Models\Reports;
+
+class Hot_reports
 {
-    public $poup_items_limit;
+    public $popup_items_limit;
 
     function __construct()
     {
         //set limit items in reports popup
-        $this->poup_items_limit = 10;
+        $this->popup_items_limit = 10;
     }
 
     //render reports header navitagion menu
@@ -20,10 +22,10 @@ class hot_reports
         $reports_query = db_query($this->reports_query());
         while ($reports = db_fetch_array($reports_query)) {
             $html_cache = '';
-            $cahce_filename = 'user-' . $app_user['id'] . '-report-' . $reports['id'];
+            $cache_filename = 'user-' . $app_user['id'] . '-report-' . $reports['id'];
             $cache_lifetime = (($reports['in_header'] and $reports['in_header_autoupdate']) ? 60 : CFG_CACHE_REPORTS_IN_HEADER_LIFETIME);
 
-            app_read_cache($html_cache, $cahce_filename, $cache_lifetime, CFG_USE_CACHE_REPORTS_IN_HEADER);
+            app_read_cache($html_cache, $cache_filename, $cache_lifetime, CFG_USE_CACHE_REPORTS_IN_HEADER);
 
             //set off $this->render_dropdown($reports['id']) to speed up
             $html .= '
@@ -135,7 +137,6 @@ class hot_reports
                 }
             }
 
-
             $items_array[] = [
                 'id' => $item['id'],
                 'path' => $path_info['full_path'],
@@ -146,11 +147,10 @@ class hot_reports
             ];
             $count++;
 
-            if ($count == $this->poup_items_limit) {
+            if ($count == $this->popup_items_limit) {
                 break;
             }
         }
-
 
         return ['items_count' => $count_items, 'items_array' => $items_array];
     }
@@ -261,7 +261,6 @@ class hot_reports
         while ($reports = db_fetch_array($reports_query)) {
             $common_reports_list[] = $reports['id'];
         }
-
 
         //create reports query inclue common reports
         $reports_query = "select r.*,e.name as entities_name,e.parent_id as entities_parent_id from app_reports r, app_entities e where e.id=r.entities_id and ((r.created_by='" . db_input(

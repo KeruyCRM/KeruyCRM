@@ -162,7 +162,7 @@ class Fieldtype_items_by_query
             }
         }
 
-        //displya number of records
+        //display number of records
         if (($cfg->get('display_as') == 'number' and !isset($options['is_listing'])) or ($cfg->get(
                     'display_as_in_listing'
                 ) == 'number' and isset($options['is_listing']))) {

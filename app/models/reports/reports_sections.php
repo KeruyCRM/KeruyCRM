@@ -1,6 +1,8 @@
 <?php
 
-class reports_sections
+namespace Models\Reports;
+
+class Reports_sections
 {
     public $reports_groups_id, $is_common;
 
@@ -105,7 +107,6 @@ class reports_sections
             if (calendar::user_has_public_access()) {
                 $choices[TEXT_EXT_CALENDAR]['calendar_public'] = TEXT_EXT_CALENDAR_PUBLIC;
             }
-
 
             //calendar preport
             if ($app_user['group_id'] > 0) {

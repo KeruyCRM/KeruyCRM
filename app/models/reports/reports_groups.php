@@ -1,6 +1,8 @@
 <?php
 
-class reports_groups
+namespace Models\Reports;
+
+class Reports_groups
 {
     static function render_dashboard_tabs()
     {

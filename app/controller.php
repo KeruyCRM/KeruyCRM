@@ -572,4 +572,5 @@ class Controller
     ['configuration_name' => 'TEST_TEST_T2', 'configuration_value' => 123]
 );*/
 //backward compatibility
-//
+//value_displya_own_column
+//dinamic_query

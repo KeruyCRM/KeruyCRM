@@ -1,6 +1,8 @@
 <?php
 
-class reports_notification
+namespace Models\Reports;
+
+class Reports_notification
 {
     function __construct()
     {
@@ -66,7 +68,7 @@ class reports_notification
                     $number_of_items_html = sprintf(
                         TEXT_DISPLAY_NUMBER_OF_ITEMS,
                         1,
-                        ($items_info['items_count'] > $hot_reports->poup_items_limit ? $hot_reports->poup_items_limit : $items_info['items_count']),
+                        ($items_info['items_count'] > $hot_reports->popup_items_limit ? $hot_reports->popup_items_limit : $items_info['items_count']),
                         $items_info['items_count']
                     );
 
