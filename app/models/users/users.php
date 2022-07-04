@@ -154,18 +154,18 @@ class Users
 
     static public function get_name_by_id($id)
     {
-        global $app_users_cache;
+        //global $app_users_cache;
 
-        if (isset($app_users_cache[$id])) {
-            return $app_users_cache[$id]['name'];
+        if (isset(\K::$fw->app_users_cache[$id])) {
+            return \K::$fw->app_users_cache[$id]['name'];
         }
     }
 
     static public function render_public_profile($users_cache, $is_photo_display = false)
     {
-        global $app_module_action;
+        //global $app_module_action;
 
-        if (strlen($app_module_action) > 0) {
+        if (strlen(\K::$fw->app_module_action) > 0) {
             return '';
         }
 
@@ -236,7 +236,7 @@ class Users
 
     static public function get_choices_by_entity($entities_id, $has_access = '')
     {
-        global $app_users_cache;
+        //global $app_users_cache;
 
         $access_schema = users::get_entities_access_schema_by_groups($entities_id);
 
@@ -252,13 +252,13 @@ class Users
 
             if (strlen($has_access)) {
                 if ($users['field_6'] == 0 or in_array($has_access, $access_schema[$users['field_6']])) {
-                    $choices[$users['id']] = $app_users_cache[$users['id']]['name'];
+                    $choices[$users['id']] = \K::$fw->app_users_cache[$users['id']]['name'];
                 }
             } elseif ($users['field_6'] == 0 or in_array('view', $access_schema[$users['field_6']]) or in_array(
                     'view_assigned',
                     $access_schema[$users['field_6']]
                 )) {
-                $choices[$users['id']] = $app_users_cache[$users['id']]['name'];
+                $choices[$users['id']] = \K::$fw->app_users_cache[$users['id']]['name'];
             }
         }
 
@@ -298,7 +298,7 @@ class Users
 
     static public function send_to($send_to, $subject, $body, $attachments = [])
     {
-        global $app_user, $app_users_cache;
+        //global $app_user, $app_users_cache;
 
         foreach ($send_to as $users_id) {
             if (strstr($users_id, '@')) {
@@ -308,15 +308,15 @@ class Users
                         'to_name' => '',
                         'subject' => $subject,
                         'body' => $body,
-                        'from' => $app_user['email'],
-                        'from_name' => $app_user['name'],
+                        'from' => \K::$fw->app_user['email'],
+                        'from_name' => \K::$fw->app_user['name'],
                         'attachments' => $attachments,
                     ];
 
                     users::send_email($options);
                 }
             } else {
-                if (\K::$fw->CFG_EMAIL_COPY_SENDER == 0 and $users_id == $app_user['id']) {
+                if (\K::$fw->CFG_EMAIL_COPY_SENDER == 0 and $users_id == \K::$fw->app_user['id']) {
                     continue;
                 }
 
@@ -327,14 +327,14 @@ class Users
                 $users_info_query = db_query(
                     "select * from app_entity_1 where id='" . db_input($users_id) . "' and field_5=1"
                 );
-                if ($users_info = db_fetch_array($users_info_query) and isset($app_user['email'])) {
+                if ($users_info = db_fetch_array($users_info_query) and isset(\K::$fw->app_user['email'])) {
                     $options = [
                         'to' => $users_info['field_9'],
-                        'to_name' => $app_users_cache[$users_info['id']]['name'],
+                        'to_name' => \K::$fw->app_users_cache[$users_info['id']]['name'],
                         'subject' => $subject,
                         'body' => $body,
-                        'from' => $app_user['email'],
-                        'from_name' => $app_user['name'],
+                        'from' => \K::$fw->app_user['email'],
+                        'from_name' => \K::$fw->app_user['name'],
                         'attachments' => $attachments,
                     ];
 
@@ -454,8 +454,7 @@ class Users
                     sprintf(
                         \K::$fw->TEXT_MAILER_ERROR,
                         $options['to']
-                    ) . ': ' . $mail->ErrorInfo . (\K::$fw->CFG_EMAIL_SMTP_DEBUG ? '<br>' . \K::f3(
-                        )->TEXT_MORE_INFO . ': log/smtp_log.txt' : ''),
+                    ) . ': ' . $mail->ErrorInfo . (\K::$fw->CFG_EMAIL_SMTP_DEBUG ? '<br>' . \K::$fw->TEXT_MORE_INFO . ': log/smtp_log.txt' : ''),
                     'error'
                 );
             } else {
@@ -576,10 +575,10 @@ class Users
 
     static public function has_users_access_name_to_entity($access, $entities_id)
     {
-        global $app_users_access, $app_user;
+        //global $app_users_access, $app_user;
 
         //administrator have full access
-        if ($app_user['group_id'] == 0) {
+        if (\K::$fw->app_user['group_id'] == 0) {
             if ($access == 'action_with_assigned') {
                 return false;
             } else {
@@ -587,8 +586,8 @@ class Users
             }
         }
 
-        if (isset($app_users_access[$entities_id])) {
-            return in_array($access, $app_users_access[$entities_id]);
+        if (isset(\K::$fw->app_users_access[$entities_id])) {
+            return in_array($access, \K::$fw->app_users_access[$entities_id]);
         } else {
             return false;
         }
@@ -596,9 +595,9 @@ class Users
 
     static public function has_users_access_to_entity($entities_id)
     {
-        global $app_users_access, $app_user;
+        //global $app_users_access, $app_user;
 
-        if (isset($app_users_access[$entities_id]) or $app_user['group_id'] == 0) {
+        if (isset(\K::$fw->app_users_access[$entities_id]) or \K::$fw->app_user['group_id'] == 0) {
             return true;
         } else {
             return false;
@@ -623,10 +622,10 @@ class Users
 
     static public function has_access($access, $access_schema = null)
     {
-        global $current_access_schema, $app_user;
+        //global $current_access_schema, $app_user;
 
         //administrator have full access
-        if ($app_user['group_id'] == 0) {
+        if (\K::$fw->app_user['group_id'] == 0) {
             if (in_array($access, ['action_with_assigned', 'delete_creator'])) {
                 return false;
             } else {
@@ -638,8 +637,8 @@ class Users
 
         if (isset($access_schema)) {
             $schema = $access_schema;
-        } elseif (is_array($current_access_schema)) {
-            $schema = $current_access_schema;
+        } elseif (is_array(\K::$fw->current_access_schema)) {
+            $schema = \K::$fw->current_access_schema;
         }
 
         return in_array($access, $schema);
@@ -647,12 +646,12 @@ class Users
 
     static public function has_access_to_entity($entities_id, $access, $access_groups_id = null)
     {
-        global $app_user;
+        //global $app_user;
 
         $access_schema = [];
 
         if (!isset($access_groups_id)) {
-            $access_groups_id = $app_user['group_id'];
+            $access_groups_id = \K::$fw->app_user['group_id'];
         }
 
         if ($access_groups_id == 0) {
@@ -673,7 +672,7 @@ class Users
 
     static public function has_access_to_assigned_item($entities_id, $items_id)
     {
-        global $app_user;
+        //global $app_user;
 
         //get users entiteis tree
         $users_entities_tree = entities::get_tree(1);
@@ -685,7 +684,7 @@ class Users
         }
 
         //force check users entities tree access
-        if (in_array($entities_id, $users_entities) and $app_user['group_id'] > 0) {
+        if (in_array($entities_id, $users_entities) and \K::$fw->app_user['group_id'] > 0) {
             $item_query = db_query(
                 "select e.id from app_entity_" . $entities_id . " e where e.id='" . db_input(
                     $items_id
@@ -740,32 +739,32 @@ class Users
             foreach ($users_fields as $id) {
                 $sql_query_array[] = "(select count(*) as total from app_entity_" . $entities_id . "_values cv where cv.items_id='" . db_input(
                         $items_id
-                    ) . "' and cv.fields_id='" . $id . "' and cv.value='" . $app_user['id'] . "')>0";
+                    ) . "' and cv.fields_id='" . $id . "' and cv.value='" . \K::$fw->app_user['id'] . "')>0";
             }
 
             //check gouped users
             foreach ($grouped_users_fields as $id) {
                 $sql_query_array[] = "(select count(*) as total from app_entity_" . $entities_id . "_values cv where  cv.items_id='" . db_input(
                         $items_id
-                    ) . "' and cv.fields_id='" . $id . "' and cv.value in (select id from app_fields_choices fc where fc.fields_id='" . $id . "' and find_in_set(" . $app_user['id'] . ",fc.users)))>0";
+                    ) . "' and cv.fields_id='" . $id . "' and cv.value in (select id from app_fields_choices fc where fc.fields_id='" . $id . "' and find_in_set(" . \K::$fw->app_user['id'] . ",fc.users)))>0";
             }
 
             //check gouped users with globallist
             foreach ($grouped_global_users_fields as $list_id => $id) {
-                $sql_query_array[] = "(select count(*) as total from app_entity_" . $entities_id . "_values cv where cv.items_id=e.id and cv.fields_id='" . $id . "' and cv.value in (select id from app_global_lists_choices fc where fc.lists_id='" . $list_id . "' and find_in_set(" . $app_user['id'] . ",fc.users)))>0";
+                $sql_query_array[] = "(select count(*) as total from app_entity_" . $entities_id . "_values cv where cv.items_id=e.id and cv.fields_id='" . $id . "' and cv.value in (select id from app_global_lists_choices fc where fc.lists_id='" . $list_id . "' and find_in_set(" . \K::$fw->app_user['id'] . ",fc.users)))>0";
             }
 
             //check access group fields
             foreach ($access_group_fields as $id) {
-                $sql_query_array[] = "(select count(*) as total from app_entity_" . $entities_id . "_values cv where cv.items_id=e.id and cv.fields_id='" . $id . "' and cv.value='" . $app_user['group_id'] . "')>0";
+                $sql_query_array[] = "(select count(*) as total from app_entity_" . $entities_id . "_values cv where cv.items_id=e.id and cv.fields_id='" . $id . "' and cv.value='" . \K::$fw->app_user['group_id'] . "')>0";
             }
 
             //check created by
-            $sql_query_array[] = "e.created_by='" . $app_user['id'] . "'";
+            $sql_query_array[] = "e.created_by='" . \K::$fw->app_user['id'] . "'";
 
             //check user entity
             if ($entities_id == 1) {
-                $sql_query_array[] = "e.id='" . $app_user['id'] . "'";
+                $sql_query_array[] = "e.id='" . \K::$fw->app_user['id'] . "'";
             }
 
             $item_query = db_query(
@@ -800,17 +799,17 @@ class Users
 
     static public function has_comments_access($access, $comments_access_schema = null, $check_logged_user = true)
     {
-        global $current_comments_access_schema, $app_user;
+        //global $current_comments_access_schema, $app_user;
 
         //administrator have full access
-        if ($app_user['group_id'] == 0 and $check_logged_user) {
+        if (\K::$fw->app_user['group_id'] == 0 and $check_logged_user) {
             return true;
         }
 
         if (isset($comments_access_schema)) {
             $schema = $comments_access_schema;
         } else {
-            $schema = $current_comments_access_schema;
+            $schema = \K::$fw->current_comments_access_schema;
         }
 
         return in_array($access, $schema);
@@ -818,15 +817,15 @@ class Users
 
     static public function has_reports_access()
     {
-        global $app_user;
+        //global $app_user;
 
         //administrator have full access
-        if ($app_user['group_id'] == 0) {
+        if (\K::$fw->app_user['group_id'] == 0) {
             return true;
         } else {
             $access_query = db_query(
                 "select * from app_entities_access where access_groups_id='" . db_input(
-                    $app_user['group_id']
+                    \K::$fw->app_user['group_id']
                 ) . "' and find_in_set('reports',access_schema)"
             );
             if ($access = db_fetch_array($access_query)) {
@@ -879,8 +878,7 @@ class Users
                 $hasher = new \Libs\PasswordHash(11, false);
 
                 if (isset($password_hashed)) {
-                    //app_session_register('app_logged_users_id', $user['id']);
-                    \K::sessionSet('app_logged_users_id', $user['id'], true);
+                    \K::app_session_register('app_logged_users_id', $user['id']);
 
                     \Models\Users\Users_login_log::success($username, $user['id']);
 
@@ -892,8 +890,7 @@ class Users
                         \K::fw()->reroute('@Dashboard');
                     }
                 } elseif ($hasher->CheckPassword($password, $user['password'])) {
-                    //app_session_register('app_logged_users_id', $user['id']);
-                    \K::sessionSet('app_logged_users_id', $user['id'], true);
+                    \K::app_session_register('app_logged_users_id', $user['id']);
 
                     //login log
                     if (\K::$fw->CFG_2STEP_VERIFICATION_ENABLED != 1) {
@@ -913,7 +910,6 @@ class Users
                     }
 
                     if (\K::cookieExists('app_login_redirect_to', $redirect_to)) {
-                        //setcookie('app_login_redirect_to','',time() - 3600,'/');
                         //redirect_to(str_replace('module=', '', $_COOKIE['app_login_redirect_to']));
                         \K::fw()->reroute($redirect_to);
                     } else {

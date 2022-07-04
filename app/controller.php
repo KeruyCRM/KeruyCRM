@@ -494,7 +494,7 @@ class Controller
         //TODO AUTOlogin https://github.com/symfony/symfony/blob/4.4/src/Symfony/Component/Security/Http/RememberMe/TokenBasedRememberMeServices.php#L101
 
         if (!\K::app_session_is_registered('app_logged_users_id') and !in_array(
-                !\K::$fw->module,
+                !\K::$fw->app_module,
                 $this->allowed_modules
             )) {
             //allows redirect user to current page after login if there is no any actions
