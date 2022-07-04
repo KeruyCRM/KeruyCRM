@@ -57,7 +57,7 @@ class fieldtype_dropdown_multilevel
 
         $cfg[] = [
             'title' => TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_VALUE_DISPLAY,
-            'name' => 'value_displya_own_column',
+            'name' => 'value_display_own_column',
             'type' => 'dropdown',
             'choices' => ['0' => TEXT_NO, '1' => TEXT_YES],
             'tooltip_icon' => TEXT_FIELDTYPE_DROPDOWN_MULTILEVEL_VALUE_DISPLAY_TIP,
@@ -257,7 +257,7 @@ class fieldtype_dropdown_multilevel
 
         $html = '';
 
-        if ($cfg->get('value_displya_own_column') == 1) {
+        if ($cfg->get('value_display_own_column') == 1) {
             $level_settings = (strlen($cfg->get('level_settings')) ? preg_split(
                 "/\\r\\n|\\r|\\n/",
                 $cfg->get('level_settings')
@@ -330,7 +330,7 @@ class fieldtype_dropdown_multilevel
 
         $th_css_class = $field['type'] . '-th filed-' . $field['id'] . '-th';
 
-        if ($cfg->get('value_displya_own_column') == 1) {
+        if ($cfg->get('value_display_own_column') == 1) {
             $level_settings = (strlen($cfg->get('level_settings')) ? preg_split(
                 "/\\r\\n|\\r|\\n/",
                 $cfg->get('level_settings')
@@ -396,7 +396,7 @@ class fieldtype_dropdown_multilevel
         $html = '';
         $export_array = [];
 
-        if ($cfg->get('value_displya_own_column') == 1) {
+        if ($cfg->get('value_display_own_column') == 1) {
             $level_settings = (strlen($cfg->get('level_settings')) ? preg_split(
                 "/\\r\\n|\\r|\\n/",
                 $cfg->get('level_settings')
@@ -449,7 +449,7 @@ class fieldtype_dropdown_multilevel
         $html = '';
         $export_array = [];
 
-        if ($cfg->get('value_displya_own_column') == 1) {
+        if ($cfg->get('value_display_own_column') == 1) {
             $level_settings = (strlen($cfg->get('level_settings')) ? preg_split(
                 "/\\r\\n|\\r|\\n/",
                 $cfg->get('level_settings')

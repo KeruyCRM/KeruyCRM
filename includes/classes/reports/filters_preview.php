@@ -12,11 +12,11 @@ class filters_preview
     public $has_listing_configuration_fields;
     public $filters_panels_fields;
 
-    function __construct($report_id, $include_paretn_filters = true)
+    function __construct($report_id, $include_parent_filters = true)
     {
         $this->reports_id = $report_id;
 
-        $this->include_parent_filters = $include_paretn_filters;
+        $this->include_parent_filters = $include_parent_filters;
 
         $this->redirect_to = 'report';
 

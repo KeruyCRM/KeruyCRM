@@ -103,7 +103,7 @@ foreach ($listing_fields as $field) {
         if ($field['type'] == 'fieldtype_dropdown_multilevel') {
             $cfg = new fields_types_cfg($field['configuration']);
 
-            if ($cfg->get('value_displya_own_column') == 1) {
+            if ($cfg->get('value_display_own_column') == 1) {
                 $level_settings = (strlen($cfg->get('level_settings')) ? explode(
                     "\n",
                     $cfg->get('level_settings')

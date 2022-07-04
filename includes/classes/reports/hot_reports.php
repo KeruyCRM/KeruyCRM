@@ -2,12 +2,12 @@
 
 class hot_reports
 {
-    public $poup_items_limit;
+    public $popup_items_limit;
 
     function __construct()
     {
         //set limit items in reports popup
-        $this->poup_items_limit = 10;
+        $this->popup_items_limit = 10;
     }
 
     //render reports header navitagion menu
@@ -20,10 +20,10 @@ class hot_reports
         $reports_query = db_query($this->reports_query());
         while ($reports = db_fetch_array($reports_query)) {
             $html_cache = '';
-            $cahce_filename = 'user-' . $app_user['id'] . '-report-' . $reports['id'];
+            $cache_filename = 'user-' . $app_user['id'] . '-report-' . $reports['id'];
             $cache_lifetime = (($reports['in_header'] and $reports['in_header_autoupdate']) ? 60 : CFG_CACHE_REPORTS_IN_HEADER_LIFETIME);
 
-            app_read_cache($html_cache, $cahce_filename, $cache_lifetime, CFG_USE_CACHE_REPORTS_IN_HEADER);
+            app_read_cache($html_cache, $cache_filename, $cache_lifetime, CFG_USE_CACHE_REPORTS_IN_HEADER);
 
             //set off $this->render_dropdown($reports['id']) to speed up
             $html .= '
@@ -146,7 +146,7 @@ class hot_reports
             ];
             $count++;
 
-            if ($count == $this->poup_items_limit) {
+            if ($count == $this->popup_items_limit) {
                 break;
             }
         }

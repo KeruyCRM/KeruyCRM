@@ -2,11 +2,10 @@
 
 class reports
 {
-
     public static function copy($reports_id)
     {
         $reports_list[] = $reports_id;
-        $reports_list = reports::get_parent_reports($reports_id, $reports_list);
+        $reports_list = self::get_parent_reports($reports_id, $reports_list);
 
         $reports_list = array_reverse($reports_list);
 
@@ -120,17 +119,17 @@ class reports
         return $reports_info;
     }
 
-    public static function get_parent_reports($reports_id, $paretn_reports = [])
+    public static function get_parent_reports($reports_id, $parent_reports = [])
     {
         $report_info = db_find('app_reports', $reports_id);
 
         if ($report_info['parent_id'] > 0) {
-            $paretn_reports[] = $report_info['parent_id'];
+            $parent_reports[] = $report_info['parent_id'];
 
-            $paretn_reports = reports::get_parent_reports($report_info['parent_id'], $paretn_reports);
+            $parent_reports = self::get_parent_reports($report_info['parent_id'], $parent_reports);
         }
 
-        return $paretn_reports;
+        return $parent_reports;
     }
 
     public static function auto_create_parent_reports($reports_id)
@@ -206,10 +205,10 @@ class reports
 
     public static function delete_parent_reports($reports_id)
     {
-        $paretn_reports = reports::get_parent_reports($reports_id);
+        $parent_reports = self::get_parent_reports($reports_id);
 
-        if (count($paretn_reports) > 0) {
-            foreach ($paretn_reports as $id) {
+        if (count($parent_reports) > 0) {
+            foreach ($parent_reports as $id) {
                 db_query("delete from app_reports where id='" . db_input($id) . "'");
                 db_query("delete from app_reports_filters where reports_id='" . db_input($id) . "'");
             }
@@ -554,7 +553,6 @@ class reports
                 $listing_order_clauses[$field_id] = $order_cause;
                 $field_cfg = new fields_types_cfg($field_info['configuration']);
 
-
                 if (in_array(
                     $field_info['type'],
                     ['fieldtype_created_by', 'fieldtype_date_added', 'fieldtype_id', 'fieldtype_date_updated']
@@ -565,14 +563,14 @@ class reports
                             $field_info['type']
                         ) . ' ' . $order_cause;
                 } elseif ($field_info['type'] == 'fieldtype_dropdown_multilevel' and $field_cfg->get(
-                        'value_displya_own_column'
+                        'value_display_own_column'
                     )) {
                     $field_id_array = explode('-', $field_id);
                     $level = $field_id_array[1];
                     $field_id = (int)$field_id;
 
                     if ($level == 0) {
-                        $field_name_to_join .= "SUBSTRING_INDEX(field_" . $field_id . ",','," . ($level + 1) . ")";
+                        $field_name_to_join = "SUBSTRING_INDEX(field_" . $field_id . ",','," . ($level + 1) . ")";
                     } else {
                         $field_name_to_join = "REPLACE(SUBSTRING_INDEX(REPLACE(field_" . $field_id . ",SUBSTRING_INDEX(field_" . $field_id . ",','," . $level . "),''),','," . ($level + 1) . "),',','')";
                     }
@@ -993,7 +991,6 @@ class reports
 
         $entity_info = db_find('app_entities', $report_info['entities_id']);
 
-
         $count_filters = 0;
         $html = '<ul class="dropdown-menu" role="menu">';
         $html .= '<li>' . link_to_modalbox(
@@ -1200,7 +1197,6 @@ class reports
 
                 $cfg = new fields_types_cfg($field_info['configuration']);
 
-
                 $list = [];
                 foreach (explode(',', $filters_values) as $id) {
                     if ($cfg->get('use_global_list') > 0) {
@@ -1280,7 +1276,6 @@ class reports
                         $html .= TEXT_DATE_TO . ': ' . $value . ' ';
                     }
                 }
-
 
                 break;
             case 'fieldtype_created_by':
@@ -1382,7 +1377,7 @@ class reports
         $count_filters = 0;
         $reports_list = [];
         $reports_list[] = $reports_id;
-        $reports_list = reports::get_parent_reports($reports_id, $reports_list);
+        $reports_list = self::get_parent_reports($reports_id, $reports_list);
 
         foreach ($reports_list as $report_id) {
             $count_filters += db_count('app_reports_filters', $report_id, 'reports_id');
