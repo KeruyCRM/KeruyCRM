@@ -2,8 +2,7 @@
 
 class default_filters
 {
-
-    static function get_reports_id($entities_id, $reports_type, $auto_create_parent = true)
+    static function get_reports_id($entities_id, $reports_type)
     {
         global $app_logged_users_id;
 
