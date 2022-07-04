@@ -33,7 +33,7 @@ class filters_panels
         $panels_query = db_query(
             "select * from app_filters_panels where length(type)=0 and (length(users_groups)=0 or find_in_set(" . $app_user['group_id'] . ",users_groups)) and is_active=1 and entities_id='" . $entities_id . "' order by sort_order"
         );
-        $count_panels = db_num_rows($panels_query);
+        //$count_panels = db_num_rows($panels_query);
         while ($panels = db_fetch_array($panels_query)) {
             $fields_query = db_query(
                 "select * from app_filters_panels_fields where panels_id='" . $panels['id'] . "' order by sort_order"
@@ -66,7 +66,7 @@ class filters_panels
         $panels_query = db_query(
             "select f.* from app_filters_panels f where (select count(*) from app_filters_panels_fields fp where fp.panels_id=f.id)>0 and f.position='horizontal' and f.type='" . $this->type . "' and (length(f.users_groups)=0 or find_in_set(" . $app_user['group_id'] . ",f.users_groups)) and f.is_active=1 and f.entities_id='" . $this->entities_id . "' order by f.sort_order"
         );
-        $count_panels = db_num_rows($panels_query);
+        //$count_panels = db_num_rows($panels_query);
         while ($panels = db_fetch_array($panels_query)) {
             $html .= '<ul class="list-inline filters-panels-' . $panels['id'] . '">';
 
