@@ -52,11 +52,11 @@ class fieldtype_years_difference
             'params' => ['class' => 'form-control input-large chosen-select required']
         ];
 
-        $cfg[] = ['title' => TEXT_CALCULATE_DIFFERENCE_DAYS, 'name' => 'calclulate_diff_days', 'type' => 'checkbox'];
+        $cfg[] = ['title' => TEXT_CALCULATE_DIFFERENCE_DAYS, 'name' => 'calculate_diff_days', 'type' => 'checkbox'];
 
         $cfg[] = [
             'title' => tooltip_icon(TEXT_CALCULATE_TOTALS_INFO) . TEXT_CALCULATE_TOTALS,
-            'name' => 'calclulate_totals',
+            'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
         $cfg[] = ['title' => TEXT_CALCULATE_AVERAGE_VALUE, 'name' => 'calculate_average', 'type' => 'checkbox'];
@@ -192,12 +192,12 @@ END;";
 
         if ($single_select) {
             $mysql_query = "(keruycrm_years_diff(" . $start_date_field . "," . $end_date_field . "," . $cfg->get(
-                    'calclulate_diff_days',
+                    'calculate_diff_days',
                     0
                 ) . "))";
         } else {
             $mysql_query = "keruycrm_years_diff(" . $start_date_field . "," . $end_date_field . "," . $cfg->get(
-                    'calclulate_diff_days',
+                    'calculate_diff_days',
                     0
                 ) . ") as field_" . $fields['id'];
         }
