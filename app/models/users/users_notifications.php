@@ -22,10 +22,10 @@ class Users_notifications
 
     public function has($items_id)
     {
-        global $app_users_cfg;
+        //global $app_users_cfg;
 
-        //don't highlight if configuratin disabled
-        if ($app_users_cfg->get('disable_highlight_unread') == 1) {
+        //don't highlight if configuration disabled
+        if (\K::app_users_cfg()->get('disable_highlight_unread') == 1) {
             return false;
         }
 
@@ -70,10 +70,10 @@ class Users_notifications
 
     public static function render()
     {
-        global $app_users_cfg;
+        //global $app_users_cfg;
 
-        //skip menu with disabled notificaiton
-        if ($app_users_cfg->get('disable_internal_notification') == 1) {
+        //skip menu with disabled notification
+        if (\K::app_users_cfg()->get('disable_internal_notification') == 1) {
             return false;
         }
 

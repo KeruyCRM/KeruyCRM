@@ -57,7 +57,7 @@ class K
         return \Tools\GlobalVars::instance();
     }
 
-    public static function users_cfg()
+    public static function app_users_cfg()
     {
         return \Models\Users\Users_cfg::instance();
     }

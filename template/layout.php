@@ -107,7 +107,7 @@ echo APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
         var app_language_short_code = '<?php echo APP_LANGUAGE_SHORT_CODE ?>';
         var app_cfg_ckeditor_images = '<?php echo url_for("dashboard/ckeditor_image")?>';
         var app_language_text_direction = '<?php echo APP_LANGUAGE_TEXT_DIRECTION ?>'
-        var app_user_saved_colors = '<?php echo $app_users_cfg->get("my_saved_colors") ?>'
+        var app_user_saved_colors = '<?php echo \K::app_users_cfg()->get("my_saved_colors") ?>'
         var app_cfg_drop_down_menu_on_hover = <?php echo CFG_DROP_DOWN_MENU_ON_HOVER ?>;
 
     </script>
@@ -121,7 +121,7 @@ echo APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
     echo app_include_custom_css() ?>
 
     <?php
-    $sidebar_pos_option = $app_users_cfg->get('sidebar-pos-option', '');
+    $sidebar_pos_option = \K::app_users_cfg()->get('sidebar-pos-option', '');
 
     if (APP_LANGUAGE_TEXT_DIRECTION == 'rtl') {
         require(component_path('dashboard/direction_rtl'));
@@ -139,10 +139,10 @@ echo APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
 </head>
 <!-- BEGIN BODY -->
 <body class="page-header-fixed <?php
-echo $app_users_cfg->get('sidebar-option', '') . ' ' . $sidebar_pos_option . ' ' . $app_users_cfg->get(
+echo \K::app_users_cfg()->get('sidebar-option', '') . ' ' . $sidebar_pos_option . ' ' . \K::app_users_cfg()->get(
         'page-scale-option',
         ''
-    ) . ' ' . $app_users_cfg->get(
+    ) . ' ' . \K::app_users_cfg()->get(
         'sidebar-status'
     ) . ' page-user-' . $app_user['id'] . ' page-usergroup-' . $app_user['group_id'] ?>">
 
