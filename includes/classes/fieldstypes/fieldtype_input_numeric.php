@@ -43,7 +43,7 @@ class fieldtype_input_numeric
         ];
         $cfg[TEXT_SETTINGS][] = [
             'title' => tooltip_icon(TEXT_CALCULATE_TOTALS_INFO) . TEXT_CALCULATE_TOTALS,
-            'name' => 'calclulate_totals',
+            'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
         $cfg[TEXT_SETTINGS][] = [

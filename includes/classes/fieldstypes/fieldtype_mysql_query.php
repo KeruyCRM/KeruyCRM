@@ -56,7 +56,7 @@ class fieldtype_mysql_query
         ];
         $cfg[] = [
             'title' => tooltip_icon(TEXT_CALCULATE_TOTALS_INFO) . TEXT_CALCULATE_TOTALS,
-            'name' => 'calclulate_totals',
+            'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
         $cfg[] = ['title' => TEXT_CALCULATE_AVERAGE_VALUE, 'name' => 'calculate_average', 'type' => 'checkbox'];

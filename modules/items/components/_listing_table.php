@@ -85,7 +85,7 @@ while ($v = db_fetch_array($fields_query)) {
                 'fieldtype_js_formula',
                 'fieldtype_input_numeric_comments'
             ]
-        ) and ($field_cfg->get('calclulate_totals') == 1 or $field_cfg->get('calculate_average') == 1)) {
+        ) and ($field_cfg->get('calculate_totals') == 1 or $field_cfg->get('calculate_average') == 1)) {
         $listing_numeric_fields[] = $v['id'];
     }
 }

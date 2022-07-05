@@ -97,7 +97,7 @@ foreach ($listing_fields as $field) {
         $avg_value = (strlen($avg_value) ? $cfg->get('prefix') . $avg_value . $cfg->get('suffix') : '');
 
         $html .= '<td class="numeric_fields_total_values">' . ($cfg->get(
-                'calclulate_totals'
+                'calculate_totals'
             ) == 1 ? $value . '<br>' : '') . ($cfg->get('calculate_average') == 1 ? $avg_value : '') . '</td>';
     } else {
         if ($field['type'] == 'fieldtype_dropdown_multilevel') {
