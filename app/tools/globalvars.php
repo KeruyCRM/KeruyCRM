@@ -26,10 +26,8 @@ class GlobalVars extends \Prefab
 
     public function apply_to_text($text)
     {
-        $app_user = \K::$fw->app_user;
-
-        $this->vars['[current_user_id]'] = $app_user['id'];
-        $this->vars['[current_user_group_id]'] = $app_user['group_id'];
+        $this->vars['[current_user_id]'] = \K::$fw->app_user['id'];
+        $this->vars['[current_user_group_id]'] = \K::$fw->app_user['group_id'];
 
         $name = array_keys($this->vars);
         $value = array_values($this->vars);
