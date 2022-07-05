@@ -164,8 +164,6 @@ class Controller
         $this->_setCfgFromDB();
         $this->_setCfg();
 
-        \K::$fw->app_global_vars = \Tools\GlobalVars::instance();
-
         //set php timezone
         \K::fw()->TZ = \K::$fw->CFG_APP_TIMEZONE;
 
@@ -229,8 +227,6 @@ class Controller
 
         $this->_setPlugin();//TODO include plugin
         $this->_userLogin();
-
-        \K::$fw->app_users_cfg = new \Models\Users\Users_cfg();
 
         $this->_setCfgSession2();
         $this->_checkEnvironment();
@@ -494,14 +490,13 @@ class Controller
         //TODO AUTOlogin https://github.com/symfony/symfony/blob/4.4/src/Symfony/Component/Security/Http/RememberMe/TokenBasedRememberMeServices.php#L101
 
         if (!\K::app_session_is_registered('app_logged_users_id') and !in_array(
-                !\K::$fw->app_module,
+                \K::$fw->app_module_path,
                 $this->allowed_modules
             )) {
             //allows redirect user to current page after login if there is no any actions
 
             if (!\K::fw()->exists('GET.action') and !\K::fw()->exists('POST.action') and !\K::$fw->AJAX) {
                 \K::cookieSet('app_login_redirect_to', \K::$fw->URI, 10 * 60);
-                //setcookie('app_login_redirect_to', $_SERVER['QUERY_STRING'], time() + 10 * 60, '/');
             }
             //if (isset($_COOKIE["app_remember_me"]) and isset($_COOKIE["app_stay_logged"])) {
             if (\K::cookieExists('app_remember_me') and \K::cookieExists('app_stay_logged')) {
@@ -515,8 +510,7 @@ class Controller
                     base64_decode(\K::cookieGet('app_remember_pass'))
                 );
             } else {
-                //redirect_to('users/login');
-                \K::fw()->reroute('@Login');
+                \Helpers\Urls::redirect_to('module/users/login');
             }
         } elseif (\K::app_session_is_registered('app_logged_users_id')) {
             $user_query = \Models\Users\Users::getGroupAndAccessByUserId(\K::$fw->app_logged_users_id);
@@ -559,10 +553,8 @@ class Controller
                 //set unique client id for rss or ical
                 \Models\Users\Users::set_client_id();
             } else {
-                //app_session_unregister('app_logged_users_id');
-                \K::sessionClear('app_logged_users_id');
-                \K::fw()->reroute('@Login');
-                //redirect_to('users/login');
+                \K::app_session_unregister('app_logged_users_id');
+                \Helpers\Urls::redirect_to('module/users/login');
             }
         }
     }
@@ -574,3 +566,5 @@ class Controller
 //backward compatibility
 //value_displya_own_column
 //dinamic_query
+//calclulate_diff_days
+//calclulate_totals

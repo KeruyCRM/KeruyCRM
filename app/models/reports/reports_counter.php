@@ -287,8 +287,8 @@ class Reports_counter
         $where_sql = '';
 
         //check hidden common reports
-        if (strlen(\K::$fw->app_users_cfg->get('hidden_common_reports')) > 0) {
-            $where_sql = " and r.id not in (" . \K::$fw->app_users_cfg->get('hidden_common_reports') . ")";
+        if (strlen(\K::app_users_cfg()->get('hidden_common_reports')) > 0) {
+            $where_sql = " and r.id not in (" . \K::app_users_cfg()->get('hidden_common_reports') . ")";
         }
 
         //get common reports list

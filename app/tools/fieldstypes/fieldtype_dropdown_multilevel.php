@@ -203,7 +203,7 @@ class Fieldtype_dropdown_multilevel
 	          <div class="form-group form-group-' . $field['id'] . '">
 	          	<label class="col-md-3 control-label" for="fields_' . $field['id'] . '">' .
                 ($field['is_required'] == 1 ? '<span class="required-label">*</span>' : '') .
-                ($field['tooltip_display_as'] == 'icon' ? tooltip_icon($field_tooltip) : '') .
+                ($field['tooltip_display_as'] == 'icon' ? \Helpers\App::tooltip_icon($field_tooltip) : '') .
                 $field_name .
                 '</label>
 	            <div class="col-md-9">

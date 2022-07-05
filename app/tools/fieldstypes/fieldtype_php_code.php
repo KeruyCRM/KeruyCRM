@@ -32,7 +32,7 @@ class Fieldtype_php_code
         ];
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_FIELDTYPE_PHP_CODE_RUN_DYNAMIC_INFO) . \K::$fw->TEXT_RUN_DYNAMIC,
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_FIELDTYPE_PHP_CODE_RUN_DYNAMIC_INFO) . \K::$fw->TEXT_RUN_DYNAMIC,
             'name' => 'dynamic_query',
             'type' => 'checkbox'
         ];

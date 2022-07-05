@@ -941,7 +941,7 @@ class Fields_types
 	        	<label class="col-md-3 control-label" for="' . generate_id_from_name(
                             'fields_configuration[' . $v['name'] . ']'
                         ) . '">' .
-                        (isset($v['tooltip_icon']) ? tooltip_icon($v['tooltip_icon']) : '') . $v['title'] .
+                        (isset($v['tooltip_icon']) ? \Helpers\App::tooltip_icon($v['tooltip_icon']) : '') . $v['title'] .
                         '</label>
 	          <div class="col-md-' . (in_array($v['type'], ['code']) ? '12' : '9') . '">' .
                         $field .

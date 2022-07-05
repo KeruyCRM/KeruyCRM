@@ -27,7 +27,7 @@ class Fieldtype_js_formula
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
             'name' => 'number_format',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
@@ -35,13 +35,13 @@ class Fieldtype_js_formula
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
-            'name' => 'calclulate_totals',
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
+            'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO) . \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
@@ -213,7 +213,7 @@ class Fieldtype_js_formula
             );
         }
 
-        $js_formula = $app_global_vars->apply_to_text($js_formula);
+        $js_formula = \K::app_global_vars()->apply_to_text($js_formula);
 
         //echo $js_formula;
         //try calculate js formula to value    

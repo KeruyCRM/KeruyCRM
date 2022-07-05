@@ -52,6 +52,16 @@ class K
         return \Helpers\Security::instance();
     }
 
+    public static function app_global_vars()
+    {
+        return \Tools\GlobalVars::instance();
+    }
+
+    public static function users_cfg()
+    {
+        return \Models\Users\Users_cfg::instance();
+    }
+
     public static function app_session_is_registered($key)
     {
         return self::fw()->exists('SESSION.' . $key);

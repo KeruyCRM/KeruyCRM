@@ -35,7 +35,7 @@ class Fieldtype_related_records
          */
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => tooltip_icon(
+            'title' => \Helpers\App::tooltip_icon(
                     \K::$fw->TEXT_DISPLAY_IN_MAIN_COLUMN_INFO
                 ) . \K::$fw->TEXT_DISPLAY_IN_MAIN_COLUMN,
             'name' => 'display_in_main_column',

@@ -16,7 +16,7 @@ class Fieldtype_hours_difference
         $cfg = [];
 
         $cfg[] = [
-            'title' => tooltip_icon(
+            'title' => \Helpers\App::tooltip_icon(
                     \K::$fw->TEXT_FIELDTYPE_DAYS_DIFFERENCE_DYNAMIC_INFO
                 ) . \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
             'name' => 'dynamic_query',
@@ -78,8 +78,8 @@ class Fieldtype_hours_difference
         $cfg[] = ['title' => \K::$fw->TEXT_EXCLUDE_HOLIDAYS, 'name' => 'exclude_holidays', 'type' => 'checkbox'];
 
         $cfg[] = [
-            'title' => tooltip_icon(TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
-            'name' => 'calclulate_totals',
+            'title' => \Helpers\App::tooltip_icon(TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
+            'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
         $cfg[] = [
@@ -89,7 +89,7 @@ class Fieldtype_hours_difference
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
+            'title' => \Helpers\App::tooltip_icon(TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
             'name' => 'number_format',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
@@ -241,7 +241,7 @@ BEGIN
 END;";
 
         $is_function = false;
-        $check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . DB_DATABASE . "'");
+        $check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . \K::$fw->DB_name . "'");
         while ($check = db_fetch_array($check_query)) {
             if ($check['Name'] == 'keruycrm_hours_diff') {
                 $is_function = true;

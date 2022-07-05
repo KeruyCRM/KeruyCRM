@@ -36,7 +36,7 @@ class Fieldtype_formula
         ];
         $cfg[] = [
             'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
-            'name' => 'calclulate_totals',
+            'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
         $cfg[] = [
@@ -120,7 +120,7 @@ class Fieldtype_formula
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = reports::prepare_numeric_sql_filters($filters, '');
+        $sql = \Models\Reports\Reports::prepare_numeric_sql_filters($filters, '');
 
         if (count($sql) > 0) {
             $sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
@@ -136,8 +136,6 @@ class Fieldtype_formula
     public static function check_formula_query_needed($formula_fields_id, $entities_id, $check_needed)
     {
         //global $mysql_formula_reports_info_holder;
-
-        //print_rr($mysql_formula_reports_info_holder);
 
         $check_formula_needed = false;
         $reports_info = [];
@@ -362,7 +360,6 @@ class Fieldtype_formula
             $available_fields = \K::$fw->app_not_formula_fields_cache[$entities_id];
         }
 
-        //print_rr($app_formula_fields_cache);
         //get formulas    
         if (isset(\K::$fw->app_formula_fields_cache[$entities_id])) {
             $formulas_fields = [];
@@ -413,7 +410,7 @@ class Fieldtype_formula
                             ) and \K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_days_difference') {
                             $formula = str_replace(
                                 '[' . $fields_id . ']',
-                                fieldtype_days_difference::prepare_query(
+                                \Tools\FieldsTypes\Fieldtype_days_difference::prepare_query(
                                     \K::$fw->app_fields_cache[$entities_id][$fields_id],
                                     'e',
                                     true
@@ -426,7 +423,7 @@ class Fieldtype_formula
                             ) and \K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_hours_difference') {
                             $formula = str_replace(
                                 '[' . $fields_id . ']',
-                                fieldtype_hours_difference::prepare_query(
+                                \Tools\FieldsTypes\Fieldtype_hours_difference::prepare_query(
                                     \K::$fw->app_fields_cache[$entities_id][$fields_id],
                                     'e',
                                     true
@@ -439,7 +436,7 @@ class Fieldtype_formula
                             ) and \K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_years_difference') {
                             $formula = str_replace(
                                 '[' . $fields_id . ']',
-                                fieldtype_years_difference::prepare_query(
+                                \Tools\FieldsTypes\Fieldtype_years_difference::prepare_query(
                                     \K::$fw->app_fields_cache[$entities_id][$fields_id],
                                     'e',
                                     true
@@ -452,7 +449,7 @@ class Fieldtype_formula
                             ) and \K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_months_difference') {
                             $formula = str_replace(
                                 '[' . $fields_id . ']',
-                                fieldtype_months_difference::prepare_query(
+                                \Tools\FieldsTypes\Fieldtype_months_difference::prepare_query(
                                     \K::$fw->app_fields_cache[$entities_id][$fields_id],
                                     'e',
                                     true
@@ -514,9 +511,6 @@ class Fieldtype_formula
                         $formula = functions::prepare_formula_query($entities_id, $formula);
                     }
 
-                    //echo 'test=' . htmlspecialchars($formula) .'<br>';
-                    //print_r($listing_sql_query_select);
-
                     if (!strstr($formula, '[') and !strstr($formula, '{')) {
                         if ($prepare_field_sum) {
                             $listing_sql_query_select .= ", sum(" . $formula . ") as sum_field_" . $fields['id'] . " ";
@@ -539,42 +533,42 @@ class Fieldtype_formula
         }
 
         //prepare mysql query field type in main query
-        $listing_sql_query_select = fieldtype_mysql_query::prepare_query_select(
+        $listing_sql_query_select = \Tools\FieldsTypes\Fieldtype_mysql_query::prepare_query_select(
             $entities_id,
             $listing_sql_query_select
         );
 
         //prepare days diff query field type in main query
-        $listing_sql_query_select = fieldtype_days_difference::prepare_query_select(
+        $listing_sql_query_select = \Tools\FieldsTypes\Fieldtype_days_difference::prepare_query_select(
             $entities_id,
             $listing_sql_query_select
         );
 
         //prepare hours diff query field type in main query
-        $listing_sql_query_select = fieldtype_hours_difference::prepare_query_select(
+        $listing_sql_query_select = \Tools\FieldsTypes\Fieldtype_hours_difference::prepare_query_select(
             $entities_id,
             $listing_sql_query_select
         );
 
         //prepare years diff query field type in main query
-        $listing_sql_query_select = fieldtype_years_difference::prepare_query_select(
+        $listing_sql_query_select = \Tools\FieldsTypes\Fieldtype_years_difference::prepare_query_select(
             $entities_id,
             $listing_sql_query_select
         );
 
         //prepare months diff query field type in main query
-        $listing_sql_query_select = fieldtype_months_difference::prepare_query_select(
+        $listing_sql_query_select = \Tools\FieldsTypes\Fieldtype_months_difference::prepare_query_select(
             $entities_id,
             $listing_sql_query_select
         );
 
         //prepare encrypted fields
-        $listing_sql_query_select = fieldtype_input_encrypted::prepare_query_select(
+        $listing_sql_query_select = \Tools\FieldsTypes\Fieldtype_input_encrypted::prepare_query_select(
             $entities_id,
             $listing_sql_query_select
         );
 
-        $listing_sql_query_select = \K::$fw->app_global_vars->apply_to_text($listing_sql_query_select);
+        $listing_sql_query_select = \K::app_global_vars()->apply_to_text($listing_sql_query_select);
 
         return $listing_sql_query_select;
     }
@@ -677,7 +671,7 @@ class Fieldtype_formula
                 ], [], 'type,configuration');
 
                 //if ($field = db_fetch_array($field_query)) {
-                if($field){
+                if ($field) {
                     $cfg = new \Tools\Settings($field['configuration']);
 
                     if (($list_id = $cfg->get('use_global_list')) > 0) {

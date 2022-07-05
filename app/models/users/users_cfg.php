@@ -2,7 +2,7 @@
 
 namespace Models\Users;
 
-class Users_cfg
+class Users_cfg extends \Prefab
 {
     public $cfg;
 

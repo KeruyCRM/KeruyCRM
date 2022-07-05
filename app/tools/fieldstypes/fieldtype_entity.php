@@ -68,7 +68,7 @@ class Fieldtype_entity
         $cfg[] = ['title' => \K::$fw->TEXT_HIDE_PLUS_BUTTON, 'name' => 'hide_plus_button', 'type' => 'checkbox'];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
             'name' => 'display_as_link',
             'type' => 'checkbox'
         ];

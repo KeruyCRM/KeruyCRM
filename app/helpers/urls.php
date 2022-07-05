@@ -1,17 +1,18 @@
 <?php
 
-namespace Helpers\Urls;
+namespace Helpers;
 
 class Urls
 {
     public static function redirect_to($module, $prams = '')
     {
-        if (IS_AJAX) {
-            echo '<script>window.top.location.href="' . url_for($module, $prams) . '"</script>';
+        if (\K::$fw->AJAX) {
+            echo '<script>window.top.location.href="' . self::url_for($module, $prams) . '"</script>';
             exit();
         }
 
-        header('Location: ' . url_for($module, $prams));
+        \K::fw()->reroute(self::url_for($module, $prams));
+        //header('Location: ' . self::url_for($module, $prams));
 
         exit();
     }
@@ -21,30 +22,21 @@ class Urls
         return ((ENABLE_SSL or IS_HTTPS == 'on') ? true : false);
     }
 
-    public static function url_for($module, $prams = '', $hide_session = false)
+    public static function url_for($module, $prams = '')
     {
-        global $session_started;
-
-        $scheme = (is_ssl() ? 'https://' : 'http://');
-        $host = $_SERVER['HTTP_HOST'];
-
         $self = pathinfo($_SERVER['PHP_SELF']);
         $self['dirname'] = str_replace("\\", "/", $self['dirname']);
         $path = $self['dirname'] . (substr($self['dirname'], -1) != '/' ? '/' : '');
 
-        $prams = (strlen($prams) > 0 ? '&' . $prams : '');
+        $prams = (strlen($prams) > 0 ? '?' . $prams : '');
 
-        if ($session_started and !SESSION_FORCE_COOKIE_USE and !$hide_session) {
-            $prams .= '&' . session_name() . '=' . session_id();
-        }
-
-        if (defined('IS_CRON') and IS_CRON == true) {
-            $url = CRON_HTTP_SERVER_HOST . 'index.php?module=' . $module . $prams;
+        if (\K::$fw->IS_CRON) {
+            $url = \K::$fw->CRON_HTTP_SERVER_HOST . $module . $prams;
         } else {
-            $url = $scheme . $host . $path . 'index.php?module=' . $module . $prams;
+            $url = \K::$fw->SCHEME . '://' . \K::$fw->HOST . $path . $module . $prams;
         }
 
-        $url .= csrf_protect::add_token_to_url($url);
+        //$url .= csrf_protect::add_token_to_url($url);
 
         return $url;
     }

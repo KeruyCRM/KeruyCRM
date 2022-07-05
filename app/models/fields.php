@@ -709,7 +709,7 @@ class Fields
         }
 
         if (strlen($text)) {
-            return ' ' . tooltip_icon($text, 'top');
+            return ' ' . \Helpers\App::tooltip_icon($text, 'top');
         } else {
             return '';
         }

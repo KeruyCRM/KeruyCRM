@@ -37,19 +37,19 @@ class Fieldtype_input_numeric
         ];
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT,
             'name' => 'number_format',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
             'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
-            'name' => 'calclulate_totals',
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
+            'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => tooltip_icon(
+            'title' => \Helpers\App::tooltip_icon(
                     \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO
                 ) . \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',

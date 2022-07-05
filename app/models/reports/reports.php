@@ -4,16 +4,12 @@ namespace Models\Reports;
 
 class Reports
 {
-
     public static function copy($reports_id)
     {
         $reports_list[] = $reports_id;
         $reports_list = self::get_parent_reports($reports_id, $reports_list);
 
         $reports_list = array_reverse($reports_list);
-
-        //print_rr($reports_list);
-        //exit();
 
         $parent_reports_id = 0;
 

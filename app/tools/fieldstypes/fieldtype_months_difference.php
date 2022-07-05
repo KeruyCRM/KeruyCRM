@@ -16,7 +16,7 @@ class Fieldtype_months_difference
         $cfg = [];
 
         $cfg[] = [
-            'title' => tooltip_icon(
+            'title' => \Helpers\App::tooltip_icon(
                     \K::$fw->TEXT_FIELDTYPE_DAYS_DIFFERENCE_DYNAMIC_INFO
                 ) . \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_DYNAMIC_QUERY,
             'name' => 'dynamic_query',
@@ -57,13 +57,13 @@ class Fieldtype_months_difference
         $cfg[] = [
             'title' => \K::$fw->TEXT_CALCULATE_DIFFERENCE_DAYS,
             'tooltip_icon' => \K::$fw->TEXT_CALCULATE_DIFFERENCE_DAYS_INFO,
-            'name' => 'calclulate_diff_days',
+            'name' => 'calculate_diff_days',
             'type' => 'checkbox'
         ];
 
         $cfg[] = [
-            'title' => tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
-            'name' => 'calclulate_totals',
+            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
+            'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
         $cfg[] = [
@@ -146,7 +146,7 @@ BEGIN
 END;";
 
         $is_function = false;
-        $check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . DB_DATABASE . "'");
+        $check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . \K::$fw->DB_name . "'");
         while ($check = db_fetch_array($check_query)) {
             if ($check['Name'] == 'keruycrm_months_diff') {
                 $is_function = true;
@@ -203,12 +203,12 @@ END;";
 
         if ($single_select) {
             $mysql_query = "(keruycrm_months_diff(" . $start_date_field . "," . $end_date_field . "," . $cfg->get(
-                    'calclulate_diff_days',
+                    'calculate_diff_days',
                     0
                 ) . "))";
         } else {
             $mysql_query = "keruycrm_months_diff(" . $start_date_field . "," . $end_date_field . "," . $cfg->get(
-                    'calclulate_diff_days',
+                    'calculate_diff_days',
                     0
                 ) . ") as field_" . $fields['id'];
         }

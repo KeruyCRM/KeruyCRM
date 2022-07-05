@@ -99,7 +99,7 @@ class forms_rows
                     	          <div class="form-group form-group-' . $v['id'] . ' form-group-' . $v['type'] . '">
                     	          	<label class="col-md-' . $label_widht . ' control-label" for="fields_' . $v['id'] . '">' .
                                 ($v['is_required'] == 1 ? '<span class="required-label">*</span>' : '') .
-                                ($v['tooltip_display_as'] == 'icon' ? tooltip_icon($v['tooltip']) : '') .
+                                ($v['tooltip_display_as'] == 'icon' ? \Helpers\App::tooltip_icon($v['tooltip']) : '') .
                                 fields_types::get_option($v['type'], 'name', $v['name']) .
                                 '</label>
                     	            <div class="col-md-' . $field_widht . '">

@@ -66,7 +66,7 @@ class Fieldtype_days_difference
 
         $cfg[] = [
             'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
-            'name' => 'calclulate_totals',
+            'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
         $cfg[] = [
@@ -187,7 +187,7 @@ BEGIN
 END;";
 
         $is_function = false;
-        $check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . DB_DATABASE . "'");
+        $check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . \K::$fw->DB_name . "'");
         while ($check = db_fetch_array($check_query)) {
             if ($check['Name'] == 'keruycrm_days_diff') {
                 $is_function = true;

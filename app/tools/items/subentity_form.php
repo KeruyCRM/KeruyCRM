@@ -216,7 +216,7 @@ class Subentity_form
                 <div class="row form-group form-group-' . $field['id'] . ' form-group-' . $field['type'] . '">
 	          	<label class="col-md-3 control-label" for="fields_' . $field['id'] . '">' .
                 ($field['is_required'] == 1 ? '<span class="required-label">*</span>' : '') .
-                ($field['tooltip_display_as'] == 'icon' ? tooltip_icon($field['tooltip']) : '') .
+                ($field['tooltip_display_as'] == 'icon' ? \Helpers\App::tooltip_icon($field['tooltip']) : '') .
                 $field['name'] .
                 '</label>
 	            <div class="col-md-9">	
@@ -258,7 +258,7 @@ class Subentity_form
                 <div class="col-md-3 form-group-' . $field['id'] . ' form-group-' . $field['type'] . '" ' . ((isset($column_width[$k]) and $column_width[$k] > 0) ? 'style="width: ' . $column_width[$k] . '%"' : '') . '>
 	          	<label class="control-label" for="fields_' . $field['id'] . '">' .
                 ($field['is_required'] == 1 ? '<span class="required-label">*</span>' : '') .
-                ($field['tooltip_display_as'] == 'icon' ? tooltip_icon($field['tooltip']) : '') .
+                ($field['tooltip_display_as'] == 'icon' ? \Helpers\App::tooltip_icon($field['tooltip']) : '') .
                 $field['name'] .
                 '</label>
 	            <div>	

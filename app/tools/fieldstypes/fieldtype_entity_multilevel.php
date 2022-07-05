@@ -53,7 +53,7 @@ class fieldtype_entity_multilevel
         ];
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => tooltip_icon(TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
+            'title' => \Helpers\App::tooltip_icon(TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
             'name' => 'display_as_link',
             'type' => 'checkbox'
         ];

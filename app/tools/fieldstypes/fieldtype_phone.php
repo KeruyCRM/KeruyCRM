@@ -130,7 +130,7 @@ BEGIN
 END";
 
         $is_function = false;
-        $check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . DB_DATABASE . "'");
+        $check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . \K::$fw->DB_name . "'");
         while ($check = db_fetch_array($check_query)) {
             if ($check['Name'] == 'keruycrm_regex_replace') {
                 $is_function = true;
