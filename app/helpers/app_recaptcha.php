@@ -13,8 +13,12 @@ class App_recaptcha
                 define('CFG_RECAPTCHA_TRUSTED_IP', '');
             }
 
+            if (!\K::fw()->exists('CFG_RECAPTCHA_TRUSTED_IP')) {
+                \K::$fw->CFG_RECAPTCHA_TRUSTED_IP = '';
+            }
+
             if (strlen(\K::$fw->CFG_RECAPTCHA_TRUSTED_IP) and in_array(
-                    $_SERVER['REMOTE_ADDR'],
+                    \K::$fw->IP,
                     array_map('trim', explode(',', \K::$fw->CFG_RECAPTCHA_TRUSTED_IP))
                 )) {
                 return false;
@@ -50,7 +54,7 @@ class App_recaptcha
         require('app/libs/ReCaptcha/RequestMethod/CurlPost.php');
 
         $recaptcha = new \ReCaptcha\ReCaptcha(\K::$fw->CFG_RECAPTCHA_SECRET_KEY);
-        $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+        $resp = $recaptcha->verify(\K::fw()->get('POST.g-recaptcha-response'), \K::$fw->IP);
 
         return $resp->isSuccess();
     }

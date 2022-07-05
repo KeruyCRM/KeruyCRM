@@ -5,20 +5,20 @@
 <html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
 <html lang="<?php
-echo APP_LANGUAGE_SHORT_CODE ?>" dir="<?php
-echo APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
+echo \K::$fw->APP_LANGUAGE_SHORT_CODE ?>" dir="<?php
+echo \K::$fw->APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
 <!--<![endif]-->
 <!-- BEGIN HEAD -->
 <head>
     <meta charset="utf-8"/>
     <meta name="robots" content="noindex,nofollow">
     <title><?php
-        echo $app_title ?></title>
+        echo \K::$fw->app_title ?></title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport"/>
     <meta content="" name="description"/>
     <?php
-    echo app_author_text() ?>
+    echo \Helpers\App::app_author_text() ?>
     <meta name="MobileOptimized" content="320">
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="template/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
@@ -35,7 +35,7 @@ echo APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
     <link href="template/css/style-responsive.css" rel="stylesheet" type="text/css"/>
     <link href="template/css/plugins.css" rel="stylesheet" type="text/css"/>
     <link href="css/skins/<?php
-    echo $app_skin ?>" rel="stylesheet" type="text/css"/>
+    echo \K::$fw->app_skin ?>" rel="stylesheet" type="text/css"/>
 
     <script src="template/plugins/jquery-1.10.2.min.js" type="text/javascript"></script>
 
@@ -47,10 +47,10 @@ echo APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
     <script type="text/javascript" src="js/main.js"></script>
 
     <script>
-        var app_cfg_drop_down_menu_on_hover = <?php echo CFG_DROP_DOWN_MENU_ON_HOVER ?>;
+        var app_cfg_drop_down_menu_on_hover = <?php echo \K::$fw->CFG_DROP_DOWN_MENU_ON_HOVER ?>;
 
         function keep_session() {
-            $.ajax({url: '<?php echo url_for("dashboard/", "action=keep_session") ?>'});
+            $.ajax({url: '<?php echo \Helpers\Urls::url_for("dashboard/keep_session") ?>'});
         }
 
         $(function () {
@@ -60,16 +60,16 @@ echo APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
 
     <link rel="stylesheet" type="text/css" href="css/default.css"/>
     <?php
-    echo app_include_custom_css() ?>
+    echo \Helpers\App::app_include_custom_css() ?>
 
     <?php
-    echo render_login_page_background() ?>
+    echo \Helpers\App::render_login_page_background() ?>
     <?php
-    echo app_recaptcha::render_js() ?>
+    echo \Helpers\App_recaptcha::render_js() ?>
 
     <!-- END THEME STYLES -->
     <?php
-    echo app_favicon() ?>
+    echo \Helpers\App::app_favicon() ?>
 </head>
 <!-- BEGIN BODY -->
 <body class="login">
@@ -80,18 +80,18 @@ echo APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
 <div class="login-page-logo">
 
     <?php
-    if (is_file(DIR_FS_UPLOADS . '/' . CFG_APP_LOGO)) {
-        if (is_image(DIR_FS_UPLOADS . '/' . CFG_APP_LOGO)) {
-            $html = '<img src="uploads/' . CFG_APP_LOGO . '" border="0" title="' . CFG_APP_NAME . '">';
+    if (is_file(\K::$fw->DIR_FS_UPLOADS . '/' . \K::$fw->CFG_APP_LOGO)) {
+        if (is_image(\K::$fw->DIR_FS_UPLOADS . '/' . \K::$fw->CFG_APP_LOGO)) {
+            $html = '<img src="uploads/' . \K::$fw->CFG_APP_LOGO . '" border="0" title="' . \K::$fw->CFG_APP_NAME . '">';
 
-            if (strlen(CFG_APP_LOGO_URL) > 0) {
-                $html = '<a href="' . CFG_APP_LOGO_URL . '" target="_new">' . $html . '</a>';
+            if (strlen(\K::$fw->CFG_APP_LOGO_URL) > 0) {
+                $html = '<a href="' . \K::$fw->CFG_APP_LOGO_URL . '" target="_new">' . $html . '</a>';
             }
 
             echo $html;
         }
     } else {
-        echo CFG_APP_NAME;
+        echo \K::$fw->CFG_APP_NAME;
     }
     ?>
 
@@ -99,14 +99,14 @@ echo APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
 <!-- END LOGO -->
 <!-- BEGIN LOGIN -->
 <div class="content <?php
-echo 'content-' . $app_action ?>">
+echo 'content-' . \K::$fw->app_action ?>">
 
     <?php
     //output alerts if they exists.
     echo $alerts->output();
 
     //include module views
-    if (is_file($path = 'modules/' . $app_module . '/views/' . $app_action . '.php')) {
+    if (is_file($path = 'modules/' . \K::$fw->app_module . '/views/' . \K::$fw->app_action . '.php')) {
         require($path);
     }
     ?>
@@ -118,9 +118,11 @@ echo 'content-' . $app_action ?>">
 <!-- BEGIN COPYRIGHT -->
 <div class="copyright">
     <?php
-    echo(strlen(CFG_APP_COPYRIGHT_NAME) > 0 ? '&copy; ' . CFG_APP_COPYRIGHT_NAME . ' ' . date('Y') . '<br>' : '') ?>
+    echo(strlen(\K::$fw->CFG_APP_COPYRIGHT_NAME) > 0 ? '&copy; ' . \K::$fw->CFG_APP_COPYRIGHT_NAME . ' ' . date(
+            'Y'
+        ) . '<br>' : '') ?>
     <?php
-    echo app_powered_by_text() ?>
+    echo \Helpers\App::app_powered_by_text() ?>
 </div>
 <!-- END COPYRIGHT -->
 

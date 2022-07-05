@@ -17,9 +17,10 @@ class Security extends \Prefab
                 !\K::app_session_is_registered('app_token')
                 or !\K::fw()->exists('POST.form_session_token', $postToken)
                 or !$this->validateToken($postToken)) {
-                \K::fw()->error(400, 'Invalid CSRF token');
+                \K::flash()->add(\K::$fw->TEXT_FROM_SESSION_ERROR, 'error');
+                \Helpers\Urls::redirect_to(\K::$fw->URI);
             } else {
-                //\K::$fw->error(200, 'TRUE');
+                return true;
             }
         }
     }

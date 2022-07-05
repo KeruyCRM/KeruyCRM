@@ -1275,7 +1275,7 @@ class App
 
     public static function is_cron()
     {
-        return defined('IS_CRON');
+        return \K::$fw->IS_CRON;
     }
 
     public static function is_mobile()
@@ -1286,7 +1286,7 @@ class App
     public static function app_get_mysql_days_choices()
     {
         $choices = [];
-        foreach (explode(",", TEXT_DATEPICKER_DAYS) as $k => $d) {
+        foreach (explode(",", \K::$fw->TEXT_DATEPICKER_DAYS) as $k => $d) {
             $d = str_replace('"', '', $d);
 
             $choices[$k + 1] = $d;
@@ -1311,17 +1311,17 @@ class App
     {
         global $app_path, $app_entities_cache;
 
-        $path_array = explode('/', $app_path);
+        $path_array = explode('/', \K::$fw->app_path);
         $last_path_item = explode('-', $path_array[count($path_array) - 1]);
         $current_entity_id = $last_path_item[0];
 
-        if ($current_entity_id == $entities_id or ($current_entity_id != $entities_id and $app_entities_cache[$current_entity_id]['parent_id'] == $app_entities_cache[$entities_id]['parent_id'])) {
+        if ($current_entity_id == $entities_id or ($current_entity_id != $entities_id and \K::$fw->app_entities_cache[$current_entity_id]['parent_id'] == \K::$fw->app_entities_cache[$entities_id]['parent_id'])) {
             unset($path_array[count($path_array) - 1]);
             $path = implode('/', $path_array);
 
             return $path . '/' . $entities_id;
         } else {
-            return $app_path . '/' . $entities_id;
+            return \K::$fw->app_path . '/' . $entities_id;
         }
     }
 
@@ -1397,18 +1397,18 @@ class App
 
     public static function app_include_codemirror($modes = [])
     {
-        $versioin = '5.63.3';
+        $version = '5.63.3';
 
         $html = '
-                <script src="js/codemirror/' . $versioin . '/lib/codemirror.js"></script>	        
-		<link rel="stylesheet" href="js/codemirror/' . $versioin . '/lib/codemirror.css">
-	        <link rel="stylesheet" href="js/codemirror/' . $versioin . '/addon/display/fullscreen.css">
-	        <script src="js/codemirror/' . $versioin . '/addon/display/fullscreen.js"></script>                
-                <script src="js/codemirror/' . $versioin . '/addon/edit/matchbrackets.js"></script>
+                <script src="js/codemirror/' . $version . '/lib/codemirror.js"></script>	        
+		<link rel="stylesheet" href="js/codemirror/' . $version . '/lib/codemirror.css">
+	        <link rel="stylesheet" href="js/codemirror/' . $version . '/addon/display/fullscreen.css">
+	        <script src="js/codemirror/' . $version . '/addon/display/fullscreen.js"></script>                
+                <script src="js/codemirror/' . $version . '/addon/edit/matchbrackets.js"></script>
 
 			';
         foreach ($modes as $mode) {
-            $html .= '<script src="js/codemirror/' . $versioin . '/mode/' . $mode . '/' . $mode . '.js"></script>';
+            $html .= '<script src="js/codemirror/' . $version . '/mode/' . $mode . '/' . $mode . '.js"></script>';
         }
 
         return $html;
@@ -1416,7 +1416,7 @@ class App
 
     public static function app_get_boolean_choices()
     {
-        return ['1' => TEXT_YES, '0' => TEXT_NO];
+        return ['1' => \K::$fw->TEXT_YES, '0' => \K::$fw->TEXT_NO];
     }
 
     public static function app_transliterate_string($string)
@@ -1465,18 +1465,18 @@ class App
 
     public static function app_powered_by_text()
     {
-        if (CFG_HIDE_POWERED_BY_TEXT == 1) {
+        if (\K::$fw->CFG_HIDE_POWERED_BY_TEXT == 1) {
             return '';
         }
 
-        $text = '<small>' . TEXT_POWERED_BY . '&nbsp;<a rel="nofollow" target="_blank" href="https://www.keruy.com.ua" title="' . TEXT_POWERED_BY_TITLE . '">KeruyCRM</a></small>';
+        $text = '<small>' . \K::$fw->TEXT_POWERED_BY . '&nbsp;<a rel="nofollow" target="_blank" href="https://www.keruy.com.ua" title="' . \K::$fw->TEXT_POWERED_BY_TITLE . '">KeruyCRM</a></small>';
 
         return $text;
     }
 
     public static function app_author_text()
     {
-        if (CFG_HIDE_POWERED_BY_TEXT == 1) {
+        if (\K::$fw->CFG_HIDE_POWERED_BY_TEXT == 1) {
             return '';
         }
 

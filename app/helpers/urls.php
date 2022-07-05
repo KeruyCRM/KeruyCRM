@@ -12,9 +12,6 @@ class Urls
         }
 
         \K::fw()->reroute(self::url_for($module, $prams));
-        //header('Location: ' . self::url_for($module, $prams));
-
-        exit();
     }
 
     public static function is_ssl()
@@ -22,18 +19,18 @@ class Urls
         return ((ENABLE_SSL or IS_HTTPS == 'on') ? true : false);
     }
 
-    public static function url_for($module, $prams = '')
+    public static function url_for($module, $params = '')
     {
         $self = pathinfo($_SERVER['PHP_SELF']);
         $self['dirname'] = str_replace("\\", "/", $self['dirname']);
         $path = $self['dirname'] . (substr($self['dirname'], -1) != '/' ? '/' : '');
 
-        $prams = (strlen($prams) > 0 ? '?' . $prams : '');
+        $params = (strlen($params) > 0 ? '?' . $params : '');
 
         if (\K::$fw->IS_CRON) {
-            $url = \K::$fw->CRON_HTTP_SERVER_HOST . $module . $prams;
+            $url = \K::$fw->CRON_HTTP_SERVER_HOST . $module . $params;
         } else {
-            $url = \K::$fw->SCHEME . '://' . \K::$fw->HOST . $path . $module . $prams;
+            $url = \K::$fw->SCHEME . '://' . \K::$fw->HOST . $path . $module . $params;
         }
 
         //$url .= csrf_protect::add_token_to_url($url);
