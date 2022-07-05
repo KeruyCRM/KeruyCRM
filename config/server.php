@@ -46,7 +46,7 @@
 
     //Session Directory
     //If sessions are file based, store them in this directory.
-    'SESSION_WRITE_DIRECTORY' => '/tmp',
+    'SESSION_WRITE_DIRECTORY' => 'memcached=127.0.0.1:11211',
 
     //session handler
     // leave empty '' for default handler or set to 'mysql'
