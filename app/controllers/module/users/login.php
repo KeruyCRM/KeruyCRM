@@ -1,8 +1,8 @@
 <?php
 
-namespace Controllers\Module;
+namespace Controllers\Module\Users;
 
-class Users extends \Controller
+class Login extends \Controller
 {
     private $app_layout = 'login_layout.php';
 
@@ -20,18 +20,19 @@ class Users extends \Controller
         \Helpers\App_restricted_ip::verify();
     }
 
-    public function login()
+    public function index()
     {
         if (\K::app_session_is_registered('app_logged_users_id')) {
             $this->logoff();
         }
 
+    }
+
+    public function login()
+    {
         if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN == 2) {
             \Helpers\Urls::redirect_to('module/users/login');
         }
-
-        //check form token
-        //app_check_form_token('users/login');
 
         //check recaptcha
         if (\Helpers\App_recaptcha::is_enabled()) {

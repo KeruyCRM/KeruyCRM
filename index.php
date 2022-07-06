@@ -38,13 +38,18 @@ foreach ($plugins as $plugin) {
 }
 
 \K::$fw->route(
-    'GET|POST @mainRouterAction: /@moduleName/@controllerName/@actionName',
-    '\Controllers\@moduleName\@controllerName->@actionName'
+    'GET|POST @mainRouterAction: /@extensionName/@moduleName/@controllerName/@actionName',
+    '\Controllers\@extensionName\@moduleName\@controllerName->@actionName'
 );
 
 \K::$fw->route(
-    'GET|POST @mainRouter: /@moduleName/@controllerName',
-    '\Controllers\@moduleName\@controllerName->index'
+    'GET|POST @mainRouterAction: /@extensionName/@moduleName/@controllerName',
+    '\Controllers\@extensionName\@moduleName\@controllerName->index'
+);
+
+\K::$fw->route(
+    'GET|POST @mainRouterAction: /@extensionName/@moduleName',
+    '\Controllers\@extensionName\@moduleName\@moduleName->index'
 );
 
 \K::$fw->route(

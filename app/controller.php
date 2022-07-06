@@ -196,16 +196,16 @@ class Controller
         \K::$fw->app_session_token = \K::security()->getAppSessionToken();
 
         \K::$fw->app_plugin_path = '';
-        \K::$fw->app_module = \K::fw()->get('PARAMS.controllerName');
-        \K::$fw->app_action = (\K::fw()->exists('PARAMS.actionName') ? \K::fw()->get(
-            'PARAMS.actionName'
-        ) : 'index');
+        \K::$fw->app_module = \K::fw()->get('PARAMS.moduleName');
+        \K::$fw->app_action = (\K::fw()->exists('PARAMS.controllerName') ? \K::fw()->get(
+            'PARAMS.controllerName'
+        ) : 'PARAMS.moduleName');
 
-        if (\K::fw()->get('PARAMS.moduleName') == 'module') {
+        if (\K::fw()->get('PARAMS.extensionName') == 'module') {
             \K::$fw->app_module_path = \K::$fw->app_module . '/' . \K::$fw->app_action;
         } else {
             \K::$fw->app_module_path = \K::fw()->get(
-                    'PARAMS.moduleName'
+                    'PARAMS.extensionName'
                 ) . '/' . \K::$fw->app_module . '/' . \K::$fw->app_action;
         }
 
@@ -213,7 +213,7 @@ class Controller
             \K::$fw->CFG_APP_SHORT_NAME
         ) > 0 ? \K::$fw->CFG_APP_SHORT_NAME : \K::$fw->CFG_APP_NAME);
 
-        \K::$fw->app_module_action = ($_GET['action'] ?? (isset($_POST['action']) ? $_POST['action'] : ''));
+        \K::$fw->app_module_action = (\K::fw()->exists('PARAMS.actionName') ? \K::fw()->get('PARAMS.actionName') : 'index');
 
         \K::$fw->app_redirect_to = ($_GET['redirect_to'] ?? (isset($_POST['redirect_to']) ? $_POST['redirect_to'] : ''));
 

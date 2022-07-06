@@ -94,11 +94,12 @@ class Model extends \Prefab
     public function db_fetch_one($table, $filter = [], $options = [], $column = null, $ttl = null)
     {
         $mapper = $this->mapper($table, $column);
-        return $mapper->findone(
+        $mapper->findone(
             $filter,
             $options,
             $ttl
-        )->cast();
+        );
+        return $mapper->cast();
     }
 
     public function db_fetch_count($table, $filter = [], $ttl = null)

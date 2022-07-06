@@ -927,8 +927,7 @@ class Users
 
                     //$alerts->add(\K::$keruy->TEXT_USER_NOT_FOUND, 'error');
                     \K::flash()->addMessage(\K::$fw->TEXT_USER_NOT_FOUND, 'error');
-                    \K::fw()->reroute('@Login');
-                    //redirect_to('users/login');
+                    \Helpers\Urls::redirect_to('module/users/login');
                 }
             } else {
                 //login log
@@ -941,8 +940,7 @@ class Users
 
                 //$alerts->add(\K::$keruy->TEXT_USER_IS_NOT_ACTIVE, 'error');
                 \K::flash()->addMessage(\K::$fw->TEXT_USER_IS_NOT_ACTIVE, 'error');
-                \K::fw()->reroute('@Login');
-                //redirect_to('users/login');
+                \Helpers\Urls::redirect_to('module/users/login');
             }
         } else {
             //login log
@@ -955,8 +953,7 @@ class Users
 
             //$alerts->add(\K::$keruy->TEXT_USER_NOT_FOUND, 'error');
             \K::flash()->addMessage(\K::$fw->TEXT_USER_NOT_FOUND, 'error');
-            \K::fw()->reroute('@Login');
-            //redirect_to('users/login');
+            \Helpers\Urls::redirect_to('module/users/login');
         }
     }
 

@@ -6,7 +6,7 @@ class App_restricted_countries
 {
     static function is_enabled()
     {
-        if (CFG_RESTRICTED_COUNTRIES_ENABLE == true and strlen(CFG_ALLOWED_COUNTRIES_LIST)) {
+        if (\K::$fw->CFG_RESTRICTED_COUNTRIES_ENABLE == true and strlen(\K::$fw->CFG_ALLOWED_COUNTRIES_LIST)) {
             return true;
         } else {
             return false;
@@ -26,8 +26,8 @@ class App_restricted_countries
 
             geoip_close($gi);
 
-            if (!in_array($country_code, array_map('trim', explode(',', CFG_ALLOWED_COUNTRIES_LIST)))) {
-                echo TEXT_ACCESS_FORBIDDEN;
+            if (!in_array($country_code, array_map('trim', explode(',', \K::$fw->CFG_ALLOWED_COUNTRIES_LIST)))) {
+                echo \K::$fw->TEXT_ACCESS_FORBIDDEN;
                 exit();
             }
         }
