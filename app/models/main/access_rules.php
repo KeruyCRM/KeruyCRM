@@ -51,7 +51,7 @@ class Access_rules
     public static function get_access_rules_fields_cache()
     {
         $cache = [];
-        //$access_rules_fields_query = \K::model()->db_query("select * from app_access_rules_fields");
+        //$access_rules_fields_query = \K::model()->db_query_exec("select * from app_access_rules_fields");
 
         $access_rules_fields_query = \K::model()->db_fetch_all(
             'app_access_rules_fields',
