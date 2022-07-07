@@ -12,7 +12,7 @@ class Login extends \Controller
 
         //force ldap login only
         if (\K::$fw->CFG_LDAP_USE == 1 and \K::$fw->CFG_USE_LDAP_LOGIN_ONLY == 1 and \K::$fw->app_module_action != 'logoff') {
-            \Helpers\Urls::redirect_to('module/users/ldap_login');
+            \Helpers\Urls::redirect_to('main/users/ldap_login');
         }
 
         //check security settings if they are enabled
@@ -26,27 +26,32 @@ class Login extends \Controller
             $this->logoff();
         }
 
+        echo \K::view()->render($this->app_layout);
     }
 
     public function login()
     {
-        if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN == 2) {
-            \Helpers\Urls::redirect_to('module/users/login');
-        }
-
-        //check recaptcha
-        if (\Helpers\App_recaptcha::is_enabled()) {
-            if (!\Helpers\App_recaptcha::verify()) {
-                \K::flash()->add(\K::$fw->TEXT_RECAPTCHA_VERIFY_ROBOT, 'error');
-                \Helpers\Urls::redirect_to('module/users/login');
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN == 2) {
+                \Helpers\Urls::redirect_to('main/users/login');
             }
-        }
 
-        \Models\Users\Users::login(
-            \K::$fw->{'POST.username'},
-            \K::$fw->{'POST.password'},
-            (\K::fw()->exists('POST.remember_me') ? 1 : 0)
-        );
+            //check recaptcha
+            if (\Helpers\App_recaptcha::is_enabled()) {
+                if (!\Helpers\App_recaptcha::verify()) {
+                    \K::flash()->add(\K::$fw->TEXT_RECAPTCHA_VERIFY_ROBOT, 'error');
+                    \Helpers\Urls::redirect_to('main/users/login');
+                }
+            }
+
+            \Models\Users\Users::login(
+                \K::$fw->{'POST.username'},
+                \K::$fw->{'POST.password'},
+                (\K::fw()->exists('POST.remember_me') ? 1 : 0)
+            );
+        } else {
+            \Helpers\Urls::redirect_to('main/users/login');
+        }
     }
 
     public function logoff()
@@ -62,6 +67,6 @@ class Login extends \Controller
         \K::cookieClear('app_remember_pass');
         \K::cookieClear('izoColorPickerColors');
 
-        \Helpers\Urls::redirect_to('module/users/login');
+        \Helpers\Urls::redirect_to('main/users/login');
     }
 }

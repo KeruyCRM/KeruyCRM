@@ -501,6 +501,33 @@ class Html
         return $html;
     }
 
+    public static function getAlerts()
+    {
+        $alerts = '';
+
+        $messages = \K::flash()->getMessages();
+        foreach ($messages as $message) {
+            switch ($message['status']) {
+                case 'error':
+                    $class = 'alert-danger';
+                    break;
+                case 'warning':
+                    $class = 'alert-warning';
+                    break;
+                case 'success':
+                    $class = 'alert-success';
+                    break;
+                default:
+                    $class = 'alert-info';
+                    break;
+            }
+
+            $alerts .= '<div class="alert ' . $class . '"><button type="button" class="close" data-dismiss="alert">&times;</button>' . $message['text'] . '</div>' . PHP_EOL;
+        }
+
+        return $alerts;
+    }
+
     private static function getAttributes($value, $attributes, $k, $name)
     {
         $attributes['checked'] = false;

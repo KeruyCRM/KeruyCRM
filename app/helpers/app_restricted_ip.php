@@ -17,8 +17,7 @@ class App_restricted_ip
     {
         if (self::is_enabled()) {
             if (!in_array($_SERVER['REMOTE_ADDR'], array_map('trim', explode(',', \K::$fw->CFG_ALLOWED_IP_LIST)))) {
-                echo \K::$fw->TEXT_ACCESS_FORBIDDEN;
-                exit();
+                \K::fw()->error(503, \K::$fw->TEXT_ACCESS_FORBIDDEN);
             }
         }
     }

@@ -146,7 +146,7 @@ echo 'content-' . $app_action ?>">
     //output alerts if they exists.
     echo $alerts->output();
 
-    //include module views
+    //include main views
     if (is_file($path = $app_plugin_path . 'modules/' . $app_module . '/views/' . $app_action . '.php')) {
         require($path);
     }

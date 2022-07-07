@@ -2,8 +2,6 @@
 
 namespace Models\Users;
 
-use Tools\Items\Items;
-
 class Users
 {
     static public function output_heading_from_item($item)
@@ -927,7 +925,7 @@ class Users
 
                     //$alerts->add(\K::$keruy->TEXT_USER_NOT_FOUND, 'error');
                     \K::flash()->addMessage(\K::$fw->TEXT_USER_NOT_FOUND, 'error');
-                    \Helpers\Urls::redirect_to('module/users/login');
+                    \Helpers\Urls::redirect_to('main/users/login');
                 }
             } else {
                 //login log
@@ -940,7 +938,7 @@ class Users
 
                 //$alerts->add(\K::$keruy->TEXT_USER_IS_NOT_ACTIVE, 'error');
                 \K::flash()->addMessage(\K::$fw->TEXT_USER_IS_NOT_ACTIVE, 'error');
-                \Helpers\Urls::redirect_to('module/users/login');
+                \Helpers\Urls::redirect_to('main/users/login');
             }
         } else {
             //login log
@@ -953,7 +951,7 @@ class Users
 
             //$alerts->add(\K::$keruy->TEXT_USER_NOT_FOUND, 'error');
             \K::flash()->addMessage(\K::$fw->TEXT_USER_NOT_FOUND, 'error');
-            \Helpers\Urls::redirect_to('module/users/login');
+            \Helpers\Urls::redirect_to('main/users/login');
         }
     }
 

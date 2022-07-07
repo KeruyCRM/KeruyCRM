@@ -53,7 +53,7 @@ echo APP_LANGUAGE_TEXT_DIRECTION ?>">
 
 <?php
 
-//include module views  
+//include main views
 if (is_file($path = $app_plugin_path . 'modules/' . $app_module . '/views/' . $app_action . '.php')) {
     require($path);
 }

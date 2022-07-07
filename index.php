@@ -8,7 +8,7 @@ $fw->AUTOLOAD = 'app/';
 
 \K::$fw->PACKAGE = 'KeruyCRM';
 
-\K::$fw->UI = 'template/';
+\K::$fw->UI = 'app/views/';
 \K::$fw->DEBUG = 3;
 \K::$fw->CACHE = true;
 
@@ -62,7 +62,7 @@ foreach ($plugins as $plugin) {
 );
 
 \K::$fw->redirect('GET /install', '/set/install/index');
-\K::$fw->redirect('GET /', '/module/dashboard');
+\K::$fw->redirect('GET /', '/main/dashboard');
 
 //\K::$fw->route('GET /example [ajax]','Page->getFragment');
 //\K::$fw->route('GET /example [sync]','Page->getFull');

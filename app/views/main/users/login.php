@@ -7,7 +7,7 @@
 echo(strlen(\K::$fw->CFG_LOGIN_PAGE_CONTENT) > 0 ? '<p>' . \K::$fw->CFG_LOGIN_PAGE_CONTENT . '</p>' : '') ?>
 
 <?php
-echo maintenance_mode::login_message() ?>
+echo \Tools\Maintenance_mode::login_message() ?>
 
 <?php
 //check if default login is enabled
@@ -116,13 +116,15 @@ endif ?>
 
 <?php
 
-if (guest_login::is_enabled()) {
-    include(component_path('users/guest_login'));
+if (\Models\Users\Guest_login::is_enabled()) {
+    //include(component_path('users/guest_login'));
+    echo \K::view()->render(\Helpers\Urls::component_path('main/users/guest_login'));
 }
 
 //social login
 if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN != 0) {
-    include(component_path('users/social_login'));
+    //include(component_path('users/social_login'));
+    echo \K::view()->render(\Helpers\Urls::component_path('main/users/social_login'));
 }
 ?>
 

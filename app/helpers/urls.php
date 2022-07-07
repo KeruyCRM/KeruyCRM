@@ -72,18 +72,11 @@ class Urls
     {
         $module_array = explode('/', $path);
 
-        if (count($module_array) == 2) {
-            $module = $module_array[0];
-            $component = (strlen($module_array[1]) > 0 ? $module_array[1] : $module_array[0]);
+        $extension = $module_array[0];
+        $module = $module_array[1];
+        $component = $module_array[2];
 
-            return 'modules/' . $module . '/components/' . $component . '.php';
-        } elseif (count($module_array) == 3) {
-            $plugin = $module_array[0];
-            $module = $module_array[1];
-            $component = (strlen($module_array[2]) > 0 ? $module_array[2] : $module_array[1]);
-
-            return 'plugins/' . $plugin . '/modules/' . $module . '/components/' . $component . '.php';
-        }
+        return  $extension . '/' . $module . '/components/' . $component . '.php';
     }
 
     public static function get_all_get_url_params($exclude_array = '')

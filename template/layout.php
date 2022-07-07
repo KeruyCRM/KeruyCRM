@@ -183,7 +183,7 @@ require('template/header.php'); ?>
                         //output users alers
                         echo users_alerts::output();
 
-                        //include module views
+                        //include main views
                         if (is_file(
                             $path = $app_plugin_path . 'modules/' . $app_module . '/views/' . $app_action . '.php'
                         )) {

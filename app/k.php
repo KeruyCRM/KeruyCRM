@@ -111,8 +111,13 @@ class K
         self::fw()->clear('COOKIE.' . $key);
     }
 
-    public static function reroute($url, $module = 'module/', $permanent = false, $die = true)
+    public static function reroute($url, $module = 'main/', $permanent = false, $die = true)
     {
         return self::fw()->reroute('/' . $module . $url, $permanent, $die);
+    }
+
+    public static function view()
+    {
+        return \View::instance();
     }
 }

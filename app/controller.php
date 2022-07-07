@@ -194,6 +194,7 @@ class Controller
 
         $this->_setCfgSession();
         \K::$fw->app_session_token = \K::security()->getAppSessionToken();
+        \K::$fw->app_extension = \K::fw()->get('PARAMS.extensionName');
 
         \K::$fw->app_plugin_path = '';
         \K::$fw->app_module = \K::fw()->get('PARAMS.moduleName');
@@ -201,7 +202,7 @@ class Controller
             'PARAMS.controllerName'
         ) : 'PARAMS.moduleName');
 
-        if (\K::fw()->get('PARAMS.extensionName') == 'module') {
+        if (\K::fw()->get('PARAMS.extensionName') == 'main') {
             \K::$fw->app_module_path = \K::$fw->app_module . '/' . \K::$fw->app_action;
         } else {
             \K::$fw->app_module_path = \K::fw()->get(
@@ -213,11 +214,17 @@ class Controller
             \K::$fw->CFG_APP_SHORT_NAME
         ) > 0 ? \K::$fw->CFG_APP_SHORT_NAME : \K::$fw->CFG_APP_NAME);
 
-        \K::$fw->app_module_action = (\K::fw()->exists('PARAMS.actionName') ? \K::fw()->get('PARAMS.actionName') : 'index');
+        \K::$fw->app_module_action = (\K::fw()->exists('PARAMS.actionName') ? \K::fw()->get(
+            'PARAMS.actionName'
+        ) : 'index');
 
         \K::$fw->app_redirect_to = ($_GET['redirect_to'] ?? (isset($_POST['redirect_to']) ? $_POST['redirect_to'] : ''));
 
         \K::$fw->app_path = ($_GET['path'] ?? (isset($_POST['path']) ? $_POST['path'] : ''));
+
+        \K::$fw->viewPath = \K::$fw->app_extension . '/' . \K::$fw->app_module . '/';
+        \K::$fw->componentPath = \K::$fw->viewPath . 'component/';
+        \K::$fw->subTemplate = \K::$fw->viewPath . \K::$fw->app_action . '.php';
 
         if (\K::$fw->CFG_USE_PUBLIC_REGISTRATION == 1) {
             $this->allowed_modules[] = 'users/registration';
@@ -523,7 +530,7 @@ class Controller
                     base64_decode(\K::cookieGet('app_remember_pass'))
                 );
             } else {
-                \Helpers\Urls::redirect_to('module/users/login');
+                \Helpers\Urls::redirect_to('main/users/login');
             }
         } elseif (\K::app_session_is_registered('app_logged_users_id')) {
             $user_query = \Models\Users\Users::getGroupAndAccessByUserId(\K::$fw->app_logged_users_id);
@@ -567,7 +574,7 @@ class Controller
                 \Models\Users\Users::set_client_id();
             } else {
                 \K::app_session_unregister('app_logged_users_id');
-                \Helpers\Urls::redirect_to('module/users/login');
+                \Helpers\Urls::redirect_to('main/users/login');
             }
         }
     }
