@@ -59,11 +59,15 @@ class Two_step_verification extends \Controller
 
     public function check()
     {
-        if (\K::$fw->two_step_verification_info['code'] == \K::fw()->get('POST.code')) {
-            \Models\Main\Users\Two_step_verification::approve();
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::$fw->two_step_verification_info['code'] == \K::fw()->get('POST.code')) {
+                \Models\Main\Users\Two_step_verification::approve();
+            } else {
+                \K::flash()->addMessage(\K::$fw->TEXT_INCORRECT_CODE, 'error');
+                \Helpers\Urls::redirect_to('main/users/two_step_verification');
+            }
         } else {
-            \K::flash()->addMessage(\K::$fw->TEXT_INCORRECT_CODE, 'error');
-            \Helpers\Urls::redirect_to('main/users/two_step_verification');
+            \Helpers\Urls::redirect_to('main/users/login');
         }
     }
 }
