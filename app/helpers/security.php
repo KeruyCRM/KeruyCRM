@@ -6,7 +6,7 @@ class Security extends \Prefab
 {
     private $_DELIMITER = '::';
 
-    public function checkCsrfToken()
+    public function checkCsrfToken($redirect_to = '')
     {
         if (\K::$fw->VERB == 'POST') {
             if (\K::fw()->exists('TOKEN_DISABLED')) {
@@ -18,7 +18,10 @@ class Security extends \Prefab
                 or !\K::fw()->exists('POST.form_session_token', $postToken)
                 or !$this->validateToken($postToken)) {
                 \K::flash()->addMessage(\K::$fw->TEXT_FROM_SESSION_ERROR, 'error');
-                \Helpers\Urls::redirect_to(\K::$fw->URI);
+                if (!$redirect_to) {
+                    $redirect_to = \K::$fw->URI;
+                }
+                \Helpers\Urls::redirect_to($redirect_to);
             } else {
                 return true;
             }

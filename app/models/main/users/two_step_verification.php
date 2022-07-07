@@ -14,7 +14,7 @@ class Two_step_verification
             return true;
         }
 
-        if (\K::$fw->app_module_path == 'users/2step_verification') {
+        if (\K::$fw->app_module_path == 'users/two_step_verification') {
             return true;
         }
 
@@ -25,10 +25,10 @@ class Two_step_verification
 
         if (!isset(\K::$fw->two_step_verification_info['is_checked']) and !in_array(
                 \K::$fw->app_module_path,
-                ['users/2step_verification', 'users/login']
+                ['users/two_step_verification', 'users/login']
             )) {
-            //redirect_to('users/2step_verification');
-            \K::reroute('users/2step_verification');
+            //redirect_to('users/two_step_verification');
+            \K::reroute('users/two_step_verification');
         }
     }
 

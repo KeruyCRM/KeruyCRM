@@ -7,6 +7,7 @@ class Guest_login extends \Controller
     public function __construct()
     {
         parent::__construct();
+        \K::security()->checkCsrfToken();
 
         //check security settings if they are enabled
         \Helpers\App_restricted_countries::verify();

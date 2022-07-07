@@ -1,13 +1,10 @@
-<h3 class="form-title"><?php
-    echo(strlen(
+<h3 class="form-title"><?= (strlen(
         \K::$fw->CFG_LOGIN_PAGE_HEADING
     ) > 0 ? \K::$fw->CFG_LOGIN_PAGE_HEADING : \K::$fw->TEXT_HEADING_LOGIN) ?></h3>
 
-<?php
-echo(strlen(\K::$fw->CFG_LOGIN_PAGE_CONTENT) > 0 ? '<p>' . \K::$fw->CFG_LOGIN_PAGE_CONTENT . '</p>' : '') ?>
+<?= (strlen(\K::$fw->CFG_LOGIN_PAGE_CONTENT) > 0 ? '<p>' . \K::$fw->CFG_LOGIN_PAGE_CONTENT . '</p>' : '') ?>
 
-<?php
-echo \Tools\Maintenance_mode::login_message() ?>
+<?= \Tools\Maintenance_mode::login_message() ?>
 
 <?php
 //check if default login is enabled
@@ -21,22 +18,19 @@ if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN != 2) {
 
     <div class="form-group">
         <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
-        <label class="control-label visible-ie8 visible-ie9"><?php
-            echo \K::$fw->TEXT_USERNAME ?></label>
+        <label class="control-label visible-ie8 visible-ie9"><?= \K::$fw->TEXT_USERNAME ?></label>
         <div class="input-icon">
             <i class="fa fa-user"></i>
-            <input class="form-control placeholder-no-fix required" type="text" autocomplete="off" placeholder="<?php
-            echo \K::$fw->TEXT_USERNAME ?>" name="username"/>
+            <input class="form-control placeholder-no-fix required" type="text" autocomplete="off"
+                   placeholder="<?= \K::$fw->TEXT_USERNAME ?>" name="username"/>
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label visible-ie8 visible-ie9"><?php
-            echo \K::$fw->TEXT_PASSWORD ?></label>
+        <label class="control-label visible-ie8 visible-ie9"><?= \K::$fw->TEXT_PASSWORD ?></label>
         <div class="input-icon">
             <i class="fa fa-lock"></i>
             <input class="form-control placeholder-no-fix required" type="password" autocomplete="off"
-                   placeholder="<?php
-                   echo \K::$fw->TEXT_PASSWORD ?>" name="password"/>
+                   placeholder="<?= \K::$fw->TEXT_PASSWORD ?>" name="password"/>
         </div>
     </div>
 
@@ -61,8 +55,7 @@ if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN != 2) {
         <?php
         endif; ?>
 
-        <button type="submit" class="btn btn-info pull-right"><?php
-            echo \K::$fw->TEXT_BUTTON_LOGIN ?></button>
+        <button type="submit" class="btn btn-info pull-right"><?= \K::$fw->TEXT_BUTTON_LOGIN ?></button>
     </div>
 
     </form>
@@ -74,9 +67,9 @@ if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN != 2) {
             ) . '">' . (strlen(
                 \K::$fw->CFG_REGISTRATION_BUTTON_TITLE
             ) ? \K::$fw->CFG_REGISTRATION_BUTTON_TITLE : \K::$fw->TEXT_BUTTON_REGISTRATION) . '</a>' ?>
-        <p><a href="<?php
-            echo \Helpers\Urls::url_for('main/users/restore_password') ?>"><?php
-                echo \K::$fw->TEXT_PASSWORD_FORGOTTEN ?></a></p>
+        <p><a href="<?= \Helpers\Urls::url_for(
+                'main/users/restore_password'
+            ) ?>"><?= \K::$fw->TEXT_PASSWORD_FORGOTTEN ?></a></p>
     </div>
 
     <?php
@@ -86,9 +79,9 @@ if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN != 2) {
 <?php
 if (\K::$fw->CFG_2STEP_VERIFICATION_ENABLED == 1 and \K::$fw->CFG_LOGIN_BY_PHONE_NUMBER == 1 and \K::$fw->CFG_2STEP_VERIFICATION_TYPE == 'sms'): ?>
     <div class="create-account">
-        <p><a href="<?php
-            echo \Helpers\Urls::url_for('main/users/login_by_phone') ?>"><?php
-                echo \K::$fw->TEXT_LOGIN_BY_PHONE_NUMBER ?></a></p>
+        <p><a href="<?= \Helpers\Urls::url_for(
+                'main/users/login_by_phone'
+            ) ?>"><?= \K::$fw->TEXT_LOGIN_BY_PHONE_NUMBER ?></a></p>
     </div>
 <?php
 endif ?>
@@ -96,9 +89,9 @@ endif ?>
 <?php
 if (strlen(\K::$fw->CFG_LOGIN_DIGITAL_SIGNATURE_MODULE)): ?>
     <div class="create-account">
-        <p><a href="<?php
-            echo \Helpers\Urls::url_for('main/users/signature_login') ?>"><?php
-                echo \K::$fw->TEXT_DIGITAL_SIGNATURE_LOGIN ?></a></p>
+        <p><a href="<?= \Helpers\Urls::url_for(
+                'main/users/signature_login'
+            ) ?>"><?= \K::$fw->TEXT_DIGITAL_SIGNATURE_LOGIN ?></a></p>
     </div>
 <?php
 endif ?>
@@ -107,9 +100,7 @@ endif ?>
 <?php
 if (\K::$fw->CFG_LDAP_USE == 1): ?>
     <div class="create-account">
-        <p><a href="<?php
-            echo \Helpers\Urls::url_for('main/users/ldap_login') ?>"><?php
-                echo \K::$fw->TEXT_MENU_LDAP_LOGIN ?></a></p>
+        <p><a href="<?= \Helpers\Urls::url_for('main/users/ldap_login') ?>"><?= \K::$fw->TEXT_MENU_LDAP_LOGIN ?></a></p>
     </div>
 <?php
 endif ?>

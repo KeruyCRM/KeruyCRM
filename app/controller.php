@@ -18,7 +18,7 @@ class Controller
         'dashboard/select2_ml_json',
         'export/xml',
         'export/file',
-        'users/2step_verification',
+        'users/two_step_verification',
         'users/login_by_phone',
         'dashboard/ajax_request',
         'subentity/form',
@@ -153,9 +153,6 @@ class Controller
 
         $this->_setSession();
         $this->_extractSession();
-
-        //TODO
-        \K::security()->checkCsrfToken();
 
         $this->_setCfgIni();
 
