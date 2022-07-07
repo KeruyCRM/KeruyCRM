@@ -30,11 +30,6 @@ class Model extends \Prefab
         }
     }
 
-    public function exec($cmds, $args = null, $ttl = 0, $log = true, $stamp = false)
-    {
-        return $this->db->exec($cmds, $args, $ttl, $log, $stamp);
-    }
-
     public function mapper($table, $fields = null)
     {
         $mapper = new DB\SQL\Mapper($this->db, $table, $fields, \K::$fw->TTL_SCHEMA);

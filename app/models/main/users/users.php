@@ -910,7 +910,6 @@ class Users
                         \Helpers\Urls::redirect_to($redirect_to);
                     } else {
                         \Helpers\Urls::redirect_to('main/dashboard');
-                        //\K::fw()->reroute('@Dashboard');
                     }
                 } else {
                     //login log

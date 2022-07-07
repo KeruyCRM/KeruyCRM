@@ -76,7 +76,7 @@ class Urls
         $module = $module_array[1];
         $component = $module_array[2];
 
-        return  $extension . '/' . $module . '/components/' . $component . '.php';
+        return $extension . '/' . $module . '/components/' . $component . '.php';
     }
 
     public static function get_all_get_url_params($exclude_array = '')

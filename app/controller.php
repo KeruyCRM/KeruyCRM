@@ -99,7 +99,7 @@ class Controller
         'CFG_DISPLAY_USER_GROUP_ID_IN_MENU' => '',
         'CFG_ENABLE_MULTIPLE_ACCESS_GROUPS' => 0,
         'CFG_USE_PUBLIC_REGISTRATION_MULTIPLE_USER_GROUPS' => 0,
-        'CFG_ENABLE_SOCIAL_LOGIN' => 0,
+        'CFG_ENABLE_SOCIAL_LOGIN' => 1,
         'CFG_ENABLE_VKONTAKTE_LOGIN' => 0,
         'CFG_VKONTAKTE_APP_ID' => '',
         'CFG_VKONTAKTE_SECRET_KEY' => '',
@@ -110,7 +110,7 @@ class Controller
         'CFG_GOOGLE_APP_ID' => '',
         'CFG_GOOGLE_SECRET_KEY' => '',
         'CFG_GOOGLE_BUTTON_TITLE' => '',
-        'CFG_ENABLE_FACEBOOK_LOGIN' => 0,
+        'CFG_ENABLE_FACEBOOK_LOGIN' => 1,
         'CFG_FACEBOOK_APP_ID' => '',
         'CFG_FACEBOOK_SECRET_KEY' => '',
         'CFG_FACEBOOK_BUTTON_TITLE' => '',
@@ -168,7 +168,7 @@ class Controller
         \K::fw()->TZ = \K::$fw->CFG_APP_TIMEZONE;
 
         //set mysql timezone as it's configured for app
-        \K::model()->exec("SET time_zone = '" . date('P') . "'");
+        \K::model()->db_query_exec("SET time_zone = '" . date('P') . "'");
 
         //cache vars
         $get_heading_fields = \Models\Main\Fields::get_heading_fields();
