@@ -26,6 +26,8 @@ class Login extends \Controller
             $this->logoff();
         }
 
+        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'login.php';
+
         echo \K::view()->render($this->app_layout);
     }
 

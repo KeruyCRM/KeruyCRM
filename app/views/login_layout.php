@@ -21,30 +21,34 @@ echo \K::$fw->APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
     echo \Helpers\App::app_author_text() ?>
     <meta name="MobileOptimized" content="320">
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    <link href="<?=\K::$fw->DOMAIN ?>template/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-    <link href="<?=\K::$fw->DOMAIN ?>template/plugins/line-awesome/css/line-awesome.min.css" rel="stylesheet" type="text/css"/>
-    <link href="<?=\K::$fw->DOMAIN ?>template/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <link href="<?=\K::$fw->DOMAIN ?>template/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/line-awesome/css/line-awesome.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/uniform/css/uniform.default.css" rel="stylesheet"
+          type="text/css"/>
     <!-- END GLOBAL MANDATORY STYLES -->
     <!-- BEGIN PAGE LEVEL STYLES -->
-    <link rel="stylesheet" type="text/css" href="<?=\K::$fw->DOMAIN ?>template/plugins/select2/select2_conquer.css"/>
+    <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>template/plugins/select2/select2_conquer.css"/>
     <!-- END PAGE LEVEL SCRIPTS -->
     <!-- BEGIN THEME STYLES -->
-    <link href="<?=\K::$fw->DOMAIN ?>template/css/style-conquer.css" rel="stylesheet" type="text/css"/>
-    <link href="<?=\K::$fw->DOMAIN ?>template/css/style.css" rel="stylesheet" type="text/css"/>
-    <link href="<?=\K::$fw->DOMAIN ?>template/css/style-responsive.css" rel="stylesheet" type="text/css"/>
-    <link href="<?=\K::$fw->DOMAIN ?>template/css/plugins.css" rel="stylesheet" type="text/css"/>
-    <link href="<?=\K::$fw->DOMAIN ?>css/skins/<?php
+    <link href="<?= \K::$fw->DOMAIN ?>template/css/style-conquer.css" rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/css/style-responsive.css" rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>css/skins/<?php
     echo \K::$fw->app_skin ?>" rel="stylesheet" type="text/css"/>
 
-    <script src="<?=\K::$fw->DOMAIN ?>template/plugins/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-1.10.2.min.js" type="text/javascript"></script>
 
-    <script type="text/javascript" src="<?=\K::$fw->DOMAIN ?>js/validation/jquery.validate.min.js"></script>
-    <script type="text/javascript" src="<?=\K::$fw->DOMAIN ?>js/validation/additional-methods.min.js"></script>
+    <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/validation/additional-methods.min.js"></script>
     <?php
     require('js/validation/validator_messages.php'); ?>
 
-    <script type="text/javascript" src="<?=\K::$fw->DOMAIN ?>js/main.js"></script>
+    <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/main.js"></script>
 
     <script>
         var app_cfg_drop_down_menu_on_hover = <?php echo \K::$fw->CFG_DROP_DOWN_MENU_ON_HOVER ?>;
@@ -58,7 +62,7 @@ echo \K::$fw->APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
         });
     </script>
 
-    <link rel="stylesheet" type="text/css" href="<?=\K::$fw->DOMAIN ?>css/default.css"/>
+    <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>css/default.css"/>
     <?php
     echo \Helpers\App::app_include_custom_css() ?>
 
@@ -105,7 +109,10 @@ echo 'content-' . \K::$fw->app_action ?>">
     //output alerts if they exist.
     echo \Helpers\Html::getAlerts();
 
-    echo \K::view()->render(\K::$fw->subTemplate);
+    if (\K::fw()->exists('subTemplate')) {
+        echo \K::view()->render(\K::$fw->subTemplate);
+    }
+
     ?>
 
 </div>
@@ -126,24 +133,25 @@ echo 'content-' . \K::$fw->app_action ?>">
 <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
 <!-- BEGIN CORE PLUGINS -->
 <!--[if lt IE 9]>
-<script src="<?=\K::$fw->DOMAIN ?>template/plugins/respond.min.js"></script>
-<script src="<?=\K::$fw->DOMAIN ?>template/plugins/excanvas.min.js"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/respond.min.js"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/excanvas.min.js"></script>
 <![endif]-->
-<script src="<?=\K::$fw->DOMAIN ?>template/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
-<script src="<?=\K::$fw->DOMAIN ?>template/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="<?=\K::$fw->DOMAIN ?>template/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.js"
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.js"
         type="text/javascript"></script>
-<script src="<?=\K::$fw->DOMAIN ?>template/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
-<script src="<?=\K::$fw->DOMAIN ?>template/plugins/jquery.blockui.min.js" type="text/javascript"></script>
-<script src="<?=\K::$fw->DOMAIN ?>template/plugins/jquery.cokie.min.js" type="text/javascript"></script>
-<script src="<?=\K::$fw->DOMAIN ?>template/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="<?=\K::$fw->DOMAIN ?>js/maskedinput/jquery.maskedinput.js"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-slimscroll/jquery.slimscroll.min.js"
+        type="text/javascript"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery.cokie.min.js" type="text/javascript"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/maskedinput/jquery.maskedinput.js"></script>
 <!-- END CORE PLUGINS -->
 <!-- BEGIN PAGE LEVEL PLUGINS -->
-<script type="text/javascript" src="<?=\K::$fw->DOMAIN ?>template/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/select2/select2.min.js"></script>
 <!-- END PAGE LEVEL PLUGINS -->
 <!-- BEGIN PAGE LEVEL SCRIPTS -->
-<script src="<?=\K::$fw->DOMAIN ?>template/scripts/app.js" type="text/javascript"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/scripts/app.js" type="text/javascript"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
 
 <?php

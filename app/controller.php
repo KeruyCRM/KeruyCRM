@@ -222,9 +222,7 @@ class Controller
 
         \K::$fw->app_path = ($_GET['path'] ?? (isset($_POST['path']) ? $_POST['path'] : ''));
 
-        \K::$fw->viewPath = \K::$fw->app_extension . '/' . \K::$fw->app_module . '/';
-        \K::$fw->componentPath = \K::$fw->viewPath . 'component/';
-        \K::$fw->subTemplate = \K::$fw->viewPath . \K::$fw->app_action . '.php';
+        \K::$fw->pathSubTemplate = \K::$fw->app_extension . '/' . \K::$fw->app_module . '/';
 
         if (\K::$fw->CFG_USE_PUBLIC_REGISTRATION == 1) {
             $this->allowed_modules[] = 'users/registration';

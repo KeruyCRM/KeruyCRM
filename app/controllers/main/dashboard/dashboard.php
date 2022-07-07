@@ -1,6 +1,6 @@
 <?php
 
-namespace Controllers\Module;
+namespace Controllers\Main\Dashboard;
 
 class Dashboard extends \Controller
 {

@@ -839,7 +839,7 @@ class Users
         //global $app_user;
         //TODO Refactor generation $client_id
         if (!\K::$fw->app_user['client_id']) {
-            $client_id = users . phpmt_rand(100000, 999999);
+            $client_id = mt_rand(100000, 999999) . \K::$fw->app_user['id'];
 
             //db_query("update app_entity_1 set client_id={$client_id} where id={$app_user['id']}");
             \K::model()->db_perform(
@@ -881,11 +881,10 @@ class Users
                     \Models\Main\Users\Users_login_log::success($username, $user['id']);
 
                     if (!\K::fw()->exists('GET.action')) {
-                        //redirect_to($_GET['module'], get_all_get_url_params());
-                        \K::fw()->reroute(\K::$fw->URI);
+                        //\Helpers\Urls::redirect_to($_GET['module'], get_all_get_url_params());
+                        \Helpers\Urls::redirect_to(\K::$fw->URI);
                     } else {
-                        //redirect_to('dashboard/');
-                        \K::fw()->reroute('@Dashboard');
+                        \Helpers\Urls::redirect_to('main/dashboard');
                     }
                 } elseif ($hasher->CheckPassword($password, $user['password'])) {
                     \K::app_session_register('app_logged_users_id', $user['id']);
@@ -908,11 +907,10 @@ class Users
                     }
 
                     if (\K::cookieExists('app_login_redirect_to', $redirect_to)) {
-                        //redirect_to(str_replace('module=', '', $_COOKIE['app_login_redirect_to']));
-                        \K::fw()->reroute($redirect_to);
+                        \Helpers\Urls::redirect_to($redirect_to);
                     } else {
-                        //redirect_to('dashboard/');
-                        \K::fw()->reroute('@Dashboard');
+                        \Helpers\Urls::redirect_to('main/dashboard');
+                        //\K::fw()->reroute('@Dashboard');
                     }
                 } else {
                     //login log
