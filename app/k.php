@@ -59,7 +59,7 @@ class K
 
     public static function app_users_cfg()
     {
-        return \Models\Users\Users_cfg::instance();
+        return \Models\Main\Users\Users_cfg::instance();
     }
 
     public static function app_session_is_registered($key)

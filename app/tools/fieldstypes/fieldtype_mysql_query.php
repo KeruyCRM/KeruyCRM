@@ -222,7 +222,7 @@ class Fieldtype_mysql_query
 
         if (isset(\K::$fw->app_formula_fields_cache[$cfg->get('entity_id')])) {
             foreach (\K::$fw->app_formula_fields_cache[$cfg->get('entity_id')] as $formula_field) {
-                $formula_cfg = \Models\Fields_types::parse_configuration($formula_field['configuration']);
+                $formula_cfg = \Models\Main\Fields_types::parse_configuration($formula_field['configuration']);
 
                 if (strlen($formula_cfg['formula'])) {
                     $formulas_fields[$formula_field['id']] = '(' . $formula_cfg['formula'] . ')';
@@ -316,7 +316,7 @@ class Fieldtype_mysql_query
 
         //handle functions in ext
         if (strstr($mysql_query, '{') and \Helpers\App::is_ext_installed()) {
-            $mysql_query = \Models\Ext\Functions::prepare_formula_query(
+            $mysql_query = \Models\Main\Ext\Functions::prepare_formula_query(
                 $cfg->get('entity_id'),
                 $mysql_query,
                 100,

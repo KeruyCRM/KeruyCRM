@@ -116,7 +116,7 @@ endif ?>
 
 <?php
 
-if (\Models\Users\Guest_login::is_enabled()) {
+if (\Models\Main\Users\Guest_login::is_enabled()) {
     //include(component_path('users/guest_login'));
     echo \K::view()->render(\Helpers\Urls::component_path('main/users/guest_login'));
 }

@@ -16,7 +16,7 @@ class Fieldtype_formula
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::$fw->TEXT_FORMULA . \Models\Fields::get_available_fields_helper(
+            'title' => \K::$fw->TEXT_FORMULA . \Models\Main\Fields::get_available_fields_helper(
                     \K::fw()->get('POST.entities_id'),
                     'fields_configuration_formula'
                 ),
@@ -120,7 +120,7 @@ class Fieldtype_formula
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = \Models\Reports\Reports::prepare_numeric_sql_filters($filters, '');
+        $sql = \Models\Main\Reports\Reports::prepare_numeric_sql_filters($filters, '');
 
         if (count($sql) > 0) {
             $sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
@@ -144,7 +144,7 @@ class Fieldtype_formula
         if (isset($check_needed['reports_id'])) {
             if (!isset(\K::$fw->mysql_formula_reports_info_holder[$check_needed['reports_id']])) {
                 if (\Helpers\App::is_mobile()) {
-                    if (\Models\Listing_types::has_mobile($entities_id)) {
+                    if (\Models\Main\Listing_types::has_mobile($entities_id)) {
                         $reports_info['listing_type'] = 'mobile';
                     }
                 }
@@ -161,7 +161,7 @@ class Fieldtype_formula
                 }
 
                 if (!strlen($reports_info['listing_type'])) {
-                    $reports_info['listing_type'] = \Models\Listing_types::get_default($entities_id);
+                    $reports_info['listing_type'] = \Models\Main\Listing_types::get_default($entities_id);
                 }
 
                 //prepare fields in listing for List and Grid
@@ -365,7 +365,7 @@ class Fieldtype_formula
             $formulas_fields = [];
 
             foreach (\K::$fw->app_formula_fields_cache[$entities_id] as $fields) {
-                $cfg = \Models\Fields_types::parse_configuration($fields['configuration']);
+                $cfg = \Models\Main\Fields_types::parse_configuration($fields['configuration']);
 
                 if (strlen($cfg['formula'])) {
                     $formulas_fields[$fields['id']] = '(' . $cfg['formula'] . ')';
@@ -582,7 +582,7 @@ class Fieldtype_formula
                 $use_field_id = $matches[2][$key];
 
                 //get parent entities
-                $parents = \Models\Entities::get_parents($entities_id);
+                $parents = \Models\Main\Entities::get_parents($entities_id);
 
                 //print_rr($parents);
 

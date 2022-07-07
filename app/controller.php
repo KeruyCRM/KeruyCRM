@@ -171,26 +171,26 @@ class Controller
         \K::model()->exec("SET time_zone = '" . date('P') . "'");
 
         //cache vars
-        $get_heading_fields = \Models\Fields::get_heading_fields();
+        $get_heading_fields = \Models\Main\Fields::get_heading_fields();
         \K::$fw->app_heading_fields_cache = $get_heading_fields['id'];
         \K::$fw->app_heading_fields_id_cache = $get_heading_fields['entities_id'];
 
-        \K::$fw->app_not_formula_fields_cache = \Models\Fields::not_formula_fields_cache();
-        \K::$fw->app_formula_fields_cache = \Models\Fields::formula_fields_cache();
-        \K::$fw->app_fields_cache = \Models\Fields::get_cache();
+        \K::$fw->app_not_formula_fields_cache = \Models\Main\Fields::not_formula_fields_cache();
+        \K::$fw->app_formula_fields_cache = \Models\Main\Fields::formula_fields_cache();
+        \K::$fw->app_fields_cache = \Models\Main\Fields::get_cache();
 
-        \K::$fw->app_access_rules_fields_cache = \Models\Access_rules::get_access_rules_fields_cache();
+        \K::$fw->app_access_rules_fields_cache = \Models\Main\Access_rules::get_access_rules_fields_cache();
         \K::$fw->app_mysql_query_fields_cache = \Tools\FieldsTypes\Fieldtype_mysql_query::get_fields_cache();
 
-        \K::$fw->app_entities_cache = \Models\Entities::get_cache();
-        \K::$fw->app_choices_cache = \Models\Fields_choices::get_cache();
-        \K::$fw->app_global_choices_cache = \Models\Global_lists::get_cache();
-        \K::$fw->app_access_groups_cache = \Models\Access_groups::get_cache();
+        \K::$fw->app_entities_cache = \Models\Main\Entities::get_cache();
+        \K::$fw->app_choices_cache = \Models\Main\Fields_choices::get_cache();
+        \K::$fw->app_global_choices_cache = \Models\Main\Global_lists::get_cache();
+        \K::$fw->app_access_groups_cache = \Models\Main\Access_groups::get_cache();
 
         //TODO num2str
         //$app_num2str = new num2str();
 
-        \Models\Custom_php::include();
+        \Models\Main\Custom_php::include();
 
         $this->_setCfgSession();
         \K::$fw->app_session_token = \K::security()->getAppSessionToken();
@@ -238,10 +238,10 @@ class Controller
         $this->_setCfgSession2();
         $this->_checkEnvironment();
 
-        \Models\Users\Two_step_verification::check();
+        \Models\Main\Users\Two_step_verification::check();
 
         //email confirmation check
-        \Models\Users\Email_verification::check();
+        \Models\Main\Users\Email_verification::check();
 
         //check if maintenance mode enabled
         \Tools\Maintenance_mode::check();
@@ -261,7 +261,7 @@ class Controller
             \K::$fw->app_skin = 'default/default.css';
         }
 
-        \K::$fw->app_users_cache = \Models\Users\Users::get_cache();
+        \K::$fw->app_users_cache = \Models\Main\Users\Users::get_cache();
     }
 
     public function beforeroute()
@@ -523,7 +523,7 @@ class Controller
                 //do not ask verification do if login by remember me function
                 \K::$fw->two_step_verification_info['is_checked'] = true;
 
-                \Models\Users\Users::login(
+                \Models\Main\Users\Users::login(
                     base64_decode(\K::cookieGet('app_remember_user')),
                     '',
                     1,
@@ -533,7 +533,7 @@ class Controller
                 \Helpers\Urls::redirect_to('main/users/login');
             }
         } elseif (\K::app_session_is_registered('app_logged_users_id')) {
-            $user_query = \Models\Users\Users::getGroupAndAccessByUserId(\K::$fw->app_logged_users_id);
+            $user_query = \Models\Main\Users\Users::getGroupAndAccessByUserId(\K::$fw->app_logged_users_id);
 
             if (isset($user_query[0])) {
                 $user = $user_query[0];
@@ -551,7 +551,7 @@ class Controller
                     'group_name' => $user['group_name'],
                     'client_id' => $user['client_id'],
                     'multiple_access_groups' => $user['multiple_access_groups'],
-                    'name' => \Models\Users\Users::output_heading_from_item($user),
+                    'name' => \Models\Main\Users\Users::output_heading_from_item($user),
                     'username' => $user['field_12'],
                     'email' => $user['field_9'],
                     'is_email_verified' => $user['is_email_verified'],
@@ -563,7 +563,7 @@ class Controller
 
                 //generate users access to entities schema
                 if (\K::$fw->app_user['group_id'] > 0) {
-                    \K::$fw->app_users_access = \Models\Users\Users::get_users_access_schema(
+                    \K::$fw->app_users_access = \Models\Main\Users\Users::get_users_access_schema(
                         \K::$fw->app_user['group_id']
                     );
                 } else {
@@ -571,7 +571,7 @@ class Controller
                 }
 
                 //set unique client id for rss or ical
-                \Models\Users\Users::set_client_id();
+                \Models\Main\Users\Users::set_client_id();
             } else {
                 \K::app_session_unregister('app_logged_users_id');
                 \Helpers\Urls::redirect_to('main/users/login');

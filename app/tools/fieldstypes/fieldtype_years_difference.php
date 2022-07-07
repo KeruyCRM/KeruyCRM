@@ -118,7 +118,7 @@ class Fieldtype_years_difference
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = \Models\Reports\Reports::prepare_numeric_sql_filters($filters, '');
+        $sql = \Models\Main\Reports\Reports::prepare_numeric_sql_filters($filters, '');
 
         if (count($sql) > 0) {
             $sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
