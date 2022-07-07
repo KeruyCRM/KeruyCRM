@@ -364,12 +364,13 @@ class Users
                 'email_attachments' => self::emails_on_schedule_prepare_attachments(($options['attachments'] ?? [])),
             ];
 
-            db_perform('app_emails_on_schedule', $sql_data);
+            \K::model()->db_perform('app_emails_on_schedule', $sql_data);
 
             return true;
         }
-
-        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+        require_once 'app/libs/PHPMailer/6.5.1/vendor/autoload.php';
+        require_once 'app/libs/PHPMailer/extras/Html2Text.php';
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
         try {
             $mail->CharSet = "UTF-8";
@@ -442,11 +443,11 @@ class Users
                 ) > 0 ? \K::$fw->CFG_EMAIL_SUBJECT_LABEL . ' ' : '') . $options['subject'];
             $mail->Body = $options['body'];
 
-            $h2t = new html2text($options['body']);
+            $h2t = new \html2text($options['body']);
             $mail->AltBody = $h2t->get_text();
 
             $mail->send();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             if (is_object($alerts)) {
                 $alerts->add(
                     sprintf(
@@ -517,7 +518,13 @@ class Users
 
         $access_info_query = \K::model()->db_fetch(
             'app_fields_access',
-            ['entities_id = ? and access_groups_id = ?', $entities_id, $access_groups_id]
+            [
+                'entities_id = ? and access_groups_id = ?',
+                $entities_id,
+                $access_groups_id
+            ],
+            [],
+            'fields_id,access_schema'
         );
 
         foreach ($access_info_query as $access_info) {

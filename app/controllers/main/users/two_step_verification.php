@@ -27,7 +27,7 @@ class Two_step_verification extends \Controller
             \Helpers\Urls::redirect_to('main/dashboard');
         }
 
-        if (!isset($two_step_verification_info['code'])) {
+        if (!isset(\K::$fw->two_step_verification_info['code'])) {
             \Models\Main\Users\Two_step_verification::send_code();
         }
 

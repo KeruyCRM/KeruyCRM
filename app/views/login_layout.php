@@ -4,21 +4,17 @@
 <!--[if IE 9]>
 <html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
-<html lang="<?php
-echo \K::$fw->APP_LANGUAGE_SHORT_CODE ?>" dir="<?php
-echo \K::$fw->APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
+<html lang="<?= \K::$fw->APP_LANGUAGE_SHORT_CODE ?>" dir="<?= \K::$fw->APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
 <!--<![endif]-->
 <!-- BEGIN HEAD -->
 <head>
     <meta charset="utf-8"/>
     <meta name="robots" content="noindex,nofollow">
-    <title><?php
-        echo \K::$fw->app_title ?></title>
+    <title><?= \K::$fw->app_title ?></title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport"/>
     <meta content="" name="description"/>
-    <?php
-    echo \Helpers\App::app_author_text() ?>
+    <?= \Helpers\App::app_author_text() ?>
     <meta name="MobileOptimized" content="320">
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="<?= \K::$fw->DOMAIN ?>template/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"
@@ -38,8 +34,7 @@ echo \K::$fw->APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
     <link href="<?= \K::$fw->DOMAIN ?>template/css/style.css" rel="stylesheet" type="text/css"/>
     <link href="<?= \K::$fw->DOMAIN ?>template/css/style-responsive.css" rel="stylesheet" type="text/css"/>
     <link href="<?= \K::$fw->DOMAIN ?>template/css/plugins.css" rel="stylesheet" type="text/css"/>
-    <link href="<?= \K::$fw->DOMAIN ?>css/skins/<?php
-    echo \K::$fw->app_skin ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>css/skins/<?= \K::$fw->app_skin ?>" rel="stylesheet" type="text/css"/>
 
     <script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-1.10.2.min.js" type="text/javascript"></script>
 
@@ -63,17 +58,13 @@ echo \K::$fw->APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
     </script>
 
     <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>css/default.css"/>
-    <?php
-    echo \Helpers\App::app_include_custom_css() ?>
+    <?= \Helpers\App::app_include_custom_css() ?>
 
-    <?php
-    echo \Helpers\App::render_login_page_background() ?>
-    <?php
-    echo \Helpers\App_recaptcha::render_js() ?>
+    <?= \Helpers\App::render_login_page_background() ?>
+    <?= \Helpers\App_recaptcha::render_js() ?>
 
     <!-- END THEME STYLES -->
-    <?php
-    echo \Helpers\App::app_favicon() ?>
+    <?= \Helpers\App::app_favicon() ?>
 </head>
 <!-- BEGIN BODY -->
 <body class="login">
@@ -102,8 +93,7 @@ echo \K::$fw->APP_LANGUAGE_TEXT_DIRECTION ?>" class="no-js">
 </div>
 <!-- END LOGO -->
 <!-- BEGIN LOGIN -->
-<div class="content <?php
-echo 'content-' . \K::$fw->app_action ?>">
+<div class="content <?= 'content-' . \K::$fw->app_action ?>">
 
     <?php
     //output alerts if they exist.
@@ -121,12 +111,10 @@ echo 'content-' . \K::$fw->app_action ?>">
 
 <!-- BEGIN COPYRIGHT -->
 <div class="copyright">
-    <?php
-    echo(strlen(\K::$fw->CFG_APP_COPYRIGHT_NAME) > 0 ? '&copy; ' . \K::$fw->CFG_APP_COPYRIGHT_NAME . ' ' . date(
+    <?= (strlen(\K::$fw->CFG_APP_COPYRIGHT_NAME) > 0 ? '&copy; ' . \K::$fw->CFG_APP_COPYRIGHT_NAME . ' ' . date(
             'Y'
         ) . '<br>' : '') ?>
-    <?php
-    echo \Helpers\App::app_powered_by_text() ?>
+    <?= \Helpers\App::app_powered_by_text() ?>
 </div>
 <!-- END COPYRIGHT -->
 

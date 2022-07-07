@@ -932,41 +932,41 @@ class App
         global $app_session_token;
 
         $list = [];
-        $list['TEXT_NO_RESULTS_MATCH'] = TEXT_NO_RESULTS_MATCH;
-        $list['TEXT_ARE_YOU_SURE'] = TEXT_ARE_YOU_SURE;
-        $list['TEXT_SELECT_AN_OPTION'] = TEXT_SELECT_AN_OPTION;
-        $list['TEXT_SELECT_SOME_OPTIONS'] = TEXT_SELECT_SOME_OPTIONS;
-        $list['TEXT_FILE_TOO_LARGE'] = TEXT_FILE_TOO_LARGE;
-        $list['TEXT_MAXIMUM_UPLOAD_LIMIT'] = TEXT_MAXIMUM_UPLOAD_LIMIT;
-        $list['TEXT_COMPLETED'] = TEXT_COMPLETED;
-        $list['TEXT_CANCELLED'] = TEXT_CANCELLED;
-        $list['TEXT_SCALE'] = TEXT_SCALE;
-        $list['TEXT_RESET_MAP_CONFIRM'] = TEXT_RESET_MAP_CONFIRM;
-        $list['TEXT_ON_TOP'] = TEXT_ON_TOP;
-        $list['TEXT_ON_BOTTOM'] = TEXT_ON_BOTTOM;
-        $list['TEXT_ON_RIGHT'] = TEXT_ON_RIGHT;
-        $list['TEXT_ON_LEFT'] = TEXT_ON_LEFT;
-        $list['TEXT_GRAPH'] = TEXT_GRAPH;
-        $list['TEXT_TREE'] = TEXT_TREE;
-        $list['TEXT_MAP'] = TEXT_MAP;
-        $list['TEXT_BOX'] = TEXT_BOX;
-        $list['TEXT_ELLIPSE'] = TEXT_ELLIPSE;
-        $list['TEXT_UNDERLINE'] = TEXT_UNDERLINE;
-        $list['TEXT_INSERT_CHILD'] = TEXT_INSERT_CHILD;
-        $list['TEXT_INSERT_SIBLING'] = TEXT_INSERT_SIBLING;
-        $list['TEXT_DELETE'] = TEXT_DELETE;
-        $list['TEXT_EDIT'] = TEXT_EDIT;
-        $list['TEXT_SET_VALUE'] = TEXT_SET_VALUE;
-        $list['TEXT_UNDO'] = TEXT_UNDO;
-        $list['TEXT_REDO'] = TEXT_REDO;
-        $list['TEXT_CENTER_MAP'] = TEXT_CENTER_MAP;
-        $list['TEXT_DESCRIPTION'] = TEXT_DESCRIPTION;
-        $list['TEXT_START'] = TEXT_START;
-        $list['TEXT_ERROR_FILE_EXTENSION'] = TEXT_ERROR_FILE_EXTENSION;
-        $list['TEXT_APPLY'] = TEXT_APPLY;
-        $list['TEXT_CANCEL'] = TEXT_CANCEL;
-        $list['TEXT_TOGGLE_ON'] = TEXT_TOGGLE_ON;
-        $list['TEXT_TOGGLE_OFF'] = TEXT_TOGGLE_OFF;
+        $list['TEXT_NO_RESULTS_MATCH'] = \K::$fw->TEXT_NO_RESULTS_MATCH;
+        $list['TEXT_ARE_YOU_SURE'] = \K::$fw->TEXT_ARE_YOU_SURE;
+        $list['TEXT_SELECT_AN_OPTION'] = \K::$fw->TEXT_SELECT_AN_OPTION;
+        $list['TEXT_SELECT_SOME_OPTIONS'] = \K::$fw->TEXT_SELECT_SOME_OPTIONS;
+        $list['TEXT_FILE_TOO_LARGE'] = \K::$fw->TEXT_FILE_TOO_LARGE;
+        $list['TEXT_MAXIMUM_UPLOAD_LIMIT'] = \K::$fw->TEXT_MAXIMUM_UPLOAD_LIMIT;
+        $list['TEXT_COMPLETED'] = \K::$fw->TEXT_COMPLETED;
+        $list['TEXT_CANCELLED'] = \K::$fw->TEXT_CANCELLED;
+        $list['TEXT_SCALE'] = \K::$fw->TEXT_SCALE;
+        $list['TEXT_RESET_MAP_CONFIRM'] = \K::$fw->TEXT_RESET_MAP_CONFIRM;
+        $list['TEXT_ON_TOP'] = \K::$fw->TEXT_ON_TOP;
+        $list['TEXT_ON_BOTTOM'] = \K::$fw->TEXT_ON_BOTTOM;
+        $list['TEXT_ON_RIGHT'] = \K::$fw->TEXT_ON_RIGHT;
+        $list['TEXT_ON_LEFT'] = \K::$fw->TEXT_ON_LEFT;
+        $list['TEXT_GRAPH'] = \K::$fw->TEXT_GRAPH;
+        $list['TEXT_TREE'] = \K::$fw->TEXT_TREE;
+        $list['TEXT_MAP'] = \K::$fw->TEXT_MAP;
+        $list['TEXT_BOX'] = \K::$fw->TEXT_BOX;
+        $list['TEXT_ELLIPSE'] = \K::$fw->TEXT_ELLIPSE;
+        $list['TEXT_UNDERLINE'] = \K::$fw->TEXT_UNDERLINE;
+        $list['TEXT_INSERT_CHILD'] = \K::$fw->TEXT_INSERT_CHILD;
+        $list['TEXT_INSERT_SIBLING'] = \K::$fw->TEXT_INSERT_SIBLING;
+        $list['TEXT_DELETE'] = \K::$fw->TEXT_DELETE;
+        $list['TEXT_EDIT'] = \K::$fw->TEXT_EDIT;
+        $list['TEXT_SET_VALUE'] = \K::$fw->TEXT_SET_VALUE;
+        $list['TEXT_UNDO'] = \K::$fw->TEXT_UNDO;
+        $list['TEXT_REDO'] = \K::$fw->TEXT_REDO;
+        $list['TEXT_CENTER_MAP'] = \K::$fw->TEXT_CENTER_MAP;
+        $list['TEXT_DESCRIPTION'] = \K::$fw->TEXT_DESCRIPTION;
+        $list['TEXT_START'] = \K::$fw->TEXT_START;
+        $list['TEXT_ERROR_FILE_EXTENSION'] = \K::$fw->TEXT_ERROR_FILE_EXTENSION;
+        $list['TEXT_APPLY'] = \K::$fw->TEXT_APPLY;
+        $list['TEXT_CANCEL'] = \K::$fw->TEXT_CANCEL;
+        $list['TEXT_TOGGLE_ON'] = \K::$fw->TEXT_TOGGLE_ON;
+        $list['TEXT_TOGGLE_OFF'] = \K::$fw->TEXT_TOGGLE_OFF;
 
         $html = '
     <script>
@@ -980,7 +980,7 @@ class App
         $html .= '
         public static function url_for(module,params)
         {
-            return "' . url_for('to_rpelace', 'token=' . urlencode($app_session_token)) . '".replace("to_rpelace",module).concat("&",params)
+            return "' . \Helpers\Urls::url_for('to_replace', 'token=' . urlencode($app_session_token)) . '".replace("to_replace",module).concat("&",params)
         }
         ';
 
