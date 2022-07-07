@@ -958,7 +958,7 @@ function i18n_js()
     $html .= '
         function url_for(module,params)
         {
-            return "' . url_for('to_rpelace', 'token=' . urlencode($app_session_token)) . '".replace("to_rpelace",module).concat("&",params)
+            return "' . url_for('to_replace', 'token=' . urlencode($app_session_token)) . '".replace("to_replace",module).concat("&",params)
         }
         ';
 
