@@ -94,12 +94,16 @@ class Model extends \Prefab
     public function db_fetch_one($table, $filter = [], $options = [], $column = null, $ttl = null)
     {
         $mapper = $this->mapper($table, $column);
-        $mapper->findone(
+        $value = $mapper->findone(
             $filter,
             $options,
             $ttl
         );
-        return $mapper->cast();
+        if ($value) {
+            return $value->cast();
+        } else {
+            return false;
+        }
     }
 
     public function db_fetch_count($table, $filter = [], $ttl = null)
@@ -142,6 +146,11 @@ class Model extends \Prefab
         $mapper = $this->mapper($table);
         return $mapper->erase([$column . ' = ?', $value]);
         //db_query("delete from " . $table . " where " . $column . "='" . db_input($value) . "'");
+    }
+
+    public function db_query_exec($cmds, $args = null, $ttl = 0, $log = true, $stamp = false)
+    {
+        return $this->db->exec($cmds, $args, $ttl, $log, $stamp);
     }
 
     public function db_query($query, $debug = false, $link = 'db_link')

@@ -41,7 +41,7 @@ class Login extends \Controller
             //check recaptcha
             if (\Helpers\App_recaptcha::is_enabled()) {
                 if (!\Helpers\App_recaptcha::verify()) {
-                    \K::flash()->add(\K::$fw->TEXT_RECAPTCHA_VERIFY_ROBOT, 'error');
+                    \K::flash()->addMessage(\K::$fw->TEXT_RECAPTCHA_VERIFY_ROBOT, 'error');
                     \Helpers\Urls::redirect_to('main/users/login');
                 }
             }

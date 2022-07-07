@@ -7,7 +7,7 @@ class Fields
     public static function get_heading_fields()
     {
         $cache = [];
-        //$fields_query = \K::model()->db_query("select * from app_fields where is_heading = 1");
+        //$fields_query = \K::model()->db_query_exec("select * from app_fields where is_heading = 1");
         $fields_query = \K::model()->db_fetch(
             'app_fields',
             ['is_heading = ?', 1],
@@ -30,7 +30,7 @@ class Fields
     public static function not_formula_fields_cache()
     {
         $cache = [];
-        //$fields_query = \K::model()->db_query(
+        //$fields_query = \K::model()->db_query_exec(
         //    "select * from app_fields where type not in ('fieldtype_formula','fieldtype_dynamic_date')"
         //);
         $fields_query = \K::model()->db_fetch(
@@ -54,7 +54,7 @@ class Fields
     public static function formula_fields_cache()
     {
         $cache = [];
-        //$fields_query = \K::model()->db_query(
+        //$fields_query = \K::model()->db_query_exec(
         //    "select * from app_fields where type in ('fieldtype_formula','fieldtype_dynamic_date')"
         //);
 
@@ -83,7 +83,7 @@ class Fields
     public static function get_cache()
     {
         $cache = [];
-        //$fields_query = \K::model()->db_query("select id, type, name, entities_id, configuration from app_fields");
+        //$fields_query = \K::model()->db_query_exec("select id, type, name, entities_id, configuration from app_fields");
 
         $fields_query = \K::model()->db_fetch_all(
             'app_fields',
@@ -174,7 +174,7 @@ class Fields
     public static function get_available_fields($entities_id, $required_types, $warn_message)
     {
         $html = '';
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (" . $required_types . ") and f.entities_id='" . $entities_id . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
         );
         //while ($fields = db_fetch_array($fields_query)) {
@@ -241,7 +241,7 @@ class Fields
 
     public static function get_name_by_id($id)
     {
-        $field_query = \K::model()->db_query("select id, type, name from app_fields where id = :id", [':id' => $id]);
+        $field_query = \K::model()->db_query_exec("select id, type, name from app_fields where id = :id", [':id' => $id]);
         if (\K::model()->count()) {
             // $field = db_fetch_array($field_query))
             $field = $field_query[0];
@@ -254,7 +254,7 @@ class Fields
     public static function get_name_cache()
     {
         $cache = [];
-        $fields_query = \K::model()->db_query("select * from app_fields");
+        $fields_query = \K::model()->db_query_exec("select * from app_fields");
 
         //while ($fields = db_fetch_array($fields_query)) {
         foreach ($fields_query as $fields) {
@@ -277,7 +277,7 @@ class Fields
 
     public static function get_last_sort_number($forms_tabs_id)
     {
-        $v = \K::model()->db_query(
+        $v = \K::model()->db_query_exec(
             "select max(sort_order) as max_sort_order from app_fields where forms_tabs_id = :forms_tabs_id ",
             [':forms_tabs_id' => $forms_tabs_id]
         );
@@ -290,7 +290,7 @@ class Fields
     {
         $html = '';
 
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.id, f.type, f.required_message, f.configuration from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
             ) . ") and  f.entities_id= :entities_id order by f.sort_order, f.name", [':entities_id' => $entities_id]
         );
@@ -340,7 +340,7 @@ class Fields
     {
         $html = '';
 
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.* from app_fields f where f.type = 'fieldtype_textarea_wysiwyg' and is_required=1 and  f.entities_id = :entities_id order by f.sort_order, f.name",
             [':entities_id' => $entities_id]
         );
@@ -384,7 +384,7 @@ class Fields
 
         $html = '';
 
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.* from app_fields f where  f.entities_id= :entities_id order by f.sort_order, f.name",
             [':entities_id' => $entities_id]
         );
@@ -436,7 +436,7 @@ class Fields
 
         $search_fields = [];
 
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.id, f.type, f.configuration, f.name, f.is_heading, t.name as tab_name from app_fields f, app_forms_tabs t where f.entities_id= :entity_id and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name",
             [':entity_id' => $entity_id]
         );
@@ -492,7 +492,7 @@ class Fields
 
         $choices = [];
         $choices[''] = '';
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name, if(f.type in ('fieldtype_id','fieldtype_date_added','fieldtype_date_updated','fieldtype_created_by','fieldtype_parent_item_id'),-1,t.sort_order) as tab_sort_order from app_fields f, app_forms_tabs t where f.type in (" . $types_for_filters_list . ") " . (strlen(
                 $exclude
             ) ? " and f.type not in ({$exclude})" : '') . " and f.entities_id= :entity_id and f.forms_tabs_id=t.id order by tab_sort_order, t.name, f.sort_order, f.name",
@@ -520,7 +520,7 @@ class Fields
 
     public static function check_if_type_changed($field_id, $new_type)
     {
-        $field_info_query = \K::model()->db_query(
+        $field_info_query = \K::model()->db_query_exec(
             "select * from app_fields where id= :field_id ",
             [':field_id' => '$field_id']
         );
@@ -530,18 +530,18 @@ class Fields
             //check if field type changed
             if ($field_info['type'] != $new_type) {
                 //delete index
-                $check_query = \K::model()->db_query(
+                $check_query = \K::model()->db_query_exec(
                     "SHOW INDEX FROM app_entity_" . $field_info['entities_id'] . " WHERE KEY_NAME = 'idx_field_" . $field_info['id'] . "'"
                 );
                 if (\K::model()->count()) {
                     //$check = db_fetch_array($check_query)
-                    \K::model()->db_query(
+                    \K::model()->db_query_exec(
                         "ALTER TABLE app_entity_" . $field_info['entities_id'] . " DROP INDEX idx_field_" . $field_info['id']
                     );
                 }
 
                 //prepare db field type
-                \K::model()->db_query(
+                \K::model()->db_query_exec(
                     "ALTER TABLE app_entity_" . $field_info['entities_id'] . " CHANGE field_" . $field_info['id'] . " field_" . $field_info['id'] . " " . entities::prepare_field_type(
                         $new_type
                     ) . " NOT NULL;"
@@ -565,7 +565,7 @@ class Fields
         $data = [];
 
         if (strlen($fields_list) > 0) {
-            $fields_query = \K::model()->db_query(
+            $fields_query = \K::model()->db_query_exec(
                 "select f.* from app_fields f, app_forms_tabs t where  f.id in (" . $fields_list . ") and  f.entities_id= :entities_id and f.forms_tabs_id = t.id order by field(f.id," . $fields_list . ")",
                 [':entities_id' => $entities_id]
             );
@@ -617,7 +617,7 @@ class Fields
         $data = [];
 
         if (strlen($fields_list) > 0) {
-            $fields_query = \K::model()->db_query(
+            $fields_query = \K::model()->db_query_exec(
                 "select f.* from app_fields f, app_forms_tabs t where  f.id in (" . $fields_list . ") and  f.entities_id= :entities_id and f.forms_tabs_id=t.id order by field(f.id," . $fields_list . ")",
                 [':entities_id' => $entities_id]
             );
@@ -662,7 +662,7 @@ class Fields
     {
         $data = [];
 
-        $field_info_query = \K::model()->db_query(
+        $field_info_query = \K::model()->db_query_exec(
             "select * from app_fields where id = :field_id",
             [':field_id' => $field_id]
         );
@@ -672,12 +672,12 @@ class Fields
 
             $cfg = new \Tools\Fields_types_cfg($field_info['configuration']);
             if ($cfg->get('use_global_list') > 0) {
-                $choices_query = \K::model()->db_query(
+                $choices_query = \K::model()->db_query_exec(
                     "select * from app_global_lists_choices where lists_id = :lists_id and length(bg_color)>0",
                     [':lists_id' => $cfg->get('use_global_list')]
                 );
             } else {
-                $choices_query = \K::model()->db_query(
+                $choices_query = \K::model()->db_query_exec(
                     "select * from app_fields_choices where fields_id = :field_id and length(bg_color)>0",
                     [':field_id' => $field_id]
                 );
@@ -718,7 +718,7 @@ class Fields
     static function get_fields_in_popup_choices($entities_id, $app_id = false)
     {
         $choices = [];
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where is_heading = 0 and f.type not in ('fieldtype_action','fieldtype_parent_item_id') and  f.entities_id= :entities_id and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name",
             [':entities_id' => $entities_id]
         );
@@ -734,7 +734,7 @@ class Fields
     {
         $choices = [];
         $exclude_fields_types_sql = " and f.type not in ('fieldtype_section','fieldtype_mapbbcode','fieldtype_mind_map')";
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.entities_id= :entities_id and f.forms_tabs_id=t.id {$exclude_fields_types_sql} order by t.sort_order, t.name, f.sort_order, f.name",
             [':entities_id' => $entities_id]
         );
@@ -774,7 +774,7 @@ class Fields
             $where_sql = " and f.type in (" . implode(',', $use_fieldtypes) . ")";
         }
 
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserverd_types_list(
             ) . ") and f.entities_id = :entities_id and f.forms_tabs_id=t.id {$where_sql} order by t.sort_order, t.name, f.sort_order, f.name",
             [':entities_id' => $entities_id]
@@ -896,7 +896,7 @@ class Fields
     static function get_unique_fields_list($entities_id)
     {
         $list = [];
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select id, configuration from app_fields where entities_id= :entities_id ",
             [':entities_id' => $entities_id]
         );
@@ -948,7 +948,7 @@ class Fields
         );
         $reserverd_fields_types_list = "'" . implode("','", $reserverd_fields_types) . "'";
 
-        $fields_query = \K::model()->db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name, if(f.type in (" . $reserverd_fields_types_list . "),-1,t.sort_order) as tab_sort_order, fr.sort_order as form_rows_sort_order,right(f.forms_rows_position,1) as forms_rows_pos  from app_fields f left join app_forms_rows fr on fr.id=LEFT(f.forms_rows_position,length(f.forms_rows_position)-2), app_forms_tabs t where f.entities_id='{$entities_id}' {$where_sql} and f.forms_tabs_id=t.id order by tab_sort_order, t.name, form_rows_sort_order, forms_rows_pos, f.sort_order, f.name"
         //TODO Disable log for sql query?
         );

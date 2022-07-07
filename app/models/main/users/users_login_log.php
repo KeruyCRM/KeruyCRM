@@ -61,7 +61,7 @@ class Users_login_log
 
             $field_id = \K::model()->db_insert_id($mapper);
 
-            \K::model()->db_query("ALTER TABLE app_entity_1 ADD field_{$field_id} INT NOT NULL;");
+            \K::model()->db_query_exec("ALTER TABLE app_entity_1 ADD field_{$field_id} INT NOT NULL;");
         } else {
             $field_id = $fields['id'];
         }

@@ -14,7 +14,7 @@ echo \Tools\Maintenance_mode::login_message() ?>
 if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN != 2) {
     echo \Helpers\Html::form_tag(
         'login_form',
-        \Helpers\Urls::url_for('users/login', 'action=login'),
+        \Helpers\Urls::url_for('main/users/login/login'),
         ['class' => 'login-form']
     )
     ?>
@@ -70,12 +70,12 @@ if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN != 2) {
     <div class="forget-password">
         <?php
         if (\K::$fw->CFG_USE_PUBLIC_REGISTRATION == 1) echo '<a style="float: right" class="btn btn-info btn-registration" href="' . \Helpers\Urls::url_for(
-                'users/registration'
+                'main/users/registration'
             ) . '">' . (strlen(
                 \K::$fw->CFG_REGISTRATION_BUTTON_TITLE
             ) ? \K::$fw->CFG_REGISTRATION_BUTTON_TITLE : \K::$fw->TEXT_BUTTON_REGISTRATION) . '</a>' ?>
         <p><a href="<?php
-            echo \Helpers\Urls::url_for('users/restore_password') ?>"><?php
+            echo \Helpers\Urls::url_for('main/users/restore_password') ?>"><?php
                 echo \K::$fw->TEXT_PASSWORD_FORGOTTEN ?></a></p>
     </div>
 
@@ -87,7 +87,7 @@ if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN != 2) {
 if (\K::$fw->CFG_2STEP_VERIFICATION_ENABLED == 1 and \K::$fw->CFG_LOGIN_BY_PHONE_NUMBER == 1 and \K::$fw->CFG_2STEP_VERIFICATION_TYPE == 'sms'): ?>
     <div class="create-account">
         <p><a href="<?php
-            echo \Helpers\Urls::url_for('users/login_by_phone') ?>"><?php
+            echo \Helpers\Urls::url_for('main/users/login_by_phone') ?>"><?php
                 echo \K::$fw->TEXT_LOGIN_BY_PHONE_NUMBER ?></a></p>
     </div>
 <?php
@@ -97,7 +97,7 @@ endif ?>
 if (strlen(\K::$fw->CFG_LOGIN_DIGITAL_SIGNATURE_MODULE)): ?>
     <div class="create-account">
         <p><a href="<?php
-            echo \Helpers\Urls::url_for('users/signature_login') ?>"><?php
+            echo \Helpers\Urls::url_for('main/users/signature_login') ?>"><?php
                 echo \K::$fw->TEXT_DIGITAL_SIGNATURE_LOGIN ?></a></p>
     </div>
 <?php
@@ -108,7 +108,7 @@ endif ?>
 if (\K::$fw->CFG_LDAP_USE == 1): ?>
     <div class="create-account">
         <p><a href="<?php
-            echo \Helpers\Urls::url_for('users/ldap_login') ?>"><?php
+            echo \Helpers\Urls::url_for('main/users/ldap_login') ?>"><?php
                 echo \K::$fw->TEXT_MENU_LDAP_LOGIN ?></a></p>
     </div>
 <?php

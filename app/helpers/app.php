@@ -8,7 +8,7 @@ class App
     {
         global $app_selected_items;
 
-        $items_query = \K::model()->db_query(
+        $items_query = \K::model()->db_query_exec(
             "select * from app_entity_{$entities_id}  where parent_id = :item_id order by sort_order, id",
             [':item_id' => $item_id]
         );

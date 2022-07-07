@@ -29,7 +29,7 @@ class Users
         if (\K::fw()->exists('CFG_PUBLIC_USER_PROFILE_FIELDS')
             and strlen(\K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS) > 0
             and $include_public_profile) {
-            $fields_query = \K::model()->db_query(
+            $fields_query = \K::model()->db_query_exec(
                 'select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (' . \Models\fields_types::get_reserverd_types_list(
                 ) . ') and f.id in (' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ') and  f.entities_id = 1 and f.forms_tabs_id = t.id order by field(f.id,' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ')'
             );
@@ -49,7 +49,7 @@ class Users
 
         $field_heading_id = \Models\Main\Fields::get_heading_id(1);
 
-        $users_query = \K::model()->db_query(
+        $users_query = \K::model()->db_query_exec(
             'select e.* ' . $listing_sql_query_select . ', a.name as group_name, a.id as group_id from app_entity_1 e left join app_access_groups a on a.id = e.field_6 order by e.field_8, e.field_7'
         );
         //while ($users = db_fetch_array($users_query)) {
@@ -955,7 +955,7 @@ class Users
 
     public static function getGroupAndAccessByUserId($users_id)
     {
-        return \K::model()->db_query(
+        return \K::model()->db_query_exec(
             'select e.*, ag.name as group_name from app_entity_1 e left join app_access_groups ag on ag.id = e.field_6 where e.id = ? and e.field_5 = 1',
             $users_id
         );

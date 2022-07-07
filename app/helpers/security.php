@@ -17,7 +17,7 @@ class Security extends \Prefab
                 !\K::app_session_is_registered('app_token')
                 or !\K::fw()->exists('POST.form_session_token', $postToken)
                 or !$this->validateToken($postToken)) {
-                \K::flash()->add(\K::$fw->TEXT_FROM_SESSION_ERROR, 'error');
+                \K::flash()->addMessage(\K::$fw->TEXT_FROM_SESSION_ERROR, 'error');
                 \Helpers\Urls::redirect_to(\K::$fw->URI);
             } else {
                 return true;
