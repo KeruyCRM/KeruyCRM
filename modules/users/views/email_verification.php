@@ -1,4 +1,4 @@
-<div id="email_verification_secion">
+<div id="email_verification_section">
     <h3 class="form-title"><?php
         echo TEXT_EMAIL_VERIFICATION_EMAIL_SUBJECT ?></h3>
 
@@ -48,7 +48,7 @@
 
 </div>
 
-<div id="update_email_secion" style="display:none;">
+<div id="update_email_section" style="display:none;">
     <h3 class="form-title"><?php
         echo TEXT_CHANGE_EMAIL ?></h3>
 
@@ -93,12 +93,12 @@
     });
 
     function show_change_email_form() {
-        $('#email_verification_secion').hide();
-        $('#update_email_secion').show();
+        $('#email_verification_section').hide();
+        $('#update_email_section').show();
     }
 
     function back_to_email_verification_form() {
-        $('#email_verification_secion').show();
-        $('#update_email_secion').hide();
+        $('#email_verification_section').show();
+        $('#update_email_section').hide();
     }
 </script> 
