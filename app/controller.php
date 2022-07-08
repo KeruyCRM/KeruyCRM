@@ -283,23 +283,23 @@ class Controller
         $SESS_LIFE = 1440;
     }
         */
-        if (K::$fw->STORE_SESSIONS == 'mysql') {
+        if (\K::$fw->STORE_SESSIONS == 'mysql') {
             new \DB\SQL\Session(\K::model()->db, 'app_sessions_new', false, function ($session) {
-                if (K::$fw->CFG_SESSION_CHECK_IP and $session->ip() !== \K::$fw->IP) {
+                if (\K::$fw->CFG_SESSION_CHECK_IP and $session->ip() !== \K::$fw->IP) {
                     return false;
                 }
-                if (K::$fw->CFG_SESSION_CHECK_BROWSER and $session->agent() !== \K::$fw->AGENT) {
+                if (\K::$fw->CFG_SESSION_CHECK_BROWSER and $session->agent() !== \K::$fw->AGENT) {
                     return false;
                 }
                 return true;
             });
         } else {
-            $sessionCache = new Cache(K::$fw->SESSION_WRITE_DIRECTORY); // Session cache
+            $sessionCache = new \Cache(\K::$fw->SESSION_WRITE_DIRECTORY); // Session cache
             new \Session(function ($session) {
-                if (K::$fw->CFG_SESSION_CHECK_IP and $session->ip() !== \K::$fw->IP) {
+                if (\K::$fw->CFG_SESSION_CHECK_IP and $session->ip() !== \K::$fw->IP) {
                     return false;
                 }
-                if (K::$fw->CFG_SESSION_CHECK_BROWSER and $session->agent() !== \K::$fw->AGENT) {
+                if (\K::$fw->CFG_SESSION_CHECK_BROWSER and $session->agent() !== \K::$fw->AGENT) {
                     return false;
                 }
                 return true;
