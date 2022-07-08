@@ -43,7 +43,15 @@ class email_verification
     {
         global $app_user, $app_users_cache, $app_email_verification_code;
 
-        $code = $app_email_verification_code = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
+        try {
+            $code = $app_email_verification_code = str_pad(
+                (string)random_int(0, (int)str_repeat('9', CFG_VERIFICATION_CODE_LENGTH)),
+                CFG_VERIFICATION_CODE_LENGTH,
+                '0',
+                STR_PAD_LEFT
+            );
+        } catch (Exception $e) {
+        }
 
         $users_info_query = db_query(
             "select * from app_entity_1 where id='" . db_input($app_user['id']) . "' and field_5=1"
