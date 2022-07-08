@@ -28,8 +28,8 @@ switch ($app_module_action) {
         }
 
         if (CFG_IS_STRONG_PASSWORD) {
-            if (!preg_match('/[A-Z]/', $password) or !preg_match('/[0-9]/', $password) or !preg_match(
-                    '/[^\w]/',
+            if (!preg_match('/[A-Z]/', $password) or !preg_match('/\d/', $password) or !preg_match(
+                    '/\W/',
                     $password
                 )) {
                 $error = true;
