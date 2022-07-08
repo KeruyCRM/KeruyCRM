@@ -9,7 +9,7 @@ class Login extends \Controller
     public function __construct()
     {
         parent::__construct();
-        \K::security()->checkCsrfToken();
+        \K::security()->checkCsrfToken('main/users/login');
 
         //force ldap login only
         if (\K::$fw->CFG_LDAP_USE == 1 and \K::$fw->CFG_USE_LDAP_LOGIN_ONLY == 1 and \K::$fw->app_module_action != 'logoff') {
