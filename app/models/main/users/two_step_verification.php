@@ -106,6 +106,7 @@ class Two_step_verification
         //global $two_step_verification_info, $app_user;
 
         \K::$fw->two_step_verification_info['is_checked'] = true;
+        unset(\K::$fw->two_step_verification_info['code']);
 
         \Models\Main\Users\Users_login_log::success(\K::$fw->app_user['username'], \K::$fw->app_user['id']);
 
