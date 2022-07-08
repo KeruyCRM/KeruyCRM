@@ -57,8 +57,7 @@ class Forms_wizard
                 ' . $html_bar . '
                 <div class="row">    
                     <div class="col-md-6 col-xs-6" style="text-align: left">
-                        <a href="#" class="btn btn-default btn-wizard-previous"><i class="fa fa-angle-left"></i> ' . \K::f3(
-            )->TEXT_PREVIOUS . '</a>
+                        <a href="#" class="btn btn-default btn-wizard-previous"><i class="fa fa-angle-left"></i> ' . \K::$fw->TEXT_PREVIOUS . '</a>
                     </div>
                     <div class="col-md-6 col-xs-6">
                         <div class="fa fa-spinner fa-spin primary-modal-action-loading"></div>	
@@ -84,8 +83,7 @@ class Forms_wizard
                             var total = navigation.find(\'li:not(".dropdown")\').length;
                             var current = index+1;
                             var $percent = (current / total) * 100;
-                            $("#' . $this->form_name . '").find(".progress-bar").css({width: $percent + "%"}).html("' . \K::f3(
-            )->TEXT_STEP . ' " + current + " ' . \K::$fw->TEXT_OF . ' "+total);
+                            $("#' . $this->form_name . '").find(".progress-bar").css({width: $percent + "%"}).html("' . \K::$fw->TEXT_STEP . ' " + current + " ' . \K::$fw->TEXT_OF . ' "+total);
                         },
                         onNext: function (tab, navigation, index) 
                         {

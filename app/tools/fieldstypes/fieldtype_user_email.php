@@ -46,8 +46,7 @@ class Fieldtype_user_email
     {
         if (isset($options['is_export'])) {
             return $options['value'];
-        } elseif (\K::$fw->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION == 'email' and \K::f3(
-            )->CFG_USE_PUBLIC_REGISTRATION == 1 and $options['item']['is_email_verified'] == 0) {
+        } elseif (\K::$fw->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION == 'email' and \K::$fw->CFG_USE_PUBLIC_REGISTRATION == 1 and $options['item']['is_email_verified'] == 0) {
             $html = '';
             $access_rules = new access_rules($options['field']['entities_id'], $options['item']);
             if (users::has_access('update', $access_rules->get_access_schema())) {

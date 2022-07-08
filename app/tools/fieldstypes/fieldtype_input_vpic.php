@@ -83,8 +83,7 @@ class Fieldtype_input_vpic
     		<div class="input-group input-medium">' .
             input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes) .
             '<div class="input-group-btn">  			
-	        		<button type="button" title="' . \K::f3(
-            )->TEXT_DECODE_VIN . '" class="btn btn-default vpic-vin-decoder" data-field-id="' . $field['id'] . '" data-toggle="dropdown"><i class="fa fa-search"></i></button>
+	        		<button type="button" title="' . \K::$fw->TEXT_DECODE_VIN . '" class="btn btn-default vpic-vin-decoder" data-field-id="' . $field['id'] . '" data-toggle="dropdown"><i class="fa fa-search"></i></button>
 	        				<div class="dropdown-menu hold-on-click dropdown-checkboxes" role="menu">
   									<div id="field_' . $field['id'] . '_vin_data">
   											

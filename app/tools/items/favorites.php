@@ -117,8 +117,7 @@ class Favorites
             <li class="external">
                 <a href="' . url_for(
                 'users/favorites'
-            ) . '">' . \K::$fw->TEXT_DISPLAYED . ': ' . $count_favorites . '. ' . \K::$fw->TEXT_GO_TO . ' "' . \K::f3(
-            )->TEXT_FAVORITES . '"<i class="fa fa-angle-right"></i></a>
+            ) . '">' . \K::$fw->TEXT_DISPLAYED . ': ' . $count_favorites . '. ' . \K::$fw->TEXT_GO_TO . ' "' . \K::$fw->TEXT_FAVORITES . '"<i class="fa fa-angle-right"></i></a>
             </li>
         ';
 

@@ -7,8 +7,7 @@ class Public_registration
     public static function send_user_activation_email_msg($user_id, $previous_item_info)
     {
         //skip notification
-        if (\K::$fw->CFG_USE_PUBLIC_REGISTRATION == 0 or \K::f3(
-            )->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION != 'manually') {
+        if (\K::$fw->CFG_USE_PUBLIC_REGISTRATION == 0 or \K::$fw->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION != 'manually') {
             return false;
         }
 

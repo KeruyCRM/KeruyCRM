@@ -12,68 +12,89 @@ class Email_verification extends \Controller
         \K::security()->checkCsrfToken('main/users/login');
 
         //check if user is logged
-        if (!app_session_is_registered(
-                'app_logged_users_id'
-            ) or CFG_PUBLIC_REGISTRATION_USER_ACTIVATION != 'email' or CFG_USE_PUBLIC_REGISTRATION != 1) {
-            redirect_to('users/login');
+        if (!\K::app_session_is_registered('app_logged_users_id')
+            or \K::$fw->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION != 'email'
+            or \K::$fw->CFG_USE_PUBLIC_REGISTRATION != 1) {
+            \Helpers\Urls::redirect_to('main/users/login');
         }
 
         //check if is checked
-        if ($app_user['is_email_verified'] == 1) {
-            redirect_to('dashboard/');
+        if (\K::$fw->app_user['is_email_verified'] == 1) {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
 
-        if (!strlen($app_email_verification_code)) {
-            email_verification::send_code();
+        if (!strlen(\K::$fw->app_email_verification_code)) {
+            \Models\Main\Users\Email_verification::send_code();
         }
     }
 
     public function index()
     {
+        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'email_verification.php';
+
+        echo \K::view()->render($this->app_layout);
     }
 
     public function resend()
     {
-        $alerts->add(TEXT_RESEND_CODE_TIP);
-        redirect_to('users/login');
+        \K::flash()->addMessage(\K::$fw->TEXT_RESEND_CODE_TIP);
+        \Helpers\Urls::redirect_to('main/users/login');
     }
 
     public function update_email()
     {
-        if (app_validate_email($_POST['email'])) {
-            $check_query = db_query(
-                "select count(*) as total from app_entity_1 where field_9='" . db_input(
-                    $_POST['email']
-                ) . "'  and id!='" . db_input($app_user['id']) . "'"
-            );
-            $check = db_fetch_array($check_query);
-            if ($check['total'] > 0) {
-                $alerts->add(TEXT_ERROR_USEREMAIL_EXIST, 'warning');
-            } elseif ($app_user['email'] != $_POST['email']) {
-                //update account
-                db_query(
-                    "update app_entity_1 set field_9='" . db_input(
-                        $_POST['email']
-                    ) . "' where id='" . $app_user['id'] . "'"
+        if (\K::$fw->VERB == 'POST') {
+            if (\Helpers\App::app_validate_email(\K::$fw->{'POST.email'})) {
+                /*$check_query = db_query(
+                    "select count(*) as total from app_entity_1 where field_9='" . db_input(
+                        \K::$fw->{'POST.email'}
+                    ) . "'  and id!='" . db_input(\K::$fw->app_user['id']) . "'"
                 );
+                $check = db_fetch_array($check_query);*/
 
-                $alerts->add(TEXT_ACCOUNT_UPDATED, 'success');
+                $check = \K::model()->db_fetch_count('app_entity_1', [
+                    'field_9 = ? and id != ?',
+                    \K::$fw->{'POST.email'},
+                    \K::$fw->app_user['id']
+                ]);
 
-                //reset verification code
-                $app_email_verification_code = '';
+                if ($check > 0) {
+                    \K::flash()->addMessage(\K::$fw->TEXT_ERROR_USEREMAIL_EXIST, 'warning');
+                } elseif (\K::$fw->app_user['email'] != \K::$fw->{'POST.email'}) {
+                    //update account
+                    /*db_query(
+                        "update app_entity_1 set field_9='" . db_input(
+                            $_POST['email']
+                        ) . "' where id='" . \K::$fw->app_user['id'] . "'"
+                    );*/
+
+                    \K::model()->db_perform(
+                        'app_entity_1',
+                        ['field_9' => \K::$fw->{'POST.email'}],
+                        '',
+                        ['id = ?', \K::$fw->app_user['id']]
+                    );
+
+                    \K::flash()->addMessage(\K::$fw->TEXT_ACCOUNT_UPDATED, 'success');
+
+                    //reset verification code
+                    \K::$fw->app_email_verification_code = '';
+                }
             }
         }
 
-        redirect_to('users/email_verification');
+        \Helpers\Urls::redirect_to('main/users/email_verification');
     }
 
     public function check()
     {
-        if ($app_email_verification_code == $_POST['code']) {
-            email_verification::approve();
-        } else {
-            $alerts->add(TEXT_INCORRECT_CODE, 'error');
-            redirect_to('users/email_verification');
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::$fw->app_email_verification_code == \K::$fw->{'POST.code'}) {
+                \Models\Main\Users\Email_verification::approve();
+            } else {
+                \K::flash()->addMessage(\K::$fw->TEXT_INCORRECT_CODE, 'error');
+            }
         }
+        \Helpers\Urls::redirect_to('main/users/email_verification');
     }
 }
