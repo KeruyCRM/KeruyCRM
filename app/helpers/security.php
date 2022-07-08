@@ -6,7 +6,7 @@ class Security extends \Prefab
 {
     private $_DELIMITER = '::';
 
-    public function checkCsrfToken($redirect_to = '')
+    public function checkCsrfToken($redirect_to = 'main/dashboard/token_error')
     {
         if (\K::$fw->VERB == 'POST') {
             if (\K::fw()->exists('TOKEN_DISABLED')) {
@@ -18,9 +18,7 @@ class Security extends \Prefab
                 or !\K::fw()->exists('POST.form_session_token', $postToken)
                 or !$this->validateToken($postToken)) {
                 \K::flash()->addMessage(\K::$fw->TEXT_FROM_SESSION_ERROR, 'error');
-                if (!$redirect_to) {
-                    $redirect_to = \K::$fw->URI;
-                }
+
                 \Helpers\Urls::redirect_to($redirect_to);
             } else {
                 return true;
@@ -38,7 +36,7 @@ class Security extends \Prefab
 
             $timeDecode = $this->decrypt36($timeSend, $saltSend . $this->_DELIMITER . \K::$fw->app_token);
 
-            if ($timeDecode + \K::$fw->CFG_TOKEN_LIFE < time()) {
+            if (\K::$fw->CFG_TOKEN_LIFE and ($timeDecode + \K::$fw->CFG_TOKEN_LIFE) < time()) {
                 return false;
             }
 
@@ -99,7 +97,6 @@ class Security extends \Prefab
     {
         $n ^= crc32($key);
         $encrypt = ((0x000000FF & $n) << 24) + (((0xFFFFFF00 & $n) >> 8) & 0x00FFFFFF);
-        //return $this->purified(base64_encode($encrypt));
         return base_convert($encrypt, 10, 36);
     }
 
