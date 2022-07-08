@@ -92,6 +92,7 @@ class two_step_verification
         global $two_step_verification_info, $app_user;
 
         $two_step_verification_info['is_checked'] = true;
+        unset($two_step_verification_info['code']);
 
         users_login_log::success($app_user['username'], $app_user['id']);
 
