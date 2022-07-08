@@ -15,10 +15,10 @@ class Change_password extends \Controller
         \Helpers\App_restricted_countries::verify();
         \Helpers\App_restricted_ip::verify();
 
-        if ((in_array($app_user['group_id'], explode(',', CFG_APP_DISABLE_CHANGE_PWD)) and strlen(
-                    CFG_APP_DISABLE_CHANGE_PWD
-                ) > 0) or CFG_USE_LDAP_LOGIN_ONLY == true) {
-            redirect_to('users/account');
+        if ((in_array(\K::$fw->app_user['group_id'], explode(',', \K::$fw->CFG_APP_DISABLE_CHANGE_PWD))
+                and strlen(\K::$fw->CFG_APP_DISABLE_CHANGE_PWD) > 0)
+            or \K::$fw->CFG_USE_LDAP_LOGIN_ONLY == true) {
+            \Helpers\Urls::redirect_to('main/users/account');
         }
     }
 
@@ -31,42 +31,47 @@ class Change_password extends \Controller
 
     public function change()
     {
-        $password = $_POST['password_new'];
-        $password_confirm = $_POST['password_confirmation'];
+        if (\K::$fw->VERB == 'POST') {
+            $password = \K::$fw->{'POST.password_new'};
+            $password_confirm = \K::$fw->{'POST.password_confirmation'};
 
-        $error = false;
+            $error = false;
 
-        if ($password != $password_confirm) {
-            $error = true;
-            $alerts->add(TEXT_ERROR_PASSWORD_CONFIRMATION, 'error');
-        }
-
-        if (strlen($password) < CFG_PASSWORD_MIN_LENGTH) {
-            $error = true;
-            $alerts->add(TEXT_ERROR_PASSWORD_LENGTH, 'error');
-        }
-
-        if (CFG_IS_STRONG_PASSWORD) {
-            if (!preg_match('/[A-Z]/', $password) or !preg_match('/[0-9]/', $password) or !preg_match(
-                    '/[^\w]/',
-                    $password
-                )) {
+            if ($password != $password_confirm) {
                 $error = true;
-                $alerts->add(TEXT_STRONG_PASSWORD_TIP, 'error');
+                \K::flash()->addMessage(\K::$fw->TEXT_ERROR_PASSWORD_CONFIRMATION, 'error');
+            }
+
+            if (strlen($password) < \K::$fw->CFG_PASSWORD_MIN_LENGTH) {
+                $error = true;
+                \K::flash()->addMessage(\K::$fw->TEXT_ERROR_PASSWORD_LENGTH, 'error');
+            }
+
+            if (\K::$fw->CFG_IS_STRONG_PASSWORD) {
+                if (!preg_match('/[A-Z]/', $password)
+                    or !preg_match('/\d/', $password)
+                    or !preg_match('/\W/', $password)) {
+                    $error = true;
+                    \K::flash()->addMessage(\K::$fw->TEXT_STRONG_PASSWORD_TIP, 'error');
+                }
+            }
+
+            if (!$error) {
+                $hasher = new \Libs\PasswordHash(11, false);
+
+                /*$sql_data = [];
+                $sql_data['password'] = $hasher->HashPassword($password);
+
+                db_perform('app_entity_1', $sql_data, 'update', "id='" . db_input(\K::$fw->app_logged_users_id) . "'");*/
+
+                \K::model()->db_perform('app_entity_1', ['password' => $hasher->HashPassword($password)], '', [
+                    'id = ?',
+                    \K::$fw->app_logged_users_id
+                ]);
+
+                \K::flash()->addMessage(\K::$fw->TEXT_PASSWORD_UPDATED, 'success');
             }
         }
-
-        if (!$error) {
-            $hasher = new PasswordHash(11, false);
-
-            $sql_data = [];
-            $sql_data['password'] = $hasher->HashPassword($password);
-
-            db_perform('app_entity_1', $sql_data, 'update', "id='" . db_input($app_logged_users_id) . "'");
-
-            $alerts->add(TEXT_PASSWORD_UPDATED, 'success');
-        }
-
-        redirect_to('users/change_password');
+        \Helpers\Urls::redirect_to('main/users/change_password');
     }
 }
