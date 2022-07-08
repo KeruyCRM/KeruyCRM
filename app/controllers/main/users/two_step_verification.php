@@ -60,7 +60,7 @@ class Two_step_verification extends \Controller
     public function check()
     {
         if (\K::$fw->VERB == 'POST') {
-            if (\K::$fw->two_step_verification_info['code'] == \K::fw()->get('POST.code')) {
+            if (\K::$fw->two_step_verification_info['code'] == \K::$fw->{'POST.code'}) {
                 \Models\Main\Users\Two_step_verification::approve();
             } else {
                 \K::flash()->addMessage(\K::$fw->TEXT_INCORRECT_CODE, 'error');
