@@ -12,7 +12,6 @@ class Dashboard extends \Controller
         \K::security()->checkCsrfToken();
 
         \K::$fw->app_title = \Helpers\App::app_set_title(\K::$fw->TEXT_MENU_DASHBOARD);
-
         /*if (!strlen(\K::$fw->app_module_action)) {
             //autoreset session table if default _sess_gc function not working
             app_session_table_reset();
@@ -21,20 +20,22 @@ class Dashboard extends \Controller
 
     public function index()
     {
-        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'login.php';
+        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'dashboard.php';
 
         echo \K::view()->render($this->app_layout);
     }
 
     public function save()
     {
-        if (isset($_POST['hidden_common_reports'])) {
-            $app_users_cfg->set('hidden_common_reports', implode(',', $_POST['hidden_common_reports']));
-        } else {
-            $app_users_cfg->set('hidden_common_reports', '');
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::fw()->exists('POST.hidden_common_reports', $hidden_common_reports)) {
+                \K::$fw->app_users_cfg->set('hidden_common_reports', implode(',', $hidden_common_reports));
+            } else {
+                \K::$fw->app_users_cfg->set('hidden_common_reports', '');
+            }
         }
 
-        redirect_to('dashboard/');
+        \Helpers\Urls::redirect_to('main/dashboard');
     }
 
     public function keep_session()
@@ -43,34 +44,51 @@ class Dashboard extends \Controller
 
     public function sort_reports()
     {
-        if (isset($_POST['reports_on_dashboard'])) {
-            $sort_order = 0;
-            foreach (explode(',', $_POST['reports_on_dashboard']) as $v) {
-                $sql_data = ['in_dashboard' => 1, 'dashboard_sort_order' => $sort_order];
-                db_perform(
-                    'app_reports',
-                    $sql_data,
-                    'update',
-                    "id='" . db_input(str_replace('report_', '', $v)) . "' and created_by='" . db_input(
-                        $app_user['id']
-                    ) . "'"
-                );
-                $sort_order++;
-            }
-        }
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::fw()->exists('POST.reports_on_dashboard', $reports_on_dashboard)) {
+                $sort_order = 0;
+                foreach (explode(',', $reports_on_dashboard) as $v) {
+                    $sql_data = ['in_dashboard' => 1, 'dashboard_sort_order' => $sort_order];
+                    /*db_perform(
+                        'app_reports',
+                        $sql_data,
+                        'update',
+                        "id='" . db_input(str_replace('report_', '', $v)) . "' and created_by='" . db_input(
+                            \K::fw()->app_user['id']
+                        ) . "'"
+                    );*/
 
-        if (isset($_POST['reports_excluded_from_dashboard'])) {
-            foreach (explode(',', $_POST['reports_excluded_from_dashboard']) as $v) {
-                $sql_data = ['in_dashboard' => 0, 'dashboard_sort_order' => 0];
-                db_perform(
-                    'app_reports',
-                    $sql_data,
-                    'update',
-                    "id='" . db_input(str_replace('report_', '', $v)) . "' and created_by='" . db_input(
-                        $app_user['id']
-                    ) . "'"
-                );
+                    \K::model()->db_perform('app_reports', $sql_data, '', [
+                        'id = ? and created_by = ?',
+                        str_replace('report_', '', $v),
+                        \K::fw()->app_user['id']
+                    ]);
+
+                    $sort_order++;
+                }
             }
+
+            if (\K::fw()->exists('POST.reports_excluded_from_dashboard', $reports_excluded_from_dashboard)) {
+                foreach (explode(',', $reports_excluded_from_dashboard) as $v) {
+                    $sql_data = ['in_dashboard' => 0, 'dashboard_sort_order' => 0];
+                    /*db_perform(
+                        'app_reports',
+                        $sql_data,
+                        'update',
+                        "id='" . db_input(str_replace('report_', '', $v)) . "' and created_by='" . db_input(
+                            \K::fw()->app_user['id']
+                        ) . "'"
+                    );*/
+                    \K::model()->db_perform('app_reports', $sql_data, '', [
+                        'id = ? and created_by = ?',
+                        str_replace('report_', '', $v),
+                        \K::fw()->app_user['id']
+                    ]);
+
+                }
+            }
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 
