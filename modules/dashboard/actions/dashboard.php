@@ -55,7 +55,7 @@ switch ($app_module_action) {
         exit();
         break;
 
-    case 'sort_reports_countr':
+    case 'sort_reports_counter':
 
         if (isset($_POST['reports_counter_on_dashboard'])) {
             $sort_order = 0;
@@ -162,7 +162,7 @@ switch ($app_module_action) {
         echo users_notifications::render_dropdown();
         exit();
         break;
-    case 'set_users_alers_viewed':
+    case 'set_users_alerts_viewed':
 
         $sql_data = [
             'users_id' => $app_user['id'],

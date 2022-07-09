@@ -304,7 +304,7 @@ echo ajax_modal_template_footer() ?>
                 data = data.slice(1)
                 $.ajax({
                     type: "POST",
-                    url: '<?php echo url_for("dashboard/", "action=sort_reports_countr")?>',
+                    url: '<?php echo url_for("dashboard/", "action=sort_reports_counter")?>',
                     data: data
                 });
             }

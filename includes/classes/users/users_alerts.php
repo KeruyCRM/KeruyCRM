@@ -63,7 +63,7 @@ class users_alerts
 				$(function(){
 					$(".users-alers-close").click(function(){
 						id = $(this).attr("data-id")
-						$.ajax({method:"POST",url:"' . url_for('dashboard/', 'action=set_users_alers_viewed') . '",data:{id:id}})
+						$.ajax({method:"POST",url:"' . url_for('dashboard/', 'action=set_users_alerts_viewed') . '",data:{id:id}})
 					})
 				})	
 			</script>		
