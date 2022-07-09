@@ -866,9 +866,9 @@ class App
 
     public static function app_reset_selected_items()
     {
-        global $app_selected_items;
+        //global $app_selected_items;
 
-        $app_selected_items = [];
+        \K::$fw->app_selected_items = [];
     }
 
     public static function i18n_date()
@@ -894,27 +894,27 @@ class App
 
         $translate = [];
 
-        $days_i18n = explode(',', str_replace('"', '', TEXT_DATEPICKER_DAYS));
+        $days_i18n = explode(',', str_replace('"', '', \K::$fw->TEXT_DATEPICKER_DAYS));
         foreach ($days as $k => $v) {
             $translate[$v] = trim($days_i18n[$k]);
         }
 
-        $daysshort_i18n = explode(',', str_replace('"', '', TEXT_DATEPICKER_DAYSSHORT));
+        $daysshort_i18n = explode(',', str_replace('"', '', \K::$fw->TEXT_DATEPICKER_DAYSSHORT));
         foreach ($daysshort as $k => $v) {
             $translate[$v] = trim($daysshort_i18n[$k]);
         }
 
-        $daysmin_i18n = explode(',', str_replace('"', '', TEXT_DATEPICKER_DAYSMIN));
+        $daysmin_i18n = explode(',', str_replace('"', '', \K::$fw->TEXT_DATEPICKER_DAYSMIN));
         foreach ($daysmin as $k => $v) {
             $translate[$v] = trim($daysmin_i18n[$k]);
         }
 
-        $month_i18n = explode(',', str_replace('"', '', TEXT_DATEPICKER_MONTHS));
+        $month_i18n = explode(',', str_replace('"', '', \K::$fw->TEXT_DATEPICKER_MONTHS));
         foreach ($month as $k => $v) {
             $translate[$v] = trim($month_i18n[$k]);
         }
 
-        $monthshort_i18n = explode(',', str_replace('"', '', TEXT_DATEPICKER_MONTHSSHORT));
+        $monthshort_i18n = explode(',', str_replace('"', '', \K::$fw->TEXT_DATEPICKER_MONTHSSHORT));
         foreach ($monthshort as $k => $v) {
             $translate[$v] = trim($monthshort_i18n[$k]);
         }
@@ -1503,9 +1503,10 @@ class App
 
     public static function app_exit()
     {
-        db_dev_log();
+        //TODO Refactoring!!!
+        //db_dev_log();
 
-        exit();
+        //exit();
     }
 
     public static function app_name2case($text, $case = 1)

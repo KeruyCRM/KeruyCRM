@@ -20,6 +20,59 @@ class Dashboard extends \Controller
 
     public function index()
     {
+        \Helpers\App::app_reset_selected_items();
+        \K::$fw->render_dashboard_tabs = reports_groups::render_dashboard_tabs();
+
+        $page = new dashboard_pages;
+        \K::$fw->render_info_blocks = $page->render_info_blocks();
+        \K::$fw->render_info_pages = $page->render_info_pages();
+
+        \K::$fw->has_reports_on_dashboard = $page->has_pages;
+
+        $reports_counter = new reports_counter;
+        $html = $reports_counter->render();
+
+        if (strlen($html)) {
+            \K::$fw->html = $html;
+
+            \K::$fw->has_reports_on_dashboard = true;
+        } else {
+            \K::$fw->html = '';
+        }
+
+        /*$reports_query = db_query(
+            "select * from app_reports where created_by='" . db_input(
+                \K::$fw->app_logged_users_id
+            ) . "' and in_dashboard=1 and reports_type in ('standard') order by dashboard_sort_order, name"
+        );*/
+
+        $reports_query = \K::model()->db_fetch('app_reports', [
+            "created_by = ? and in_dashboard = 1 and reports_type in ('standard')",
+            \K::$fw->app_logged_users_id
+        ], ['order' => 'dashboard_sort_order,name'], 'id,name');
+
+        $reports = [];
+        foreach ($reports_query as $report) {
+            /*$check_query = db_query(
+                "select id from app_reports_sections where (report_left='standard{$reports['id']}' or report_right='standard{$reports['id']}') and reports_groups_id=0 and created_by='" . \K::$fw->app_user['id'] . "'"
+            );*/
+
+            $check = \K::model()->db_fetch_count('app_reports_sections', [
+                "(report_left = 'standard{$report->id}' or report_right = 'standard{$report->id}') and reports_groups_id = 0 and created_by = ?",
+                \K::$fw->app_user['id']
+            ]);
+
+            $value = [
+                'check' => $check,
+                'id' => $report->id,
+                'name' => $report->name
+            ];
+
+            $reports[] = $value;
+        }
+
+        \K::$fw->reports = $reports;
+
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'dashboard.php';
 
         echo \K::view()->render($this->app_layout);
@@ -162,7 +215,7 @@ class Dashboard extends \Controller
             echo $hot_reports->render_dropdown($reports_id);
 
             //TODO db_dev_log
-           // db_dev_log();
+            // db_dev_log();
         } else {
             \Helpers\Urls::redirect_to('main/dashboard');
         }
@@ -175,24 +228,40 @@ class Dashboard extends \Controller
 
     public function update_user_notifications_report()
     {
-        echo users_notifications::render_dropdown();
+        echo \Models\Main\Users\Users_notifications::render_dropdown();
     }
 
     public function set_users_alerts_viewed()
     {
-        $sql_data = [
-            'users_id' => $app_user['id'],
-            'alerts_id' => _post::int('id'),
-        ];
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::fw()->exists('POST.id', $id)) {
+                $sql_data = [
+                    'users_id' => \K::$fw->app_user['id'],
+                    'alerts_id' => $id,
+                ];
 
-        db_perform('app_users_alerts_viewed', $sql_data);
+                \K::model()->db_perform('app_users_alerts_viewed', $sql_data);
+            } else {
+                \K::errorPost();
+            }
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 
     public function set_filter_status()
     {
-        db_query("update app_reports_filters set is_active=" . _POST('is_active') . " where id=" . _POST('filter_id'));
-
-        app_exit();
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::fw()->exists('POST.is_active', $is_active)
+                and \K::fw()->exists('POST.filter_id', $filter_id)) {
+                \K::model()->db_perform('app_reports_filters', ['is_active' => $is_active], ['id = ?', $filter_id]);
+                \Helpers\App::app_exit();
+            } else {
+                \K::errorPost();
+            }
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 
     private function _update_reports($sql_data, $v)

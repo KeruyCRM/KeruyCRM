@@ -1,76 +1,112 @@
 <?php
 
-$reports_id = str_replace(entities_menu::get_reports_types(), '', $section_report);
+$reports_id = str_replace(entities_menu::get_reports_types(), '', \K::$fw->section_report);
 
 switch (true) {
-    case strstr($section_report, 'standard'):
-        $reports_query = db_query(
-            "select * from app_reports where created_by='" . db_input($app_logged_users_id) . "' and id='" . db_input(
-                $reports_id
-            ) . "'"
-        );
-        if ($reports = db_fetch_array($reports_query)) {
-            require(component_path('dashboard/render_standard_reports'));
+    case strstr(\K::$fw->section_report, 'standard'):
+
+        $reports = \K::model()->db_fetch_one('app_reports', [
+            'created_by = ? and id = ?',
+            \K::$fw->app_logged_users_id,
+            $reports_id
+        ]);
+
+        if ($reports) {
+            \K::$fw->reports = $reports;
+
+            echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/render_standard_reports'));
         }
         break;
-    case strstr($section_report, 'common'):
-        $reports_query = db_query(
-            "select * from app_reports where find_in_set(" . $app_user['group_id'] . ",users_groups) and id='" . db_input(
-                $reports_id
-            ) . "'"
-        );
-        if ($reports = db_fetch_array($reports_query)) {
-            require(component_path('dashboard/render_standard_reports'));
+    case strstr(\K::$fw->section_report, 'common'):
+
+        $reports = \K::model()->db_fetch_one('app_reports', [
+            'find_in_set( ? ,users_groups) and id = ?',
+            \K::$fw->app_user['group_id'],
+            $reports_id
+        ]);
+
+        if ($reports) {
+            \K::$fw->reports = $reports;
+
+            echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/render_standard_reports'));
         }
         break;
-    case strstr($section_report, 'graphicreport'):
-        $reports_query = db_query("select * from app_ext_graphicreport where id='" . $reports_id . "'");
-        if ($reports = db_fetch_array($reports_query)) {
+    case strstr(\K::$fw->section_report, 'graphicreport'):
+
+        $reports = \K::model()->db_fetch_one('app_ext_graphicreport', [
+            'id = ?',
+            $reports_id
+        ]);
+
+        if ($reports) {
+            \K::$fw->reports = $reports;
             if (in_array(
-                    $app_user['group_id'],
+                    \K::$fw->app_user['group_id'],
                     explode(',', $reports['allowed_groups'])
-                ) or $app_user['group_id'] == 0) {
-                echo '<h3 class="page-title"><a href="' . url_for(
+                ) or \K::$fw->app_user['group_id'] == 0) {
+                echo '<h3 class="page-title"><a href="' . \Helpers\Urls::url_for(
                         'ext/graphicreport/view',
                         'id=' . $reports['id']
                     ) . '">' . $reports['name'] . '</a></h3>';
 
-                require(component_path('ext/graphicreport/view'));
+                echo \K::view()->render(\Helpers\Urls::component_path('ext/graphicreport/view'));
             }
         }
         break;
-    case strstr($section_report, 'funnelchart'):
-        $reports_query = db_query("select * from app_ext_funnelchart where id='" . $reports_id . "'");
-        while ($reports = db_fetch_array($reports_query)) {
-            if (in_array($app_user['group_id'], explode(',', $reports['users_groups'])) or $app_user['group_id'] == 0) {
-                echo '<h3 class="page-title"><a href="' . url_for(
+    case strstr(\K::$fw->section_report, 'funnelchart'):
+
+        $reports = \K::model()->db_fetch_one('app_ext_funnelchart', [
+            'id = ?',
+            $reports_id
+        ]);
+
+        if ($reports) {
+            \K::$fw->reports = $reports;
+            if (in_array(
+                    \K::$fw->app_user['group_id'],
+                    explode(',', $reports['users_groups'])
+                ) or \K::$fw->app_user['group_id'] == 0) {
+                echo '<h3 class="page-title"><a href="' . \Helpers\Urls::url_for(
                         'ext/funnelchart/view',
                         'id=' . $reports['id']
                     ) . '">' . $reports['name'] . '</a></h3>';
-                require(component_path('ext/funnelchart/view'));
+
+                echo \K::view()->render(\Helpers\Urls::component_path('ext/funnelchart/view'));
             }
         }
         break;
 
-    case strstr($section_report, 'pivot_tables'):
-        $reports_query = db_query("select * from app_ext_pivot_tables where id='" . $reports_id . "'");
-        if ($pivot_tables = db_fetch_array($reports_query)) {
-            echo '<h3 class="page-title"><a href="' . url_for(
+    case strstr(\K::$fw->section_report, 'pivot_tables'):
+
+        $pivot_tables = \K::model()->db_fetch_one('app_ext_pivot_tables', [
+            'id = ?',
+            $reports_id
+        ]);
+
+        if ($pivot_tables) {
+            \K::$fw->pivot_tables = $pivot_tables;
+            echo '<h3 class="page-title"><a href="' . \Helpers\Urls::url_for(
                     'ext/pivot_tables/view',
                     'id=' . $pivot_tables['id']
                 ) . '">' . $pivot_tables['name'] . '</a></h3>';
             $pivot_table = new pivot_tables($pivot_tables);
-            require(component_path('ext/pivot_tables/pivot_table'));
+
+            echo \K::view()->render(\Helpers\Urls::component_path('ext/pivot_tables/pivot_table'));
         }
         break;
-    case strstr($section_report, 'pivotreports'):
-        $reports_query = db_query("select * from app_ext_pivotreports where id='" . $reports_id . "'");
-        if ($pivotreports = db_fetch_array($reports_query)) {
+    case strstr(\K::$fw->section_report, 'pivotreports'):
+
+        $pivotreports = \K::model()->db_fetch_one('app_ext_pivotreports', [
+            'id = ?',
+            $reports_id
+        ]);
+
+        if ($pivotreports) {
             if (in_array(
-                    $app_user['group_id'],
+                    \K::$fw->app_user['group_id'],
                     explode(',', $pivotreports['allowed_groups'])
-                ) or $app_user['group_id'] == 0) {
-                echo '<h3 class="page-title"><a href="' . url_for(
+                ) or \K::$fw->app_user['group_id'] == 0) {
+                echo '<h3 class="page-title"><a href="' . \Helpers\Urls::url_for(
                         'ext/pivotreports/view',
                         'id=' . $pivotreports['id']
                     ) . '">' . $pivotreports['name'] . '</a></h3>';
@@ -86,41 +122,57 @@ switch (true) {
 						';
 
                 //allow edit
-                $pivotreports = pivotreports::apply_allow_edit($pivotreports);
+                \K::$fw->pivotreports = pivotreports::apply_allow_edit($pivotreports);
 
-                require(component_path('ext/pivotreports/pivottable'));
+                echo \K::view()->render(\Helpers\Urls::component_path('ext/pivotreports/pivottable'));
             }
         }
         break;
-    case strstr($section_report, 'calendar_personal'):
-        echo '<h3 class="page-title"><a href="' . url_for(
+    case strstr(\K::$fw->section_report, 'calendar_personal'):
+
+        echo '<h3 class="page-title"><a href="' . \Helpers\Urls::url_for(
                 'ext/calendar/personal'
-            ) . '">' . TEXT_EXT_MY_CALENDAR . '</a>' . icalendar::get_url(
-                CFG_PERSONAL_CALENDAR_ICAL,
+            ) . '">' . \K::$fw->TEXT_EXT_MY_CALENDAR . '</a>' . icalendar::get_url(
+                \K::$fw->CFG_PERSONAL_CALENDAR_ICAL,
                 'personal'
             ) . '</h3>';
-        require(component_path('ext/calendar/personal'));
+
+        echo \K::view()->render(\Helpers\Urls::component_path('ext/calendar/personal'));
         break;
-    case strstr($section_report, 'calendar_public'):
-        echo '<h3 class="page-title"><a href="' . url_for(
+    case strstr(\K::$fw->section_report, 'calendar_public'):
+
+        echo '<h3 class="page-title"><a href="' . \Helpers\Urls::url_for(
                 'ext/calendar/public'
-            ) . '">' . TEXT_EXT_CALENDAR . '</a> ' . icalendar::get_url(CFG_PUBLIC_CALENDAR_ICAL, 'public') . '</h3>';
-        require(component_path('ext/calendar/public'));
+            ) . '">' . \K::$fw->TEXT_EXT_CALENDAR . '</a> ' . icalendar::get_url(
+                \K::$fw->CFG_PUBLIC_CALENDAR_ICAL,
+                'public'
+            ) . '</h3>';
+
+        echo \K::view()->render(\Helpers\Urls::component_path('ext/calendar/public'));
         break;
-    case strstr($section_report, 'calendarreport'):
-        if ($app_user['group_id'] > 0) {
-            $reports_query = db_query(
-                "select c.* from app_ext_calendar c, app_entities e, app_ext_calendar_access ca where c.id='" . $reports_id . "' and e.id=c.entities_id and c.id=ca.calendar_id and ca.access_groups_id='" . db_input(
-                    $app_user['group_id']
-                ) . "' order by c.name"
+    case strstr(\K::$fw->section_report, 'calendarreport'):
+
+        if (\K::$fw->app_user['group_id'] > 0) {
+            $reports_query = \K::model()->db_query_exec(
+                'select c.* from app_ext_calendar c, app_entities e, app_ext_calendar_access ca where c.id = :reports_id and e.id = c.entities_id and c.id = ca.calendar_id and ca.access_groups_id = :group_id order by c.name',
+                [
+                    ':reports_id' => $reports_id,
+                    ':group_id' => \K::$fw->app_user['group_id']
+                ]
             );
         } else {
-            $reports_query = db_query(
-                "select c.* from app_ext_calendar c, app_entities e where c.id='" . $reports_id . "' and  e.id=c.entities_id order by c.name"
+            $reports_query = \K::model()->db_query_exec(
+                "select c.* from app_ext_calendar c, app_entities e where c.id = :reports_id and  e.id = c.entities_id order by c.name",
+                [
+                    ':reports_id' => $reports_id
+                ]
             );
         }
-        if ($reports = db_fetch_array($reports_query)) {
-            echo '<h3 class="page-title"><a href="' . url_for(
+        if (isset($reports_query[0])) {
+            $reports = $reports_query[0];
+            \K::$fw->reports = $reports;
+
+            echo '<h3 class="page-title"><a href="' . \Helpers\Urls::url_for(
                     'ext/calendar/report',
                     'id=' . $reports['id']
                 ) . '">' . $reports['name'] . '</a> ' . icalendar::get_url(
@@ -128,14 +180,21 @@ switch (true) {
                     'report',
                     $reports['id']
                 ) . '</h3>';
-            require(component_path('ext/calendar/report'));
+
+            echo \K::view()->render(\Helpers\Urls::component_path('ext/calendar/report'));
         }
         break;
-    case strstr($section_report, 'pivot_calendars'):
-        $reports_query = db_query("select * from app_ext_pivot_calendars where id='" . $reports_id . "'");
-        if ($reports = db_fetch_array($reports_query)) {
+    case strstr(\K::$fw->section_report, 'pivot_calendars'):
+
+        $reports = \K::model()->db_fetch_one('app_ext_pivot_calendars', [
+            'id = ?',
+            $reports_id
+        ]);
+
+        if ($reports) {
+            \K::$fw->reports = $reports;
             if (pivot_calendars::has_access($reports['users_groups'])) {
-                echo '<h3 class="page-title"><a href="' . url_for(
+                echo '<h3 class="page-title"><a href="' . \Helpers\Urls::url_for(
                         'ext/pivot_calendars/view',
                         'id=' . $reports['id']
                     ) . '">' . $reports['name'] . '</a>' . icalendar::get_url(
@@ -143,18 +202,26 @@ switch (true) {
                         'pivot_report',
                         $reports['id']
                     ) . '</h3>';
-                require(component_path('ext/pivot_calendars/report'));
+
+                echo \K::view()->render(\Helpers\Urls::component_path('ext/pivot_calendars/report'));
             }
         }
         break;
-    case strstr($section_report, 'resource_timeline'):
-        $reports_query = db_query("select * from app_ext_resource_timeline where id='" . $reports_id . "'");
-        if ($reports = db_fetch_array($reports_query)) {
-            echo '<h3 class="page-title"><a href="' . url_for(
+    case strstr(\K::$fw->section_report, 'resource_timeline'):
+
+        $reports = \K::model()->db_fetch_one('app_ext_resource_timeline', [
+            'id = ?',
+            $reports_id
+        ]);
+
+        if ($reports) {
+            \K::$fw->reports = $reports;
+            echo '<h3 class="page-title"><a href="' . \Helpers\Urls::url_for(
                     'ext/resource_timeline/view',
                     'id=' . $reports['id']
                 ) . '">' . $reports['name'] . '</a></h3>';
-            require(component_path('ext/resource_timeline/report'));
+
+            echo \K::view()->render(\Helpers\Urls::component_path('ext/resource_timeline/report'));
         }
         break;
 }

@@ -120,4 +120,9 @@ class K
     {
         return \View::instance();
     }
+
+    public static function errorPost()
+    {
+        \K::fw()->error(400, 'Error: POST.value is not available!');
+    }
 }

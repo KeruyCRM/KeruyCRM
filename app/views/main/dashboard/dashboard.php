@@ -1,63 +1,47 @@
 <?php
 
-app_reset_selected_items();
-
 //tabs
-echo reports_groups::render_dashboard_tabs();
+echo \K::$fw->render_dashboard_tabs;
 
 //dashboard pages
-$page = new dashboard_pages;
-echo $page->render_info_blocks();
-echo $page->render_info_pages();
-
-$has_reports_on_dashboard = $page->has_pages;
+echo \K::$fw->render_info_blocks;
+echo \K::$fw->render_info_pages;
 
 //counters
-$reports_counter = new reports_counter;
-$html = $reports_counter->render();
-if (strlen($html)) {
-    echo $html;
-
-    $has_reports_on_dashboard = true;
-}
+echo \K::$fw->html;
 
 //include sections
-require(component_path('dashboard/sections'));
+//require(component_path('dashboard/sections'));
+echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/sections'));
 
-$reports_query = db_query(
-    "select * from app_reports where created_by='" . db_input(
-        $app_logged_users_id
-    ) . "' and in_dashboard=1 and reports_type in ('standard') order by dashboard_sort_order, name"
-);
-while ($reports = db_fetch_array($reports_query)) {
-    $check_query = db_query(
-        "select id from app_reports_sections where (report_left='standard{$reports['id']}' or report_right='standard{$reports['id']}') and reports_groups_id=0 and created_by='" . $app_user['id'] . "'"
-    );
-    if ($check = db_fetch_array($check_query)) {
+foreach (\K::$fw->reports as $reports) {
+    if ($reports['check']) {
         echo '
 			<div class="row">
-        <div class="col-md-12"><h3 class="page-title"><a href="' . url_for(
-                'reports/view',
+        <div class="col-md-12"><h3 class="page-title"><a href="' . \Helpers\Urls::url_for(
+                'main/reports/view',
                 'reports_id=' . $reports['id']
             ) . '">' . $reports['name'] . '</a></h3></div>
       </div>
-			<div class="alert alert-warning">' . TEXT_REPORT_ALREADY_ASSIGNED . '</div>';
+			<div class="alert alert-warning">' . \K::$fw->TEXT_REPORT_ALREADY_ASSIGNED . '</div>';
     } else {
-        require(component_path('dashboard/render_standard_reports'));
+        //require(component_path('dashboard/render_standard_reports'));
+        echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/render_standard_reports'));
     }
 
-    $has_reports_on_dashboard = true;
+    \K::$fw->has_reports_on_dashboard = true;
 }
 
 //include common reports
-require(component_path('dashboard/common_reports'));
+//require(component_path('dashboard/common_reports'));
+echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/common_reports'));
 
 //display default dashboard msg
-if (!$has_reports_on_dashboard and $app_user['group_id'] == 0) {
-    echo TEXT_DASHBOARD_DEFAULT_ADMIN_MSG;
-} elseif (!$has_reports_on_dashboard) {
-    echo TEXT_DASHBOARD_DEFAULT_MSG;
+if (!\K::$fw->has_reports_on_dashboard and \K::$fw->app_user['group_id'] == 0) {
+    echo \K::$fw->TEXT_DASHBOARD_DEFAULT_ADMIN_MSG;
+} elseif (!\K::$fw->has_reports_on_dashboard) {
+    echo \K::$fw->TEXT_DASHBOARD_DEFAULT_MSG;
 }
 
-require(component_path('items/load_items_listing.js'));
-
+//require(component_path('items/load_items_listing.js'));
+echo \K::view()->render(\Helpers\Urls::component_path('main/items/load_items_listing.js'));
