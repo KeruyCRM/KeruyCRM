@@ -40,7 +40,7 @@ class Users_cfg extends \Prefab
                     'configuration_name' => $key,
                     'configuration_value' => trim($value),
                     'users_id' => \K::$fw->app_user['id']
-                ], '',
+                ],
                 ['users_id = ? and configuration_name = ?', \K::$fw->app_user['id'], $key]
             );
         }

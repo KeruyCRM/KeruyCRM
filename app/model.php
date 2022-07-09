@@ -198,7 +198,7 @@ class Model extends \Prefab
          return $mapper;
      }*/
 
-    public function db_perform($table, $data, $action = 'insert', $parameters = [], $debug = false)
+    public function db_perform($table, $data, $parameters = [], $debug = false)
     {
         $mapper = $this->mapper($table);
         if ($parameters) {

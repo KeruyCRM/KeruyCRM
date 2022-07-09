@@ -71,7 +71,6 @@ class Email_verification extends \Controller
                     \K::model()->db_perform(
                         'app_entity_1',
                         ['field_9' => \K::$fw->{'POST.email'}],
-                        '',
                         ['id = ?', \K::$fw->app_user['id']]
                     );
 

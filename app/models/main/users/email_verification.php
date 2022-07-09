@@ -42,7 +42,6 @@ class Email_verification
                 \K::model()->db_perform(
                     'app_entity_1',
                     ['is_email_verified' => 0],
-                    '',
                     ['id = ?', \K::$fw->app_user['id']]
                 );
             }
@@ -95,7 +94,6 @@ class Email_verification
         \K::model()->db_perform(
             'app_entity_1',
             ['is_email_verified' => 1],
-            '',
             ['id = ?', \K::$fw->app_user['id']]
         );
 

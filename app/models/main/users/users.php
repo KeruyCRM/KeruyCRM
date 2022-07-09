@@ -852,7 +852,6 @@ class Users
             \K::model()->db_perform(
                 'app_entity_1',
                 ['client_id' => $client_id],
-                '',
                 ['id = ?', \K::$fw->app_user['id']]
             );
 

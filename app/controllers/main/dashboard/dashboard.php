@@ -58,7 +58,7 @@ class Dashboard extends \Controller
                         ) . "'"
                     );*/
 
-                    \K::model()->db_perform('app_reports', $sql_data, '', [
+                    \K::model()->db_perform('app_reports', $sql_data, [
                         'id = ? and created_by = ?',
                         str_replace('report_', '', $v),
                         \K::fw()->app_user['id']
@@ -79,12 +79,11 @@ class Dashboard extends \Controller
                             \K::fw()->app_user['id']
                         ) . "'"
                     );*/
-                    \K::model()->db_perform('app_reports', $sql_data, '', [
+                    \K::model()->db_perform('app_reports', $sql_data, [
                         'id = ? and created_by = ?',
                         str_replace('report_', '', $v),
                         \K::fw()->app_user['id']
                     ]);
-
                 }
             }
         } else {

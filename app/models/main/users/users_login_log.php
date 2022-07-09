@@ -68,7 +68,7 @@ class Users_login_log
 
         //update
         //db_query("update app_entity_1 set field_{$field_id}=" . time() . " where id={$users_id}");
-        \K::model()->db_perform('app_entity_1', ["field_{$field_id}" => time()], '', ['id = ?', $users_id]);
+        \K::model()->db_perform('app_entity_1', ["field_{$field_id}" => time()], ['id = ?', $users_id]);
     }
 
     static function delete_by_user_id($users_id)
