@@ -1,22 +1,23 @@
 <?php
 
-class favorites
+namespace Models\Main\Items;
+
+class Favorites
 {
-    function __construct($entities_id, $item_id)
+    public function __construct($entities_id, $item_id)
     {
         $this->entities_id = $entities_id;
-        $this->entity_cfg = new entities_cfg($entities_id);
+        $this->entity_cfg = new \Models\Main\Entities_cfg($entities_id);
         $this->item_id = $item_id;
 
         $this->is_in_list = $this->is_in_list();
     }
 
-    function render_icon()
+    public function render_icon()
     {
         if ($this->entity_cfg->get('enable_favorites') != 1) {
             return '';
         }
-
 
         $html = '<a href="#" class="favorite-icon ' . ($this->is_in_list ? 'active' : '') . '" data_path="' . $this->entities_id . '-' . $this->item_id . '">
                     <i class="fa ' . ($this->is_in_list ? 'fa-star' : 'fa-star-o') . '" aria-hidden="true"></i>
@@ -25,7 +26,7 @@ class favorites
         return $html;
     }
 
-    function is_in_list()
+    public function is_in_list()
     {
         global $app_user;
 
@@ -39,7 +40,7 @@ class favorites
         }
     }
 
-    static function render_header_nofitifcation()
+    public static function render_header_nofitifcation()
     {
         $html = '
         <li class="dropdown hot-reports" id="favorites_header_dropdown">
@@ -65,7 +66,7 @@ class favorites
         return $html;
     }
 
-    static function count()
+    public static function count()
     {
         global $app_user;
 
@@ -77,12 +78,12 @@ class favorites
         return $favorites['total'];
     }
 
-    static function delete_by_item_id($entities_id, $items_id)
+    public static function delete_by_item_id($entities_id, $items_id)
     {
         db_query("delete from app_favorites where entities_id={$entities_id} and items_id={$items_id}");
     }
 
-    static function render_header_dropdown()
+    public static function render_header_dropdown()
     {
         global $app_user, $app_entities_cache;
 
@@ -144,4 +145,3 @@ class favorites
         return $html;
     }
 }
-
