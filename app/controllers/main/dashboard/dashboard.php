@@ -11,12 +11,19 @@ class Dashboard extends \Controller
         parent::__construct();
         \K::security()->checkCsrfToken();
 
-        $app_title = app_set_title(TEXT_MENU_DASHBOARD);
+        \K::$fw->app_title = \Helpers\App::app_set_title(\K::$fw->TEXT_MENU_DASHBOARD);
 
-        if (!strlen($app_module_action)) {
+        /*if (!strlen(\K::$fw->app_module_action)) {
             //autoreset session table if default _sess_gc function not working
             app_session_table_reset();
-        }
+        }*/
+    }
+
+    public function index()
+    {
+        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'login.php';
+
+        echo \K::view()->render($this->app_layout);
     }
 
     public function save()
@@ -67,7 +74,7 @@ class Dashboard extends \Controller
         }
     }
 
-    public function sort_reports_countr()
+    public function sort_reports_counter()
     {
         if (isset($_POST['reports_counter_on_dashboard'])) {
             $sort_order = 0;
@@ -171,7 +178,7 @@ class Dashboard extends \Controller
         echo users_notifications::render_dropdown();
     }
 
-    public function set_users_alers_viewed()
+    public function set_users_alerts_viewed()
     {
         $sql_data = [
             'users_id' => $app_user['id'],
