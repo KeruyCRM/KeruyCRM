@@ -29,9 +29,9 @@ class Dashboard extends \Controller
     {
         if (\K::$fw->VERB == 'POST') {
             if (\K::fw()->exists('POST.hidden_common_reports', $hidden_common_reports)) {
-                \K::$fw->app_users_cfg->set('hidden_common_reports', implode(',', $hidden_common_reports));
+                \K::app_users_cfg()->set('hidden_common_reports', implode(',', $hidden_common_reports));
             } else {
-                \K::$fw->app_users_cfg->set('hidden_common_reports', '');
+                \K::app_users_cfg()->set('hidden_common_reports', '');
             }
         }
 
@@ -40,6 +40,7 @@ class Dashboard extends \Controller
 
     public function keep_session()
     {
+        return true;
     }
 
     public function sort_reports()
@@ -49,20 +50,8 @@ class Dashboard extends \Controller
                 $sort_order = 0;
                 foreach (explode(',', $reports_on_dashboard) as $v) {
                     $sql_data = ['in_dashboard' => 1, 'dashboard_sort_order' => $sort_order];
-                    /*db_perform(
-                        'app_reports',
-                        $sql_data,
-                        'update',
-                        "id='" . db_input(str_replace('report_', '', $v)) . "' and created_by='" . db_input(
-                            \K::fw()->app_user['id']
-                        ) . "'"
-                    );*/
 
-                    \K::model()->db_perform('app_reports', $sql_data, [
-                        'id = ? and created_by = ?',
-                        str_replace('report_', '', $v),
-                        \K::fw()->app_user['id']
-                    ]);
+                    $this->_update_reports($sql_data, $v);
 
                     $sort_order++;
                 }
@@ -71,19 +60,8 @@ class Dashboard extends \Controller
             if (\K::fw()->exists('POST.reports_excluded_from_dashboard', $reports_excluded_from_dashboard)) {
                 foreach (explode(',', $reports_excluded_from_dashboard) as $v) {
                     $sql_data = ['in_dashboard' => 0, 'dashboard_sort_order' => 0];
-                    /*db_perform(
-                        'app_reports',
-                        $sql_data,
-                        'update',
-                        "id='" . db_input(str_replace('report_', '', $v)) . "' and created_by='" . db_input(
-                            \K::fw()->app_user['id']
-                        ) . "'"
-                    );*/
-                    \K::model()->db_perform('app_reports', $sql_data, [
-                        'id = ? and created_by = ?',
-                        str_replace('report_', '', $v),
-                        \K::fw()->app_user['id']
-                    ]);
+
+                    $this->_update_reports($sql_data, $v);
                 }
             }
         } else {
@@ -93,101 +71,106 @@ class Dashboard extends \Controller
 
     public function sort_reports_counter()
     {
-        if (isset($_POST['reports_counter_on_dashboard'])) {
-            $sort_order = 0;
-            foreach (explode(',', $_POST['reports_counter_on_dashboard']) as $v) {
-                $sql_data = ['in_dashboard_counter' => 1, 'dashboard_counter_sort_order' => $sort_order];
-                db_perform(
-                    'app_reports',
-                    $sql_data,
-                    'update',
-                    "id='" . db_input(str_replace('report_', '', $v)) . "' and created_by='" . db_input(
-                        $app_user['id']
-                    ) . "'"
-                );
-                $sort_order++;
-            }
-        }
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::fw()->exists('POST.reports_counter_on_dashboard', $reports_counter_on_dashboard)) {
+                $sort_order = 0;
+                foreach (explode(',', $reports_counter_on_dashboard) as $v) {
+                    $sql_data = ['in_dashboard_counter' => 1, 'dashboard_counter_sort_order' => $sort_order];
 
-        if (isset($_POST['reports_counter_excluded_from_dashboard'])) {
-            foreach (explode(',', $_POST['reports_counter_excluded_from_dashboard']) as $v) {
-                $sql_data = ['in_dashboard_counter' => 0, 'dashboard_counter_sort_order' => 0];
-                db_perform(
-                    'app_reports',
-                    $sql_data,
-                    'update',
-                    "id='" . db_input(str_replace('report_', '', $v)) . "' and created_by='" . db_input(
-                        $app_user['id']
-                    ) . "'"
-                );
+                    $this->_update_reports($sql_data, $v);
+
+                    $sort_order++;
+                }
             }
+
+            if (\K::fw()->exists(
+                'POST.reports_counter_excluded_from_dashboard',
+                $reports_counter_excluded_from_dashboard
+            )) {
+                foreach (explode(',', $reports_counter_excluded_from_dashboard) as $v) {
+                    $sql_data = ['in_dashboard_counter' => 0, 'dashboard_counter_sort_order' => 0];
+
+                    $this->_update_reports($sql_data, $v);
+                }
+            }
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 
     public function sort_reports_header()
     {
-        if (isset($_POST['reports_in_header'])) {
-            $sort_order = 0;
-            foreach (explode(',', $_POST['reports_in_header']) as $v) {
-                $sql_data = ['in_header' => 1, 'header_sort_order' => $sort_order];
-                db_perform(
-                    'app_reports',
-                    $sql_data,
-                    'update',
-                    "id='" . db_input(str_replace('report_', '', $v)) . "' and created_by='" . db_input(
-                        $app_user['id']
-                    ) . "'"
-                );
-                $sort_order++;
-            }
-        }
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::fw()->exists('POST.reports_in_header', $reports_in_header)) {
+                $sort_order = 0;
+                foreach (explode(',', $reports_in_header) as $v) {
+                    $sql_data = ['in_header' => 1, 'header_sort_order' => $sort_order];
 
-        if (isset($_POST['reports_excluded_in_header'])) {
-            foreach (explode(',', $_POST['reports_excluded_in_header']) as $v) {
-                $sql_data = ['in_header' => 0, 'header_sort_order' => 0];
-                db_perform(
-                    'app_reports',
-                    $sql_data,
-                    'update',
-                    "id='" . db_input(str_replace('report_', '', $v)) . "' and created_by='" . db_input(
-                        $app_user['id']
-                    ) . "'"
-                );
+                    $this->_update_reports($sql_data, $v);
+
+                    $sort_order++;
+                }
             }
+
+            if (\K::fw()->exists('POST.reports_excluded_in_header', $reports_excluded_in_header)) {
+                foreach (explode(',', $reports_excluded_in_header) as $v) {
+                    $sql_data = ['in_header' => 0, 'header_sort_order' => 0];
+
+                    $this->_update_reports($sql_data, $v);
+                }
+            }
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 
     public function update_hot_reports()
     {
-        $reports_info_query = db_query("select * from app_reports where id='" . db_input($_GET['reports_id']) . "'");
-        if (!$reports_info = db_fetch_array($reports_info_query)) {
-            exit();
-        }
+        if (\K::fw()->exists('GET.reports_id', $reports_id)) {
+            $reports_info = \K::model()->db_fetch_one('app_reports', [
+                'id = ?',
+                $reports_id
+            ]);
 
-        //check report access
-        if ($reports_info['reports_type'] == 'common') {
-            //check access for common report
-            $check_query = db_query(
-                "select r.* from app_reports r, app_entities e, app_entities_access ea  where r.id = '" . $reports_info['id'] . "' and  r.entities_id = e.id and e.id=ea.entities_id and length(ea.access_schema)>0 and ea.access_groups_id='" . db_input(
-                    $app_user['group_id']
-                ) . "' and (find_in_set(" . $app_user['group_id'] . ",r.users_groups) or find_in_set(" . $app_user['id'] . ",r.assigned_to)) and r.reports_type = 'common' order by r.dashboard_sort_order, r.name"
-            );
-            if (!$check = db_fetch_array($check_query)) {
-                exit();
+            if (!$reports_info) {
+                return;
             }
-        } elseif ($app_logged_users_id != $reports_info['created_by']) {
-            exit();
+
+            //check report access
+            if ($reports_info['reports_type'] == 'common') {
+                //check access for common report
+                $check_query = \K::model()->db_query_exec(
+                    "select r.* from app_reports r, app_entities e, app_entities_access ea where r.id = ? and  r.entities_id = e.id and e.id = ea.entities_id and length(ea.access_schema) > 0 and ea.access_groups_id = ? and (find_in_set( ? ,r.users_groups) or find_in_set( ? ,r.assigned_to)) and r.reports_type = 'common' order by r.dashboard_sort_order, r.name"
+                    ,
+                    [
+                        $reports_info['id'],
+                        \K::$fw->app_user['group_id'],
+                        \K::$fw->app_user['group_id'],
+                        \K::$fw->app_user['id']
+                    ]
+                );
+                if (!count($check_query)) {
+                    return;
+                }
+            } elseif (\K::$fw->app_logged_users_id != $reports_info['created_by']) {
+                return;
+            }
+
+            $hot_reports = new \Models\Main\Reports\Hot_reports();
+
+            //TODO add render
+            echo $hot_reports->render_dropdown($reports_id);
+
+            //TODO db_dev_log
+           // db_dev_log();
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
-
-        $hot_reports = new hot_reports();
-        echo $hot_reports->render_dropdown($_GET['reports_id']);
-
-        db_dev_log();
     }
 
     public function update_favorites_header_dropdown()
     {
-        echo favorites::render_header_dropdown();
+        echo \Models\Main\Items\Favorites::render_header_dropdown();
     }
 
     public function update_user_notifications_report()
@@ -210,5 +193,14 @@ class Dashboard extends \Controller
         db_query("update app_reports_filters set is_active=" . _POST('is_active') . " where id=" . _POST('filter_id'));
 
         app_exit();
+    }
+
+    private function _update_reports($sql_data, $v)
+    {
+        \K::model()->db_perform('app_reports', $sql_data, [
+            'id = ? and created_by = ?',
+            str_replace('report_', '', $v),
+            \K::fw()->app_user['id']
+        ]);
     }
 }
