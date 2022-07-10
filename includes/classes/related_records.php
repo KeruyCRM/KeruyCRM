@@ -77,7 +77,6 @@ class related_records
                 continue;
             }
 
-
             //render list
             $this->field = $field;
 
@@ -183,12 +182,10 @@ class related_records
             '&path=' . $app_path . '/' . $reports_info['entities_id'] . '&redirect_to=parent_item_info_page'
         );
 
-
         $html_btn = '
             <div class="row">
                 <div class="col-sm-' . ($this->cfg->get('display_search_bar') == 1 ? '6' : '12') . '">
             ';
-
 
         if (users::has_access('update', $this->current_entities_access_schema) and $current_field_access != 'view') {
             //add button
@@ -259,7 +256,6 @@ class related_records
 	      			</div>';
             }
         }
-
 
         //add search bar
         if ($this->cfg->get('display_search_bar') == 1) {
@@ -818,7 +814,6 @@ class related_records
     function add_related_record($entities_id, $items_id, $related_items_id)
     {
         $related_entities_id = $this->cfg->get('entity_id');
-        $related_items_id = $related_items_id;
 
         $table_info = related_records::get_related_items_table_name($entities_id, $related_entities_id);
 
