@@ -58,7 +58,7 @@ if (\Models\Main\Users\Users::has_access('export_selected', $access_schema) and 
         ) . '</li>';
 }
 
-$with_selected_menu .= plugins::include_dashboard_with_selected_menu_items(\K::$fw->reports['id']);
+$with_selected_menu .= \Tools\Plugins::include_dashboard_with_selected_menu_items(\K::$fw->reports['id']);
 
 $report_title_html = '
   		<div class="row">
