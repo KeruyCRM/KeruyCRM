@@ -46,7 +46,7 @@ class dashboard_pages
 
         foreach ($sections_choices as $section) {
             $html = '';
-
+            $item = '';
             $pages_query = db_query(
                 "select * from app_dashboard_pages where sections_id='" . $section['id'] . "' and type='info_block' and find_in_set(" . $app_user['group_id'] . ", users_groups) and is_active=1 order by sort_order, name"
             );
