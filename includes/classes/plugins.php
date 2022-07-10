@@ -65,7 +65,7 @@ class plugins
 
     static public function include_dashboard_with_selected_menu_items($reports_id, $url_params = '')
     {
-        global $app_plugin_menu, $app_user, $app_module_path;
+        global $app_user, $app_module_path;
 
         $html = '';
 
