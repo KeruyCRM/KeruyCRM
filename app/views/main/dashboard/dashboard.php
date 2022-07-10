@@ -44,4 +44,4 @@ if (!\K::$fw->has_reports_on_dashboard and \K::$fw->app_user['group_id'] == 0) {
 }
 
 //require(component_path('items/load_items_listing.js'));
-echo \K::view()->render(\Helpers\Urls::component_path('main/items/load_items_listing.js'));
+//echo \K::view()->render(\Helpers\Urls::component_path('main/items/load_items_listing.js'));

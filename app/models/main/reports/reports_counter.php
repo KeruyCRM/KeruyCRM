@@ -30,13 +30,14 @@ class Reports_counter
         $html = '';
 
         if (!$this->reports_query) {
-            $reports_query = db_query($this->reports_query());
+            $reports_query = \K::model()->db_query_exec($this->reports_query());
         } else {
-            $reports_query = db_query($this->reports_query);
+            $reports_query = \K::model()->db_query_exec($this->reports_query);
         }
 
         $count = 0;
-        while ($reports = db_fetch_array($reports_query)) {
+        //while ($reports = db_fetch_array($reports_query)) {
+        foreach ($reports_query as $reports) {
             $color_style = (strlen(
                 $reports['in_dashboard_counter_color']
             ) ? 'style="color: ' . $reports['in_dashboard_counter_color'] . '"' : '');
@@ -62,14 +63,14 @@ class Reports_counter
             }
 
             if ($this->common_filter_reports_id > 0) {
-                $click_url = url_for(
-                    'reports/common_filters',
+                $click_url = \Helpers\Urls::url_for(
+                    'main/reports/common_filters',
                     'action=use&redirect_to=' . $this->redirect_to . '&reports_id=' . $this->common_filter_reports_id . '&use_filters=' . $reports['id'] . (strlen(
                         \K::$fw->app_path
                     ) ? '&path=' . \K::$fw->app_path : '')
                 );
             } else {
-                $click_url = url_for('reports/view', 'reports_id=' . $reports['id']);
+                $click_url = \Helpers\Urls::url_for('main/reports/view', 'reports_id=' . $reports['id']);
             }
 
             $is_selected = false;
@@ -97,7 +98,7 @@ class Reports_counter
                                 <tr>	
                                 ' . (($reports['in_dashboard_icon'] and strlen(
                         $reports['menu_icon']
-                    )) ? '<td><div class="icon">' . app_render_icon(
+                    )) ? '<td><div class="icon">' . \Helpers\App::app_render_icon(
                         $reports['menu_icon'],
                         $color_style
                     ) . '</div></td>' : '') . '
@@ -293,19 +294,26 @@ class Reports_counter
 
         //get common reports list
         $common_reports_list = [];
-        $reports_query = db_query(
-            "select r.* from app_reports r, app_entities e, app_entities_access ea  where r.entities_id = e.id and e.id=ea.entities_id and length(ea.access_schema)>0 and ea.access_groups_id='" . db_input(
-                \K::$fw->app_user['group_id']
-            ) . "' and (find_in_set(" . \K::$fw->app_user['group_id'] . ",r.users_groups) or find_in_set(" . \K::$fw->app_user['id'] . ",r.assigned_to)) and r.in_dashboard_counter=1 and r.reports_type = 'common' " . $where_sql . " order by r.dashboard_sort_order, r.name"
+        $reports_query = \K::model()->db_query_exec(
+            'select r.* from app_reports r, app_entities e, app_entities_access ea where r.entities_id = e.id and e.id = ea.entities_id and length(ea.access_schema) > 0 and ea.access_groups_id = ? and (FIND_IN_SET( ? , r.users_groups) or FIND_IN_SET( ? , r.assigned_to)) and r.in_dashboard_counter = 1 and r.reports_type = ? ' . $where_sql . ' order by r.dashboard_sort_order, r.name',
+            [
+                \K::$fw->app_user['group_id'],
+                \K::$fw->app_user['group_id'],
+                \K::$fw->app_user['id'],
+                'common'
+            ]
         );
-        while ($reports = db_fetch_array($reports_query)) {
+        //while ($reports = db_fetch_array($reports_query)) {
+        foreach ($reports_query as $reports) {
             $common_reports_list[] = $reports['id'];
         }
 
         //create reports query inclue common reports
-        $reports_query = "select r.*,e.name as entities_name,e.parent_id as entities_parent_id from app_reports r, app_entities e where e.id=r.entities_id and ((r.created_by='" . db_input(
+        $reports_query = "select r.*,e.name as entities_name,e.parent_id as entities_parent_id from app_reports r, app_entities e where e.id=r.entities_id and ((r.created_by=" . \K::model(
+            )->quote(
                 \K::$fw->app_logged_users_id
-            ) . "' and r.reports_type='standard' and  r.in_dashboard_counter=1)  " . (count(
+            )
+            . " and r.reports_type='standard' and  r.in_dashboard_counter=1)  " . (count(
                 $common_reports_list
             ) > 0 ? " or r.id in(" . implode(
                     ',',

@@ -10,15 +10,15 @@
                     <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
 
                     <?php
-                    if (is_file(DIR_FS_UPLOADS . '/' . CFG_APP_LOGO)) {
-                        if (is_image(DIR_FS_UPLOADS . '/' . CFG_APP_LOGO)) {
-                            $html = '<img src="uploads/' . CFG_APP_LOGO . '" border="0" title="' . CFG_APP_NAME . '">';
+                    if (is_file(\K::$fw->DIR_FS_UPLOADS . '/' . \K::$fw->CFG_APP_LOGO)) {
+                        if (\Helpers\App::is_image(\K::$fw->DIR_FS_UPLOADS . '/' . \K::$fw->CFG_APP_LOGO)) {
+                            $html = '<img src="uploads/' . \K::$fw->CFG_APP_LOGO . '" border="0" title="' . \K::$fw->CFG_APP_NAME . '">';
 
-                            if (strlen(CFG_APP_LOGO_URL) > 0) {
-                                $html = '<div class="logo"><a href="' . CFG_APP_LOGO_URL . '" target="_new">' . $html . '</a></div>';
+                            if (strlen(\K::$fw->CFG_APP_LOGO_URL) > 0) {
+                                $html = '<div class="logo"><a href="' . \K::$fw->CFG_APP_LOGO_URL . '" target="_new">' . $html . '</a></div>';
                             } else {
-                                $html = '<div class="logo"><a href="' . url_for(
-                                        'dashboard/'
+                                $html = '<div class="logo"><a href="' . \Helpers\Urls::url_for(
+                                        'main/dashboard'
                                     ) . '">' . $html . '</a></div>';
                             }
 
@@ -41,9 +41,9 @@
                 </li>
 
                 <?php
-                $sidebarMenu = build_main_menu();
+                /*$sidebarMenu = build_main_menu();
                 //print_rr($sidebarMenu);
-                echo renderSidebarMenu($sidebarMenu)
+                echo renderSidebarMenu($sidebarMenu)*/
                 ?>
 
             </ul>

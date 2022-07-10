@@ -4,7 +4,6 @@ namespace Tools\Pages;
 
 class Dashboard_pages
 {
-
     public $has_pages;
 
     public function __construct()
@@ -14,15 +13,13 @@ class Dashboard_pages
 
     public static function get_color_choices()
     {
-        $choices = [
-            'default' => TEXT_DEFAULT,
-            'warning' => TEXT_ALERT_WARNING,
-            'danger' => TEXT_ALERT_DANGER,
-            'success' => TEXT_ALERT_SUCCESS,
-            'info' => TEXT_ALERT_INFO,
+        return [
+            'default' => \K::$fw->TEXT_DEFAULT,
+            'warning' => \K::$fw->TEXT_ALERT_WARNING,
+            'danger' => \K::$fw->TEXT_ALERT_DANGER,
+            'success' => \K::$fw->TEXT_ALERT_SUCCESS,
+            'info' => \K::$fw->TEXT_ALERT_INFO,
         ];
-
-        return $choices;
     }
 
     public static function get_color_by_name($name)
@@ -34,53 +31,88 @@ class Dashboard_pages
 
     public function render_info_blocks()
     {
-        global $app_user;
-
         $html_sections = '';
 
         $sections_choices = [];
-        $sections_choices[] = ['id' => 0, 'grid' => 4, 'name' => $app_user['name']];
-        $sections_query = db_query("select * from app_dashboard_pages_sections order by sort_order, name");
-        while ($sections = db_fetch_array($sections_query)) {
+        $sections_choices[] = ['id' => 0, 'grid' => 4, 'name' => \K::$fw->app_user['name']];
+        //$sections_query = db_query("select * from app_dashboard_pages_sections order by sort_order, name");
+        $sections_query = \K::model()->db_fetch(
+            'app_dashboard_pages_sections',
+            [],
+            ['order' => 'sort_order,name'],
+            'id,grid,name'
+        );
+
+        //while ($sections = db_fetch_array($sections_query)) {
+        foreach ($sections_query as $sections) {
             $sections_choices[] = ['id' => $sections['id'], 'grid' => $sections['grid'], 'name' => $sections['name']];
         }
 
         foreach ($sections_choices as $section) {
             $html = '';
+            $item = '';
+            /*$pages_query = db_query(
+                "select * from app_dashboard_pages where sections_id='" . $section['id'] . "' and type='info_block' and find_in_set(" . \K::$fw->app_user['group_id'] . ", users_groups) and is_active=1 order by sort_order, name"
+            );*/
 
-            $pages_query = db_query(
-                "select * from app_dashboard_pages where sections_id='" . $section['id'] . "' and type='info_block' and find_in_set(" . $app_user['group_id'] . ", users_groups) and is_active=1 order by sort_order, name"
-            );
+            $pages_query = \K::model()->db_fetch('app_dashboard_pages', [
+                'sections_id = ? and type = ? and find_in_set( ? , users_groups) and is_active = 1',
+                $section['id'],
+                'info_block',
+                \K::$fw->app_user['group_id']
+            ], ['order' => 'sort_order,name']);
 
-            if (db_num_rows($pages_query)) {
-                $item_query = db_query(
-                    "select e.* " . fieldtype_formula::prepare_query_select(
+            if (count($pages_query)) {
+                $item_query = \K::model()->db_query_exec(
+                    "select e.* " .
+                    \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                         1,
                         ''
-                    ) . " from app_entity_1 e where e.id='" . db_input($app_user['id']) . "' and e.field_5=1"
+                    ) . " from app_entity_1 e where e.id = ? and e.field_5 = 1", [\K::$fw->app_user['id']]
                 );
-                $item = db_fetch_array($item_query);
+                if (isset($item_query[0])) {
+                    $item = $item_query[0];
+                }
             }
 
             $count = 1;
 
-            while ($pages = db_fetch_array($pages_query)) {
+            //while ($pages = db_fetch_array($pages_query)) {
+            foreach ($pages_query as $pages) {
+                $pages = $pages->cast();
+
                 $fields_html = '';
                 $count_fields = 0;
 
                 if (strlen($pages['users_fields'])) {
-                    $fields_access_schema = users::get_fields_access_schema(1, $app_user['group_id']);
+                    $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema(
+                        1,
+                        \K::$fw->app_user['group_id']
+                    );
 
                     $fields_html = '<table class="table">';
 
-                    $fields_query = db_query(
+                    /*$fields_query = db_query(
                         "select id, type, name, configuration, entities_id from app_fields where id in (" . $pages['users_fields'] . ") order by field(id," . $pages['users_fields'] . ")"
-                    );
-                    while ($field = db_fetch_array($fields_query)) {
-                        //prepare field value
-                        $value = items::prepare_field_value_by_type($field, $item);
+                    );*/
 
-                        $cfg = new fields_types_cfg($field['configuration']);
+                    $fields_query = \K::model()->db_fetch(
+                        'app_fields',
+                        [
+                            'id in (?)',
+                            $pages['users_fields']
+                        ],
+                        ['order' => 'field(id,' . $pages['users_fields'] . ')'],
+                        'id,type,name,configuration,entities_id'
+                    );
+
+                    //while ($field = db_fetch_array($fields_query)) {
+                    foreach ($fields_query as $field) {
+                        $field = $field->cast();
+                        //prepare field value
+                        $value = \Tools\Items\Items::prepare_field_value_by_type($field, $item);
+
+                        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
                         //hide if empty
                         if (($cfg->get('hide_field_if_empty') == 1 and strlen($value) == 0) or ($cfg->get(
@@ -110,7 +142,7 @@ class Dashboard_pages
                             }
                         }
 
-                        if ($cfg->get('hide_field_if_empty') == 1 and fields_types::is_empty_value(
+                        if ($cfg->get('hide_field_if_empty') == 1 and \Models\Main\Fields_types::is_empty_value(
                                 $value,
                                 $field['type']
                             )) {
@@ -124,17 +156,17 @@ class Dashboard_pages
                             'item' => $item,
                             'is_listing' => true,
                             'display_user_photo' => true,
-                            'path' => '1-' . $app_user['id']
+                            'path' => '1-' . \K::$fw->app_user['id']
                         ];
 
                         $fields_html .= '
 								<tr>
-									<th>' . ($field_name = fields_types::get_option(
+									<th>' . ($field_name = \Models\Main\Fields_types::get_option(
                                 $field['type'],
                                 'name',
                                 $field['name']
                             )) . '</th>
-									<td>' . ($field_value = fields_types::output($output_options)) . '</td>
+									<td>' . ($field_value = \Models\Main\Fields_types::output($output_options)) . '</td>
 								<tr>
 								';
 
@@ -166,7 +198,9 @@ class Dashboard_pages
 						<div class="stats-overview stat-block stats-' . $pages['color'] . '">
 						 	<table width="100%">
 								<tr>
-							' . (strlen($pages['icon']) ? '<td width="32"><div class="icon">' . app_render_icon(
+							' . (strlen(
+                            $pages['icon']
+                        ) ? '<td width="32"><div class="icon">' . \Helpers\App::app_render_icon(
                                 $pages['icon']
                             ) . '</div></td>' : '') . '
 									<td>
@@ -202,11 +236,11 @@ class Dashboard_pages
                     $count++;
                 } elseif ($count_fields > 0 or strlen($pages['description'])) {
                     if (strlen($pages['description'])) {
-                        $text_pattern = new fieldtype_text_pattern();
+                        $text_pattern = new \Tools\FieldsTypes\Fieldtype_text_pattern();
                         $pages['description'] = $text_pattern->output_singe_text(
                             $pages['description'],
                             1,
-                            $app_user['fields']
+                            \K::$fw->app_user['fields']
                         );
                     }
 
@@ -215,7 +249,9 @@ class Dashboard_pages
 							<div class="panel panel-' . $pages['color'] . '">
 							  ' . (strlen($pages['name']) ? '<div class="panel-heading">' . (strlen(
                                 $pages['icon']
-                            ) ? app_render_icon($pages['icon']) . ' ' : '') . $pages['name'] . '</div>' : '') . '
+                            ) ? \Helpers\App::app_render_icon(
+                                    $pages['icon']
+                                ) . ' ' : '') . $pages['name'] . '</div>' : '') . '
 							  <div class="panel-body">
 							    ' . (strlen($pages['description']) ? '<p>' . $pages['description'] . '</p>' : '') . '
 							    ' . $fields_html . '		
@@ -234,7 +270,11 @@ class Dashboard_pages
 
             if (strlen($html)) {
                 $html_sections .= '
-						<h3 class="page-title">' . str_replace('[user_name]', $app_user['name'], $section['name']) . '</h3>
+						<h3 class="page-title">' . str_replace(
+                        '[user_name]',
+                        \K::$fw->app_user['name'],
+                        $section['name']
+                    ) . '</h3>
 						<div class="row users-info-blocks users-info-blocks-content">' . $html . '</div>		
 						';
 
@@ -247,18 +287,25 @@ class Dashboard_pages
 
     public function render_info_pages()
     {
-        global $app_user;
-
         $html = '';
 
-        $pages_query = db_query(
-            "select * from app_dashboard_pages where type='page' and find_in_set(" . $app_user['group_id'] . ", users_groups) and is_active=1 order by sort_order, name"
-        );
+        /*$pages_query = db_query(
+            "select * from app_dashboard_pages where type='page' and find_in_set(" . \K::$fw->app_user['group_id'] . ", users_groups) and is_active=1 order by sort_order, name"
+        );*/
 
-        while ($pages = db_fetch_array($pages_query)) {
+        $pages_query = \K::model()->db_fetch('app_dashboard_pages', [
+            'type = ? and FIND_IN_SET( ? ,users_groups) and is_active = 1',
+            'page',
+            \K::$fw->app_user['group_id']
+        ], ['order' => 'sort_order,name']);
+
+        //while ($pages = db_fetch_array($pages_query)) {
+        foreach ($pages_query as $pages) {
+            $pages = $pages->cast();
+
             if ($pages['color'] == 'default') {
                 $html .= '
-						<h3 class="page-title">' . (strlen($pages['icon']) ? app_render_icon(
+						<h3 class="page-title">' . (strlen($pages['icon']) ? \Helpers\App::app_render_icon(
                             $pages['icon']
                         ) . ' ' : '') . $pages['name'] . '</h3>
 						<p>' . $pages['description'] . '</p>
@@ -266,7 +313,7 @@ class Dashboard_pages
             } else {
                 $html .= '
 						<div class="alert alert-' . $pages['color'] . '">
-							<h3 class="page-title">' . (strlen($pages['icon']) ? app_render_icon(
+							<h3 class="page-title">' . (strlen($pages['icon']) ? \Helpers\App::app_render_icon(
                             $pages['icon']
                         ) . ' ' : '') . $pages['name'] . '</h3>
 							<p>' . $pages['description'] . '</p>
@@ -285,9 +332,9 @@ class Dashboard_pages
     public static function get_section_grid_choices()
     {
         $choices = [];
-        $choices[6] = '2 ' . TEXT_COLUMNS;
-        $choices[4] = '3 ' . TEXT_COLUMNS;
-        $choices[3] = '4 ' . TEXT_COLUMNS;
+        $choices[6] = '2 ' . \K::$fw->TEXT_COLUMNS;
+        $choices[4] = '3 ' . \K::$fw->TEXT_COLUMNS;
+        $choices[3] = '4 ' . \K::$fw->TEXT_COLUMNS;
 
         return $choices;
     }
@@ -296,13 +343,13 @@ class Dashboard_pages
     {
         $choices = self::get_section_grid_choices();
 
-        return (isset($choices[$v]) ? $choices[$v] : '');
+        return ($choices[$v] ?? '');
     }
 
     public static function get_section_choices()
     {
         $choices = [];
-        $choices[] = TEXT_DEFAULT;
+        $choices[] = \K::$fw->TEXT_DEFAULT;
         $sections_query = db_query("select * from app_dashboard_pages_sections order by sort_order, name");
         while ($sections = db_fetch_array($sections_query)) {
             $choices[$sections['id']] = $sections['name'];

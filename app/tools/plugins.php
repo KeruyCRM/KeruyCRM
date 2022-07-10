@@ -31,6 +31,8 @@ class Plugins
 
     public static function include_part($part)
     {
+        return;
+        //TODO Refactored
         global $app_module, $app_action, $app_module_path, $app_user, $app_redirect_to, $app_path, $app_chat;
 
         if (defined('AVAILABLE_PLUGINS')) {

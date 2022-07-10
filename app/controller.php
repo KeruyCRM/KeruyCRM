@@ -541,7 +541,7 @@ class Controller
                 }
 
                 \K::$fw->app_user = [
-                    'id' => $user['id'],
+                    'id' => (int)$user['id'],
                     'group_id' => (int)$user['field_6'],
                     'group_name' => $user['group_name'],
                     'client_id' => $user['client_id'],

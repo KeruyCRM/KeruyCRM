@@ -19,13 +19,19 @@ class Hot_reports
 
         $html = '';
 
-        $reports_query = db_query($this->reports_query());
-        while ($reports = db_fetch_array($reports_query)) {
+        $reports_query = \K::model()->db_query_exec($this->reports_query());
+        //while ($reports = db_fetch_array($reports_query)) {
+        foreach ($reports_query as $reports) {
             $html_cache = '';
             $cache_filename = 'user-' . \K::$fw->app_user['id'] . '-report-' . $reports['id'];
             $cache_lifetime = (($reports['in_header'] and $reports['in_header_autoupdate']) ? 60 : \K::$fw->CFG_CACHE_REPORTS_IN_HEADER_LIFETIME);
 
-            app_read_cache($html_cache, $cache_filename, $cache_lifetime, \K::$fw->CFG_USE_CACHE_REPORTS_IN_HEADER);
+            \Helpers\App::app_read_cache(
+                $html_cache,
+                $cache_filename,
+                $cache_lifetime,
+                \K::$fw->CFG_USE_CACHE_REPORTS_IN_HEADER
+            );
 
             //set off $this->render_dropdown($reports['id']) to speed up
             $html .= '
@@ -253,19 +259,21 @@ class Hot_reports
 
         //get common reports list
         $common_reports_list = [];
-        $reports_query = db_query(
-            "select r.* from app_reports r, app_entities e, app_entities_access ea  where r.entities_id = e.id and e.id=ea.entities_id and length(ea.access_schema)>0 and ea.access_groups_id='" . db_input(
-                \K::$fw->app_user['group_id']
-            ) . "' and (find_in_set(" . \K::$fw->app_user['group_id'] . ",r.users_groups) or find_in_set(" . \K::$fw->app_user['id'] . ",r.assigned_to)) and r.in_header=1 and r.reports_type = 'common' " . $where_sql . " order by r.dashboard_sort_order, r.name"
+        $reports_query = \K::model()->db_query_exec(
+            "select r.* from app_reports r, app_entities e, app_entities_access ea  where r.entities_id = e.id and e.id = ea.entities_id and length(ea.access_schema) > 0 and ea.access_groups_id = ? and (find_in_set( ? ,r.users_groups) or find_in_set( ? ,r.assigned_to)) and r.in_header=1 and r.reports_type = 'common' " . $where_sql . " order by r.dashboard_sort_order, r.name",
+            [\K::$fw->app_user['group_id'], \K::$fw->app_user['group_id'], \K::$fw->app_user['id']]
         );
-        while ($reports = db_fetch_array($reports_query)) {
+
+        //while ($reports = db_fetch_array($reports_query)) {
+        foreach ($reports_query as $reports) {
             $common_reports_list[] = $reports['id'];
         }
 
         //create reports query inclue common reports
-        $reports_query = "select r.*,e.name as entities_name,e.parent_id as entities_parent_id from app_reports r, app_entities e where e.id=r.entities_id and ((r.created_by='" . db_input(
+        $reports_query = "select r.*,e.name as entities_name,e.parent_id as entities_parent_id from app_reports r, app_entities e where e.id=r.entities_id and ((r.created_by=" . \K::model(
+            )->quote(
                 \K::$fw->app_logged_users_id
-            ) . "' and r.reports_type='standard' and  r.in_header=1)  " . (count(
+            ) . " and r.reports_type='standard' and  r.in_header=1)  " . (count(
                 $common_reports_list
             ) > 0 ? " or r.id in(" . implode(
                     ',',

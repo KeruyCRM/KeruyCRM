@@ -50,7 +50,7 @@ class Favorites
         <script>
           function favorites_render_dropdown()
           {
-            $("#favorites_header_dropdown").load("' . url_for("dashboard/", "action=update_favorites_header_dropdown") . '",function(){
+            $("#favorites_header_dropdown").load("' . \Helpers\Urls::url_for("main/dashboard/dashboard/update_favorites_header_dropdown") . '",function(){
                 $(\'[data-hover="dropdown"]\').dropdownHover();
             		app_handle_scrollers();
               })

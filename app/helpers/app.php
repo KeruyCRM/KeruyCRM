@@ -207,7 +207,7 @@ class App
         }
 
         if (strlen($d) > 0) {
-            return i18n_date($date_format, $d);
+            return self::i18n_date($date_format, $d);
         } else {
             return '';
         }
@@ -224,7 +224,7 @@ class App
         }
 
         if (strlen($d) > 0) {
-            return i18n_date($date_format, $d);
+            return self::i18n_date($date_format, $d);
         } else {
             return '';
         }
@@ -978,9 +978,9 @@ class App
         }
 
         $html .= '
-        public static function url_for(module,params)
+        function url_for(module,params)
         {
-            return "' . \Helpers\Urls::url_for('to_replace', 'token=' . urlencode($app_session_token)) . '".replace("to_replace",module).concat("&",params)
+            return "' . \Helpers\Urls::url_for('to_replace', 'token=' . urlencode(\K::$fw->app_session_token)) . '".replace("to_replace",module).concat("&",params)
         }
         ';
 
@@ -1450,14 +1450,15 @@ class App
 
     public static function app_include_custom_css()
     {
-        if (!defined('DIR_WS_CUSTOM_CSS_FILE')) {
-            define('DIR_WS_CUSTOM_CSS_FILE', 'css/custom.css');
+        if (!\K::fw()->exists('DIR_WS_CUSTOM_CSS_FILE')) {
+            \K::$fw->DIR_WS_CUSTOM_CSS_FILE = 'css/custom.css';
         }
 
-        if (is_file(DIR_WS_CUSTOM_CSS_FILE)) {
-            return '<link rel="stylesheet" type="text/css" href="' . DIR_WS_CUSTOM_CSS_FILE . (defined(
+        if (is_file(\K::$fw->DIR_WS_CUSTOM_CSS_FILE)) {
+            return '<link rel="stylesheet" type="text/css" href="' . \K::$fw->DIR_WS_CUSTOM_CSS_FILE . (\K::fw(
+                )->exists(
                     'CFG_CUSTOM_CSS_TIME'
-                ) ? '?time=' . CFG_CUSTOM_CSS_TIME : '') . '">';
+                ) ? '?time=' . \K::$fw->CFG_CUSTOM_CSS_TIME : '') . '">';
         }
 
         return '';

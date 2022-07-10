@@ -21,15 +21,15 @@ class Dashboard extends \Controller
     public function index()
     {
         \Helpers\App::app_reset_selected_items();
-        \K::$fw->render_dashboard_tabs = reports_groups::render_dashboard_tabs();
+        \K::$fw->render_dashboard_tabs = \Models\Main\Reports\Reports_groups::render_dashboard_tabs();
 
-        $page = new dashboard_pages;
+        $page = new \Tools\Pages\Dashboard_pages();
         \K::$fw->render_info_blocks = $page->render_info_blocks();
         \K::$fw->render_info_pages = $page->render_info_pages();
 
         \K::$fw->has_reports_on_dashboard = $page->has_pages;
 
-        $reports_counter = new reports_counter;
+        $reports_counter = new \Models\Main\Reports\Reports_counter();
         $html = $reports_counter->render();
 
         if (strlen($html)) {

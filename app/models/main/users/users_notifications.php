@@ -85,7 +85,9 @@ class Users_notifications
         <script>
           function user_notifications_report_render_dropdown()
           {
-            $("#user_notifications_report").load("' . url_for("dashboard/", "action=update_user_notifications_report") . '",function(){
+            $("#user_notifications_report").load("' . \Helpers\Urls::url_for(
+                "main/dashboard/dashboard/update_user_notifications_report"
+            ) . '",function(){
                 $(\'[data-hover="dropdown"]\').dropdownHover();
             		app_handle_scrollers();
               })

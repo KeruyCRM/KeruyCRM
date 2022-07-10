@@ -1,5 +1,5 @@
 <?php
-
+return;
 $where_sql = '';
 if (strlen($app_users_cfg->get('hidden_common_reports')) > 0) {
     $where_sql = " and r.id not in (" . $app_users_cfg->get('hidden_common_reports') . ")";
