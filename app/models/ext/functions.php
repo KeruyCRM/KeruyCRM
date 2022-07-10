@@ -16,7 +16,7 @@ class Functions
         return $cache;
     }
 
-    static public function get_choices()
+    public static function get_choices()
     {
         $choices = [];
         $choices['SUM'] = \K::$fw->TEXT_EXT_FUNCTION_SUM;
@@ -28,7 +28,7 @@ class Functions
         return $choices;
     }
 
-    static public function prepare_formula_query($entities_id, $formula, $table_prefix = 100, $e_prefix = 'e')
+    public static function prepare_formula_query($entities_id, $formula, $table_prefix = 100, $e_prefix = 'e')
     {
         global $app_functions_cache;
 
@@ -66,7 +66,7 @@ class Functions
         return $formula;
     }
 
-    static public function prepare_function_query(
+    public static function prepare_function_query(
         $entities_id,
         $functions_id,
         $perform_field_id = 0,
@@ -157,7 +157,7 @@ class Functions
         }
     }
 
-    static public function add_field_query(
+    public static function add_field_query(
         $entities_id,
         $function_entities_id,
         $perform_field_id,
@@ -216,7 +216,7 @@ class Functions
         return $sql;
     }
 
-    static public function prepare_formula_in_function_query($entities_id, $formula, $table_prefix)
+    public static function prepare_formula_in_function_query($entities_id, $formula, $table_prefix)
     {
         global $app_not_formula_fields_cache, $app_formula_fields_cache, $app_fields_cache, $app_user, $app_currencies_cache;
 
@@ -336,7 +336,7 @@ class Functions
         return $formula;
     }
 
-    static public function prepare_parent_entities_query($parent_entities, $entities_id, $sql, $table_prefix, $e_prefix)
+    public static function prepare_parent_entities_query($parent_entities, $entities_id, $sql, $table_prefix, $e_prefix)
     {
         $e_prefix = ($table_prefix == 100 ? $e_prefix : 'func' . ($table_prefix + 1));
 
