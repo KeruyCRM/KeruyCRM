@@ -3,7 +3,7 @@
 class ganttchart
 {
 
-    static public function get_columns_config($reports, $is_read_only = false)
+    public static function get_columns_config($reports, $is_read_only = false)
     {
         global $app_user;
 
@@ -73,7 +73,7 @@ class ganttchart
         return $html;
     }
 
-    static public function get_access_by_report($ganttchart_id, $groups_id)
+    public static function get_access_by_report($ganttchart_id, $groups_id)
     {
         $info_query = db_query(
             "select * from app_ext_ganttchart_access where ganttchart_id='" . db_input(
@@ -87,7 +87,7 @@ class ganttchart
         }
     }
 
-    static public function users_has_access($ganttchart_id)
+    public static function users_has_access($ganttchart_id)
     {
         global $app_user;
 
@@ -107,7 +107,7 @@ class ganttchart
         }
     }
 
-    static public function users_has_full_access($reports)
+    public static function users_has_full_access($reports)
     {
         global $app_user;
 

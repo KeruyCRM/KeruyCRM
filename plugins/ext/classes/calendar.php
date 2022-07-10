@@ -2,7 +2,7 @@
 
 class calendar
 {
-    static public function get_default_view_choices()
+    public static function get_default_view_choices()
     {
         $choices = [];
         $choices['year'] = TEXT_EXT_YEAR;
@@ -46,7 +46,7 @@ class calendar
         return $modes;
     }
 
-    static public function get_highlighting_weekends_choices()
+    public static function get_highlighting_weekends_choices()
     {
         $choices = [];
         foreach (explode(',', TEXT_DATEPICKER_DAYS) as $k => $v) {
@@ -58,7 +58,7 @@ class calendar
         return $choices;
     }
 
-    static public function render_highlighting_weekends($highlighting_weekends)
+    public static function render_highlighting_weekends($highlighting_weekends)
     {
         if (strlen($highlighting_weekends)) {
             return '
@@ -76,7 +76,7 @@ class calendar
         return '';
     }
 
-    static public function get_css($reports)
+    public static function get_css($reports)
     {
         if ((int)$reports['use_background'] == 0) {
             return '';
@@ -127,7 +127,7 @@ class calendar
         return $html;
     }
 
-    static public function get_events($date_from, $date_to, $calendar_type)
+    public static function get_events($date_from, $date_to, $calendar_type)
     {
         global $app_user;
 
@@ -381,7 +381,7 @@ class calendar
         return $list;
     }
 
-    static public function check_repeat_event_dif($dif, $events, $repeat_end)
+    public static function check_repeat_event_dif($dif, $events, $repeat_end)
     {
         $check = true;
 
@@ -411,7 +411,7 @@ class calendar
         return $check;
     }
 
-    static public function get_access_by_report($calendar_id, $groups_id)
+    public static function get_access_by_report($calendar_id, $groups_id)
     {
         $info_query = db_query(
             "select * from app_ext_calendar_access where calendar_id='" . db_input(
@@ -425,7 +425,7 @@ class calendar
         }
     }
 
-    static public function get_personal_access()
+    public static function get_personal_access()
     {
         $list = [];
         $access_query = db_query("select * from app_ext_calendar_access where calendar_type='personal'");
@@ -436,7 +436,7 @@ class calendar
         return $list;
     }
 
-    static public function get_public_access($group_id)
+    public static function get_public_access($group_id)
     {
         $access_query = db_query(
             "select * from app_ext_calendar_access where calendar_type='public' and access_groups_id='" . db_input(
@@ -450,7 +450,7 @@ class calendar
         }
     }
 
-    static public function user_has_access($calendar_type)
+    public static function user_has_access($calendar_type)
     {
         global $app_user;
 
@@ -470,17 +470,17 @@ class calendar
         }
     }
 
-    static public function user_has_personal_access()
+    public static function user_has_personal_access()
     {
         return calendar::user_has_access('personal');
     }
 
-    static public function user_has_public_access()
+    public static function user_has_public_access()
     {
         return calendar::user_has_access('public');
     }
 
-    static public function user_has_public_full_access()
+    public static function user_has_public_full_access()
     {
         global $app_user;
 
@@ -500,7 +500,7 @@ class calendar
         }
     }
 
-    static public function user_has_reports_access($reports, $access_schema = '')
+    public static function user_has_reports_access($reports, $access_schema = '')
     {
         global $app_user;
 
@@ -536,7 +536,7 @@ class calendar
         }
     }
 
-    static public function get_events_repeat_types()
+    public static function get_events_repeat_types()
     {
         $list = [
             '' => '',
@@ -548,7 +548,7 @@ class calendar
         return $list;
     }
 
-    static public function get_events_repeat_days()
+    public static function get_events_repeat_days()
     {
         $days = explode(',', str_replace('"', '', TEXT_DATEPICKER_DAYS));
         $days[7] = $days[0];

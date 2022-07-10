@@ -101,7 +101,7 @@ class export_selected
         }
     }
 
-    static public function prepare_button_css($buttons)
+    public static function prepare_button_css($buttons)
     {
         $css = '';
 

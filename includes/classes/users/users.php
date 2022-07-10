@@ -2,12 +2,12 @@
 
 class users
 {
-    static public function output_heading_from_item($item)
+    public static function output_heading_from_item($item)
     {
         return (CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? $item['field_7'] . ' ' . $item['field_8'] : $item['field_8'] . ' ' . $item['field_7']);
     }
 
-    static public function get_cache()
+    public static function get_cache()
     {
         $include_public_profile = false;
 
@@ -106,7 +106,7 @@ class users
         return $cache;
     }
 
-    static public function get_assigned_users_by_item($entity_id, $item_id)
+    public static function get_assigned_users_by_item($entity_id, $item_id)
     {
         $users = [];
 
@@ -141,7 +141,7 @@ class users
         return $users;
     }
 
-    static public function get_name_by_id($id)
+    public static function get_name_by_id($id)
     {
         global $app_users_cache;
 
@@ -150,7 +150,7 @@ class users
         }
     }
 
-    static public function render_public_profile($users_cache, $is_photo_display = false)
+    public static function render_public_profile($users_cache, $is_photo_display = false)
     {
         global $app_module_action;
 
@@ -207,7 +207,7 @@ class users
         }
     }
 
-    static public function get_choices($options = [])
+    public static function get_choices($options = [])
     {
         $choices = [];
         $users_query = db_query(
@@ -223,7 +223,7 @@ class users
         return $choices;
     }
 
-    static public function get_choices_by_entity($entities_id, $has_access = '')
+    public static function get_choices_by_entity($entities_id, $has_access = '')
     {
         global $app_users_cache;
 
@@ -254,7 +254,7 @@ class users
         return $choices;
     }
 
-    static public function use_email_pattern($pattern, $blocks = [])
+    public static function use_email_pattern($pattern, $blocks = [])
     {
         $content = file_get_contents('includes/patterns/email/' . $pattern . '.html');
 
@@ -266,7 +266,7 @@ class users
         return $content;
     }
 
-    static public function use_email_pattern_style($content, $style)
+    public static function use_email_pattern_style($content, $style)
     {
         $content = preg_replace('/data-content="(.*)"/', '', $content);
 
@@ -285,7 +285,7 @@ class users
         return $content;
     }
 
-    static public function send_to($send_to, $subject, $body, $attachments = [])
+    public static function send_to($send_to, $subject, $body, $attachments = [])
     {
         global $app_user, $app_users_cache;
 
@@ -333,7 +333,7 @@ class users
         }
     }
 
-    static public function send_email($options = [])
+    public static function send_email($options = [])
     {
         global $alerts;
 
@@ -477,7 +477,7 @@ class users
         return implode(',', $files_list);
     }
 
-    static public function get_random_password($length = CFG_PASSWORD_MIN_LENGTH, $has_symbols = true)
+    public static function get_random_password($length = CFG_PASSWORD_MIN_LENGTH, $has_symbols = true)
     {
         $chars = "abcdefghijkmnopqrstuvwxyz0123456789ABCDEFGHIJKMNOPQRSTUVWXYZ" . ($has_symbols ? '~!@#$%^&*()_+' : '');
 
@@ -493,7 +493,7 @@ class users
         return $password;
     }
 
-    static public function get_fields_access_schema($entities_id, $access_groups_id)
+    public static function get_fields_access_schema($entities_id, $access_groups_id)
     {
         global $roles_fields_access_schema;
 
@@ -514,7 +514,7 @@ class users
         return $access_schema;
     }
 
-    static public function get_entities_access_schema($entities_id, $access_groups_id)
+    public static function get_entities_access_schema($entities_id, $access_groups_id)
     {
         $access_schema = [];
 
@@ -530,7 +530,7 @@ class users
         return $access_schema;
     }
 
-    static public function get_users_access_schema($access_groups_id)
+    public static function get_users_access_schema($access_groups_id)
     {
         $access_schema = [];
 
@@ -546,7 +546,7 @@ class users
         return $access_schema;
     }
 
-    static public function has_users_access_name_to_entity($access, $entities_id)
+    public static function has_users_access_name_to_entity($access, $entities_id)
     {
         global $app_users_access, $app_user;
 
@@ -566,7 +566,7 @@ class users
         }
     }
 
-    static public function has_users_access_to_entity($entities_id)
+    public static function has_users_access_to_entity($entities_id)
     {
         global $app_users_access, $app_user;
 
@@ -577,7 +577,7 @@ class users
         }
     }
 
-    static public function get_entities_access_schema_by_groups($entities_id)
+    public static function get_entities_access_schema_by_groups($entities_id)
     {
         $access_schema = [];
 
@@ -593,7 +593,7 @@ class users
         return $access_schema;
     }
 
-    static public function has_access($access, $access_schema = null)
+    public static function has_access($access, $access_schema = null)
     {
         global $current_access_schema, $app_user;
 
@@ -617,7 +617,7 @@ class users
         return in_array($access, $schema);
     }
 
-    static public function has_access_to_entity($entities_id, $access, $access_groups_id = null)
+    public static function has_access_to_entity($entities_id, $access, $access_groups_id = null)
     {
         global $app_user;
 
@@ -643,7 +643,7 @@ class users
         return in_array($access, $access_schema);
     }
 
-    static public function has_access_to_assigned_item($entities_id, $items_id)
+    public static function has_access_to_assigned_item($entities_id, $items_id)
     {
         global $app_user;
 
@@ -754,7 +754,7 @@ class users
         }
     }
 
-    static public function get_comments_access_schema($entities_id, $access_groups_id)
+    public static function get_comments_access_schema($entities_id, $access_groups_id)
     {
         $access_schema = [];
 
@@ -770,7 +770,7 @@ class users
         return $access_schema;
     }
 
-    static public function has_comments_access($access, $comments_access_schema = null, $check_logged_user = true)
+    public static function has_comments_access($access, $comments_access_schema = null, $check_logged_user = true)
     {
         global $current_comments_access_schema, $app_user;
 
@@ -788,7 +788,7 @@ class users
         return in_array($access, $schema);
     }
 
-    static public function has_reports_access()
+    public static function has_reports_access()
     {
         global $app_user;
 
@@ -821,7 +821,7 @@ class users
         }
     }
 
-    static public function login($username, $password, $remember_me, $password_hashed = null, $redirect_to = null)
+    public static function login($username, $password, $remember_me, $password_hashed = null, $redirect_to = null)
     {
         global $alerts, $_GET;
 

@@ -2,7 +2,7 @@
 
 class plugins
 {
-    static public function include_menu($key, $menu = [])
+    public static function include_menu($key, $menu = [])
     {
         global $app_plugin_menu, $app_user, $app_redirect_to, $app_module_path, $app_path;
 
@@ -13,7 +13,7 @@ class plugins
         return $menu;
     }
 
-    static public function handle_action($action)
+    public static function handle_action($action)
     {
         global $app_module, $app_action, $app_module_path, $app_user, $app_redirect_to, $app_path, $current_entity_id;
 
@@ -27,7 +27,7 @@ class plugins
         }
     }
 
-    static public function include_part($part)
+    public static function include_part($part)
     {
         global $app_module, $app_action, $app_module_path, $app_user, $app_redirect_to, $app_path, $app_chat;
 
@@ -41,7 +41,7 @@ class plugins
         }
     }
 
-    static public function render_simple_menu_items($key, $url_params = '')
+    public static function render_simple_menu_items($key, $url_params = '')
     {
         $html = '';
         if (count($plugin_menu = self::include_menu($key)) > 0) {
@@ -63,7 +63,7 @@ class plugins
         return $html;
     }
 
-    static public function include_dashboard_with_selected_menu_items($reports_id, $url_params = '')
+    public static function include_dashboard_with_selected_menu_items($reports_id, $url_params = '')
     {
         global $app_user, $app_module_path;
 

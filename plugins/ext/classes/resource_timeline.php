@@ -382,7 +382,7 @@ class resource_timeline
         }
     }
 
-    static public function get_default_view_choices()
+    public static function get_default_view_choices()
     {
         $choices = [];
         $choices['timelineYear'] = TEXT_EXT_YEAR;
@@ -520,7 +520,7 @@ class resource_timeline
         return false;
     }
 
-    static public function render_legend($reports)
+    public static function render_legend($reports)
     {
         $html = '';
 

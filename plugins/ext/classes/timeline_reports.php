@@ -2,7 +2,7 @@
 
 class timeline_reports
 {
-    static public function get_css($timeline_reports)
+    public static function get_css($timeline_reports)
     {
         if ((int)$timeline_reports['use_background'] == 0) {
             return '';
@@ -61,7 +61,7 @@ class timeline_reports
         return $html;
     }
 
-    static public function get_json($timeline_reports, $fiters_reports_id, $path)
+    public static function get_json($timeline_reports, $fiters_reports_id, $path)
     {
         $entity_info = db_find('app_entities', $timeline_reports['entities_id']);
 

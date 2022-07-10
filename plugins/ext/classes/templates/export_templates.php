@@ -228,7 +228,7 @@ class export_templates
         }
     }
 
-    static public function prepare_button_css($buttons)
+    public static function prepare_button_css($buttons)
     {
         $css = '';
 
@@ -257,7 +257,7 @@ class export_templates
         return $css;
     }
 
-    static public function check_buttons_filters($buttons)
+    public static function check_buttons_filters($buttons)
     {
         global $current_item_id, $current_entity_id, $sql_query_having;
 

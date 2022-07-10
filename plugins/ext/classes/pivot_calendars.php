@@ -47,7 +47,7 @@ class pivot_calendars
         return false;
     }
 
-    static public function get_css($reports)
+    public static function get_css($reports)
     {
         if ((int)$reports['use_background'] == 0) {
             return '';
@@ -98,7 +98,7 @@ class pivot_calendars
         return $html;
     }
 
-    static public function render_legend($reports)
+    public static function render_legend($reports)
     {
         $html = '';
 
