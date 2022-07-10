@@ -67,8 +67,6 @@ class Plugins
 
     public static function include_dashboard_with_selected_menu_items($reports_id, $url_params = '')
     {
-        global $app_user, $app_module_path;
-
         $html = '';
 
         /*$reports_info_query = db_query("select * from app_reports where id='" . db_input($reports_id) . "'");
@@ -82,7 +80,7 @@ class Plugins
         if (\Helpers\App::is_ext_installed()) {
             $processes = new \Tools\Ext\Processes\Processes($reports_info['entities_id']);
 
-            if ($app_module_path == 'dashboard/reports') {
+            if (\K::$fw->app_module_path == 'dashboard/reports') {
                 $processes->rdirect_to = 'reports_groups_' . \K::$fw->{'GET.id'};
             } else {
                 $processes->rdirect_to = (strstr(
@@ -96,7 +94,7 @@ class Plugins
 
         $access_schema = \Models\Main\Users\Users::get_entities_access_schema(
             $reports_info['entities_id'],
-            $app_user['group_id']
+            \K::$fw->app_user['group_id']
         );
 
         if (\Helpers\App::is_ext_installed()) {

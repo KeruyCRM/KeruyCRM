@@ -540,12 +540,13 @@ class Users
     {
         $access_schema = [];
 
-        $access_info_query = db_query(
-            "select access_schema from app_entities_access where entities_id='" . db_input(
-                $entities_id
-            ) . "' and access_groups_id='" . db_input($access_groups_id) . "'"
-        );
-        if ($access_info = db_fetch_array($access_info_query)) {
+        $access_info = \K::model()->db_fetch_one('app_entities_access', [
+            'entities_id = ? and access_groups_id = ?',
+            $entities_id,
+            $access_groups_id
+        ], [], 'access_schema');
+
+        if ($access_info) {
             $access_schema = explode(',', $access_info['access_schema']);
         }
 
@@ -627,8 +628,6 @@ class Users
 
     public static function has_access($access, $access_schema = null)
     {
-        //global $current_access_schema, $app_user;
-
         //administrator have full access
         if (\K::$fw->app_user['group_id'] == 0) {
             if (in_array($access, ['action_with_assigned', 'delete_creator'])) {

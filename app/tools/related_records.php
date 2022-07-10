@@ -12,7 +12,7 @@ class Related_records
     public $entities_access_schema;
     public $current_entities_access_schema;
 
-    function __construct($entities_id, $items_id)
+    public function __construct($entities_id, $items_id)
     {
         global $app_user;
 
@@ -24,14 +24,14 @@ class Related_records
         );
     }
 
-    function set_related_field($fields_id)
+    public function set_related_field($fields_id)
     {
         $field = db_find('app_fields', $fields_id);
         $this->field = $field;
         $this->cfg = new fields_types_cfg($field['configuration']);
     }
 
-    function render_as_single_list($as_single_list = true)
+    public function render_as_single_list($as_single_list = true)
     {
         global $app_user, $current_path;
 
@@ -88,7 +88,7 @@ class Related_records
         return $html;
     }
 
-    static function get_report_info($field_info)
+    public static function get_report_info($field_info)
     {
         global $app_heading_fields_id_cache;
 
@@ -133,7 +133,7 @@ class Related_records
         return $reports_info;
     }
 
-    function field_has_button($button)
+    public function field_has_button($button)
     {
         $hide_controls = [];
         if (is_array($this->cfg->get('hide_controls'))) {
@@ -147,7 +147,7 @@ class Related_records
         }
     }
 
-    function render_single_list($current_field_access)
+    public function render_single_list($current_field_access)
     {
         global $current_path, $app_path;
 
@@ -318,7 +318,7 @@ class Related_records
         return $html;
     }
 
-    static function handle_app_redirect()
+    public static function handle_app_redirect()
     {
         global $app_redirect_to;
 
@@ -328,7 +328,7 @@ class Related_records
         }
     }
 
-    function get_add_url()
+    public function get_add_url()
     {
         global $current_path_array;
 
@@ -383,7 +383,7 @@ class Related_records
         return ['table_name' => $table_name, 'table_key' => $key_name, 'sufix' => $sufix];
     }
 
-    function get_related_items()
+    public function get_related_items()
     {
         $related_items_array = [];
 
@@ -420,7 +420,7 @@ class Related_records
         return $related_items_array;
     }
 
-    function count_related_items()
+    public function count_related_items()
     {
         $related_items = $this->get_related_items();
 
@@ -449,7 +449,7 @@ class Related_records
         }
     }
 
-    function render_list_in_listing($options)
+    public function render_list_in_listing($options)
     {
         global $sql_query_having;
 
@@ -813,10 +813,9 @@ class Related_records
         }
     }
 
-    function add_related_record($entities_id, $items_id, $related_items_id)
+    public function add_related_record($entities_id, $items_id, $related_items_id)
     {
         $related_entities_id = $this->cfg->get('entity_id');
-        $related_items_id = $related_items_id;
 
         $table_info = related_records::get_related_items_table_name($entities_id, $related_entities_id);
 
