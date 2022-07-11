@@ -228,10 +228,8 @@ require('template/footer.php'); ?>
 <script type="text/javascript" src="template/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript"
         src="template/plugins/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src="template/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"
-        type="text/javascript"></script>
-<script type="text/javascript" src="template/plugins/bootstrap-modal/js/bootstrap-modal.js"
-        type="text/javascript"></script>
+<script type="text/javascript" src="template/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"></script>
+<script type="text/javascript" src="template/plugins/bootstrap-modal/js/bootstrap-modal.js"></script>
 <script type="text/javascript" src="template/plugins/jquery-nestable/jquery.nestable.js"></script>
 <script type="text/javascript" src="template/plugins/bootstrap-wizard/jquery.bootstrap.wizard.js"></script>
 <script type="text/javascript" src="js/izoAutocomplete/1.0/izoAutocomplete.js"></script>
@@ -327,4 +325,3 @@ echo CFG_CUSTOM_HTML_BODY ?>
 </body>
 <!-- END BODY -->
 </html>
-      
