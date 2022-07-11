@@ -395,19 +395,22 @@ class Html
 
     public static function button_icon_delete($url, $is_dialog = true, $attributes = [])
     {
-        return self::button_icon(\Base::instance()->TEXT_BUTTON_DELETE, 'fa fa-trash-o', $url, $is_dialog, $attributes);
+        return self::button_icon(\K::$fw->TEXT_BUTTON_DELETE, 'fa fa-trash-o', $url, $is_dialog, $attributes);
     }
 
     public static function button_icon_edit($url, $is_dialog = true)
     {
-        return self::button_icon(\Base::instance()->TEXT_BUTTON_EDIT, 'fa fa-edit', $url, $is_dialog);
+        return self::button_icon(\K::$fw->TEXT_BUTTON_EDIT, 'fa fa-edit', $url, $is_dialog);
     }
 
     public static function image_tag($path, $attributes = [])
     {
         $default = ['border' => '0'];
 
-        return '<img src="' . $path . '" ' . self::tag_attributes_to_html($default, $attributes) . '>';
+        return '<img src="' . \K::$fw->DOMAIN . $path . '" ' . self::tag_attributes_to_html(
+                $default,
+                $attributes
+            ) . '>';
     }
 
     public static function select_button_tag($choices = [], $value = '', $btn_class = 'btn-default')
@@ -462,17 +465,17 @@ class Html
 				    width: "100%",		      
 				    dropdownParent: $("#ajax-modal"),
 				    "language":{
-				      "noResults" : function () { return "' . addslashes(\Base::instance()->TEXT_NO_RESULTS_FOUND) . '"; },
-				  		"searching" : function () { return "' . addslashes(\Base::instance()->TEXT_SEARCHING) . '"; },
+				      "noResults" : function () { return "' . addslashes(\K::$fw->TEXT_NO_RESULTS_FOUND) . '"; },
+				  		"searching" : function () { return "' . addslashes(\K::$fw->TEXT_SEARCHING) . '"; },
 				  		"errorLoading" : function () { return "' . addslashes(
-                \Base::instance()->TEXT_RESULTS_COULD_NOT_BE_LOADED
+                \K::$fw->TEXT_RESULTS_COULD_NOT_BE_LOADED
             ) . '"; },
 				  		"loadingMore" : function () { return "' . addslashes(
-                \Base::instance()->TEXT_LOADING_MORE_RESULTS
+                \K::$fw->TEXT_LOADING_MORE_RESULTS
             ) . '"; }		    				
 				    },	
                                     allowClear: true,
-                                    placeholder: \'' . addslashes(\Base::instance()->TEXT_PLEASE_SELECT_ITEMS) . '\',
+                                    placeholder: \'' . addslashes(\K::$fw->TEXT_PLEASE_SELECT_ITEMS) . '\',
 				    ajax: {
 				  		url: "' . $url . '",
 				  		dataType: "json",                                                

@@ -3,7 +3,7 @@
     <div class="header-inner">
 
         <!-- BEGIN LOGO -->
-        <a class="navbar-brand" href="<?= \Helpers\Urls::url_for('main/main/dashboard') ?>">
+        <a class="navbar-brand" href="<?= \Helpers\Urls::url_for('main/dashboard') ?>">
             <?= \K::$fw->CFG_APP_NAME ?>
             <?= \Tools\Maintenance_mode::header_message() ?>
         </a>
@@ -98,7 +98,7 @@
                     <i class="fa fa-angle-down"></i>
                 </a>
 
-                <?= ''//\Helpers\Menu::renderDropDownMenu(\Helpers\Menu::build_user_menu()) ?>
+                <?= \Helpers\Menu::renderDropDownMenu(\Helpers\Menu::build_user_menu()) ?>
 
             </li>
             <!-- END USER LOGIN DROPDOWN -->

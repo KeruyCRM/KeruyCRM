@@ -203,7 +203,7 @@ echo \K::app_users_cfg()->get('sidebar-option', '') . ' ' . $sidebar_pos_option 
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript"
         src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"</script>
+<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/js/bootstrap-modal.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-nestable/jquery.nestable.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-wizard/jquery.bootstrap.wizard.js"></script>

@@ -111,36 +111,44 @@ class Users_notifications
 
     public static function render_dropdown()
     {
-        global $app_user, $app_users_cache;
-
-        $poup_items_limit = 10;
+        $popup_items_limit = 10;
+        $items_display_count = 0;
 
         $items_html = '';
 
-        $itmes_display_count = 0;
-        $itmes_query = db_query(
-            "select * from app_users_notifications where users_id='" . $app_user['id'] . "' order by id desc limit " . $poup_items_limit
-        );
-        while ($itmes = db_fetch_array($itmes_query)) {
-            $path_info = items::get_path_info($itmes['entities_id'], $itmes['items_id']);
+       /* $items_query = db_query(
+            "select * from app_users_notifications where users_id='" . \K::$fw->app_user['id'] . "' order by id desc limit " . $popup_items_limit
+        );*/
+
+        $items_query = \K::model()->db_fetch('app_users_notifications', [
+            'users_id = ?',
+            \K::$fw->app_user['id']
+        ], [
+            'order' => 'id desc',
+            'limit' => $popup_items_limit
+        ],'entities_id,items_id,type,name,created_by');
+
+        //while ($items = db_fetch_array($items_query)) {
+        foreach ($items_query as $items){
+            $path_info = \Tools\Items\Items::get_path_info($items['entities_id'], $items['items_id']);
 
             $items_html .= '
           <li>
-  					<a href="' . url_for(
-                    'items/info',
+  					<a href="' . \Helpers\Urls::url_for(
+                    'main/items/info',
                     'path=' . $path_info['full_path']
                 ) . '">' . self::render_icon_by_type(
-                    $itmes['type']
-                ) . ' ' . $itmes['name'] . ' <span class="parent-name"><i class="fa fa-angle-left"></i>' . (isset($app_users_cache[$itmes['created_by']]) ? $app_users_cache[$itmes['created_by']]['name'] : '') . '</span></a>
+                    $items['type']
+                ) . ' ' . $items['name'] . ' <span class="parent-name"><i class="fa fa-angle-left"></i>' . (isset(\K::$fw->app_users_cache[$items['created_by']]) ? \K::$fw->app_users_cache[$items['created_by']]['name'] : '') . '</span></a>
   				</li>
         ';
 
-            $itmes_display_count++;
+            $items_display_count++;
         }
 
-        $itmes_count = db_count('app_users_notifications', $app_user['id'], 'users_id');
+        $items_count = \K::model()->db_count('app_users_notifications', \K::$fw->app_user['id'], 'users_id');
 
-        if ($itmes_count == 0) {
+        if ($items_count == 0) {
             $items_html .= '
           <li>
   					<a onClick="return false;">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</a>
@@ -148,29 +156,31 @@ class Users_notifications
         ';
         }
 
-        $dropdown_menu_height = ($itmes_display_count < 11 ? ($itmes_display_count * 42 + 42) : 420);
+        $dropdown_menu_height = ($items_display_count < 11 ? ($items_display_count * 42 + 42) : 420);
 
         $external_html = '';
-        if ($itmes_count > 0) {
+        if ($items_count > 0) {
             $external_html = '
           <li class="external">
-						<a href="' . url_for('users/notifications') . '">' . sprintf(
+						<a href="' . \Helpers\Urls::url_for('main/users/notifications') . '">' . sprintf(
                     \K::$fw->TEXT_DISPLAY_NUMBER_OF_ITEMS_OPEN_REPORT,
-                    $itmes_display_count
+                    $items_display_count
                 ) . '</a>
 					</li>
         ';
         }
 
-        $badge_html = ($itmes_count > 0 ? '<span class="badge badge-warning">' . $itmes_count . '</span>' : '');
+        $badge_html = ($items_count > 0 ? '<span class="badge badge-warning">' . $items_count . '</span>' : '');
 
-        $html = '
+        return '
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
 				  <i class="fa fa-bell-o"></i>
 				  ' . $badge_html . '
 				</a>
 				<ul class="dropdown-menu extended tasks">
-					<li style="cursor:pointer" onClick="location.href=\'' . url_for('users/notifications') . '\'">
+					<li style="cursor:pointer" onClick="location.href=\'' . \Helpers\Urls::url_for(
+                'main/users/notifications'
+            ) . '\'">
 						<p>' . \K::$fw->TEXT_USERS_NOTIFICATIONS . '</p>
 					</li>
 					<li>
@@ -182,8 +192,6 @@ class Users_notifications
           
 				</ul>            
       ';
-
-        return $html;
     }
 
     public static function render_icon_by_type($type)

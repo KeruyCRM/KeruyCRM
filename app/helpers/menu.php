@@ -6,16 +6,14 @@ class Menu
 {
     public static function build_user_menu()
     {
-        global $app_user;
-
         $menu = [];
 
         //check if logged user is guest
-        if (guest_login::is_guest()) {
-            if (strlen($app_user['multiple_access_groups'])) {
+        if (\Models\Main\Users\Guest_login::is_guest()) {
+            if (strlen(\K::$fw->app_user['multiple_access_groups'])) {
                 $menu[] = [
                     'title' => \K::$fw->TEXT_CHANGE_ACCESS_GROUP,
-                    'url' => url_for('users/change_access_group'),
+                    'url' => \Helpers\Urls::url_for('main/users/change_access_group'),
                     'modalbox' => true,
                     'class' => 'fa-user-o'
                 ];
@@ -23,32 +21,36 @@ class Menu
 
             $menu[] = [
                 'title' => \K::$fw->TEXT_LOGOFF,
-                'url' => url_for('users/login&action=logoff'),
+                'url' => \Helpers\Urls::url_for('main/users/login/logoff'),
                 'class' => 'fa-sign-out'
             ];
 
             return $menu;
         }
 
-        //build menu for standard tuser
-        $menu[] = ['title' => \K::$fw->TEXT_MY_ACCOUNT, 'url' => url_for('users/account'), 'class' => 'fa-user'];
+        //build menu for standard user
+        $menu[] = [
+            'title' => \K::$fw->TEXT_MY_ACCOUNT,
+            'url' => \Helpers\Urls::url_for('main/users/account'),
+            'class' => 'fa-user'
+        ];
 
-        if (is_ext_installed() and \K::$fw->CFG_LOGIN_DIGITAL_SIGNATURE_MODULE > 0) {
+        if (\Helpers\App::is_ext_installed() and \K::$fw->CFG_LOGIN_DIGITAL_SIGNATURE_MODULE > 0) {
             $menu[] = [
                 'title' => \K::$fw->TEXT_EXT_MY_DIGITAL_SIGNATURE,
-                'url' => url_for('users/signature_account'),
+                'url' => \Helpers\Urls::url_for('main/users/signature_account'),
                 'class' => 'fa-address-card-o'
             ];
         }
 
-        if (count($plugin_menu = plugins::include_menu('account_menu')) > 0) {
+        if (count($plugin_menu = \Tools\Plugins::include_menu('account_menu')) > 0) {
             $menu = array_merge($menu, $plugin_menu);
         }
 
         if (strlen(\K::$fw->CFG_APP_SKIN) == 0) {
             $menu[] = [
                 'title' => \K::$fw->TEXT_CHANGE_SKIN,
-                'url' => url_for('users/change_skin'),
+                'url' => \Helpers\Urls::url_for('main/users/change_skin'),
                 'modalbox' => true,
                 'class' => 'fa-picture-o'
             ];
@@ -56,31 +58,31 @@ class Menu
 
         $menu[] = [
             'title' => \K::$fw->TEXT_CONFIGURE_DASHBOARD,
-            'url' => url_for('dashboard/configure'),
+            'url' => \Helpers\Urls::url_for('main/dashboard/configure'),
             'modalbox' => true,
             'class' => 'fa-bars'
         ];
         $menu[] = [
             'title' => \K::$fw->TEXT_CONFIGURE_THEME,
-            'url' => url_for('dashboard/configure_theme'),
+            'url' => \Helpers\Urls::url_for('main/dashboard/configure_theme'),
             'modalbox' => true,
             'class' => 'fa-gear'
         ];
 
-        if ((!in_array($app_user['group_id'], explode(',', \K::$fw->CFG_APP_DISABLE_CHANGE_PWD)) or strlen(
+        if ((!in_array(\K::$fw->app_user['group_id'], explode(',', \K::$fw->CFG_APP_DISABLE_CHANGE_PWD)) or strlen(
                     \K::$fw->CFG_APP_DISABLE_CHANGE_PWD
                 ) == 0) and \K::$fw->CFG_USE_LDAP_LOGIN_ONLY == false) {
             $menu[] = [
                 'title' => \K::$fw->TEXT_CHANGE_PASSWORD,
-                'url' => url_for('users/change_password'),
+                'url' => \Helpers\Urls::url_for('main/users/change_password'),
                 'class' => 'fa-unlock-alt'
             ];
         }
 
-        if (strlen($app_user['multiple_access_groups'])) {
+        if (strlen(\K::$fw->app_user['multiple_access_groups'])) {
             $menu[] = [
                 'title' => \K::$fw->TEXT_CHANGE_ACCESS_GROUP,
-                'url' => url_for('users/change_access_group'),
+                'url' => \Helpers\Urls::url_for('main/users/change_access_group'),
                 'is_hr' => true,
                 'modalbox' => true,
                 'class' => 'fa-user-o'
@@ -89,7 +91,7 @@ class Menu
 
         $menu[] = [
             'title' => \K::$fw->TEXT_LOGOFF,
-            'url' => url_for('users/login&action=logoff'),
+            'url' => \Helpers\Urls::url_for('main/users/login/logoff'),
             'is_hr' => true,
             'class' => 'fa-sign-out'
         ];
@@ -802,7 +804,7 @@ class Menu
         <li><a ' . $url . '><i class="fa ' . $v['class'] . '"></i> ' . $v['title'] . '</a>';
 
             if (isset($v['submenu'])) {
-                $html = renderDropDownMenu($v['submenu'], $html, $level + 1);
+                $html = self::renderDropDownMenu($v['submenu'], $html, $level + 1);
             }
 
             $html .= '

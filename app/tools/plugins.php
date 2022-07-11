@@ -6,10 +6,8 @@ class Plugins
 {
     public static function include_menu($key, $menu = [])
     {
-        global $app_plugin_menu, $app_user, $app_redirect_to, $app_module_path, $app_path;
-
-        if (isset($app_plugin_menu[$key])) {
-            $menu = array_merge($menu, $app_plugin_menu[$key]);
+        if (isset(\K::$fw->app_plugin_menu[$key])) {
+            $menu = array_merge($menu, \K::$fw->app_plugin_menu[$key]);
         }
 
         return $menu;

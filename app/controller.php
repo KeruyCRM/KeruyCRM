@@ -265,7 +265,9 @@ class Controller
 
     public function afterroute()
     {
-        echo '<PRE style="white-space: pre-wrap;">' . PHP_EOL . \K::model()->db->log() . '</PRE>';
+        if(!\K::$fw->AJAX) {
+            echo '<PRE style="white-space: pre-wrap;">' . PHP_EOL . \K::model()->db->log() . '</PRE>';
+        }
     }
 
     public function _extractSession()

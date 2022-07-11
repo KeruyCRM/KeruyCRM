@@ -138,9 +138,13 @@ class Model extends \Prefab
 
     public function db_delete_row($table, $value, $column = 'id')
     {
+        return self::db_delete($table,[$column . ' = ?', $value]);
+    }
+
+    public function db_delete($table, $filter)
+    {
         $mapper = $this->mapper($table);
-        return $mapper->erase([$column . ' = ?', $value]);
-        //db_query("delete from " . $table . " where " . $column . "='" . db_input($value) . "'");
+        return $mapper->erase($filter);
     }
 
     public function db_query_exec($cmds, $args = null, $ttl = 0, $log = true, $stamp = false)
