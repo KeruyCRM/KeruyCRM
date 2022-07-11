@@ -1,8 +1,9 @@
 <?php
 
-class entities_menu
-{
+namespace Models\Main;
 
+class Entities_menu
+{
     static function get_choices()
     {
         $choices = [];
@@ -628,5 +629,4 @@ class entities_menu
 
         return $sub_menu;
     }
-
 }

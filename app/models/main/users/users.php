@@ -827,12 +827,19 @@ class Users
         if (\K::$fw->app_user['group_id'] == 0) {
             return true;
         } else {
-            $access_query = db_query(
+            /*$access_query = db_query(
                 "select * from app_entities_access where access_groups_id='" . db_input(
                     \K::$fw->app_user['group_id']
                 ) . "' and find_in_set('reports',access_schema)"
-            );
-            if ($access = db_fetch_array($access_query)) {
+            );*/
+
+            $access = \K::model()->db_fetch_one('app_entities_access', [
+                'access_groups_id = ? and find_in_set( ? ,access_schema)',
+                \K::$fw->app_user['group_id'],
+                'reports'
+            ]);
+
+            if ($access) {
                 return true;
             } else {
                 return false;

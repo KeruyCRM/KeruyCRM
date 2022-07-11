@@ -311,7 +311,7 @@ class Controller
 
     private function _setCfgFromDB()
     {
-        $cfg = \K::model()->db_fetch_all('app_configuration', null, [\K::$fw->TTL_APP, 'app_configuration']);
+        $cfg = \K::model()->db_fetch_all('app_configuration', 'configuration_name,configuration_value', [\K::$fw->TTL_APP, 'app_configuration']);
 
         foreach ($cfg as $v) {
             \K::$fw->{$v->configuration_name} = $v->configuration_value;

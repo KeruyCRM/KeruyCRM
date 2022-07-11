@@ -41,9 +41,9 @@
                 </li>
 
                 <?php
-                /*$sidebarMenu = build_main_menu();
+                \K::$fw->sidebarMenu = \Helpers\Menu::build_main_menu();
                 //print_rr($sidebarMenu);
-                echo renderSidebarMenu($sidebarMenu)*/
+                echo \Helpers\Menu::renderSidebarMenu(\K::$fw->sidebarMenu)
                 ?>
 
             </ul>

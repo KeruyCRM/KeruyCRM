@@ -43,9 +43,8 @@ class Reports
 
     public static function create_default_entity_report($entity_id, $reports_type, $path_array = [])
     {
-        //global $app_logged_users_id;
-
         $where_str = '';
+        $where_var = [];
 
         //filter reports by parent item
         if (count($path_array) > 1) {
@@ -54,22 +53,45 @@ class Reports
             $parent_entity_id = $parent_path_array[0];
             $parent_item_id = $parent_path_array[1];
 
-            $where_str = " and parent_entity_id='" . $parent_entity_id . "' and parent_item_id='" . $parent_item_id . "'";
+            //$where_str = " and parent_entity_id='" . $parent_entity_id . "' and parent_item_id='" . $parent_item_id . "'";
+            $where_str = ' and parent_entity_id = :parent_entity_id and parent_item_id = :parent_item_id';
+            $where_var = [
+                ':parent_entity_id' => $parent_entity_id,
+                ':parent_item_id' => $parent_item_id
+            ];
         } else {
             $parent_entity_id = 0;
             $parent_item_id = 0;
         }
 
-        $reports_info_query = db_query(
+        /*$reports_info_query = db_query(
             "select * from app_reports where entities_id='" . db_input(
                 $entity_id
             ) . "' and reports_type='" . $reports_type . "' and created_by='" . \K::$fw->app_logged_users_id . "' " . $where_str
+        );*/
+
+        $reports_info = \K::model()->db_fetch_one(
+            'app_reports',
+            [
+                'entities_id = :entities_id and reports_type = :reports_type and created_by = :created_by' . $where_str,
+                ':entities_id' => $entity_id,
+                ':reports_type' => $reports_type,
+                ':created_by' => \K::$fw->app_logged_users_id
+            ] + $where_var
         );
-        if (!$reports_info = db_fetch_array($reports_info_query)) {
-            $default_reports_query = db_query(
+
+        if (!$reports_info) {
+            /*$default_reports_query = db_query(
                 "select * from app_reports where entities_id='" . db_input($entity_id) . "' and reports_type='default'"
             );
-            $default_reports = db_fetch_array($default_reports_query);
+
+            $default_reports = db_fetch_array($default_reports_query);*/
+
+            $default_reports = \K::model()->db_fetch_one('app_reports', [
+                'entities_id =? and reports_type = ?',
+                $entity_id,
+                'default'
+            ]);
 
             $sql_data = [
                 'name' => '',
@@ -77,22 +99,23 @@ class Reports
                 'reports_type' => $reports_type,
                 'in_menu' => 0,
                 'in_dashboard' => 0,
-                'listing_order_fields' => (isset($default_reports['listing_order_fields']) ? $default_reports['listing_order_fields'] : ''),
+                'listing_order_fields' => ($default_reports['listing_order_fields'] ?? ''),
                 'created_by' => \K::$fw->app_logged_users_id,
                 'parent_entity_id' => $parent_entity_id,
                 'parent_item_id' => $parent_item_id,
             ];
-            db_perform('app_reports', $sql_data);
 
-            $reports_id = db_insert_id();
+            $mapper = \K::model()->db_perform('app_reports', $sql_data);
+            $reports_id = \K::model()->db_insert_id($mapper);
 
             if ($default_reports) {
-                $filters_query = db_query(
-                    "select rf.*, f.name from app_reports_filters rf left join app_fields f on rf.fields_id=f.id where rf.reports_id='" . db_input(
-                        $default_reports['id']
-                    ) . "' order by rf.id"
+                $filters_query = \K::model()->db_query_exec(
+                    'select rf.*, f.name from app_reports_filters rf left join app_fields f on rf.fields_id = f.id where rf.reports_id = ? order by rf.id',
+                    $default_reports['id']
                 );
-                while ($v = db_fetch_array($filters_query)) {
+
+                //while ($v = db_fetch_array($filters_query)) {
+                foreach ($filters_query as $v) {
                     $sql_data = [
                         'reports_id' => $reports_id,
                         'fields_id' => $v['fields_id'],
@@ -100,19 +123,24 @@ class Reports
                         'filters_values' => $v['filters_values'],
                     ];
 
-                    db_perform('app_reports_filters', $sql_data);
+                    \K::model()->db_perform('app_reports_filters', $sql_data);
                 }
             }
 
-            $reports_info_query = db_query("select * from app_reports where id='" . db_input($reports_id) . "'");
-            $reports_info = db_fetch_array($reports_info_query);
+            /*$reports_info_query = db_query("select * from app_reports where id='" . db_input($reports_id) . "'");
+            $reports_info = db_fetch_array($reports_info_query);*/
+
+            $reports_info = \K::model()->db_fetch_one('app_reports', [
+                'id = ?',
+                $reports_id
+            ]);
         }
 
         //check if parent reports was not set
         if ($reports_info['parent_id'] == 0 and $reports_type != 'entity') {
             self::auto_create_parent_reports($reports_info['id']);
 
-            $reports_info = db_find('app_reports', $reports_info['id']);
+            $reports_info = \K::model()->db_find('app_reports', $reports_info['id']);
         }
 
         return $reports_info;
@@ -135,8 +163,8 @@ class Reports
     {
         //global $app_logged_users_id;
 
-        $report_info = db_find('app_reports', $reports_id);
-        $entity_info = db_find('app_entities', $report_info['entities_id']);
+        $report_info = \K::model()->db_find('app_reports', $reports_id);
+        $entity_info = \K::model()->db_find('app_entities', $report_info['entities_id']);
 
         if ($entity_info['parent_id'] > 0 and $report_info['parent_id'] == 0) {
             $sql_data = [
@@ -148,15 +176,18 @@ class Reports
                 'created_by' => \K::$fw->app_logged_users_id,
             ];
 
-            db_perform('app_reports', $sql_data);
+            $mapper = \K::model()->db_perform('app_reports', $sql_data);
 
-            $insert_id = db_insert_id();
+            $insert_id = \K::model()->db_insert_id($mapper);
 
-            db_perform(
+            \K::model()->db_perform(
                 'app_reports',
                 ['parent_id' => $insert_id],
-                'update',
-                "id='" . db_input($reports_id) . "' and created_by='" . \K::$fw->app_logged_users_id . "'"
+                [
+                    "id = ? and created_by = ?",
+                    $reports_id,
+                    \K::$fw->app_logged_users_id
+                ]
             );
 
             self::auto_create_parent_reports($insert_id);
