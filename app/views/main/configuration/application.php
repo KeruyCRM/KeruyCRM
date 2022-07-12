@@ -6,15 +6,12 @@
     ['enctype' => 'multipart/form-data', 'class' => 'form-horizontal']
 ) ?>
 <div class="form-body">
-
-
     <div class="tabbable tabbable-custom">
 
         <ul class="nav nav-tabs">
             <li class="active"><a href="#general_info" data-toggle="tab"><?= \K::$fw->TEXT_GENERAL_INFO ?></a></li>
 
         </ul>
-
 
         <div class="tab-content">
             <div class="tab-pane fade active in" id="general_info">
@@ -284,7 +281,6 @@
                 }
             }
         });
-
 
         $(".input-masked").each(function () {
             $.mask.definitions["~"] = "[,. *]";

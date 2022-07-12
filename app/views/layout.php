@@ -17,46 +17,61 @@
     <meta name="MobileOptimized" content="320">
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/font-awesome/css/font-awesome.min.css?v=4.7.0" rel="stylesheet" type="text/css"/>
-    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/line-awesome/css/line-awesome.min.css?v=1.3.0" rel="stylesheet" type="text/css"/>
-    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/font-awesome/css/font-awesome.min.css?v=4.7.0" rel="stylesheet"
+          type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/line-awesome/css/line-awesome.min.css?v=1.3.0" rel="stylesheet"
+          type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/uniform/css/uniform.default.css" rel="stylesheet"
+          type="text/css"/>
     <!-- END GLOBAL MANDATORY STYLES -->
     <!-- BEGIN PAGE LEVEL STYLES -->
     <link href="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-ui/jquery-ui-1.10.3.custom.min.css" rel="stylesheet"/>
-    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css"/>
-    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css"/>
-    <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-datepicker/css/datepicker.css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css"
+          rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet"
+          type="text/css"/>
+    <link rel="stylesheet" type="text/css"
+          href="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-datepicker/css/datepicker.css"/>
     <link rel="stylesheet" type="text/css"
           href="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css"/>
     <!-- END PAGE LEVEL SCRIPTS -->
     <!-- BEGIN THEME STYLES -->
     <link href="<?= \K::$fw->DOMAIN ?>template/css/style-conquer.css?v=2" rel="stylesheet" type="text/css"/>
-    <link href="<?= \K::$fw->DOMAIN ?>template/css/style.css?v=<?= \K::$fw->PROJECT_VERSION ?>" rel="stylesheet" type="text/css"/>
-    <link href="<?= \K::$fw->DOMAIN ?>template/css/style-responsive.css?v=<?= \K::$fw->PROJECT_VERSION ?>" rel="stylesheet" type="text/css"/>
-    <link href="<?= \K::$fw->DOMAIN ?>template/css/plugins.css?v=<?= \K::$fw->PROJECT_VERSION ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/css/style.css?v=<?= \K::$fw->PROJECT_VERSION ?>" rel="stylesheet"
+          type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/css/style-responsive.css?v=<?= \K::$fw->PROJECT_VERSION ?>"
+          rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>template/css/plugins.css?v=<?= \K::$fw->PROJECT_VERSION ?>" rel="stylesheet"
+          type="text/css"/>
     <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>js/izoColorPicker/1.0/izoColorPicker.css"/>
     <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>js/izoAutocomplete/1.0/izoAutocomplete.css"/>
     <link href="<?= \K::$fw->DOMAIN ?>js/uploadifive/uploadifive.css" rel="stylesheet" media="screen">
     <link href="<?= \K::$fw->DOMAIN ?>js/chosen/chosen.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-nestable/jquery.nestable.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-nestable/jquery.nestable.css"/>
     <link rel="stylesheet" type="text/css" media="screen"
           href="<?= \K::$fw->DOMAIN ?>template/plugins/ckeditor/4.16.2/plugins/codesnippet/lib/highlight/styles/default.css"/>
-    <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>js/DataTables-1.10.15/media/css/dataTables.bootstrap.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="<?= \K::$fw->DOMAIN ?>js/DataTables-1.10.15/media/css/dataTables.bootstrap.css"/>
     <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>js/select2/dist/css/select2.min.css"/>
     <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>js/multistep-indicator-master/css/style.css"/>
-    <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>js/JalaliCalendar/jquery.Bootstrap-PersianDateTimePicker.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="<?= \K::$fw->DOMAIN ?>js/JalaliCalendar/jquery.Bootstrap-PersianDateTimePicker.css"/>
     <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>js/treetable-master/jquery-treetable.css">
 
 
     <?php
     require('js/mapbbcode-master/includes.css.php'); ?>
 
-    <link href="<?= \K::$fw->DOMAIN ?>css/skins/<?= \K::$fw->app_skin . '?v=' . \K::$fw->PROJECT_VERSION ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?= \K::$fw->DOMAIN ?>css/skins/<?= \K::$fw->app_skin . '?v=' . \K::$fw->PROJECT_VERSION ?>"
+          rel="stylesheet" type="text/css"/>
 
     <script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-1.10.2.min.js" type="text/javascript"></script>
 
-    <script src="<?= \K::$fw->DOMAIN ?>js/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js" type="text/javascript"></script>
+    <script src="<?= \K::$fw->DOMAIN ?>js/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js"
+            type="text/javascript"></script>
 
     <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/validation/jquery.validate.min.js"></script>
     <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/validation/additional-methods.min.js"></script>
@@ -64,8 +79,10 @@
     require('js/validation/validator_messages.php'); ?>
 
     <!-- Add fancyBox -->
-    <link rel="stylesheet" href="<?= \K::$fw->DOMAIN ?>js/fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen"/>
-    <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+    <link rel="stylesheet" href="<?= \K::$fw->DOMAIN ?>js/fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css"
+          media="screen"/>
+    <script type="text/javascript"
+            src="<?= \K::$fw->DOMAIN ?>js/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
 
     <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/izoColorPicker/1.0/izoColorPicker.js"></script>
 
@@ -106,7 +123,8 @@
     <?php
     \Tools\Plugins::include_part('layout_head') ?>
 
-    <link rel="stylesheet" type="text/css" href="<?= \K::$fw->DOMAIN ?>css/default.css?v=<?= K::$fw->PROJECT_VERSION ?>"/>
+    <link rel="stylesheet" type="text/css"
+          href="<?= \K::$fw->DOMAIN ?>css/default.css?v=<?= K::$fw->PROJECT_VERSION ?>"/>
     <?= \Helpers\App::app_include_custom_css() ?>
 
     <?php
@@ -189,24 +207,30 @@ echo \K::app_users_cfg()->get('sidebar-option', '') . ' ' . $sidebar_pos_option 
 <![endif]-->
 <script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
 <!-- IMPORTANT! Load jquery-ui-1.10.3.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
-<script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-ui/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-ui/jquery-ui-1.10.3.custom.min.js"
+        type="text/javascript"></script>
 <script src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.js?v=2.2.2"
         type="text/javascript"></script>
-<script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-slimscroll/jquery.slimscroll.min.js"
+        type="text/javascript"></script>
 <script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery.blockui.min.js" type="text/javascript"></script>
 <script src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery.cokie.min.js" type="text/javascript"></script>
 <script src="<?= \K::$fw->DOMAIN ?>template/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
 <!-- END CORE PLUGINS -->
 <!-- BEGIN PAGE LEVEL PLUGINS -->
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/ckeditor/4.16.2/ckeditor.js"></script>
-<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript"
+        src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript"
         src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"></script>
-<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/js/bootstrap-modal.js"></script>
+<script type="text/javascript"
+        src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/js/bootstrap-modalmanager.js"></script>
+<script type="text/javascript"
+        src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-modal/js/bootstrap-modal.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/jquery-nestable/jquery.nestable.js"></script>
-<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-wizard/jquery.bootstrap.wizard.js"></script>
+<script type="text/javascript"
+        src="<?= \K::$fw->DOMAIN ?>template/plugins/bootstrap-wizard/jquery.bootstrap.wizard.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/izoAutocomplete/1.0/izoAutocomplete.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/uploadifive/jquery.uploadifive.js?v=1.2.2"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/chosen/chosen.jquery.js"></script>
@@ -219,12 +243,16 @@ echo \K::app_users_cfg()->get('sidebar-option', '') . ' ' . $sidebar_pos_option 
         src="<?= \K::$fw->DOMAIN ?>template/plugins/ckeditor/4.16.2/plugins/codesnippet/lib/highlight/highlight.pack.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/jquery-resizable/jquery-resizable.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/select2/dist/js/select2.full.js"></script>
-<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/jquery.taboverride-master/build/taboverride.min.js"></script>
-<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/jquery.taboverride-master/build/jquery.taboverride.min.js"></script>
+<script type="text/javascript"
+        src="<?= \K::$fw->DOMAIN ?>js/jquery.taboverride-master/build/taboverride.min.js"></script>
+<script type="text/javascript"
+        src="<?= \K::$fw->DOMAIN ?>js/jquery.taboverride-master/build/jquery.taboverride.min.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/JalaliCalendar/jalaali.js"></script>
-<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/JalaliCalendar/jquery.Bootstrap-PersianDateTimePicker.js"></script>
+<script type="text/javascript"
+        src="<?= \K::$fw->DOMAIN ?>js/JalaliCalendar/jquery.Bootstrap-PersianDateTimePicker.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/inputmask/5.0.5/jquery.inputmask.min.js"></script>
-<script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/scannerdetection/1.1.2/jquery.scannerdetection.js"></script>
+<script type="text/javascript"
+        src="<?= \K::$fw->DOMAIN ?>js/scannerdetection/1.1.2/jquery.scannerdetection.js"></script>
 <script type="text/javascript" src="<?= \K::$fw->DOMAIN ?>js/treetable-master/jquery-treetable.js"></script>
 
 
@@ -290,6 +318,22 @@ if (\Helpers\App::is_ext_installed()) {
 
 <?= \Helpers\App::i18n_js() ?>
 
+<script>
+    //Add csrf_token to all POST AJAX request
+    var csrf_token = $('input[#form_session_token]').attr('value');
+    $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+        if (options.type.toLowerCase() === "post") {
+            // initialize `data` to empty string if it does not exist
+            options.data = options.data || "";
+
+            // add leading ampersand if `data` is non-empty
+            options.data += options.data ? "&" : "";
+
+            // add _token entry
+            options.data += "form_session_token=" + encodeURIComponent(csrf_token);
+        }
+    });
+</script>
 <!-- END JAVASCRIPTS -->
 
 <!-- Custom code before </body> tag -->

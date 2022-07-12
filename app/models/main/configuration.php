@@ -1,10 +1,21 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
-class configuration
+namespace Models\Main;
+
+class Configuration
 {
     static function set($k, $value)
     {
-        $cfq_query = db_query("select * from app_configuration where configuration_name='" . $k . "'");
+        \K::model()->db_perform('app_configuration', [
+            'configuration_value' => $value,
+            'configuration_name' => $k
+        ], ['configuration_name = ?', $k]);
+
+        /*$cfq_query = db_query("select * from app_configuration where configuration_name='" . $k . "'");
         if (!$cfq = db_fetch_array($cfq_query)) {
             db_perform('app_configuration', ['configuration_value' => $value, 'configuration_name' => $k]);
         } else {
@@ -14,6 +25,6 @@ class configuration
                 'update',
                 "configuration_name='" . $k . "'"
             );
-        }
+        }*/
     }
 }

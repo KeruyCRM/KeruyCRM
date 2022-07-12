@@ -712,9 +712,17 @@ class App
     {
         $list = [];
 
-        $dir = 'includes/languages/';
+        $dir = \K::$fw->LOCALES;
 
-        if ($handle = opendir($dir)) {
+        $glob = glob('app/languages/*.php');
+
+        foreach ($glob as $file) {
+            if (is_file($file) and substr($file, -4) == '.php') {
+                $name = substr(substr($file, (strrpos($file, "/") + 1)), 0, -4);
+                $list[$name] = $name;
+            }
+        }
+        /*if ($handle = opendir($dir)) {
             while (false !== ($file = readdir($handle))) {
                 if ($file != "." && $file != ".." && is_file($dir . $file) and substr($file, -4) == '.php') {
                     $name = implode(' ', array_map('ucfirst', explode('K', substr($file, 0, -4))));
@@ -722,7 +730,7 @@ class App
                     $list[$file] = $name;
                 }
             }
-        }
+        }*/
 
         return $list;
     }
@@ -1398,15 +1406,17 @@ class App
         $version = '5.63.3';
 
         $html = '
-                <script src="js/codemirror/' . $version . '/lib/codemirror.js"></script>	        
-		<link rel="stylesheet" href="js/codemirror/' . $version . '/lib/codemirror.css">
-	        <link rel="stylesheet" href="js/codemirror/' . $version . '/addon/display/fullscreen.css">
-	        <script src="js/codemirror/' . $version . '/addon/display/fullscreen.js"></script>                
-                <script src="js/codemirror/' . $version . '/addon/edit/matchbrackets.js"></script>
-
+<script src="' . \K::$fw->DOMAIN . 'js/codemirror/' . $version . '/lib/codemirror.js"></script>	        
+<link rel="stylesheet" href="' . \K::$fw->DOMAIN . 'js/codemirror/' . $version . '/lib/codemirror.css">
+<link rel="stylesheet" href="' . \K::$fw->DOMAIN . 'js/codemirror/' . $version . '/addon/display/fullscreen.css">
+<script src="' . \K::$fw->DOMAIN . 'js/codemirror/' . $version . '/addon/display/fullscreen.js"></script>                
+<script src="' . \K::$fw->DOMAIN . 'js/codemirror/' . $version . '/addon/edit/matchbrackets.js"></script>
+<link rel="stylesheet" href="' . \K::$fw->DOMAIN . 'js/codemirror/5.63.3/addon/hint/show-hint.css">
+<script src="' . \K::$fw->DOMAIN . 'js/codemirror/' . $version . '/addon/hint/show-hint.js"></script>
+<script src="' . \K::$fw->DOMAIN . 'js/codemirror/' . $version . '/addon/hint/css-hint.js"></script>
 			';
         foreach ($modes as $mode) {
-            $html .= '<script src="js/codemirror/' . $version . '/mode/' . $mode . '/' . $mode . '.js"></script>';
+            $html .= '<script src="' . \K::$fw->DOMAIN . 'js/codemirror/' . $version . '/mode/' . $mode . '/' . $mode . '.js"></script>';
         }
 
         return $html;
