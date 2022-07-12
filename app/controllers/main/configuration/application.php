@@ -14,6 +14,8 @@ class Application extends \Controller
     {
         parent::__construct();
         \K::security()->checkCsrfToken();
+
+        \Controllers\Main\Configuration\_Module::top();
     }
 
     public function index()

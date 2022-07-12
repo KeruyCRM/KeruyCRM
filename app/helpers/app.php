@@ -191,9 +191,7 @@ class App
 
     public static function app_set_title($title)
     {
-        global $app_title;
-
-        return $app_title . ' | ' . $title;
+        return \K::$fw->app_title . ' | ' . $title;
     }
 
     public static function format_date($d, $date_format = false)
