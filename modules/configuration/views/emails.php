@@ -192,11 +192,6 @@ echo input_hidden_tag('redirect_to', 'configuration/emails') ?>
 </form>
 
 <script>
-    function send_test_email() {
-        $('#redirect_to').val('configuration/emails&action=send_test_smtp_email')
-        $('#cfg').submit()
-    }
-
     $(function () {
         $('#cfg').validate();
     })
