@@ -600,7 +600,7 @@ class Menu
             ];
             $ss[] = [
                 'title' => \K::$fw->TEXT_BUTTON_SEND_TEST_EMAIL,
-                'url' => \Helpers\Urls::url_for('configuration/emails_send_test')
+                'url' => \Helpers\Urls::url_for('main/configuration/emails_send_test')
             ];
             $s[] = [
                 'title' => \K::$fw->TEXT_MENU_EMAIL_OPTIONS,

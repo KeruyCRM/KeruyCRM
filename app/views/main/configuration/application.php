@@ -17,15 +17,20 @@
             <div class="tab-pane fade active in" id="general_info">
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_APP_NAME"><?= \K::$fw->TEXT_APPLICATION_NAME ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_APP_NAME"><?= \K::$fw->TEXT_APPLICATION_NAME ?></label>
                     <div class="col-md-9">
-                        <?= \Helpers\Html::input_tag('CFG[APP_NAME]', \K::$fw->CFG_APP_NAME, ['class' => 'form-control input-large required']
+                        <?= \Helpers\Html::input_tag(
+                            'CFG[APP_NAME]',
+                            \K::$fw->CFG_APP_NAME,
+                            ['class' => 'form-control input-large required']
                         ); ?>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_APP_SHORT_NAME"><?= \K::$fw->TEXT_APPLICATION_SHORT_NAME ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_APP_SHORT_NAME"><?= \K::$fw->TEXT_APPLICATION_SHORT_NAME ?></label>
                     <div class="col-md-9">
                         <?= \Helpers\Html::input_tag(
                             'CFG[APP_SHORT_NAME]',
@@ -39,9 +44,14 @@
                     <label class="col-md-3 control-label" for="APP_LOGO"><?= \K::$fw->TEXT_APPLICATION_LOGO ?></label>
                     <div class="col-md-9">
                         <p class="form-control-static">
-                            <?php echo \Helpers\Html::input_file_tag(
+                            <?php
+                            echo \Helpers\Html::input_file_tag(
                                     'APP_LOGO',
-                                    ['accept' => \Tools\FieldsTypes\Fieldtype_attachments::get_accept_types_by_extensions('gif,jpg,png')]
+                                    [
+                                        'accept' => \Tools\FieldsTypes\Fieldtype_attachments::get_accept_types_by_extensions(
+                                            'gif,jpg,png'
+                                        )
+                                    ]
                                 ) . \Helpers\Html::input_hidden_tag('CFG[APP_LOGO]', \K::$fw->CFG_APP_LOGO);
 
                             if (is_file(\K::$fw->DIR_FS_UPLOADS . '/' . \K::$fw->CFG_APP_LOGO)) {
@@ -55,9 +65,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_APP_LOGO_URL"><?= \K::$fw->TEXT_APP_LOGO_URL ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_APP_LOGO_URL"><?= \K::$fw->TEXT_APP_LOGO_URL ?></label>
                     <div class="col-md-9">
-                        <?= \Helpers\Html::input_tag('CFG[APP_LOGO_URL]', \K::$fw->CFG_APP_LOGO_URL, ['class' => 'form-control input-large']
+                        <?= \Helpers\Html::input_tag(
+                            'CFG[APP_LOGO_URL]',
+                            \K::$fw->CFG_APP_LOGO_URL,
+                            ['class' => 'form-control input-large']
                         ); ?>
                         <?= \Helpers\App::tooltip_text(\K::$fw->TEXT_APP_LOGO_URL_TOOLTIP) ?>
                     </div>
@@ -135,7 +149,8 @@
                 ?>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_APP_TIMEZONE"><?= \K::$fw->TEXT_APPLICATION_TIMEZONE ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_APP_TIMEZONE"><?= \K::$fw->TEXT_APPLICATION_TIMEZONE ?></label>
                     <div class="col-md-9">
                         <?= \Helpers\Html::select_tag(
                             'CFG[APP_TIMEZONE]',
@@ -147,14 +162,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_APP_TIMEZONE"><a href="https://en.wikipedia.org/wiki/Coordinated_Universal_Time" target="_blank">UTC</a></label>
+                    <label class="col-md-3 control-label" for="CFG_APP_TIMEZONE"><a
+                                href="https://en.wikipedia.org/wiki/Coordinated_Universal_Time" target="_blank">UTC</a></label>
                     <div class="col-md-9">
                         <p class="form-control-static"><?= date('P'); ?></p>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_APP_ROWS_PER_PAGE"><?= \K::$fw->TEXT_ROWS_PER_PAGE ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_APP_ROWS_PER_PAGE"><?= \K::$fw->TEXT_ROWS_PER_PAGE ?></label>
                     <div class="col-md-9">
                         <?= \Helpers\Html::input_tag(
                             'CFG[APP_ROWS_PER_PAGE]',
@@ -165,7 +182,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_APP_DATE_FORMAT"><?= \K::$fw->TEXT_DATE_FORMAT ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_APP_DATE_FORMAT"><?= \K::$fw->TEXT_DATE_FORMAT ?></label>
                     <div class="col-md-9">
                         <?= \Helpers\Html::input_tag(
                             'CFG[APP_DATE_FORMAT]',
@@ -176,7 +194,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_APP_DATETIME_FORMAT"><?= \K::$fw->TEXT_DATETIME_FORMAT ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_APP_DATETIME_FORMAT"><?= \K::$fw->TEXT_DATETIME_FORMAT ?></label>
                     <div class="col-md-9">
                         <?= \Helpers\Html::input_tag(
                             'CFG[APP_DATETIME_FORMAT]',
@@ -188,7 +207,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_APP_NUMBER_FORMAT"><?= \Helpers\App::tooltip_icon(\K::$fw->TEXT_NUMBER_FORMAT_INFO) . \K::$fw->TEXT_NUMBER_FORMAT ?></label>
+                    <label class="col-md-3 control-label" for="CFG_APP_NUMBER_FORMAT"><?= \Helpers\App::tooltip_icon(
+                            \K::$fw->TEXT_NUMBER_FORMAT_INFO
+                        ) . \K::$fw->TEXT_NUMBER_FORMAT ?></label>
                     <div class="col-md-9">
                         <?= \Helpers\Html::input_tag(
                             'CFG[APP_NUMBER_FORMAT]',
@@ -213,7 +234,8 @@
                 ?>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_APP_FIRST_DAY_OF_WEEK"><?= \K::$fw->TEXT_FIRST_DAY_OF_WEEK ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_APP_FIRST_DAY_OF_WEEK"><?= \K::$fw->TEXT_FIRST_DAY_OF_WEEK ?></label>
                     <div class="col-md-9">
                         <?= \Helpers\Html::select_tag(
                             'CFG[APP_FIRST_DAY_OF_WEEK]',
@@ -226,7 +248,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_DROP_DOWN_MENU_ON_HOVER"><?= \K::$fw->TEXT_DROP_DOWN_MENU_ON_HOVER ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_DROP_DOWN_MENU_ON_HOVER"><?= \K::$fw->TEXT_DROP_DOWN_MENU_ON_HOVER ?></label>
                     <div class="col-md-9">
                         <?= \Helpers\Html::select_tag(
                             'CFG[DROP_DOWN_MENU_ON_HOVER]',
@@ -238,7 +261,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_DISABLE_CHECK_FOR_UPDATES"><?= \K::$fw->TEXT_DISABLE_CHECK_FOR_UPDATES ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_DISABLE_CHECK_FOR_UPDATES"><?= \K::$fw->TEXT_DISABLE_CHECK_FOR_UPDATES ?></label>
                     <div class="col-md-9">
                         <?= \Helpers\Html::select_tag(
                             'CFG[DISABLE_CHECK_FOR_UPDATES]',
@@ -250,7 +274,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="CFG_HIDE_POWERED_BY_TEXT"><?= \K::$fw->TEXT_HIDE . ' "' . \K::$fw->TEXT_POWERED_BY . ' KeruyCRM"' ?></label>
+                    <label class="col-md-3 control-label"
+                           for="CFG_HIDE_POWERED_BY_TEXT"><?= \K::$fw->TEXT_HIDE . ' "' . \K::$fw->TEXT_POWERED_BY . ' KeruyCRM"' ?></label>
                     <div class="col-md-9">
                         <?= (\Helpers\App::is_ext_installed() ? \Helpers\Html::select_tag(
                             'CFG[HIDE_POWERED_BY_TEXT]',

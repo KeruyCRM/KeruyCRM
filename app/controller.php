@@ -230,11 +230,13 @@ class Controller
         $this->_setPlugin();//TODO include plugin
         $this->_userLogin();
 
-        //var_export(\K::$fw->app_user);
         \K::$fw->LANGUAGE = \K::$fw->app_user['language'];
 
         $this->_setCfgSession2();
-        $this->_checkEnvironment();
+
+        if (\K::$fw->app_user['group_id'] == 0) {
+            $this->_checkEnvironment();
+        }
 
         \Models\Main\Users\Two_step_verification::check();
 
