@@ -25,7 +25,7 @@ if (file_exists('config/database.php')) {
 include 'config/server.php';
 include 'config/security.php';
 
-\K::$fw->LANGUAGE = 'xx';
+//\K::$fw->LANGUAGE = 'xx';
 \K::$fw->FALLBACK = 'xx';
 
 \K::$fw->PREFIX = 'TEXT_';

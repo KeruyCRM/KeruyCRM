@@ -230,6 +230,9 @@ class Controller
         $this->_setPlugin();//TODO include plugin
         $this->_userLogin();
 
+        //var_export(\K::$fw->app_user);
+        \K::$fw->LANGUAGE = \K::$fw->app_user['language'];
+
         $this->_setCfgSession2();
         $this->_checkEnvironment();
 
@@ -265,7 +268,7 @@ class Controller
 
     public function afterroute()
     {
-        if(!\K::$fw->AJAX) {
+        if (!\K::$fw->AJAX) {
             echo '<PRE style="white-space: pre-wrap;">' . PHP_EOL . \K::model()->db->log() . '</PRE>';
         }
     }
@@ -311,7 +314,11 @@ class Controller
 
     private function _setCfgFromDB()
     {
-        $cfg = \K::model()->db_fetch_all('app_configuration', 'configuration_name,configuration_value', [\K::$fw->TTL_APP, 'app_configuration']);
+        $cfg = \K::model()->db_fetch_all(
+            'app_configuration',
+            'configuration_name,configuration_value',
+            [\K::$fw->TTL_APP, 'app_configuration']
+        );
 
         foreach ($cfg as $v) {
             \K::$fw->{$v->configuration_name} = $v->configuration_value;

@@ -1463,7 +1463,7 @@ class App
         }
 
         if (is_file(\K::$fw->DIR_WS_CUSTOM_CSS_FILE)) {
-            return '<link rel="stylesheet" type="text/css" href="' . \K::$fw->DIR_WS_CUSTOM_CSS_FILE . (\K::fw(
+            return '<link rel="stylesheet" type="text/css" href="' . \K::$fw->DOMAIN . \K::$fw->DIR_WS_CUSTOM_CSS_FILE . (\K::fw(
                 )->exists(
                     'CFG_CUSTOM_CSS_TIME'
                 ) ? '?time=' . \K::$fw->CFG_CUSTOM_CSS_TIME : '') . '">';

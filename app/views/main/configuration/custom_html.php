@@ -1,44 +1,34 @@
-<h3 class="page-title"><?php
-    echo TEXT_CUSTOM_HTML ?></h3>
+<h3 class="page-title"><?= \K::$fw->TEXT_CUSTOM_HTML ?></h3>
 
-<p><?php
-    echo TEXT_CUSTOM_HTML_INFO ?></p>
+<p><?= \K::$fw->TEXT_CUSTOM_HTML_INFO ?></p>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'cfg',
-    url_for('configuration/save', 'redirect_to=configuration/custom_html'),
+    \Helpers\Urls::url_for('main/configuration/save', 'redirect_to=main/configuration/custom_html'),
     ['class' => 'form-horizontal']
 ) ?>
 <div class="form-body">
-
     <div class="form-group">
-        <label class="col-md-3 control-label"><?php
-            echo htmlspecialchars(TEXT_ADD_CODE_END_OF_HEAD) ?></label>
+        <label class="col-md-3 control-label"><?= htmlspecialchars(\K::$fw->TEXT_ADD_CODE_END_OF_HEAD) ?></label>
         <div class="col-md-9">
-            <?php
-            echo textarea_tag('CFG[CUSTOM_HTML_HEAD]', CFG_CUSTOM_HTML_HEAD, ['class' => 'form-control code-mirror']
+            <?= \Helpers\Html::textarea_tag('CFG[CUSTOM_HTML_HEAD]', \K::$fw->CFG_CUSTOM_HTML_HEAD, ['class' => 'form-control code-mirror']
             ); ?>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="col-md-3 control-label"><?php
-            echo htmlspecialchars(TEXT_ADD_CODE_BEFORE_BODY) ?></label>
+        <label class="col-md-3 control-label"><?= htmlspecialchars(\K::$fw->TEXT_ADD_CODE_BEFORE_BODY) ?></label>
         <div class="col-md-9">
-            <?php
-            echo textarea_tag('CFG[CUSTOM_HTML_BODY]', CFG_CUSTOM_HTML_BODY, ['class' => 'form-control code-mirror']
+            <?= \Helpers\Html::textarea_tag('CFG[CUSTOM_HTML_BODY]', \K::$fw->CFG_CUSTOM_HTML_BODY, ['class' => 'form-control code-mirror']
             ); ?>
         </div>
     </div>
 
-    <?php
-    echo submit_tag(TEXT_BUTTON_SAVE) ?>
+    <?= \Helpers\Html::submit_tag(\K::$fw->TEXT_BUTTON_SAVE) ?>
 </div>
 </form>
 
-<?php
-echo app_include_codemirror(['css']) ?>
+<?= \Helpers\App::app_include_codemirror(['htmlmixed']) ?>
 
 <script>
 
