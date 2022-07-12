@@ -32,7 +32,6 @@ if (isset($_POST['delete_login_maintenance_background'])) {
     $_POST['CFG']['APP_LOGIN_MAINTENANCE_BACKGROUND'] = '';
 }
 
-
 if (isset($_POST['CFG'])) {
     foreach ($_POST['CFG'] as $k => $v) {
         $k = 'CFG_' . $k;
@@ -62,7 +61,6 @@ if (isset($_POST['CFG'])) {
                 }
             }
         }
-
 
         if ($k == 'CFG_APP_LOGIN_PAGE_BACKGROUND') {
             if (strlen($_FILES['APP_LOGIN_PAGE_BACKGROUND']['name']) > 0) {
@@ -105,7 +103,8 @@ if (isset($_POST['CFG'])) {
                 break;
         }
 
-        $cfq_query = db_query("select * from app_configuration where configuration_name='" . $k . "'");
+        configuration::set($k, $value);
+        /*$cfq_query = db_query("select * from app_configuration where configuration_name='" . $k . "'");
         if (!$cfq = db_fetch_array($cfq_query)) {
             db_perform('app_configuration', ['configuration_value' => $value, 'configuration_name' => $k]);
         } else {
@@ -115,7 +114,7 @@ if (isset($_POST['CFG'])) {
                 'update',
                 "configuration_name='" . $k . "'"
             );
-        }
+        }*/
     }
 
     $alerts->add(TEXT_CONFIGURATION_UPDATED, 'success');
