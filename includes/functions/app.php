@@ -1387,18 +1387,20 @@ function app_button_color_css($color, $css_class = '')
 
 function app_include_codemirror($modes = [])
 {
-    $versioin = '5.63.3';
+    $version = '5.63.3';
 
     $html = '
-                <script src="js/codemirror/' . $versioin . '/lib/codemirror.js"></script>	        
-		<link rel="stylesheet" href="js/codemirror/' . $versioin . '/lib/codemirror.css">
-	        <link rel="stylesheet" href="js/codemirror/' . $versioin . '/addon/display/fullscreen.css">
-	        <script src="js/codemirror/' . $versioin . '/addon/display/fullscreen.js"></script>                
-                <script src="js/codemirror/' . $versioin . '/addon/edit/matchbrackets.js"></script>
-
+<script src="js/codemirror/' . $version . '/lib/codemirror.js"></script>	        
+<link rel="stylesheet" href="js/codemirror/' . $version . '/lib/codemirror.css">
+<link rel="stylesheet" href="js/codemirror/' . $version . '/addon/display/fullscreen.css">
+<script src="js/codemirror/' . $version . '/addon/display/fullscreen.js"></script>                
+<script src="js/codemirror/' . $version . '/addon/edit/matchbrackets.js"></script>
+<link rel="stylesheet" href="js/codemirror/' . $version . '/addon/hint/show-hint.css">
+<script src="js/codemirror/' . $version . '/addon/hint/show-hint.js"></script>
+<script src="js/codemirror/' . $version . '/addon/hint/css-hint.js"></script>
 			';
     foreach ($modes as $mode) {
-        $html .= '<script src="js/codemirror/' . $versioin . '/mode/' . $mode . '/' . $mode . '.js"></script>';
+        $html .= '<script src="js/codemirror/' . $version . '/mode/' . $mode . '/' . $mode . '.js"></script>';
     }
 
     return $html;

@@ -30,10 +30,6 @@ if (!is_writable($css_folder)) {
 <?php
 echo app_include_codemirror(['css']) ?>
 
-<link rel="stylesheet" href="js/codemirror/addon/hint/show-hint.css">
-<script src="js/codemirror/addon/hint/show-hint.js"></script>
-<script src="js/codemirror/addon/hint/css-hint.js"></script>
-
 <script>
     var editor = CodeMirror.fromTextArea(document.getElementById("custom_css"), {
         lineNumbers: true,
