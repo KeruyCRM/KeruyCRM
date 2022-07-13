@@ -522,7 +522,7 @@ class Controller
             //allows redirect user to current page after login if there is no any actions
 
             if (!\K::fw()->exists('GET.action') and !\K::fw()->exists('POST.action') and !\K::$fw->AJAX) {
-                \K::cookieSet('app_login_redirect_to', \K::$fw->URI, 10 * 60);
+                \K::cookieSet('app_login_redirect_to', ltrim(\K::$fw->URI, '/'), 10 * 60);
             }
             //if (isset($_COOKIE["app_remember_me"]) and isset($_COOKIE["app_stay_logged"])) {
             if (\K::cookieExists('app_remember_me') and \K::cookieExists('app_stay_logged')) {
