@@ -1,10 +1,8 @@
-<?php
-echo ajax_modal_template_header(TEXT_PDF_EXPORT_FONTS) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_PDF_EXPORT_FONTS) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'font_form',
-    url_for('configuration/pdf', 'action=save'),
+    \Helpers\Urls::url_for('main/configuration/pdf/save'),
     ['enctype' => 'multipart/form-data', 'class' => 'form-horizontal', 'target' => '_new']
 ) ?>
 <div class="modal-body">
@@ -13,14 +11,19 @@ echo form_tag(
         <?php
         $has_errors = false;
 
-        if (!is_writable(CFG_PATH_TO_DOMPDF_FONTS)) {
-            echo alert_error(sprintf(TEXT_ERROR_FOLDER_NOT_WRITABLE, CFG_PATH_TO_DOMPDF_FONTS));
+        if (!is_writable(\K::$fw->CFG_PATH_TO_DOMPDF_FONTS)) {
+            echo \Helpers\App::alert_error(
+                sprintf(\K::$fw->TEXT_ERROR_FOLDER_NOT_WRITABLE, \K::$fw->CFG_PATH_TO_DOMPDF_FONTS)
+            );
             $has_errors = true;
         }
 
-        if (!is_writable(CFG_PATH_TO_DOMPDF_FONTS . '/dompdf_font_family_cache.php')) {
-            echo alert_error(
-                sprintf(TEXT_ERROR_FILE_NOT_WRITABLE, CFG_PATH_TO_DOMPDF_FONTS . '/dompdf_font_family_cache.php')
+        if (!is_writable(\K::$fw->CFG_PATH_TO_DOMPDF_FONTS . '/dompdf_font_family_cache.php')) {
+            echo \Helpers\App::alert_error(
+                sprintf(
+                    \K::$fw->TEXT_ERROR_FILE_NOT_WRITABLE,
+                    \K::$fw->CFG_PATH_TO_DOMPDF_FONTS . '/dompdf_font_family_cache.php'
+                )
             );
             $has_errors = true;
         }
@@ -30,11 +33,10 @@ echo form_tag(
         ?>
 
         <div class="form-group">
-            <label class="col-md-3 control-label" for="name"><span class="required-label">*</span><?php
-                echo TEXT_NAME ?></label>
+            <label class="col-md-3 control-label" for="name"><span
+                        class="required-label">*</span><?= \K::$fw->TEXT_NAME ?></label>
             <div class="col-md-9">
-                <?php
-                echo input_tag('name', '', ['class' => 'form-control input-large required autofocus']) ?>
+                <?= \Helpers\Html::input_tag('name', '', ['class' => 'form-control input-large required autofocus']) ?>
             </div>
         </div>
 
@@ -43,8 +45,7 @@ echo form_tag(
                 echo 'Normal' ?></label>
             <div class="col-md-9">
                 <div class="input-group">
-                    <?php
-                    echo input_file_tag('file_normal', ['class' => 'form-control required']) ?>
+                    <?= \Helpers\Html::input_file_tag('file_normal', ['class' => 'form-control required']) ?>
                     <span class="input-group-addon">.ttf</span>
                 </div>
                 <label id="file_normal-error" class="error" for="file_normal"></label>
@@ -56,8 +57,7 @@ echo form_tag(
                 echo 'Bold' ?></label>
             <div class="col-md-9">
                 <div class="input-group">
-                    <?php
-                    echo input_file_tag('file_bold', ['class' => 'form-control']) ?>
+                    <?= \Helpers\Html::input_file_tag('file_bold', ['class' => 'form-control']) ?>
                     <span class="input-group-addon">.ttf</span>
                 </div>
                 <label id="file_bold-error" class="error" for="file_bold"></label>
@@ -69,8 +69,7 @@ echo form_tag(
                 echo 'Italic' ?></label>
             <div class="col-md-9">
                 <div class="input-group">
-                    <?php
-                    echo input_file_tag('file_italic', ['class' => 'form-control']) ?>
+                    <?= \Helpers\Html::input_file_tag('file_italic', ['class' => 'form-control']) ?>
                     <span class="input-group-addon">.ttf</span>
                 </div>
                 <label id="file_italic-error" class="error" for="file_italic"></label>
@@ -82,8 +81,7 @@ echo form_tag(
                 echo 'Bold Italic' ?></label>
             <div class="col-md-9">
                 <div class="input-group">
-                    <?php
-                    echo input_file_tag('file_bold_italic', ['class' => 'form-control']) ?>
+                    <?= \Helpers\Html::input_file_tag('file_bold_italic', ['class' => 'form-control']) ?>
                     <span class="input-group-addon">.ttf</span>
                 </div>
                 <label id="file_bold_italic-error" class="error" for="file_bold_italic"></label>
@@ -94,8 +92,7 @@ echo form_tag(
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 <?php
 } ?>
@@ -122,5 +119,4 @@ echo ajax_modal_template_footer() ?>
             }
         });
     });
-
 </script>  

@@ -158,6 +158,11 @@ class Controller
 
         \K::fw()->mset($this->defaultCfg);
 
+        \K::fw()->CFG_PATH_TO_DOMPDF = 'app/libs/dompdf/1.1.1/vendor/autoload.php';
+        \K::fw()->CFG_PATH_TO_DOMPDF_FONTS = 'app/libs/dompdf/fonts/';
+        \K::fw()->CFG_PATH_TO_PHPWORD = 'app/libs/PHPWord/0.18.2/vendor/autoload.php';
+        \K::fw()->CFG_PATH_TO_PHPSPREADSHEET = 'app/libs/PHPSpreadsheet/1.18.0/vendor/autoload.php';
+
         $this->_setCfgFromDB();
         $this->_setCfg();
 

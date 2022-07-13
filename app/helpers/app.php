@@ -602,7 +602,7 @@ class App
     }
 
     public static function ajax_modal_template_footer(
-        $action_button_tille = false,
+        $action_button_title = false,
         $extra_buttons = '',
         $extra_text = ''
     ) {
@@ -613,9 +613,9 @@ class App
     
   	<div class="fa fa-spinner fa-spin primary-modal-action-loading"></div>	
         ' . $extra_buttons . '
-        <button type="button" class="btn btn-default btn-sub-dialog-back" style="display:none"><i class="fa fa-angle-left"></i> ' . TEXT_BUTTON_BACK . '</button>        
-        ' . ($action_button_tille != 'hide-save-button' ? '<button type="submit" class="btn btn-primary btn-primary-modal-action">' . ($action_button_tille ? $action_button_tille : TEXT_BUTTON_SAVE) . '</button>' : '') . '
-        <button type="button" class="btn btn-default btn-close" data-dismiss="modal">' . TEXT_BUTTON_CLOSE . '</button>    
+        <button type="button" class="btn btn-default btn-sub-dialog-back" style="display:none"><i class="fa fa-angle-left"></i> ' . \K::$fw->TEXT_BUTTON_BACK . '</button>        
+        ' . ($action_button_title != 'hide-save-button' ? '<button type="submit" class="btn btn-primary btn-primary-modal-action">' . ($action_button_title ? $action_button_title : \K::$fw->TEXT_BUTTON_SAVE) . '</button>' : '') . '
+        <button type="button" class="btn btn-default btn-close" data-dismiss="modal">' . \K::$fw->TEXT_BUTTON_CLOSE . '</button>    
     </div>';
 
         $html .= '
@@ -641,7 +641,7 @@ class App
     {
         $html = '
   <div class="modal-footer">    
-    <button type="button" class="btn btn-default" data-dismiss="modal">' . TEXT_BUTTON_CLOSE . '</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">' . \K::$fw->TEXT_BUTTON_CLOSE . '</button>
   </div>';
 
         $html .= '
@@ -1230,7 +1230,7 @@ class App
     {
         $patterns = ['/ +/', '/[<>]/'];
         $replace = [' ', '_'];
-        return preg_replace($patterns, $replace, trim($string));
+        return trim(\K::fw()->clean(preg_replace($patterns, $replace, trim($string))));
     }
 
     public static function app_render_status_label($status)

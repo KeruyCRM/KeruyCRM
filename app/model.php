@@ -220,4 +220,20 @@ class Model extends \Prefab
     {
         return $mapper->get('_id');
     }
+
+    public function db_prepare_input($string)
+    {
+        if (is_string($string)) {
+            return \Helpers\App::app_sanitize_string($string);
+        } elseif (is_array($string)) {
+            reset($string);
+
+            foreach ($string as $key => $value) {
+                $string[$key] = $this->db_prepare_input($value);
+            }
+            return $string;
+        } else {
+            return $string;
+        }
+    }
 }

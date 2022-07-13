@@ -174,7 +174,7 @@ class Access_groups
             'id,name',
             [\K::$fw->TTL_APP, 'app_access_groups']
         );
-        //while ($v = db_fetch_array($groups_query)) {
+
         foreach ($groups_query as $v) {
             $v = $v->cast();
 

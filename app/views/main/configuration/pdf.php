@@ -1,25 +1,19 @@
-<h3 class="page-title"><?php
-    echo TEXT_PDF_EXPORT_FONTS ?></h3>
-<p><?php
-    echo TEXT_PDF_EXPORT_FONTS_INFO ?></p>
+<h3 class="page-title"><?= \K::$fw->TEXT_PDF_EXPORT_FONTS ?></h3>
+<p><?= \K::$fw->TEXT_PDF_EXPORT_FONTS_INFO ?></p>
 
 <?php
 $rootDir = $fontDir = '';
-$fonts_list = require CFG_PATH_TO_DOMPDF_FONTS . '/dompdf_font_family_cache.php';
+$fonts_list = require \K::$fw->CFG_PATH_TO_DOMPDF_FONTS . '/dompdf_font_family_cache.php';
 
-//print_rr($fonts_list);
-
-echo button_tag(TEXT_ADD, url_for('configuration/pdf_form'), true);
+echo \Helpers\Html::button_tag(\K::$fw->TEXT_ADD, \Helpers\Urls::url_for('main/configuration/pdf_form'), true);
 ?>
 
 <div class="table-scrollable">
     <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr>
-            <th><?php
-                echo TEXT_NAME ?></th>
-            <th><?php
-                echo TEXT_FILENAME ?></th>
+            <th><?= \K::$fw->TEXT_NAME ?></th>
+            <th><?= \K::$fw->TEXT_FILENAME ?></th>
         </tr>
         </thead>
         <tbody>
@@ -36,6 +30,4 @@ echo button_tag(TEXT_ADD, url_for('configuration/pdf_form'), true);
         </tbody>
     </table>
 </div>
-<?php
-echo TEXT_FONTS_FOLDER . ': ' . CFG_PATH_TO_DOMPDF_FONTS
-?>
+<?= \K::$fw->TEXT_FONTS_FOLDER . ': ' . \K::$fw->CFG_PATH_TO_DOMPDF_FONTS ?>
