@@ -585,12 +585,9 @@ class Controller
         }
     }
 }
-/*\K::model()->db_perform(
-    'app_configuration',
-    ['configuration_name' => 'TEST_TEST_T2', 'configuration_value' => 123]
-);*/
 //backward compatibility
 //value_displya_own_column
 //dinamic_query
 //calclulate_diff_days
 //calclulate_totals
+//CFG_SOCAL_LOGIN_*

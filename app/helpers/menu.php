@@ -569,7 +569,7 @@ class Menu
             ];
             $ss[] = [
                 'title' => \K::$fw->TEXT_2STEP_VERIFICATION,
-                'url' => \Helpers\Urls::url_for('main/configuration/2step_verification')
+                'url' => \Helpers\Urls::url_for('main/configuration/two_step_verification')
             ];
             $ss[] = [
                 'title' => \K::$fw->TEXT_SOCIAL_LOGIN,

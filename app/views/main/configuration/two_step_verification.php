@@ -1,31 +1,21 @@
-<?php
+<h3 class="page-title"><?= \K::$fw->TEXT_2STEP_VERIFICATION ?></h3>
 
-//set check to stop autologoff current user
-$two_step_verification_info['is_checked'] = true;
-?>
-<h3 class="page-title"><?php
-    echo TEXT_2STEP_VERIFICATION ?></h3>
+<p><?= \K::$fw->TEXT_2STEP_VERIFICATION_INFO ?></p>
 
-<p><?php
-    echo TEXT_2STEP_VERIFICATION_INFO ?></p>
-
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'cfg',
-    url_for('configuration/save', 'redirect_to=configuration/2step_verification'),
+    \Helpers\Urls::url_for('main/configuration/save'),
     ['class' => 'form-horizontal']
 ) ?>
+<?= \Helpers\Html::input_hidden_tag('redirect_to', 'main/configuration/two_step_verification') ?>
 <div class="form-body">
-
     <div class="form-group">
-        <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_ENABLED"><?php
-            echo TEXT_ENABLE_TEXT_2STEP_VERIFICATION ?></label>
+        <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_ENABLED"><?= \K::$fw->TEXT_ENABLE_TEXT_2STEP_VERIFICATION ?></label>
         <div class="col-md-9">
-            <?php
-            echo select_tag(
+            <?= \Helpers\Html::select_tag(
                 'CFG[2STEP_VERIFICATION_ENABLED]',
-                $default_selector,
-                CFG_2STEP_VERIFICATION_ENABLED,
+                \K::$fw->default_selector,
+                \K::$fw->CFG_2STEP_VERIFICATION_ENABLED,
                 ['class' => 'form-control input-small']
             ); ?>
         </div>
@@ -39,14 +29,12 @@ echo form_tag(
     ?>
 
     <div class="form-group">
-        <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_TYPE"><?php
-            echo TEXT_SEND_CODE_BY ?></label>
+        <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_TYPE"><?= \K::$fw->TEXT_SEND_CODE_BY ?></label>
         <div class="col-md-9">
-            <?php
-            echo select_tag(
+            <?= \Helpers\Html::select_tag(
                 'CFG[2STEP_VERIFICATION_TYPE]',
                 $choices,
-                CFG_2STEP_VERIFICATION_TYPE,
+                \K::$fw->CFG_2STEP_VERIFICATION_TYPE,
                 ['class' => 'form-control input-small']
             ); ?>
         </div>
@@ -55,62 +43,45 @@ echo form_tag(
 
     <div id="sms_settings" style="display:none">
         <?php
-        if (is_ext_installed()) {
-            $modules = new modules('sms');
+        if (\Helpers\App::is_ext_installed()) {
+            $modules = new \Tools\Modules('sms');
             $choices = $modules->get_active_modules();
             ?>
             <div class="form-group">
-                <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_SMS_MODULE"><?php
-                    echo TEXT_EXT_SMS_MODULE ?></label>
+                <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_SMS_MODULE"><?= \K::$fw->TEXT_EXT_SMS_MODULE ?></label>
                 <div class="col-md-9">
-                    <?php
-                    echo select_tag(
+                    <?= \Helpers\Html::select_tag(
                         'CFG[2STEP_VERIFICATION_SMS_MODULE]',
                         $choices,
-                        CFG_2STEP_VERIFICATION_SMS_MODULE,
+                        \K::$fw->CFG_2STEP_VERIFICATION_SMS_MODULE,
                         ['class' => 'form-control input-large required']
                     ); ?>
                 </div>
             </div>
 
-            <?php
-            $choices = ['' => ''];
-            $fields_query = db_query(
-                "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in ('fieldtype_input','fieldtype_input_masked','fieldtype_phone') and f.entities_id=1 and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
-                $choices[$fields['id']] = $fields['name'];
-            }
-            ?>
             <div class="form-group">
-                <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_USER_PHONE"><?php
-                    echo TEXT_PHONE ?></label>
+                <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_USER_PHONE"><?= \K::$fw->TEXT_PHONE ?></label>
                 <div class="col-md-9">
-                    <?php
-                    echo select_tag(
+                    <?= \Helpers\Html::select_tag(
                         'CFG[2STEP_VERIFICATION_USER_PHONE]',
-                        $choices,
-                        CFG_2STEP_VERIFICATION_USER_PHONE,
+                        \K::$fw->choices,
+                        \K::$fw->CFG_2STEP_VERIFICATION_USER_PHONE,
                         ['class' => 'form-control input-large required']
                     ); ?>
-                    <?php
-                    echo tooltip_text(TEXT_EXT_SEND_TO_USER_NUMBER_INFO) ?>
+                    <?= \Helpers\App::tooltip_text(\K::$fw->TEXT_EXT_SEND_TO_USER_NUMBER_INFO) ?>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="col-md-3 control-label" for="CFG_LOGIN_BY_PHONE_NUMBER"><?php
-                    echo TEXT_ALLOW_LOGIN_BY_PHONE_NUMBER ?></label>
+                <label class="col-md-3 control-label" for="CFG_LOGIN_BY_PHONE_NUMBER"><?= \K::$fw->TEXT_ALLOW_LOGIN_BY_PHONE_NUMBER ?></label>
                 <div class="col-md-9">
-                    <?php
-                    echo select_tag(
+                    <?= \Helpers\Html::select_tag(
                         'CFG[LOGIN_BY_PHONE_NUMBER]',
-                        $default_selector,
-                        CFG_LOGIN_BY_PHONE_NUMBER,
+                        \K::$fw->default_selector,
+                        \K::$fw->CFG_LOGIN_BY_PHONE_NUMBER,
                         ['class' => 'form-control input-small']
                     ); ?>
-                    <?php
-                    echo tooltip_text(TEXT_ALLOW_LOGIN_BY_PHONE_NUMBER_INFO) ?>
+                    <?= \Helpers\App::tooltip_text(\K::$fw->TEXT_ALLOW_LOGIN_BY_PHONE_NUMBER_INFO) ?>
                 </div>
             </div>
 
@@ -120,8 +91,7 @@ echo form_tag(
             <div class="form-group">
                 <label class="col-md-3 control-label"></label>
                 <div class="col-md-3">
-                    <?php
-                    echo alert_error(TEXT_EXTENSION_REQUIRED); ?>
+                    <?= \Helpers\App::alert_error(\K::$fw->TEXT_EXTENSION_REQUIRED); ?>
                 </div>
             </div>
             <?php
@@ -129,8 +99,7 @@ echo form_tag(
         ?>
     </div>
 
-    <?php
-    echo submit_tag(TEXT_BUTTON_SAVE) ?>
+    <?= \Helpers\Html::submit_tag(\K::$fw->TEXT_BUTTON_SAVE) ?>
 
 </div>
 </form>

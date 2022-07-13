@@ -935,7 +935,9 @@ class Fields_types
 	        	<label class="col-md-3 control-label" for="' . generate_id_from_name(
                             'fields_configuration[' . $v['name'] . ']'
                         ) . '">' .
-                        (isset($v['tooltip_icon']) ? \Helpers\App::tooltip_icon($v['tooltip_icon']) : '') . $v['title'] .
+                        (isset($v['tooltip_icon']) ? \Helpers\App::tooltip_icon(
+                            $v['tooltip_icon']
+                        ) : '') . $v['title'] .
                         '</label>
 	          <div class="col-md-' . (in_array($v['type'], ['code']) ? '12' : '9') . '">' .
                         $field .
@@ -1018,7 +1020,10 @@ class Fields_types
             return '';
         }
 
-        $fieldtype = new $class;
+        $class = ucfirst($class);
+        $className = "\\Tools\\FieldsTypes\\{$class}";
+
+        $fieldtype = new $className();
 
         if ($key == 'name' and strlen($default) > 0) {
             return $default;
