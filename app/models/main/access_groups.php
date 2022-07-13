@@ -167,8 +167,17 @@ class Access_groups
             $choices[0] = \K::$fw->TEXT_ADMINISTRATOR;
         }
 
-        $groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
-        while ($v = db_fetch_array($groups_query)) {
+        $groups_query = \K::model()->db_fetch(
+            'app_access_groups',
+            '',
+            ['order' => 'sort_order,name'],
+            'id,name',
+            [\K::$fw->TTL_APP, 'app_access_groups']
+        );
+        //while ($v = db_fetch_array($groups_query)) {
+        foreach ($groups_query as $v) {
+            $v = $v->cast();
+
             $choices[$v['id']] = $v['name'];
         }
 
@@ -177,28 +186,6 @@ class Access_groups
 
     public static function get_cache()
     {
-        $cache = [];
-
-        //if (defined('TEXT_ADMINISTRATOR')) {
-        $cache[0] = \K::$fw->TEXT_ADMINISTRATOR;
-        //}
-
-        //$groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
-        $groups_query = \K::model()->db_fetch(
-            'app_access_groups',
-            [],
-            ['order', 'sort_order, name'],
-            'id,name',//FIX
-            [\K::$fw->TTL_APP, 'app_access_groups']
-        );
-
-        //while ($v = db_fetch_array($groups_query)) {
-        foreach ($groups_query as $v) {
-            $v = $v->cast();
-
-            $cache[$v['id']] = $v['name'];
-        }
-
-        return $cache;
+        return self::get_choices();
     }
 }
