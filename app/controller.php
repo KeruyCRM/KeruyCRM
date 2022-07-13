@@ -104,8 +104,8 @@ class Controller
         'CFG_VKONTAKTE_APP_ID' => '',
         'CFG_VKONTAKTE_SECRET_KEY' => '',
         'CFG_VKONTAKTE_BUTTON_TITLE' => '',
-        'CFG_SOCAL_LOGIN_CREATE_USER' => 'autocreate',
-        'CFG_SOCAL_LOGIN_USER_GROUP' => '',
+        'CFG_SOCIAL_LOGIN_CREATE_USER' => 'autocreate',
+        'CFG_SOCIAL_LOGIN_USER_GROUP' => '',
         'CFG_ENABLE_GOOGLE_LOGIN' => 0,
         'CFG_GOOGLE_APP_ID' => '',
         'CFG_GOOGLE_SECRET_KEY' => '',
@@ -215,9 +215,9 @@ class Controller
             'PARAMS.actionName'
         ) : 'index');
 
-        \K::$fw->app_redirect_to = ($_GET['redirect_to'] ?? (isset($_POST['redirect_to']) ? $_POST['redirect_to'] : ''));
+        \K::$fw->app_redirect_to = (\K::$fw->GET['redirect_to'] ?? (\K::$fw->POST['redirect_to'] ?? ''));
 
-        \K::$fw->app_path = ($_GET['path'] ?? (isset($_POST['path']) ? $_POST['path'] : ''));
+        \K::$fw->app_path = ($_GET['path'] ?? ($_POST['path'] ?? ''));
 
         \K::$fw->pathSubTemplate = \K::$fw->app_extension . '/' . \K::$fw->app_module . '/';
 

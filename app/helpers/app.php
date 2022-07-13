@@ -1229,13 +1229,13 @@ class App
     public static function app_sanitize_string($string)
     {
         $patterns = ['/ +/', '/[<>]/'];
-        $replace = [' ', 'K'];
+        $replace = [' ', '_'];
         return preg_replace($patterns, $replace, trim($string));
     }
 
-    public static function app_render_status_label($stauts)
+    public static function app_render_status_label($status)
     {
-        return ($stauts == true ? '<span class="label label-success">' . TEXT_ACTIVE . '</span>' : '<span class="label label-default">' . TEXT_INACTIVE . '</span>');
+        return ($status == true ? '<span class="label label-success">' . \K::$fw->TEXT_ACTIVE . '</span>' : '<span class="label label-default">' . \K::$fw->TEXT_INACTIVE . '</span>');
     }
 
     public static function app_get_days_choices()

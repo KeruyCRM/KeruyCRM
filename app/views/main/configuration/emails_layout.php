@@ -20,7 +20,10 @@
     <div class="form-group">
         <label class="col-md-2 control-label"><?= \K::$fw->TEXT_CUSTOM_HTML ?></label>
         <div class="col-md-10">
-            <?= \Helpers\Html::textarea_tag('CFG[EMAIL_HTML_LAYOUT]', \K::$fw->CFG_EMAIL_HTML_LAYOUT, ['class' => 'form-control code-mirror']
+            <?= \Helpers\Html::textarea_tag(
+                'CFG[EMAIL_HTML_LAYOUT]',
+                \K::$fw->CFG_EMAIL_HTML_LAYOUT,
+                ['class' => 'form-control code-mirror']
             ); ?>
         </div>
     </div>

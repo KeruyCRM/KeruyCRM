@@ -2,9 +2,10 @@
 
 <?= \Helpers\Html::form_tag(
     'cfg_form',
-    \Helpers\Urls::url_for('main/configuration/save', 'redirect_to=main/configuration/application'),
+    \Helpers\Urls::url_for('main/configuration/save'),
     ['enctype' => 'multipart/form-data', 'class' => 'form-horizontal']
 ) ?>
+<?= \Helpers\Html::input_hidden_tag('redirect_to', 'main/configuration/application') ?>
 <div class="form-body">
     <div class="tabbable tabbable-custom">
 

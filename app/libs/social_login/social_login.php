@@ -65,7 +65,7 @@ class social_login
         }
         else
         {
-            switch(CFG_SOCAL_LOGIN_CREATE_USER)
+            switch(CFG_SOCIAL_LOGIN_CREATE_USER)
             {
                 case 'autocreate':
                     
@@ -93,8 +93,8 @@ class social_login
                         'date_added'=>0,
                         'created_by'=>0,
                         'parent_item_id'=>0,
-                        'field_6' => (int)CFG_SOCAL_LOGIN_USER_GROUP,
-                        'multiple_access_groups'=> (count(explode(',',CFG_SOCAL_LOGIN_USER_GROUP))>1 ? CFG_SOCAL_LOGIN_USER_GROUP:''),
+                        'field_6' => (int)CFG_SOCIAL_LOGIN_USER_GROUP,
+                        'multiple_access_groups'=> (count(explode(',',CFG_SOCIAL_LOGIN_USER_GROUP))>1 ? CFG_SOCIAL_LOGIN_USER_GROUP:''),
                         'field_5'=>1,
                         'is_email_verified'=>1, 
                         'field_13' =>CFG_APP_LANGUAGE,

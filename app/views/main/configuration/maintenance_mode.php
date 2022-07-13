@@ -1,106 +1,97 @@
-<h3 class="page-title"><?php
-    echo TEXT_HEADING_MAINTENANCE_MODE ?></h3>
+<h3 class="page-title"><?= \K::$fw->TEXT_HEADING_MAINTENANCE_MODE ?></h3>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'cfg',
-    url_for('configuration/save', 'redirect_to=configuration/maintenance_mode'),
+    \Helpers\Urls::url_for('main/configuration/save'),
     ['enctype' => 'multipart/form-data', 'class' => 'form-horizontal']
 ) ?>
+<?= \Helpers\Html::input_hidden_tag('redirect_to', 'main/configuration/maintenance_mode') ?>
 <div class="form-body">
 
     <div class="form-group">
-        <label class="col-md-3 control-label" for="CFG_MAINTENANCE_MODE"><?php
-            echo TEXT_MAINTENANCE_MODE ?></label>
+        <label class="col-md-3 control-label" for="CFG_MAINTENANCE_MODE"><?= \K::$fw->TEXT_MAINTENANCE_MODE ?></label>
         <div class="col-md-9">
-            <?php
-            echo select_tag(
+            <?= \Helpers\Html::select_tag(
                 'CFG[MAINTENANCE_MODE]',
-                $default_selector,
-                CFG_MAINTENANCE_MODE,
+                \K::$fw->default_selector,
+                \K::$fw->CFG_MAINTENANCE_MODE,
                 ['class' => 'form-control input-small']
             ); ?>
-            <?php
-            echo tooltip_text(TEXT_MAINTENANCE_MODE_NOTE) ?>
+            <?= \Helpers\App::tooltip_text(\K::$fw->TEXT_MAINTENANCE_MODE_NOTE) ?>
         </div>
     </div>
-    <?php
 
-    $choices = ['' => TEXT_NONE];
-    $users_query = db_query(
-        "select u.*,a.name as group_name from app_entity_1 u left join app_access_groups a on a.id=u.field_6 where u.field_6>0 and u.field_5=1 order by u.field_8, u.field_7"
-    );
-    while ($users = db_fetch_array($users_query)) {
-        $choices[$users['group_name']][$users['id']] = $app_users_cache[$users['id']]['name'];
-    }
-
-    ?>
     <div class="form-group">
-        <label class="col-md-3 control-label" for="CFG_MAINTENANCE_ALLOW_LOGIN_FOR_USERS"><?php
-            echo TEXT_ALLOW_LOGIN_FOR_USERS ?></label>
+        <label class="col-md-3 control-label"
+               for="CFG_MAINTENANCE_ALLOW_LOGIN_FOR_USERS"><?= \K::$fw->TEXT_ALLOW_LOGIN_FOR_USERS ?></label>
         <div class="col-md-9">
-            <?php
-            echo select_tag(
+            <?= \Helpers\Html::select_tag(
                 'CFG[MAINTENANCE_ALLOW_LOGIN_FOR_USERS][]',
-                $choices,
-                CFG_MAINTENANCE_ALLOW_LOGIN_FOR_USERS,
+                \K::$fw->choices,
+                \K::$fw->CFG_MAINTENANCE_ALLOW_LOGIN_FOR_USERS,
                 ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
             ); ?>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="col-md-3 control-label" for="CFG_MAINTENANCE_MESSAGE_HEADING"><?php
-            echo TEXT_MESSAGE_HEADING ?></label>
+        <label class="col-md-3 control-label"
+               for="CFG_MAINTENANCE_MESSAGE_HEADING"><?= \K::$fw->TEXT_MESSAGE_HEADING ?></label>
         <div class="col-md-9">
-            <?php
-            echo input_tag(
+            <?= \Helpers\Html::input_tag(
                 'CFG[MAINTENANCE_MESSAGE_HEADING]',
-                CFG_MAINTENANCE_MESSAGE_HEADING,
+                \K::$fw->CFG_MAINTENANCE_MESSAGE_HEADING,
                 ['class' => 'form-control input-large']
             ); ?>
-            <?php
-            echo tooltip_text(TEXT_DEFAULT . ': "' . TEXT_MAINTENANCE_MESSAGE_HEADING . '"') ?>
+            <?= \Helpers\App::tooltip_text(
+                \K::$fw->TEXT_DEFAULT . ': "' . \K::$fw->TEXT_MAINTENANCE_MESSAGE_HEADING . '"'
+            ) ?>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="col-md-3 control-label" for="CFG_MAINTENANCE_MESSAGE_CONTENT"><?php
-            echo TEXT_MESSAGE_CONTENT ?></label>
+        <label class="col-md-3 control-label"
+               for="CFG_MAINTENANCE_MESSAGE_CONTENT"><?= \K::$fw->TEXT_MESSAGE_CONTENT ?></label>
         <div class="col-md-9">
-            <?php
-            echo textarea_tag(
+            <?= \Helpers\Html::textarea_tag(
                 'CFG[MAINTENANCE_MESSAGE_CONTENT]',
-                CFG_MAINTENANCE_MESSAGE_CONTENT,
+                \K::$fw->CFG_MAINTENANCE_MESSAGE_CONTENT,
                 ['class' => 'form-control input-xlarge', 'rows' => 3]
             ); ?>
-            <?php
-            echo tooltip_text(TEXT_DEFAULT . ': "' . TEXT_MAINTENANCE_MESSAGE_CONTENT . '"') ?>
+            <?= \Helpers\App::tooltip_text(
+                \K::$fw->TEXT_DEFAULT . ': "' . \K::$fw->TEXT_MAINTENANCE_MESSAGE_CONTENT . '"'
+            ) ?>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="col-md-3 control-label" for="APP_LOGIN_MAINTENANCE_BACKGROUND"><?php
-            echo TEXT_LOGIN_PAGE_BACKGROUND ?></label>
+        <label class="col-md-3 control-label"
+               for="APP_LOGIN_MAINTENANCE_BACKGROUND"><?= \K::$fw->TEXT_LOGIN_PAGE_BACKGROUND ?></label>
         <div class="col-md-9">
             <?php
-            echo input_file_tag(
+            echo \Helpers\Html::input_file_tag(
                     'APP_LOGIN_MAINTENANCE_BACKGROUND',
-                    ['accept' => fieldtype_attachments::get_accept_types_by_extensions('gif,jpg,png')]
-                ) . input_hidden_tag('CFG[APP_LOGIN_MAINTENANCE_BACKGROUND]', CFG_APP_LOGIN_MAINTENANCE_BACKGROUND);
-            if (is_file(DIR_FS_UPLOADS . '/' . CFG_APP_LOGIN_MAINTENANCE_BACKGROUND)) {
-                echo '<span class="help-block">' . CFG_APP_LOGIN_MAINTENANCE_BACKGROUND . '<label class="checkbox">' . input_checkbox_tag(
+                    [
+                        'accept' => \Tools\FieldsTypes\Fieldtype_attachments::get_accept_types_by_extensions(
+                            'gif,jpg,png'
+                        )
+                    ]
+                ) . \Helpers\Html::input_hidden_tag(
+                    'CFG[APP_LOGIN_MAINTENANCE_BACKGROUND]',
+                    \K::$fw->CFG_APP_LOGIN_MAINTENANCE_BACKGROUND
+                );
+            if (is_file(\K::$fw->DIR_FS_UPLOADS . '/' . \K::$fw->CFG_APP_LOGIN_MAINTENANCE_BACKGROUND)) {
+                echo '<span class="help-block">' . \K::$fw->CFG_APP_LOGIN_MAINTENANCE_BACKGROUND . '<label class="checkbox">' . \Helpers\Html::input_checkbox_tag(
                         'delete_login_maintenance_background'
-                    ) . ' ' . TEXT_DELETE . '</label></span>';
+                    ) . ' ' . \K::$fw->TEXT_DELETE . '</label></span>';
             }
 
-            echo tooltip_text(TEXT_LOGIN_PAGE_BACKGROUND_INFO);
+            echo \Helpers\App::tooltip_text(\K::$fw->TEXT_LOGIN_PAGE_BACKGROUND_INFO);
             ?>
         </div>
     </div>
 
-    <?php
-    echo submit_tag(TEXT_BUTTON_SAVE) ?>
+    <?= \Helpers\Html::submit_tag(\K::$fw->TEXT_BUTTON_SAVE) ?>
 
 </div>
 </form>

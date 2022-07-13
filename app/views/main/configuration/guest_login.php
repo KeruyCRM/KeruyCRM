@@ -4,9 +4,10 @@
 
 <?= \Helpers\Html::form_tag(
     'cfg',
-    \Helpers\Urls::url_for('main/configuration/save', 'redirect_to=configuration/guest_login'),
+    \Helpers\Urls::url_for('main/configuration/save'),
     ['class' => 'form-horizontal']
 ) ?>
+<?= \Helpers\Html::input_hidden_tag('redirect_to', 'main/configuration/guest_login') ?>
 <div class="form-body">
     <div class="form-group">
         <label class="col-md-3 control-label"><?= \K::$fw->TEXT_ENABLE_GUEST_LOGIN ?></label>

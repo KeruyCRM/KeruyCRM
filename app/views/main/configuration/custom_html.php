@@ -4,14 +4,18 @@
 
 <?= \Helpers\Html::form_tag(
     'cfg',
-    \Helpers\Urls::url_for('main/configuration/save', 'redirect_to=main/configuration/custom_html'),
+    \Helpers\Urls::url_for('main/configuration/save'),
     ['class' => 'form-horizontal']
 ) ?>
+<?= \Helpers\Html::input_hidden_tag('redirect_to', 'main/configuration/custom_html') ?>
 <div class="form-body">
     <div class="form-group">
         <label class="col-md-3 control-label"><?= htmlspecialchars(\K::$fw->TEXT_ADD_CODE_END_OF_HEAD) ?></label>
         <div class="col-md-9">
-            <?= \Helpers\Html::textarea_tag('CFG[CUSTOM_HTML_HEAD]', \K::$fw->CFG_CUSTOM_HTML_HEAD, ['class' => 'form-control code-mirror']
+            <?= \Helpers\Html::textarea_tag(
+                'CFG[CUSTOM_HTML_HEAD]',
+                \K::$fw->CFG_CUSTOM_HTML_HEAD,
+                ['class' => 'form-control code-mirror']
             ); ?>
         </div>
     </div>
@@ -19,7 +23,10 @@
     <div class="form-group">
         <label class="col-md-3 control-label"><?= htmlspecialchars(\K::$fw->TEXT_ADD_CODE_BEFORE_BODY) ?></label>
         <div class="col-md-9">
-            <?= \Helpers\Html::textarea_tag('CFG[CUSTOM_HTML_BODY]', \K::$fw->CFG_CUSTOM_HTML_BODY, ['class' => 'form-control code-mirror']
+            <?= \Helpers\Html::textarea_tag(
+                'CFG[CUSTOM_HTML_BODY]',
+                \K::$fw->CFG_CUSTOM_HTML_BODY,
+                ['class' => 'form-control code-mirror']
             ); ?>
         </div>
     </div>
