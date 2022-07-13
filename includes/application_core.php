@@ -486,11 +486,11 @@ if (!defined('CFG_VKONTAKTE_SECRET_KEY')) {
 if (!defined('CFG_VKONTAKTE_BUTTON_TITLE')) {
     define('CFG_VKONTAKTE_BUTTON_TITLE', '');
 }
-if (!defined('CFG_SOCAL_LOGIN_CREATE_USER')) {
-    define('CFG_SOCAL_LOGIN_CREATE_USER', 'autocreate');
+if (!defined('CFG_SOCIAL_LOGIN_CREATE_USER')) {
+    define('CFG_SOCIAL_LOGIN_CREATE_USER', 'autocreate');
 }
-if (!defined('CFG_SOCAL_LOGIN_USER_GROUP')) {
-    define('CFG_SOCAL_LOGIN_USER_GROUP', '');
+if (!defined('CFG_SOCIAL_LOGIN_USER_GROUP')) {
+    define('CFG_SOCIAL_LOGIN_USER_GROUP', '');
 }
 if (!defined('CFG_ENABLE_GOOGLE_LOGIN')) {
     define('CFG_ENABLE_GOOGLE_LOGIN', 0);

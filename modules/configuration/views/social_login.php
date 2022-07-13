@@ -50,13 +50,13 @@ echo form_tag(
             echo select_tag(
                 'CFG[SOCAL_LOGIN_CREATE_USER]',
                 $choices,
-                CFG_SOCAL_LOGIN_CREATE_USER,
+                CFG_SOCIAL_LOGIN_CREATE_USER,
                 ['class' => 'form-control input-xlarge']
             ); ?>
         </div>
     </div>
 
-    <div class="form-group" form_display_rules="CFG_SOCAL_LOGIN_CREATE_USER:autocreate">
+    <div class="form-group" form_display_rules="CFG_SOCIAL_LOGIN_CREATE_USER:autocreate">
         <label class="col-md-3 control-label"><?php
             echo tooltip_icon(TEXT_PUBLIC_REGISTRATION_USER_GROUP) . TEXT_USERS_GROUPS ?></label>
         <div class="col-md-9">
@@ -64,7 +64,7 @@ echo form_tag(
             echo select_tag(
                 'CFG[SOCAL_LOGIN_USER_GROUP][]',
                 access_groups::get_choices(false),
-                CFG_SOCAL_LOGIN_USER_GROUP,
+                CFG_SOCIAL_LOGIN_USER_GROUP,
                 ['class' => 'form-control input-xlarge chosen-select required', 'multiple' => 'multiple']
             ); ?>
         </div>
