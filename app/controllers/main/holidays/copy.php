@@ -31,9 +31,10 @@ class Copy extends \Controller
             $selected_items = \K::$fw->POST['selected_items'] ?? '';
             $year = \K::$fw->POST['year'];
 
-            foreach (explode(',', $selected_items) as $id) {
-                //$holiday_query = db_query("select * from app_holidays where id={$id}");
-                $holiday = \K::model()->db_fetch_one('app_holidays', ['id = ?' => $id]);
+            $explode = explode(',', $selected_items);
+
+            foreach ($explode as $id) {
+                $holiday = \K::model()->db_fetch_one('app_holidays', ['id = ?', $id]);
 
                 if ($holiday) {
                     $sql_data = [
