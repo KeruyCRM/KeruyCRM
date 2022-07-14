@@ -26,13 +26,32 @@ class Security extends \Prefab
         }
     }
 
-    private function validateToken($postToken)
+    public function checkCsrfTokenUrl($redirect_to = 'main/dashboard/token_error')
+    {
+        if (\K::fw()->exists('TOKEN_DISABLED')) {
+            return true;
+        }
+
+        if (
+            !\K::app_session_is_registered('app_token')
+            or !\K::fw()->exists('GET.url_session_token', $getToken)
+            or !$this->validateToken($getToken)) {
+            \K::flash()->addMessage(\K::$fw->TEXT_FROM_SESSION_ERROR, 'error');
+
+            \Helpers\Urls::redirect_to($redirect_to);
+        } else {
+            return true;
+        }
+    }
+
+    private function validateToken($token)
     {
         try {
-            $explode = explode(':', $postToken);
-            $saltSend = $explode[0];
-            $timeSend = $explode[1];
-            $tokenSend = $explode[2];
+            //$explode = explode(':', $token);
+
+            $saltSend = substr($token, 0, \K::$fw->CFG_TOKEN_LENGTH);
+            $timeSend = substr($token, \K::$fw->CFG_TOKEN_LENGTH, strlen($token) - \K::$fw->CFG_TOKEN_LENGTH * 2);
+            $tokenSend = substr($token, -\K::$fw->CFG_TOKEN_LENGTH);
 
             $timeDecode = $this->decrypt36($timeSend, $saltSend . $this->_DELIMITER . \K::$fw->app_token);
 
@@ -85,7 +104,12 @@ class Security extends \Prefab
             echo $e->getMessage();
         }
 
-        return $salt . ':' . $time . ':' . $token;
+        return $salt . $time . $token;
+    }
+
+    public function addTokenToUrl()
+    {
+        return 'url_session_token=' . $this->getAppSessionToken();
     }
 
     private function purified($string)

@@ -46,7 +46,7 @@ class Maintenance_mode
                     explode(',', \K::$fw->CFG_MAINTENANCE_ALLOW_LOGIN_FOR_USERS)
                 )) {
                     \K::flash()->addMessage(\K::$fw->TEXT_ACCESS_FORBIDDEN, 'error');
-                    \Helpers\Urls::redirect_to('main/users/login/logoff');
+                    \Helpers\Urls::redirect_to('main/users/login/logoff','', true);
                 }
             }
         }

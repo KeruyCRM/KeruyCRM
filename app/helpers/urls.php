@@ -4,14 +4,14 @@ namespace Helpers;
 
 class Urls
 {
-    public static function redirect_to($module, $prams = '')
+    public static function redirect_to($module, $prams = '', $token = false)
     {
         if (\K::$fw->AJAX) {
-            echo '<script>window.top.location.href="' . self::url_for($module, $prams) . '"</script>';
+            echo '<script>window.top.location.href="' . self::url_for($module, $prams, $token) . '"</script>';
             exit();
         }
 
-        \K::fw()->reroute(self::url_for($module, $prams));
+        \K::fw()->reroute(self::url_for($module, $prams, $token));
     }
 
     public static function is_ssl()
@@ -19,7 +19,7 @@ class Urls
         return ((ENABLE_SSL or IS_HTTPS == 'on') ? true : false);
     }
 
-    public static function url_for($module, $params = '')
+    public static function url_for($module, $params = '', $token = false)
     {
         $self = pathinfo($_SERVER['PHP_SELF']);
         $self['dirname'] = str_replace("\\", "/", $self['dirname']);
@@ -33,7 +33,9 @@ class Urls
             $url = \K::$fw->SCHEME . '://' . \K::$fw->HOST . $path . $module . $params;
         }
 
-        //$url .= csrf_protect::add_token_to_url($url);
+        if ($token) {
+            $url .= (strlen($params) > 0 ? '&' : '?') . \K::security()->addTokenToUrl();
+        }
 
         return $url;
     }

@@ -21,7 +21,7 @@ class Menu
 
             $menu[] = [
                 'title' => \K::$fw->TEXT_LOGOFF,
-                'url' => \Helpers\Urls::url_for('main/users/login/logoff'),
+                'url' => \Helpers\Urls::url_for('main/users/login/logoff', '', true),
                 'class' => 'fa-sign-out'
             ];
 
@@ -91,7 +91,7 @@ class Menu
 
         $menu[] = [
             'title' => \K::$fw->TEXT_LOGOFF,
-            'url' => \Helpers\Urls::url_for('main/users/login/logoff'),
+            'url' => \Helpers\Urls::url_for('main/users/login/logoff', '', true),
             'is_hr' => true,
             'class' => 'fa-sign-out'
         ];

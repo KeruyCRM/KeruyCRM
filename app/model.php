@@ -112,7 +112,7 @@ class Model extends \Prefab
 
     public function db_find($table, $value, $column = 'id')
     {
-        $mapper = $this->mapper($table, $column);
+        $mapper = $this->mapper($table);
 
         $info_query = $mapper->findone(
             [$column . ' = ?', $value]
@@ -138,7 +138,7 @@ class Model extends \Prefab
 
     public function db_delete_row($table, $value, $column = 'id')
     {
-        return self::db_delete($table,[$column . ' = ?', $value]);
+        return self::db_delete($table, [$column . ' = ?', $value]);
     }
 
     public function db_delete($table, $filter)
@@ -235,5 +235,17 @@ class Model extends \Prefab
         } else {
             return $string;
         }
+    }
+
+    public function db_show_columns($table)
+    {
+        $info = [];
+        $columns_query = $this->db->schema($table);
+
+        foreach ($columns_query as $columns => $value) {
+            $info[$columns] = '';
+        }
+
+        return $info;
     }
 }

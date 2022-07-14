@@ -20,7 +20,7 @@ class Login_by_phone extends \Controller
         \Helpers\App_restricted_ip::verify();
 
         if (\K::app_session_is_registered('app_logged_users_id')) {
-            \Helpers\Urls::redirect_to('main/users/login/logoff');
+            \Helpers\Urls::redirect_to('main/users/login/logoff', '', true);
         }
     }
 

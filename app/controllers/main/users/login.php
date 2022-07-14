@@ -59,17 +59,21 @@ class Login extends \Controller
 
     public function logoff()
     {
-        \K::app_session_unregister('app_logged_users_id');
-        \K::app_session_unregister('app_current_version');
-        \K::app_session_unregister('two_step_verification_info');
-        \K::app_session_unregister('app_email_verification_code');
-        \K::app_session_unregister('app_session_token');
+        if (\K::security()->checkCsrfTokenUrl()) {
+            \K::app_session_unregister('app_logged_users_id');
+            \K::app_session_unregister('app_current_version');
+            \K::app_session_unregister('two_step_verification_info');
+            \K::app_session_unregister('app_email_verification_code');
+            \K::app_session_unregister('app_session_token');
 
-        \K::cookieClear('app_stay_logged');
-        \K::cookieClear('app_remember_user');
-        \K::cookieClear('app_remember_pass');
-        \K::cookieClear('izoColorPickerColors');
+            \K::cookieClear('app_stay_logged');
+            \K::cookieClear('app_remember_user');
+            \K::cookieClear('app_remember_pass');
+            \K::cookieClear('izoColorPickerColors');
 
-        \Helpers\Urls::redirect_to('main/users/login');
+            \Helpers\Urls::redirect_to('main/users/login');
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 }

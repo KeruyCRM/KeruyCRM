@@ -1,6 +1,8 @@
 <?php
 
-class holidays
+namespace Models\Main;
+
+class Holidays
 {
     static function render_js_holidays()
     {
@@ -28,10 +30,16 @@ class holidays
     static function get_year_choices()
     {
         $choices = [];
-        $holidays_query = db_query(
+        /*$holidays_query = db_query(
             "select min(year(start_date)) as min_year, max(year(end_date)) max_year from app_holidays"
         );
-        $holidays = db_fetch_array($holidays_query);
+        $holidays = db_fetch_array($holidays_query);*/
+
+        $mapper = \K::model()->mapper('app_holidays','id');
+        $mapper->min_year = 'min(year(start_date))';
+        $mapper->max_year = 'max(year(end_date))';
+        $holidays = $mapper->findone();
+        $holidays = $holidays->cast();
 
         if ($holidays['min_year'] > 0) {
             for ($i = $holidays['min_year']; $i <= ($holidays['max_year'] + 1); $i++) {
