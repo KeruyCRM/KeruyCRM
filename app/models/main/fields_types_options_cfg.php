@@ -1,6 +1,10 @@
 <?php
+/*
+ * KeruyCRM (c) 
+ * https://keruy.com.ua
+ */
 
-namespace Tools;
+namespace Models\Main;
 
 class Fields_types_options_cfg
 {

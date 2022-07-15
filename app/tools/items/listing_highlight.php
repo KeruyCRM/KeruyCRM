@@ -353,7 +353,7 @@ class Listing_highlight
     {
         $html = '';
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         switch (self::get_field_type_key($field['type'])) {
             case 'boolean':

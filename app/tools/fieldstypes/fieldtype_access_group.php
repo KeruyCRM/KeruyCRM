@@ -81,7 +81,7 @@ class Fieldtype_access_group
     {
         global $app_user;
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $choices = [];
 
@@ -108,7 +108,7 @@ class Fieldtype_access_group
     {
         global $app_users_cache, $app_user;
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $entities_id = $field['entities_id'];
 
@@ -164,7 +164,7 @@ class Fieldtype_access_group
     {
         global $app_send_to;
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $value = (is_array($options['value']) ? implode(',', $options['value']) : $options['value']);
 

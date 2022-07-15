@@ -77,7 +77,7 @@ class Fieldtype_text_pattern_static
         foreach ($fields_query as $fields) {
             $fields = $fields->cast();
 
-            $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
             if (!$item_info) {
                 $item_info = \K::model()->db_query_exec_one(

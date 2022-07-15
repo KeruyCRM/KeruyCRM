@@ -71,7 +71,7 @@ class Fieldtype_iframe
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get('input_width') .
@@ -95,7 +95,7 @@ class Fieldtype_iframe
         if (isset($options['is_export'])) {
             return $value;
         } elseif (strlen($value)) {
-            $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
             return '<iframe  src="' . $value . '" width="' . $cfg->get('width') . '"  height="' . $cfg->get(
                     'height'

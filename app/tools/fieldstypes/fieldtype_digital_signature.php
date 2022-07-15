@@ -138,7 +138,7 @@ class Fieldtype_digital_signature
 
         $html = '';
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
         $entities_id = $options['field']['entities_id'];
 
         $path_info = items::get_path_info($options['field']['entities_id'], $options['item']['id'], $options['item']);
@@ -352,7 +352,7 @@ class Fieldtype_digital_signature
         if (isset($app_fields_cache[$entities_id])) {
             foreach ($app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_digital_signature') {
-                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
                     if (!is_array($cfg->get('signature_fields'))) {
                         continue;

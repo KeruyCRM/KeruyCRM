@@ -45,7 +45,7 @@ class Fieldtype_progress
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $attributes = ['class' => 'form-control input-small fieldtype_input field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')];
 
@@ -82,7 +82,7 @@ class Fieldtype_progress
 
     public function output($options)
     {
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if (strlen($options['value']) > 0) {
             if (isset($options['is_export'])) {

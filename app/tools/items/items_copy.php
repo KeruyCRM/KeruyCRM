@@ -144,7 +144,7 @@ class Items_copy
 
                     //barcode
                     if ($app_fields_cache[$this->entities_id][substr($k, 6)]['type'] == 'fieldtype_barcode') {
-                        $cfg = new \Tools\Fields_types_cfg(
+                        $cfg = new \Models\Main\Fields_types_cfg(
                             $app_fields_cache[$this->entities_id][substr($k, 6)]['configuration']
                         );
                         if (strlen($cfg->get('template'))) {

@@ -50,7 +50,7 @@ class Fieldtype_jalali_calendar
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         if (strlen($obj['field_' . $field['id']]) > 0 and $obj['field_' . $field['id']] != 0) {
             $value = self::timestamp_to_jalali($obj['field_' . $field['id']], $cfg->get('time_picker'));
@@ -115,7 +115,7 @@ class Fieldtype_jalali_calendar
 
     public function output($options)
     {
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if ($options['value'] != 0) {
             return self::timestamp_to_jalali($options['value'], $cfg->get('time_picker'));

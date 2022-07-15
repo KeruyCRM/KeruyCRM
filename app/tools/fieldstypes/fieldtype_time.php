@@ -47,7 +47,7 @@ class Fieldtype_time
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         if (strlen($obj['field_' . $field['id']]) > 0 and $obj['field_' . $field['id']] != 0) {
             $value = $obj['field_' . $field['id']];

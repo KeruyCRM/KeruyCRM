@@ -191,7 +191,7 @@ class Fieldtype_google_map_directions
     {
         global $is_google_map_script, $app_user;
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         //skip
         if (!strlen($cfg->get('address_pattern')) or !strlen(
@@ -581,7 +581,7 @@ class Fieldtype_google_map_directions
                 if ($fields['type'] == 'fieldtype_google_map_directions') {
                     $fields_id = $fields['id'];
 
-                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
                     //skip if no pattern setup
                     if (!strlen($cfg->get('address_pattern'))) {

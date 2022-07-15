@@ -718,7 +718,7 @@ class Users
                 ) . "'"
             );
             while ($fields = db_fetch_array($fields_query)) {
-                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+                $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
                 if ($cfg->get('use_global_list') > 0) {
                     $grouped_global_users_fields[$cfg->get('use_global_list')] = $fields['id'];

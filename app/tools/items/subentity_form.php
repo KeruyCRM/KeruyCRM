@@ -16,7 +16,7 @@ class Subentity_form
 
         $this->entities_id = $entities_id;
         $this->items_id = ($items_id > 0 ? $items_id : false);
-        $this->cfg = new \Tools\Fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
+        $this->cfg = new \Models\Main\Fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
         $this->field_id = $field_id;
         $this->field_name = $app_fields_cache[$entities_id][$field_id]['name'];
     }

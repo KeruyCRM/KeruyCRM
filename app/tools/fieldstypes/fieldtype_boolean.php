@@ -73,7 +73,7 @@ class Fieldtype_boolean
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get(
@@ -98,7 +98,7 @@ class Fieldtype_boolean
 
     public static function get_choices($field, $add_empty = false)
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $choices = [];
 
@@ -118,7 +118,7 @@ class Fieldtype_boolean
 
     public static function get_boolean_value($field, $value)
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         switch ($value) {
             case 'true':
@@ -142,7 +142,7 @@ class Fieldtype_boolean
         global $app_changed_fields, $app_choices_cache;
 
         if (!$options['is_new_item']) {
-            $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
                 $app_changed_fields[] = [

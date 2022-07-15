@@ -74,7 +74,7 @@ class Fieldtype_js_formula
     {
         global $app_fields_cache, $parent_entity_item_id, $app_global_vars;
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $formula = $js_formula = $cfg->get('formula');
 
@@ -291,7 +291,7 @@ class Fieldtype_js_formula
         }
 
         //return value using number format
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if (strlen($cfg->get('number_format')) > 0 and strlen($value) > 0) {
             $format = explode('/', str_replace('*', '', $cfg->get('number_format')));

@@ -130,7 +130,7 @@ class Fieldtype_image_ajax
             $delete_file_url = url_for('items/items', 'action=attachments_delete_in_queue&path=' . $_GET['path']);
         }
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $allowed_extensions = is_array($cfg->get('allowed_extensions')) ? $cfg->get('allowed_extensions') : [
             'gif',
@@ -250,7 +250,7 @@ $(function(){
 
     public function output($options)
     {
-        $options_cfg = new fields_types_options_cfg($options);
+        $options_cfg = new \Models\Main\Fields_types_options_cfg($options);
 
         if (strlen($options['value']) > 0) {
             $file = attachments::parse_filename($options['value']);
@@ -279,7 +279,7 @@ $(function(){
                 return $file['name'];
             } else {
                 if ($file['is_image']) {
-                    $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
                     $fancybox_css_class = 'fancybox' . $options['field']['id'] . time();
 

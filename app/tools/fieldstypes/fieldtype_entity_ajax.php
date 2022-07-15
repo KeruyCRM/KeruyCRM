@@ -211,7 +211,7 @@ class Fieldtype_entity_ajax
     {
         global $app_module_path, $app_layout, $current_path_array, $app_action, $app_user;
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $entity_info = db_find('app_entities', $cfg->get('entity_id'));
         $field_entity_info = db_find('app_entities', $field['entities_id']);
@@ -416,7 +416,7 @@ class Fieldtype_entity_ajax
             return '';
         }
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $fields_in_popup_cfg = '';
 

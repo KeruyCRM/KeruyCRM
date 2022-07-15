@@ -87,7 +87,7 @@ class Fieldtype_tags
     {
         global $app_module_path, $app_layout;
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $add_empty = ($field['is_required'] == 1 ? false : true);
 
@@ -181,7 +181,7 @@ class Fieldtype_tags
     {
         global $process_options;
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $values_id = [];
 
@@ -246,7 +246,7 @@ class Fieldtype_tags
     {
         $is_export = isset($options['is_export']);
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         //render global list value
         if ($cfg->get('use_global_list') > 0) {

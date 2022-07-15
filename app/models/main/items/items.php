@@ -1405,7 +1405,7 @@ class Items
 
         //while ($field = db_fetch_array($fields_query)) {
         foreach ($fields_query as $field) {
-            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
             //skip fields with disabled notification
             if ($cfg->get('disable_notification') == 1) {

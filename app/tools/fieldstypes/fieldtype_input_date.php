@@ -140,7 +140,7 @@ class Fieldtype_input_date
                 if (strlen($value)) {
                     $field_query = db_query("select id, name, configuration from app_fields where id='" . $value . "'");
                     if ($field = db_fetch_array($field_query)) {
-                        $field_cfg = new \Tools\Fields_types_cfg($field['configuration']);
+                        $field_cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
                         if ($field_cfg->get('use_global_list') > 0) {
                             $choices = global_lists::get_choices($field_cfg->get('use_global_list'), false);
@@ -165,7 +165,7 @@ class Fieldtype_input_date
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         if (strlen($obj['field_' . $field['id']]) > 0 and $obj['field_' . $field['id']] != 0) {
             $value = date('Y-m-d', $obj['field_' . $field['id']]);
@@ -230,7 +230,7 @@ class Fieldtype_input_date
         $value = !is_numeric($options['value']) ? (int)get_date_timestamp($options['value']) : (int)$options['value'];
 
         if (!$options['is_new_item']) {
-            $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
             if ($value != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
                 $app_changed_fields[] = [
@@ -247,7 +247,7 @@ class Fieldtype_input_date
 
     public function output($options)
     {
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if (isset($options['is_export']) and strlen($options['value']) > 0 and $options['value'] != 0) {
             return format_date($options['value'], $cfg->get('date_format'));

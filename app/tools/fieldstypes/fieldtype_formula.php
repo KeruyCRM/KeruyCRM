@@ -97,7 +97,7 @@ class Fieldtype_formula
         }
 
         //return value using number format
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if (strlen($cfg->get('number_format')) > 0 and strlen($value) > 0) {
             $format = explode('/', str_replace('*', '', $cfg->get('number_format')));
@@ -305,7 +305,7 @@ class Fieldtype_formula
             foreach ($fields_query as $fields) {
                 $fields = $fields->cast();
 
-                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+                $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
                 $pattern = $cfg->get('pattern');
 
                 if (strstr($pattern, '[' . $formula_fields_id . ']')) {
@@ -329,7 +329,7 @@ class Fieldtype_formula
             foreach ($fields_query as $fields) {
                 $fields = $fields->cast();
 
-                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+                $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
                 if (strstr($cfg->get('where_query'), '[' . $formula_fields_id . ']')) {
                     $check_formula_needed = true;
@@ -373,7 +373,7 @@ class Fieldtype_formula
             }
 
             foreach (\K::$fw->app_formula_fields_cache[$entities_id] as $fields) {
-                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+                $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
                 $formula = $cfg->get('formula');
 

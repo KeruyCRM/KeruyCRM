@@ -109,7 +109,7 @@ class Items_page
                 'path' => $current_path,
             ];
 
-            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
             //hide if empty
             if ($cfg->get('hide_field_if_empty') == 1 and fields_types::is_empty_value($value, $field['type'])) {

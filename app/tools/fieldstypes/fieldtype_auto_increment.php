@@ -108,7 +108,7 @@ class Fieldtype_auto_increment
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get('width') .
@@ -138,7 +138,7 @@ class Fieldtype_auto_increment
     {
         global $app_entities_cache, $parent_entity_item_id;
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $where_sql = '';
 
@@ -180,7 +180,7 @@ class Fieldtype_auto_increment
     {
         $field = $options['field'];
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         //if view only then recalculate value before save
         if ($cfg->get('view_only') == 1 and isset($options['is_new_item']) and $options['is_new_item'] == 1) {
@@ -192,7 +192,7 @@ class Fieldtype_auto_increment
 
     public function output($options)
     {
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         return (strlen($options['value']) ? $cfg->get('prefix') . $options['value'] . $cfg->get('suffix') : '');
     }

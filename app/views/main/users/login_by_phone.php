@@ -18,7 +18,7 @@
 </div>
 
 <?php
-$cfg = new \Tools\Fields_types_cfg(
+$cfg = new \Models\Main\Fields_types_cfg(
     \K::$fw->app_fields_cache[1][\K::$fw->CFG_2STEP_VERIFICATION_USER_PHONE]['configuration']
 );
 

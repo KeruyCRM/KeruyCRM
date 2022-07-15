@@ -31,7 +31,7 @@ class Fieldtype_user_lastname
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $html = '';
         $requried_class = 'required';

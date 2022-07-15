@@ -345,7 +345,7 @@ class Fieldtype_subentity_form
             $app_subentity_form_items_deleted[$field['id']] = [];
         }
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $subentity_form = new subentity_form($field['entities_id'], $obj['id'], $field['id']);
 

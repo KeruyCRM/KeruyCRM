@@ -102,7 +102,7 @@ class Fieldtype_months_difference
 
     public function output($options)
     {
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $value = $options['value'];
 
@@ -165,7 +165,7 @@ END;";
         if (isset($app_fields_cache[$entities_id])) {
             foreach ($app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_months_difference') {
-                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
                     //skip dynamic query
                     if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {
@@ -187,7 +187,7 @@ END;";
 
     public static function prepare_query($fields, $prefix = 'e', $single_select = false, $force_query = false)
     {
-        $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
         //skip dynamic query
         if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1 and !$force_query) {
@@ -221,7 +221,7 @@ END;";
         if (isset(\K::$fw->app_fields_cache[$entities_id])) {
             foreach (\K::$fw->app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_months_difference') {
-                    $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
                     //skip dynamic query
                     if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {

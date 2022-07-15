@@ -109,7 +109,7 @@ class Fieldtype_input_protected
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get('width') .
@@ -137,7 +137,7 @@ class Fieldtype_input_protected
             return '';
         }
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $users_groups = $cfg->get('users_groups');
 

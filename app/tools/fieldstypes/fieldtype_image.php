@@ -58,7 +58,7 @@ class Fieldtype_image
                     ) . ' ' . \K::$fw->TEXT_DELETE . '</label></div>' : '');
         }
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         return input_file_tag(
                 'fields[' . $field['id'] . ']',
@@ -110,7 +110,7 @@ class Fieldtype_image
 
     public function output($options)
     {
-        $options_cfg = new fields_types_options_cfg($options);
+        $options_cfg = new \Models\Main\Fields_types_options_cfg($options);
 
         if (strlen($options['value']) > 0) {
             $file = attachments::parse_filename($options['value']);
@@ -139,7 +139,7 @@ class Fieldtype_image
                 return $file['name'];
             } else {
                 if ($file['is_image']) {
-                    $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
                     $fancybox_css_class = 'fancybox' . $options['field']['id'] . time();
 

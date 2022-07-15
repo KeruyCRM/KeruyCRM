@@ -169,7 +169,7 @@ class Fieldtype_image_map
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get(
@@ -213,7 +213,7 @@ class Fieldtype_image_map
     {
         global $app_choices_cache;
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         //check if value exist
         if ($options['value'] == 0 or !isset($app_choices_cache[$options['value']])) {

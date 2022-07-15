@@ -50,7 +50,7 @@ class Attachments
 
         $field_query = db_query("select id, name, configuration,type from app_fields where id='" . $field_id . "'");
         if ($field = db_fetch_array($field_query)) {
-            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
         } else {
             $cfg = new \Tools\Settings('');
         }

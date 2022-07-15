@@ -94,7 +94,7 @@ class Fieldtype_grouped_users
     {
         $attributes = ['class' => 'form-control input-medium field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')];
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $display_as = (strlen($cfg->get('display_as')) > 0 ? $cfg->get('display_as') : 'dropdown');
 
@@ -166,7 +166,7 @@ class Fieldtype_grouped_users
 
         $value = (is_array($options['value']) ? implode(',', $options['value']) : $options['value']);
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if ($cfg->get('disable_notification') != 1) {
             foreach (explode(',', $value) as $choices_id) {
@@ -204,7 +204,7 @@ class Fieldtype_grouped_users
 
     public function output($options)
     {
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $html = ($cfg->get('use_global_list') > 0 ? global_lists::render_value(
             $options['value']
@@ -223,7 +223,7 @@ class Fieldtype_grouped_users
 
         $html = '';
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $show_users = (is_array($cfg->get('show_users')) ? $cfg->get('show_users') : []);
 

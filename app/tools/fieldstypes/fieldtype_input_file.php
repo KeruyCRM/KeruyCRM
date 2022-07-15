@@ -52,7 +52,7 @@ class Fieldtype_input_file
                     ) . ' ' . \K::$fw->TEXT_DELETE . '</label></div>' : '');
         }
 
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         return input_file_tag(
                 'fields[' . $field['id'] . ']',
@@ -116,7 +116,7 @@ class Fieldtype_input_file
 
     public function output($options)
     {
-        $options_cfg = new fields_types_options_cfg($options);
+        $options_cfg = new \Models\Main\Fields_types_options_cfg($options);
 
         if (strlen($options['value']) > 0) {
             $use_file_storage = false;

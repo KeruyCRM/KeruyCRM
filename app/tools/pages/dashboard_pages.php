@@ -112,7 +112,7 @@ class Dashboard_pages
                         //prepare field value
                         $value = \Tools\Items\Items::prepare_field_value_by_type($field, $item);
 
-                        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+                        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
                         //hide if empty
                         if (($cfg->get('hide_field_if_empty') == 1 and strlen($value) == 0) or ($cfg->get(

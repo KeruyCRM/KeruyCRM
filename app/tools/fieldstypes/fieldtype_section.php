@@ -27,7 +27,7 @@ class Fieldtype_section
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $count = (isset($params['count_fields']) ? 'form-section-' . $params['count_fields'] : '');
 

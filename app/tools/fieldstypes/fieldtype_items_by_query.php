@@ -130,7 +130,7 @@ class Fieldtype_items_by_query
 
     public function output($options)
     {
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $mysql_query = $this->build_query($options);
 
@@ -274,7 +274,7 @@ class Fieldtype_items_by_query
     {
         global $app_user, $app_entities_cache, $app_fields_cache;
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         //print_rr($options);
 

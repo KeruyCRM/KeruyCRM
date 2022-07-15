@@ -343,7 +343,7 @@ class Items
                 case 'fieldtype_tags':
                 case 'fieldtype_autostatus':
 
-                    $cfg = new \Tools\Fields_types_cfg($field_info['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg($field_info['configuration']);
 
                     if ($cfg->get('use_global_list') > 0) {
                         return global_lists::render_value($heading_field_value, true);
@@ -733,7 +733,7 @@ class Items
                     $output_options['is_email'] = true;
                 }
 
-                $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+                $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
                 //hide if empty
                 if ($cfg->get('hide_field_if_empty') == 1 and fields_types::is_empty_value($value, $field['type'])) {
@@ -926,7 +926,7 @@ class Items
                 }
             }
 
-            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
             $output_options = [
                 'class' => $field['type'],
@@ -1258,7 +1258,7 @@ class Items
                 ) . "'"
             );
             while ($fields = db_fetch_array($fields_query)) {
-                $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
+                $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
                 if ($cfg->get('use_global_list') > 0) {
                     $grouped_global_users_fields[$cfg->get('use_global_list')] = $fields['id'];
@@ -1405,7 +1405,7 @@ class Items
             ) . "' "
         );
         while ($field = db_fetch_array($fields_query)) {
-            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
             //skip fields with disabled notification
             if ($cfg->get('disable_notification') == 1) {
@@ -1546,7 +1546,7 @@ class Items
                 foreach ($parent_users_fields as $id) {
                     if (isset($parent_item_info['field_' . $id]) and strlen($parent_item_info['field_' . $id])) {
                         $field = $app_fields_cache[$path_info['entities_id']][$id];
-                        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+                        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
                         //echo $field['type'] . '<br>';
 

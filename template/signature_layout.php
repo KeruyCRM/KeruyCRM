@@ -25,7 +25,7 @@
 <body onselectstart="return false">
 
 <?php
-$cfg = new \Tools\Fields_types_cfg($app_fields_cache[$current_entity_id][_get::int('fields_id')]['configuration']);
+$cfg = new \Models\Main\Fields_types_cfg($app_fields_cache[$current_entity_id][_get::int('fields_id')]['configuration']);
 
 $button_title = (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : TEXT_APPROVE);
 ?>

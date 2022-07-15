@@ -72,7 +72,7 @@ class Fieldtype_qrcode
 
         $html = '';
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $entities_id = $options['field']['entities_id'];
 

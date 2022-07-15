@@ -110,7 +110,7 @@ class Fieldtype_random_value
 
     public function render_random_value($options)
     {
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $characters = (strlen($cfg->get('value_characters')) ? $cfg->get('value_characters') : '0123456789');
         $value_length = (strlen($cfg->get('value_length')) ? $cfg->get('value_length') : 5);

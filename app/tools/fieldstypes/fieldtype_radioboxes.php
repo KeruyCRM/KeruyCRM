@@ -68,7 +68,7 @@ class Fieldtype_radioboxes
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),
@@ -124,7 +124,7 @@ class Fieldtype_radioboxes
 
     public function output($options)
     {
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         //render global list value
         if ($cfg->get('use_global_list') > 0) {

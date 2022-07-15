@@ -82,13 +82,13 @@ class forms_fields_rules
                 }
             } elseif (in_array($v['type'], ['fieldtype_entity', 'fieldtype_entity_ajax', 'fieldtype_entity_multilevel']
             )) {
-                $cfg = new \Tools\Fields_types_cfg($v['configuration']);
+                $cfg = new \Models\Main\Fields_types_cfg($v['configuration']);
 
                 foreach (explode(',', $v['choices']) as $item_id) {
                     $chocies_values[] = items::get_heading_field($cfg->get('entity_id'), $item_id);
                 }
             } else {
-                $cfg = new \Tools\Fields_types_cfg($v['configuration']);
+                $cfg = new \Models\Main\Fields_types_cfg($v['configuration']);
 
                 if ($cfg->get('use_global_list') > 0) {
                     $choices_query = db_query(

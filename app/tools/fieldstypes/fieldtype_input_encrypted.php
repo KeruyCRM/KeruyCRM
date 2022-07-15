@@ -136,7 +136,7 @@ class Fieldtype_input_encrypted
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = new \Tools\Fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get('width') .
@@ -183,7 +183,7 @@ class Fieldtype_input_encrypted
             return '';
         }
 
-        $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if ($cfg->get('hide_value') != '1') {
             return $options['value'];
