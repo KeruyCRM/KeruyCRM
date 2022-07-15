@@ -77,7 +77,7 @@ class Favorites
 
     public static function count()
     {
-        $favorites = \K::model()->db_query_one(
+        $favorites = \K::model()->db_query_exec_one(
             'select count(*) as total from app_favorites f, app_entities e where e.id = f.entities_id and f.users_id = ? order by e.name, f.id',
             [\K::$fw->app_user['id']]
         );

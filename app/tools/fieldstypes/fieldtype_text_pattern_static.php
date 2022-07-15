@@ -62,27 +62,34 @@ class Fieldtype_text_pattern_static
 
     public static function set($entities_id, $items_id, $item_info = false)
     {
-        global $sql_query_having, $app_changed_fields, $app_choices_cache;
-
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select * from app_fields where entities_id='" . db_input(
                 $entities_id
             ) . "' and type='fieldtype_text_pattern_static'"
-        );
-        while ($fields = db_fetch_array($fields_query)) {
+        );*/
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'entities_id = ? and type = ?',
+            $entities_id,
+            'fieldtype_text_pattern_static'
+        ]);
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
             if (!$item_info) {
-                $item_info_query = db_query(
-                    "select e.* " . fieldtype_formula::prepare_query_select(
+                $item_info = \K::model()->db_query_exec_one(
+                    "select e.* " . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                         $entities_id,
                         ''
                     ) . fieldtype_related_records::prepare_query_select(
                         $entities_id,
                         ''
-                    ) . " from app_entity_" . $entities_id . " e where e.id='" . db_input($items_id) . "'"
+                    ) . " from app_entity_" . $entities_id . " e where e.id = ?", [$items_id]
                 );
-                $item_info = db_fetch_array($item_info_query);
+                //$item_info = db_fetch_array($item_info_query);
             }
 
             if ($item_info) {
@@ -92,7 +99,7 @@ class Fieldtype_text_pattern_static
                     'path' => $entities_id . '-' . $items_id,
                 ];
 
-                $fieldtype_text_pattern = new fieldtype_text_pattern;
+                $fieldtype_text_pattern = new \Tools\FieldsTypes\Fieldtype_text_pattern();
                 $value = $fieldtype_text_pattern->output($options);
 
                 if (strlen($cfg->get('trim_value'))) {
@@ -105,10 +112,16 @@ class Fieldtype_text_pattern_static
                     }
                 }
 
-                db_query(
+                /*db_query(
                     "update app_entity_" . $entities_id . " set field_" . $fields['id'] . " = '" . db_input(
                         $value
                     ) . "' where id='" . $items_id . "'"
+                );*/
+
+                \K::model()->db_update(
+                    'app_entity_' . $entities_id,
+                    ['field_' . $fields['id'] => $value],
+                    ['id = ?', $items_id]
                 );
             }
         }

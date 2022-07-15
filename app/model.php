@@ -152,7 +152,7 @@ class Model extends \Prefab
         return $this->db->exec($cmds, $args, $ttl, $log, $stamp);
     }
 
-    public function db_query_one($cmds, $args = null, $ttl = 0, $log = true, $stamp = false)
+    public function db_query_exec_one($cmds, $args = null, $ttl = 0, $log = true, $stamp = false)
     {
         $query = $this->db->exec($cmds, $args, $ttl, $log, $stamp);
         return $query[0] ?? '';

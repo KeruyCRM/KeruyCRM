@@ -393,13 +393,21 @@ class Fieldtype_subentity_form
 
     public static function update_items_fields($entities_id, $items_id)
     {
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select id from app_fields where entities_id='" . db_input(
                 $entities_id
             ) . "' and type='fieldtype_subentity_form'"
-        );
-        while ($fields = db_fetch_array($fields_query)) {
-            $subentity_form = new subentity_form($entities_id, $items_id, $fields['id']);
+        );*/
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'entities_id = ? and type = ?',
+            $entities_id,
+            'fieldtype_subentity_form'
+        ]);
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
+            $subentity_form = new \Models\Main\Items\Subentity_form($entities_id, $items_id, $fields['id']);
             $subentity_form->save_form();
         }
     }

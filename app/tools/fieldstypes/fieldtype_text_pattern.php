@@ -125,13 +125,13 @@ class Fieldtype_text_pattern
 
                                 //check if formula value exist in item and if not then do extra query to calcualte it
                                 if (strlen($item['field_' . $field['id']]) == 0) {
-                                    //prepare forumulas query
+                                    //prepare formulas query
                                     if (!$formulas_fields) {
-                                        $formulas_fields = \K::model()->db_query_one(
+                                        $formulas_fields = \K::model()->db_query_exec_one(
                                             "select e.* " . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                                                 $entities_id,
                                                 ''
-                                            ) . " from app_entity_" . $entities_id . " e where id= ?",
+                                            ) . " from app_entity_" . $entities_id . " e where id = ?",
                                             $item['id']
                                         );
                                         //$formulas_fields = $formulas_fields_query[0] ?? '';

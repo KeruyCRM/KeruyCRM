@@ -28,11 +28,7 @@ class Entities_cfg
 
     function get($key, $default = '')
     {
-        if (isset($this->cfg[$key])) {
-            return $this->cfg[$key];
-        } else {
-            return $default;
-        }
+        return $this->cfg[$key] ?? $default;
     }
 
     function set($key, $value)

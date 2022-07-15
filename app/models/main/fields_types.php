@@ -1101,7 +1101,7 @@ class Fields_types
         $fieldtype_mysql_query_force = true;
 
         //get item info
-        $item_info = \K::model()->db_query_one(
+        $item_info = \K::model()->db_query_exec_one(
             'select e.* ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                 $current_entity_id,
                 ''

@@ -1,8 +1,9 @@
 <?php
 
-class items
-{
+namespace Models\Main\Items;
 
+class Items
+{
     public static function get_info($entities_id, $items_id)
     {
         $item_query = db_query(
@@ -547,10 +548,8 @@ class items
 
         $menu = [];
 
-
         //print_r($app_users_access);
         //exit();
-
 
         if ($entity_id > 0) {
             $parent_entity_cfg = new entities_cfg($entity_id);
@@ -676,7 +675,6 @@ class items
 
         $html = '';
 
-
         /**
          * display entity fields
          */
@@ -685,7 +683,6 @@ class items
         } else {
             $exclude_fields_types = ",'fieldtype_related_records','fieldtype_parent_item_id'";
         }
-
 
         $count = 0;
 
@@ -930,7 +927,6 @@ class items
 
             $cfg = new fields_types_cfg($field['configuration']);
 
-
             $output_options = [
                 'class' => $field['type'],
                 'value' => $value,
@@ -968,7 +964,6 @@ class items
         ';
             }
         }
-
 
         return $html;
     }
@@ -1011,7 +1006,6 @@ class items
         $path_to_entity = [];
         foreach ($path_array as $v) {
             $path_list[] = $v['path'];
-
 
             if ($cout != (count($path_array) - 1)) {
                 $paent_path_list[] = $v['path'];
@@ -1157,7 +1151,6 @@ class items
                     ) . "' and e.parent_id = '" . db_input($parent_id) . "' order by e.sort_order, e.name"
                 );
             }
-
 
             while ($entities = db_fetch_array($entities_query)) {
                 $list[] = $entities['id'];
@@ -1388,20 +1381,31 @@ class items
     public static function get_send_to($entity_id, $item_id, $item = false)
     {
         if (!$item) {
-            $item = db_find('app_entity_' . $entity_id, $item_id);
+            $item = \K::model()->db_find('app_entity_' . $entity_id, $item_id);
         }
 
         //start build $send_to array
         $send_to = [];
 
         //add assigned users to notification
-        $fields_query = db_query(
+        /*$fields_query = \K::model()->db_query_exec(
             "select f.* from app_fields f where f.type in ('fieldtype_users_approve','fieldtype_user_roles','fieldtype_grouped_users','fieldtype_users','fieldtype_users_ajax') and  f.entities_id='" . db_input(
                 $entity_id
             ) . "' "
-        );
-        while ($field = db_fetch_array($fields_query)) {
-            $cfg = new fields_types_cfg($field['configuration']);
+        );*/
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (?,?,?,?,?) and entities_id = ?',
+            'fieldtype_users_approve',
+            'fieldtype_user_roles',
+            'fieldtype_grouped_users',
+            'fieldtype_users',
+            'fieldtype_users_ajax',
+            $entity_id
+        ]);
+
+        //while ($field = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $field) {
+            $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
             //skip fields with disabled notification
             if ($cfg->get('disable_notification') == 1) {
@@ -1435,10 +1439,10 @@ class items
     public static function send_new_item_nofitication($current_entity_id, $item_id, $app_send_to = false)
     {
         if (!$app_send_to) {
-            $app_send_to = items::get_send_to($current_entity_id, $item_id);
+            $app_send_to = self::get_send_to($current_entity_id, $item_id);
         }
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //sending sms
             $modules = new modules('sms');
             $sms = new sms($current_entity_id, $item_id);
@@ -1459,7 +1463,6 @@ class items
         $subject = (strlen($entity_cfg->get('email_subject_new_item')) > 0 ? $entity_cfg->get(
                 'email_subject_new_item'
             ) . ' ' . $item_name : TEXT_DEFAULT_EMAIL_SUBJECT_NEW_ITEM . ' ' . $item_name);
-
 
         //Send notification if there are assigned users and items is new or there is changed fields or new assigned users
         if (count($app_send_to) > 0) {
@@ -1496,7 +1499,6 @@ class items
 
                 //echo $subject . $body;
                 //exit();
-
 
                 if (users_cfg::get_value_by_users_id($send_to, 'disable_notification') != 1) {
                     users::send_to([$send_to], $subject, $heading . $body);

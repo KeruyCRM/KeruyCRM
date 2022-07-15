@@ -32,7 +32,9 @@ class Fieldtype_php_code
         ];
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_FIELDTYPE_PHP_CODE_RUN_DYNAMIC_INFO) . \K::$fw->TEXT_RUN_DYNAMIC,
+            'title' => \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXT_FIELDTYPE_PHP_CODE_RUN_DYNAMIC_INFO
+                ) . \K::$fw->TEXT_RUN_DYNAMIC,
             'name' => 'dynamic_query',
             'type' => 'checkbox'
         ];
@@ -68,18 +70,21 @@ class Fieldtype_php_code
 
     public static function run($entities_id, $items_id, $item_info = false)
     {
-        global $app_fields_cache;
-
-        foreach ($app_fields_cache[$entities_id] as $field_id => $field) {
+        foreach (\K::$fw->app_fields_cache[$entities_id] as $field_id => $field) {
             $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
             if ($field['type'] == 'fieldtype_php_code' and $cfg->get('dynamic_query') != 1) {
                 $output_value = self::run_code($entities_id, $items_id, $field_id, $item_info);
 
-                db_query(
+                /*db_query(
                     "update app_entity_{$entities_id} set field_{$field_id}='" . db_input(
                         $output_value
                     ) . "' where id='" . db_input($items_id) . "'"
+                );*/
+                \K::model()->db_update(
+                    'app_entity_' . $entities_id,
+                    ['field_' . $field_id => $output_value],
+                    ['id = ?', $items_id]
                 );
             }
         }
@@ -87,36 +92,43 @@ class Fieldtype_php_code
 
     public static function run_code($entities_id, $items_id, $field_id, $item_info = false)
     {
-        global $app_entities_cache, $app_fields_cache, $current_field_value, $parent_item_holder, $app_user;
-
-        $cfg = new \Tools\Fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
+        $cfg = new \Tools\Fields_types_cfg(\K::$fw->app_fields_cache[$entities_id][$field_id]['configuration']);
 
         $is_dynamic_query = false;
 
         if (!$item_info) {
             $is_dynamic_query = true;
 
-            $item_info_query = db_query(
+            $item_info = \K::model()->db_query_exec_one(
                 "select e.* " . fieldtype_formula::prepare_query_select(
                     $entities_id,
                     ''
-                ) . " from app_entity_" . $entities_id . " e where e.id='" . db_input($items_id) . "'"
+                ) . " from app_entity_" . $entities_id . " e where e.id = ?",
+                $items_id
             );
-            $item_info = db_fetch_array($item_info_query);
+            //$item_info = db_fetch_array($item_info_query);
         }
 
-        $current_field_value = $item_info['field_' . $field_id];
+        \K::$fw->current_field_value = $item_info['field_' . $field_id];
 
         $fields_values = $item_info;
 
-        if ($app_entities_cache[$entities_id]['parent_id'] > 0) {
-            if (!isset($parent_item_holder[$item_info['parent_item_id']])) {
-                $parent_item_query = db_query(
-                    "select * from app_entity_{$app_entities_cache[$entities_id]['parent_id']} where id={$item_info['parent_item_id']}"
+        if (\K::$fw->app_entities_cache[$entities_id]['parent_id'] > 0) {
+            if (!isset(\K::$fw->parent_item_holder[$item_info['parent_item_id']])) {
+                /*$parent_item_query = db_query(
+                    "select * from app_entity_{\K::$fw->app_entities_cache[$entities_id]['parent_id']} where id={$item_info['parent_item_id']}"
+                );*/
+
+                $parent_item = \K::model()->db_fetch_one(
+                    'app_entity_' . \K::$fw->app_entities_cache[$entities_id]['parent_id'], [
+                        'id = ?',
+                        $item_info['parent_item_id']
+                    ]
                 );
-                $parent_item_holder[$item_info['parent_item_id']] = $parent_item = db_fetch_array($parent_item_query);
+
+                \K::$fw->parent_item_holder[$item_info['parent_item_id']] = $parent_item;
             } else {
-                $parent_item = $parent_item_holder[$item_info['parent_item_id']];
+                $parent_item = \K::$fw->parent_item_holder[$item_info['parent_item_id']];
             }
 
             if ($parent_item) {
@@ -130,11 +142,11 @@ class Fieldtype_php_code
 
         $php_code = $cfg->get('php_code');
 
-        $php_code = str_replace('[current_user_id]', $app_user['id'], $php_code);
+        $php_code = str_replace('[current_user_id]', \K::$fw->app_user['id'], $php_code);
 
         //prepare values to replace
-        foreach ($fields_values as $fiels_id => $fields_value) {
-            $fiels_id = str_replace('field_', '', $fiels_id);
+        foreach ($fields_values as $fields_id => $fields_value) {
+            $fields_id = str_replace('field_', '', $fields_id);
 
             if (!strlen($fields_value)) {
                 $fields_value = 0;
@@ -142,12 +154,12 @@ class Fieldtype_php_code
                 $fields_value = "'" . addslashes($fields_value) . "'";
             }
 
-            $php_code = str_replace('[' . $fiels_id . ']', $fields_value, $php_code);
+            $php_code = str_replace('[' . $fields_id . ']', $fields_value, $php_code);
         }
 
         if ($cfg->get('debug_mode') == 1 and !$is_dynamic_query) {
-            print_rr($fields_values);
-            print_rr(htmlspecialchars($php_code));
+            \Helpers\App::print_r($fields_values);
+            \Helpers\App::print_r(htmlspecialchars($php_code));
         }
 
         if (!strlen($php_code)) {
@@ -156,11 +168,11 @@ class Fieldtype_php_code
 
         try {
             eval($php_code);
-        } catch (Error $e) {
-            echo alert_error(\K::$fw->TEXT_ERROR . ' ' . $e->getMessage() . ' on line ' . $e->getLine());
+        } catch (\Error $e) {
+            echo \Helpers\App::alert_error(\K::$fw->TEXT_ERROR . ' ' . $e->getMessage() . ' on line ' . $e->getLine());
         }
 
-        return (isset($output_value) ? $output_value : '');
+        return ($output_value ?? '');
     }
 
     public function reports_query($options)

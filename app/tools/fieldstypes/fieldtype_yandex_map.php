@@ -182,10 +182,8 @@ class Fieldtype_yandex_map
 
     public static function update_items_fields($entities_id, $items_id, $item_info = false)
     {
-        global $app_fields_cache, $alerts;
-
-        if (isset($app_fields_cache[$entities_id])) {
-            foreach ($app_fields_cache[$entities_id] as $fields) {
+        if (isset(\K::$fw->app_fields_cache[$entities_id])) {
+            foreach (\K::$fw->app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_yandex_map') {
                     $fields_id = $fields['id'];
 
@@ -198,8 +196,13 @@ class Fieldtype_yandex_map
 
                     //get item info
                     if (!$item_info) {
-                        $item_info_query = db_query("select * from app_entity_{$entities_id} where id={$items_id}");
-                        $item_info = db_fetch_array($item_info_query);
+                        /*$item_info_query = db_query("select * from app_entity_{$entities_id} where id={$items_id}");
+                        $item_info = db_fetch_array($item_info_query);*/
+
+                        $item_info = \K::model()->db_fetch_one('app_entity_' . $entities_id, [
+                            'id = ?',
+                            $items_id
+                        ]);
                     }
 
                     //get address by pattern
@@ -210,16 +213,22 @@ class Fieldtype_yandex_map
                         'path' => $entities_id . '-' . $items_id,
                     ];
 
-                    $fieldtype_text_pattern = new fieldtype_text_pattern;
+                    $fieldtype_text_pattern = new \Tools\FieldsTypes\Fieldtype_text_pattern();
                     $use_address = urlencode(strip_tags($fieldtype_text_pattern->output($pattern_options)));
                     $use_address = str_replace(["\n\r", "\n", "\r"], " ", $use_address);
 
                     //skip if address empty
                     if (!strlen($use_address)) {
-                        db_query(
+                        /*db_query(
                             "update app_entity_{$entities_id} set field_{$fields_id}='' where id='" . db_input(
                                 $items_id
                             ) . "'"
+                        );*/
+
+                        \K::model()->db_update(
+                            'app_entity_' . $entities_id,
+                            ['field_' . $fields_id => ''],
+                            ['id = ?', $items_id]
                         );
 
                         return false;
@@ -240,9 +249,6 @@ class Fieldtype_yandex_map
 
                     //update address if it needs
                     if (!strlen($lat) or $use_address != $current_address) {
-                        //echo 'use=' . $use_address . '<br>cur=' . $current_address;
-                        //exit();
-
                         $url = "https://geocode-maps.yandex.ru/1.x?geocode=" . $use_address . "&apikey=" . $cfg->get(
                                 'api_key'
                             ) . "&format=json&results=1&lang=" . $cfg->get('lang');
@@ -257,31 +263,30 @@ class Fieldtype_yandex_map
 
                         $result = json_decode($result, true);
 
-                        //print_rr($result);
-                        //exit();
-
                         if (isset($result['error'])) {
-                            $alerts->add(
-                                \K::f3(
-                                )->TEXT_FIELD . ' "' . $fields['name'] . '": ' . $result['error'] . ': ' . $result['message'],
+                            \K::flash()->addMessage(
+                                \K::$fw->TEXT_FIELD . ' "' . $fields['name'] . '": ' . $result['error'] . ': ' . $result['message'],
                                 'error'
                             );
                         } else {
-                            $formated_address = $result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text'];
+                            $formatted_address = $result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text'];
 
                             $pos = $result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'];
                             $pos = explode(' ', $pos);
                             $lat = $pos[0];
                             $lng = $pos[1];
 
-                            $value = $lng . "\t" . $lat . "\t" . $use_address . "\t" . $formated_address;
+                            $value = $lng . "\t" . $lat . "\t" . $use_address . "\t" . $formatted_address;
 
-                            //echo $value;
-
-                            db_query(
+                            /*db_query(
                                 "update app_entity_{$entities_id} set field_{$fields_id}='" . db_input(
                                     $value
                                 ) . "' where id='" . db_input($items_id) . "'"
+                            );*/
+                            \K::model()->db_update(
+                                'app_entity_' . $entities_id,
+                                ['field_' . $fields_id => $value],
+                                ['id = ?', $items_id]
                             );
                         }
                     }

@@ -1,6 +1,8 @@
 <?php
 
-class subentity_form
+namespace Models\Main\Items;
+
+class Subentity_form
 {
     function __construct($entities_id, $items_id, $field_id)
     {
@@ -371,46 +373,35 @@ class subentity_form
 
     function save_form()
     {
-        global $app_subentity_form_items;
-
         switch ($this->cfg->get('fields_display')) {
             case 'column':
             case 'row':
-                //print_rr($_POST);
-                $subentityform = $_POST['subentityform' . $this->field_id . '_fields'] ?? [];
+                $subentityform = \K::$fw->POST['subentityform' . $this->field_id . '_fields'] ?? [];
                 $this->save_form_post($subentityform);
 
                 //reset data after save;
-                $_POST['subentityform' . $this->field_id . '_fields'] = [];
+                \K::$fw->POST['subentityform' . $this->field_id . '_fields'] = [];
                 break;
             case 'window':
-                $subentityform = $app_subentity_form_items[$this->field_id] ?? [];
+                $subentityform = \K::$fw->app_subentity_form_items[$this->field_id] ?? [];
                 $this->save_form_post($subentityform);
 
                 //reset data after save
-                $app_subentity_form_items[$this->field_id] = [];
+                \K::$fw->app_subentity_form_items[$this->field_id] = [];
                 break;
         }
     }
 
-
     function save_form_post($subentityform)
     {
-        global $app_fields_cache, $app_user, $app_subentity_form_items_deleted;
-
         $current_entity_id = $this->cfg->get('entity_id');
-
-        //print_rr($subentityform);
-        //exit();
-
-        $form_items_list = [];
 
         foreach ($subentityform as $item_id => $fields) {
             $sql_data = [];
-            $choices_values = new choices_values($current_entity_id);
+            $choices_values = new \Models\Main\Choices_values($current_entity_id);
 
             foreach ($fields as $field_id => $field_value) {
-                $field = $app_fields_cache[$current_entity_id][$field_id];
+                $field = \K::$fw->app_fields_cache[$current_entity_id][$field_id];
 
                 if (is_array($field_value) and !in_array($field['type'], ['fieldtype_tags', 'fieldtype_image_ajax'])) {
                     $field_value = implode(',', $field_value);
@@ -425,7 +416,7 @@ class subentity_form
                     'item' => [],
                 ];
 
-                $sql_data['field_' . $field['id']] = fields_types::process($process_options);
+                $sql_data['field_' . $field['id']] = \Models\Main\Fields_types::process($process_options);
 
                 //prepare choices values for fields with multiple values
                 $choices_values->prepare($process_options);
@@ -440,38 +431,35 @@ class subentity_form
                 }
             }
 
-            //print_rr($sql_data);
-            //exit();
-
             if (is_numeric($item_id)) {
                 $sql_data['date_updated'] = time();
-                db_perform('app_entity_' . $current_entity_id, $sql_data, 'update', "id='" . $item_id . "'");
+                \K::model()->db_perform('app_entity_' . $current_entity_id, $sql_data, ['id = ?' => $item_id]);
 
                 //insert choices values for fields with multiple values
                 $choices_values->process($item_id);
 
                 //autoupdate all field types
-                fields_types::update_items_fields($current_entity_id, $item_id);
+                \Models\Main\Fields_types::update_items_fields($current_entity_id, $item_id);
 
-                if (is_ext_installed()) {
+                if (\Helpers\App::is_ext_installed()) {
                     //run actions after item update
                     $processes = new processes($current_entity_id);
                     $processes->run_after_update($item_id);
                 }
             } else {
                 $sql_data['date_added'] = time();
-                $sql_data['created_by'] = $app_user['id'];
+                $sql_data['created_by'] = \K::$fw->app_user['id'];
                 $sql_data['parent_item_id'] = $this->items_id;
-                db_perform('app_entity_' . $current_entity_id, $sql_data);
-                $item_id = db_insert_id();
+                $mapper = \K::model()->db_perform('app_entity_' . $current_entity_id, $sql_data);
+                $item_id = \K::model()->db_insert_id($mapper);
 
                 //insert choices values for fields with multiple values
                 $choices_values->process($item_id);
 
                 //autoupdate all field types
-                fields_types::update_items_fields($current_entity_id, $item_id);
+                \Models\Main\Fields_types::update_items_fields($current_entity_id, $item_id);
 
-                items::send_new_item_nofitication($current_entity_id, $item_id);
+                \Models\Main\Items\Items::send_new_item_nofitication($current_entity_id, $item_id);
 
                 if (is_ext_installed()) {
                     //subscribe
@@ -484,21 +472,16 @@ class subentity_form
                     $processes->run_after_insert($item_id);
                 }
             }
-
-            $form_items_list[] = $item_id;
         }
 
         //delete items
-        if (isset($app_subentity_form_items_deleted[$this->field_id]) and is_array(
-                $app_subentity_form_items_deleted[$this->field_id]
-            ) and count($app_subentity_form_items_deleted[$this->field_id])) {
-            //print_rr($app_subentity_form_items_deleted[$this->field_id]);
-            //exit();
-
+        if (isset(\K::$fw->app_subentity_form_items_deleted[$this->field_id]) and is_array(
+                \K::$fw->app_subentity_form_items_deleted[$this->field_id]
+            ) and count(\K::$fw->app_subentity_form_items_deleted[$this->field_id])) {
             $items_query = db_query(
                 "select id from app_entity_{$current_entity_id} where parent_item_id={$this->items_id}  and id in (" . implode(
                     ',',
-                    $app_subentity_form_items_deleted[$this->field_id]
+                    \K::$fw->app_subentity_form_items_deleted[$this->field_id]
                 ) . ")"
             );
             while ($items = db_fetch_array($items_query)) {
@@ -646,7 +629,6 @@ class subentity_form
             <tbody>
             ';
 
-
         //print_rr($app_subentity_form_items);
         //print_rr($listing_fields);
 
@@ -732,7 +714,6 @@ class subentity_form
                     TEXT_DELETE
                 ) . '"><i class="fa fa-times" aria-hidden="true"></i></button></div>';
 
-
             foreach ($listing_fields as $col => $field) {
                 if (isset($item[$field['id']])) {
                     $output_options = [
@@ -758,13 +739,11 @@ class subentity_form
                     </div>';
             }
 
-
             $html .= '
                         </div>
                     </div>
                 </div>';
         }
-
 
         return ['rows_count' => 0, 'html' => $html];
     }

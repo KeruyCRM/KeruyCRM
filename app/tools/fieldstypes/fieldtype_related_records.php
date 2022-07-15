@@ -263,21 +263,21 @@ class Fieldtype_related_records
             $reports_info['fields_in_listing'] = '';
         }
 
-        $fields_query = db_query(
+        $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in ('fieldtype_related_records') and " . (strlen(
                 $reports_info['fields_in_listing']
-            ) ? "find_in_set(f.id,'" . $reports_info['fields_in_listing'] . "')" : "f.listing_status=1") . " and f.entities_id='" . db_input(
-                $entities_id
-            ) . "' and f.forms_tabs_id=t.id  order by t.sort_order, t.name, f.sort_order, f.name"
+            ) ? "find_in_set(f.id,'" . $reports_info['fields_in_listing'] . "')" : "f.listing_status = 1") . " and f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
+            [$entities_id]
         );
-        while ($field = db_fetch_array($fields_query)) {
+        //while ($field = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $field) {
             $cfg = new \Tools\Fields_types_cfg($field['configuration']);
 
             if ($cfg->get('display_in_listing', 'count') != 'count') {
                 continue;
             }
 
-            $table_info = related_records::get_related_items_table_name($entities_id, $cfg->get('entity_id'));
+            $table_info = \Tools\Related_records::get_related_items_table_name($entities_id, $cfg->get('entity_id'));
 
             $where_sql = '';
 
@@ -285,7 +285,7 @@ class Fieldtype_related_records
                 $where_sql = " or ri.entity_" . $entities_id . $table_info['sufix'] . "_items_id=e.id ";
             }
 
-            $listing_sql_query_select .= ", (select count(*) as total from " . $table_info['table_name'] . " ri where ri.entity_" . $entities_id . "_items_id=e.id {$where_sql}) as field_" . $field['id'];
+            $listing_sql_query_select .= ", (select count(*) as total from " . $table_info['table_name'] . " ri where ri.entity_" . $entities_id . "_items_id = e.id {$where_sql}) as field_" . $field['id'];
         }
 
         return $listing_sql_query_select;

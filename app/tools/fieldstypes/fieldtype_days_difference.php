@@ -264,7 +264,7 @@ END;";
 
                     //skip dynamic query
                     if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {
-                        $item_info = \K::model()->db_query_one(
+                        $item_info = \K::model()->db_query_exec_one(
                             "select " . self::prepare_query(
                                 $fields,
                                 'e',

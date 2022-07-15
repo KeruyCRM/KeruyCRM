@@ -234,7 +234,7 @@ class Fieldtype_dynamic_date
 
         if (count($update_fields)) {
             if (!$item_info) {
-                $item_info = \K::model()->db_query_one(
+                $item_info = \K::model()->db_query_exec_one(
                     'select e.* ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                         $entities_id,
                         ''

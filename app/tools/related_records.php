@@ -4,7 +4,6 @@ namespace Tools;
 
 class Related_records
 {
-
     public $entities_id;
     public $items_id;
     public $field;

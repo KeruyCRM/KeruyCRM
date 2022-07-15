@@ -1349,7 +1349,7 @@ class App
         }
     }
 
-    public static function print_rr($v)
+    public static function print_r($v)
     {
         echo '<pre>';
         print_r($v);

@@ -63,7 +63,7 @@ class Dashboard_pages
             ], ['order' => 'sort_order,name']);
 
             if (count($pages_query)) {
-                $item = \K::model()->db_query_one(
+                $item = \K::model()->db_query_exec_one(
                     "select e.* " .
                     \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                         1,
