@@ -8,16 +8,15 @@ class Num2str extends \Prefab
 
     function __construct()
     {
-        $path = 'app/languages/num2str/';
-        if ($handle = opendir($path)) {
-            while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != "..") {
-                    $data = require 'includes/languages/num2str/' . $entry;
+        $glob = glob('app/languages/num2str/*.php');
 
-                    $this->data[str_replace('.php', '', $entry)] = $data;
-                }
+        foreach ($glob as $file) {
+            if (is_file($file) and substr($file, -4) == '.php') {
+                $entry = substr(substr($file, (strrpos($file, "/") + 1)), 0, -4);
+                $data = require 'includes/languages/num2str/' . $entry;
+
+                $this->data[$entry] = $data;
             }
-            closedir($handle);
         }
     }
 
@@ -29,16 +28,18 @@ class Num2str extends \Prefab
                 $text,
                 $matches
             )) {
-                //echo '<pre>';
-                //print_r($matches);
-
                 foreach ($matches[1] as $matches_key => $filed_id) {
                     $number = '';
 
                     $filed_id = (strlen($matches[2][$matches_key]) ? $matches[2][$matches_key] : $filed_id);
 
-                    $field_query = db_query("select * from app_fields where id='" . (int)$filed_id . "'");
-                    if ($field = db_fetch_array($field_query)) {
+                    //$field_query = db_query("select * from app_fields where id='" . (int)$filed_id . "'");
+
+                    $field = \K::model()->db_fetch_one('app_fields', [
+                        'id = ?',
+                        $filed_id
+                    ]);
+                    if ($field) {
                         $value = $item['field_' . $field['id']] ?? '';
 
                         $output_options = [
@@ -50,14 +51,12 @@ class Num2str extends \Prefab
                             'path' => $field['entities_id']
                         ];
 
-                        $number = trim(strip_tags(fields_types::output($output_options)));
+                        $number = trim(\K::fw()->clean(\Models\Main\Fields_types::output($output_options)));
                     }
 
                     if (!strlen($number)) {
                         $number = 0;
                     }
-
-                    //echo $matches[0][$matches_key] . ' - ' . $number . '<br>' . $this->convert($code, $number) . '<br><br>';
 
                     $text = str_replace($matches[0][$matches_key], $this->convert($code, $number), $text);
                 }
@@ -76,13 +75,12 @@ class Num2str extends \Prefab
         $hundred = $this->data[$code]['hundred'];
         $unit = $this->data[$code]['unit'];
 
-        //
-        [$rub, $kop] = explode('.', sprintf("%015.2f", floatval($num)));
+        [$banknote, $coin] = explode('.', sprintf("%015.2f", floatval($num)));
 
         $out = [];
 
-        if (intval($rub) > 0) {
-            foreach (str_split($rub, 3) as $uk => $v) { // by 3 symbols
+        if (intval($banknote) > 0) {
+            foreach (str_split($banknote, 3) as $uk => $v) { // by 3 symbols
                 if (!intval($v)) {
                     continue;
                 }
@@ -110,9 +108,9 @@ class Num2str extends \Prefab
         }
 
         if ($add_currency) {
-            $out[] = $this->morph(intval($rub), $unit[1][0], $unit[1][1], $unit[1][2]); // rub
+            $out[] = $this->morph(intval($banknote), $unit[1][0], $unit[1][1], $unit[1][2]); // rub
 
-            $out[] = $kop . ' ' . $this->morph($kop, $unit[0][0], $unit[0][1], $unit[0][2]); // kop
+            $out[] = $coin . ' ' . $this->morph($coin, $unit[0][0], $unit[0][1], $unit[0][2]); // kop
         }
 
         return trim(preg_replace('/ {2,}/', ' ', join(' ', $out)));
