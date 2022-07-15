@@ -41,8 +41,6 @@ class Fieldtype_text_pattern
 
     public function output($options)
     {
-        global $app_user, $app_entities_cache, $app_fields_cache, $fields_access_schema_holder, $parent_items_name_holder, $app_num2str, $app_module_path, $app_session_token;
-
         $html = '';
 
         $cfg = new \Tools\Fields_types_cfg($options['field']['configuration']);
@@ -58,14 +56,14 @@ class Fieldtype_text_pattern
         }
 
         if (strlen($pattern) > 0) {
-            //hanlde current user name, id, item id etc
+            //handle current user name, id, item id etc
             $pattern = str_replace([
                 '[current_user_name]',
                 '[current_user_id]',
                 '[id]',
             ], [
-                ($app_user['name'] ?? ''),
-                ($app_user['id'] ?? ''),
+                (\K::$fw->app_user['name'] ?? ''),
+                (\K::$fw->app_user['id'] ?? ''),
                 $item['id'],
             ], $pattern);
 
@@ -77,7 +75,7 @@ class Fieldtype_text_pattern
             }
 
             //num2str
-            $pattern = $app_num2str->prepare($pattern, $item);
+            $pattern = \K::app_num2str()->prepare($pattern, $item);
 
             if (preg_match_all('/\[(\w+)\]/', $pattern, $matches)) {
                 //use to check if formulas fields using in text pattern
@@ -86,25 +84,25 @@ class Fieldtype_text_pattern
                 foreach ($matches[1] as $matches_key => $fields_id) {
                     $field = false;
 
-                    if (isset($app_fields_cache[$entities_id]['fieldtype_' . $fields_id])) {
-                        $field = $app_fields_cache[$entities_id]['fieldtype_' . $fields_id];
-                    } elseif (isset($app_fields_cache[$entities_id][$fields_id])) {
-                        $field = $app_fields_cache[$entities_id][$fields_id];
+                    if (isset(\K::$fw->app_fields_cache[$entities_id]['fieldtype_' . $fields_id])) {
+                        $field = \K::$fw->app_fields_cache[$entities_id]['fieldtype_' . $fields_id];
+                    } elseif (isset(\K::$fw->app_fields_cache[$entities_id][$fields_id])) {
+                        $field = \K::$fw->app_fields_cache[$entities_id][$fields_id];
                     }
 
                     if ($field) {
                         switch ($field['type']) {
                             case 'fieldtype_parent_item_id':
-                                $enitites_info = $app_entities_cache[$entities_id];
+                                $enitites_info = \K::$fw->app_entities_cache[$entities_id];
 
                                 if ($enitites_info['parent_id'] > 0 and $item['parent_item_id'] > 0) {
-                                    if (!isset($parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']])) {
-                                        $value = $parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']] = items::get_heading_field(
+                                    if (!isset(\K::$fw->parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']])) {
+                                        $value = \K::$fw->parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']] = \Tools\Items\Items::get_heading_field(
                                             $enitites_info['parent_id'],
                                             $item['parent_item_id']
                                         );
                                     } else {
-                                        $value = $parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']];
+                                        $value = \K::$fw->parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']];
                                     }
                                 } else {
                                     $value = '';
@@ -129,13 +127,14 @@ class Fieldtype_text_pattern
                                 if (strlen($item['field_' . $field['id']]) == 0) {
                                     //prepare forumulas query
                                     if (!$formulas_fields) {
-                                        $formulas_fields_query = db_query(
-                                            "select e.* " . fieldtype_formula::prepare_query_select(
+                                        $formulas_fields = \K::model()->db_query_one(
+                                            "select e.* " . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                                                 $entities_id,
                                                 ''
-                                            ) . " from app_entity_" . $entities_id . " e where id='" . $item['id'] . "'"
+                                            ) . " from app_entity_" . $entities_id . " e where id= ?",
+                                            $item['id']
                                         );
-                                        $formulas_fields = db_fetch_array($formulas_fields_query);
+                                        //$formulas_fields = $formulas_fields_query[0] ?? '';
                                     }
 
                                     $value = $item['field_' . $field['id']] = $formulas_fields['field_' . $field['id']];
@@ -155,9 +154,9 @@ class Fieldtype_text_pattern
                             'item' => $item,
                             'is_export' => true,
                             'is_print' => true,
-                            'is_email' => (isset($options['is_email']) ? $options['is_email'] : false),
-                            'hide_attachments_url' => (isset($options['hide_attachments_url']) ? $options['hide_attachments_url'] : false),
-                            'path' => (isset($options['path']) ? $options['path'] : '')
+                            'is_email' => ($options['is_email'] ?? false),
+                            'hide_attachments_url' => ($options['hide_attachments_url'] ?? false),
+                            'path' => ($options['path'] ?? '')
                         ];
 
                         //output full html if print option off
@@ -169,45 +168,46 @@ class Fieldtype_text_pattern
                         }
 
                         if (in_array($field['type'], ['fieldtype_textarea_wysiwyg'])) {
-                            $output = trim(fields_types::output($output_options));
+                            $output = trim(\Models\Main\Fields_types::output($output_options));
                         } elseif (in_array($field['type'], ['fieldtype_user_photo'])) {
-                            if ($app_module_path == 'dashboard/select2_users_json') {
-                                $output = '<img src="' . url_for(
-                                        'dashboard/select2_users_json',
-                                        'action=preview_image&form_type=' . $_GET['form_type'] . '&entity_id=' . $_GET['entity_id'] . '&field_id=' . $_GET['field_id'] . '&token=' . base64_encode(
-                                            $app_session_token
-                                        ) . '&file=' . urlencode(base64_encode($output_options['value']))
+                            if (\K::$fw->app_module_path == 'dashboard/select2_users_json') {
+                                $output = '<img src="' . \Helpers\Urls::url_for(
+                                        'main/dashboard/select2_users_json/preview_image',
+                                        'form_type=' . \K::$fw->GET['form_type'] . '&entity_id=' . \K::$fw->GET['entity_id'] . '&field_id=' . \K::$fw->GET['field_id'] . '&file=' . urlencode(
+                                            base64_encode($output_options['value'])
+                                        ),
+                                        true
                                     ) . '">';
                             } else {
-                                $output = fields_types::output($output_options);
+                                $output = \Models\Main\Fields_types::output($output_options);
                             }
                         } elseif (in_array($field['type'], ['fieldtype_image'])) {
                             if (strlen($output_options['value'])) {
-                                if ($app_module_path == 'dashboard/select2_json') {
-                                    $output = '<img src="' . url_for(
-                                            'dashboard/select2_json',
-                                            'action=preview_image&form_type=' . $_GET['form_type'] . '&entity_id=' . $_GET['entity_id'] . '&field_id=' . $_GET['field_id'] . '&parent_entity_item_id=' . $_GET['parent_entity_item_id'] . '&file=' . urlencode(
+                                if (\K::$fw->app_module_path == 'dashboard/select2_json') {
+                                    $output = '<img src="' . \Helpers\Urls::url_for(
+                                            'main/dashboard/select2_json/preview_image',
+                                            'form_type=' . \K::$fw->GET['form_type'] . '&entity_id=' . \K::$fw->GET['entity_id'] . '&field_id=' . \K::$fw->GET['field_id'] . '&parent_entity_item_id=' . \K::$fw->GET['parent_entity_item_id'] . '&file=' . urlencode(
                                                 base64_encode($output_options['value'])
                                             )
                                         ) . '">';
-                                } elseif ($app_module_path == 'dashboard/select2_ml_json') {
-                                    $output = '<img src="' . url_for(
-                                            'dashboard/select2_ml_json',
-                                            'action=preview_image&form_type=' . $_GET['form_type'] . '&entity_id=' . $_GET['entity_id'] . '&field_id=' . $_GET['field_id'] . '&parent_entity_item_id=' . $_GET['parent_entity_item_id'] . '&file=' . urlencode(
+                                } elseif (\K::$fw->app_module_path == 'dashboard/select2_ml_json') {
+                                    $output = '<img src="' . \Helpers\Urls::url_for(
+                                            'main/dashboard/select2_ml_json/preview_image',
+                                            'form_type=' . \K::$fw->GET['form_type'] . '&entity_id=' . \K::$fw->GET['entity_id'] . '&field_id=' . \K::$fw->GET['field_id'] . '&parent_entity_item_id=' . \K::$fw->GET['parent_entity_item_id'] . '&file=' . urlencode(
                                                 base64_encode($output_options['value'])
                                             )
                                         ) . '">';
                                 } elseif ($options['is_email'] == 1) {
-                                    $file = attachments::parse_filename($output_options['value']);
+                                    $file = \Tools\Attachments::parse_filename($output_options['value']);
 
                                     if ($options['hide_attachments_url'] == 1) {
                                         $output = $file['name'];
                                     } else {
-                                        $output = link_to(
+                                        $output = \Helpers\Urls::link_to(
                                             $file['name'],
-                                            url_for(
-                                                'items/info',
-                                                'path=' . $entities_id . '&action=download_attachment&file=' . urlencode(
+                                            \Helpers\Urls::url_for(
+                                                'main/items/info/download_attachment',
+                                                'path=' . $entities_id . '&file=' . urlencode(
                                                     base64_encode($output_options['value'])
                                                 ) . '&field=' . $output_options['field']['id']
                                             ),
@@ -215,9 +215,9 @@ class Fieldtype_text_pattern
                                         );
                                     }
                                 } else {
-                                    $output = '<img src="' . url_for(
-                                            'items/info&path=' . $entities_id,
-                                            '&action=download_attachment&preview=1&file=' . urlencode(
+                                    $output = '<img src="' . \Helpers\Urls::url_for(
+                                            'main/items/info/download_attachment',
+                                            '&path=' . $entities_id . '&preview=1&file=' . urlencode(
                                                 base64_encode($output_options['value'])
                                             )
                                         ) . '">';
@@ -231,11 +231,11 @@ class Fieldtype_text_pattern
                                 $field['type'],
                                 ['fieldtype_attachments', 'fieldtype_input_file', 'fieldtype_image']
                             )) {
-                            $output = fields_types::output($output_options);
+                            $output = \Models\Main\Fields_types::output($output_options);
                         } elseif (in_array($field['type'], ['fieldtype_todo_list'])) {
-                            $output = trim(fields_types::output($output_options));
+                            $output = trim(\Models\Main\Fields_types::output($output_options));
                         } else {
-                            $output = trim(strip_tags(fields_types::output($output_options)));
+                            $output = trim(\K::fw()->clean(\Models\Main\Fields_types::output($output_options)));
                         }
 
                         //handle xml pattern
@@ -243,13 +243,12 @@ class Fieldtype_text_pattern
                             if (in_array($field['type'], ['fieldtype_textarea_wysiwyg'])) {
                                 $output = '<![CDATA[' . $output . ']]>';
                             } elseif (in_array($field['type'], ['fieldtype_textarea'])) {
+                                //TODO $f3->decode
                                 $output = '<![CDATA[' . str_replace(['&lt;', '&gt;'], ['<', '>'], $output) . ']]>';
                             } else {
                                 $output = htmlspecialchars($output, ENT_XML1);
                             }
                         }
-
-                        //echo '<br>' . $fields_id . ' ' . $output . ' ' . $matches[0][$matches_key];  
 
                         $pattern = str_replace($matches[0][$matches_key], $output, $pattern);
                     }
@@ -269,17 +268,17 @@ class Fieldtype_text_pattern
 
     public function output_singe_text($text, $entities_id, $item, $options = [])
     {
-        $path = (isset($options['path']) ? $options['path'] : $entities_id . '-' . $item['id']);
+        $path = ($options['path'] ?? $entities_id . '-' . $item['id']);
 
         $output_options = ['item' => $item];
         $output_options['field']['configuration'] = '';
         $output_options['field']['entities_id'] = $entities_id;
         $output_options['path'] = $path;
         $output_options['custom_pattern'] = $text;
-        $output_options['is_print'] = (isset($options['is_print']) ? $options['is_print'] : true);
+        $output_options['is_print'] = ($options['is_print'] ?? true);
 
-        $output_options['is_email'] = (isset($options['is_email']) ? $options['is_email'] : false);
-        $output_options['hide_attachments_url'] = (isset($options['hide_attachments_url']) ? $options['hide_attachments_url'] : false);
+        $output_options['is_email'] = ($options['is_email'] ?? false);
+        $output_options['hide_attachments_url'] = ($options['hide_attachments_url'] ?? false);
 
         if (isset($options['is_xml'])) {
             $output_options['is_xml'] = $options['is_xml'];

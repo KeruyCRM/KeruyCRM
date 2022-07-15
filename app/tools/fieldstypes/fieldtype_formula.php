@@ -390,7 +390,7 @@ class Fieldtype_formula
 
                     //prepare fields
                     foreach ($available_fields as $fields_id) {
-                        //hander mysql qeury field type in formula
+                        //handler mysql query field type in formula
                         if (strstr(
                                 $formula,
                                 '[' . $fields_id . ']'

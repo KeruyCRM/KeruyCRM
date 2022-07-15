@@ -63,16 +63,16 @@ class Dashboard_pages
             ], ['order' => 'sort_order,name']);
 
             if (count($pages_query)) {
-                $item_query = \K::model()->db_query_exec(
+                $item = \K::model()->db_query_one(
                     "select e.* " .
                     \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                         1,
                         ''
                     ) . " from app_entity_1 e where e.id = ? and e.field_5 = 1", [\K::$fw->app_user['id']]
                 );
-                if (isset($item_query[0])) {
+                /*if (isset($item_query[0])) {
                     $item = $item_query[0];
-                }
+                }*/
             }
 
             $count = 1;

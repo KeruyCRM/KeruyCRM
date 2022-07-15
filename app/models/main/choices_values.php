@@ -1,11 +1,11 @@
 <?php
 
-class choices_values
+namespace Models\Main;
+
+class Choices_values
 {
     protected $entities_id;
-
     protected $use_for_fieldtypes;
-
     public $choices_values_list;
 
     function __construct($entities_id)
@@ -44,13 +44,19 @@ class choices_values
     {
         foreach ($this->choices_values_list as $values) {
             //reset choices values for current item and field
-            db_query(
+            /*db_query(
                 "delete from app_entity_" . $this->entities_id . "_values where items_id='" . db_input(
                     $items_id
                 ) . "' and fields_id='" . $values['fields_id'] . "'"
-            );
+            );*/
 
-            //prepare valuse
+            \K::model()->db_delete('app_entity_' . $this->entities_id . '_values', [
+                'items_id = ? and fields_id = ?',
+                $items_id,
+                $values['fields_id']
+            ]);
+
+            //prepare values
             $value = (is_array($values['value']) ? $values['value'] : (strlen($values['value']) > 0 ? explode(
                 ',',
                 $values['value']
@@ -67,7 +73,7 @@ class choices_values
                 ];
             }
 
-            db_batch_insert("app_entity_" . $this->entities_id . "_values", $sql_data);
+            \K::model()->db_perform("app_entity_" . $this->entities_id . "_values", $sql_data);
         }
     }
 

@@ -62,6 +62,11 @@ class K
         return \Models\Main\Users\Users_cfg::instance();
     }
 
+    public static function app_num2str()
+    {
+        return \Models\Main\Num2str::instance();
+    }
+
     public static function app_session_is_registered($key)
     {
         return self::fw()->exists('SESSION.' . $key);

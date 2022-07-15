@@ -346,15 +346,13 @@ class Fieldtype_mysql_query
         return $mysql_query;
     }
 
-    //function to update item if there are any not dinamic query
+    //function to update item if there are any not dynamic query
     public static function update_items_fields($entities_id, $items_id, $item_info = false)
     {
-        global $app_mysql_query_fields_cache;
-
         $update_fields = [];
 
-        if (isset($app_mysql_query_fields_cache[$entities_id])) {
-            foreach ($app_mysql_query_fields_cache[$entities_id] as $fields) {
+        if (isset(\K::$fw->app_mysql_query_fields_cache[$entities_id])) {
+            foreach (\K::$fw->app_mysql_query_fields_cache[$entities_id] as $fields) {
                 $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                 if ($cfg->get('dynamic_query') != 1) {
@@ -365,23 +363,26 @@ class Fieldtype_mysql_query
 
         if (count($update_fields)) {
             if (!$item_info) {
-                $item_info_query = db_query(
-                    "select e.* " . fieldtype_formula::prepare_query_select(
+                $item_info = \K::model()->db_query_one(
+                    'select e.* ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                         $entities_id,
                         ''
-                    ) . " from app_entity_" . $entities_id . " e where e.id='" . db_input($items_id) . "'"
+                    ) . ' from app_entity_' . $entities_id . ' e where e.id = ?',
+                    $items_id
                 );
-                $item_info = db_fetch_array($item_info_query);
+                //$item_info = $item_info_query[0] ?? '';
             }
-            //print_r($item_info);
-            //exit();
 
             foreach ($update_fields as $fields_id) {
-                db_query(
+                /*db_query(
                     "update app_entity_{$entities_id} set field_{$fields_id}='" . $item_info['field_' . $fields_id] . "' where id='" . db_input(
                         $items_id
                     ) . "'"
-                );
+                );*/
+
+                \K::model()->db_update('app_entity_' . $entities_id, [
+                    'field_' . $fields_id => $item_info['field_' . $fields_id]
+                ], ['id = ?', $items_id]);
             }
         }
     }

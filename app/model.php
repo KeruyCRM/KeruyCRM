@@ -152,6 +152,12 @@ class Model extends \Prefab
         return $this->db->exec($cmds, $args, $ttl, $log, $stamp);
     }
 
+    public function db_query_one($cmds, $args = null, $ttl = 0, $log = true, $stamp = false)
+    {
+        $query = $this->db->exec($cmds, $args, $ttl, $log, $stamp);
+        return $query[0] ?? '';
+    }
+
     public function db_query($query, $debug = false, $link = 'db_link')
     {
         //global $$link, $app_db_query_log, $app_db_slow_query_log;
@@ -202,7 +208,7 @@ class Model extends \Prefab
          return $mapper;
      }*/
 
-    public function db_perform($table, $data, $parameters = [], $debug = false)
+    public function db_perform($table, $data, $parameters = [], $update = false, $debug = false)
     {
         $mapper = $this->mapper($table);
         if ($parameters) {
@@ -213,7 +219,15 @@ class Model extends \Prefab
             $mapper->{$columns} = $value;
         }
 
+        if ($update) {
+            return $mapper->update();
+        }
         return $mapper->save();
+    }
+
+    public function db_update($table, $data, $parameters = [], $debug = false)
+    {
+        return $this->db_perform($table, $data, $parameters, true, $debug);
     }
 
     public function db_insert_id($mapper)

@@ -6,15 +6,18 @@ class App
 {
     public static function app_set_nested_selected_items($reports_id, $entities_id, $item_id)
     {
-        global $app_selected_items;
-
-        $items_query = \K::model()->db_query_exec(
+        /*$items_query = \K::model()->db_query_exec(
             "select * from app_entity_{$entities_id}  where parent_id = :item_id order by sort_order, id",
             [':item_id' => $item_id]
-        );
+        );*/
+        $items_query = \K::model()->db_fetch('app_entity_' . $entities_id, [
+            'parent_id = ?',
+            $item_id
+        ], ['order' => 'sort_order, id'], 'id');
         //while ($item = db_fetch_array($items_query)) {
         foreach ($items_query as $item) {
-            $app_selected_items[$reports_id][] = $item['id'];
+            $item = $item->cast();
+            \K::$fw->app_selected_items[$reports_id][] = $item['id'];
 
             self::app_set_nested_selected_items($reports_id, $entities_id, $item['id']);
         }

@@ -54,7 +54,7 @@ class Urls
 
     public static function link_to($name, $url, $attributes = [])
     {
-        return '<a href="' . $url . '" ' . tag_attributes_to_html($attributes) . '>' . $name . '</a>';
+        return '<a href="' . $url . '" ' . \Helpers\Html::tag_attributes_to_html($attributes) . '>' . $name . '</a>';
     }
 
     public static function link_to_modalbox($name, $url, $attributes = [])

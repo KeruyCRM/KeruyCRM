@@ -4,7 +4,6 @@ namespace Models\Main;
 
 class Fields_types
 {
-
     public static function get_reserved_types()
     {
         return [
@@ -984,28 +983,33 @@ class Fields_types
 
     public static function render($class, $field, $obj, $params = [])
     {
-        $fieldtype = new $class;
+        $class = ucfirst($class);
+        $className = "\\Tools\\FieldsTypes\\{$class}";
+        $fieldtype = new $className();
 
         return $fieldtype->render($field, $obj, $params);
     }
 
     public static function process($options = [])
     {
-        $fieldtype = new $options['class'];
+        $class = '\\Tools\\Fieldtype\\' . ucfirst($options['class']);
+        $fieldtype = new $class();
 
         return $fieldtype->process($options);
     }
 
     public static function output($options = [])
     {
-        $fieldtype = new $options['class'];
+        $class = '\\Tools\\Fieldtype\\' . ucfirst($options['class']);
+        $fieldtype = new $class();
 
         return $fieldtype->output($options);
     }
 
     public static function reports_query($options = [])
     {
-        $fieldtype = new $options['class'];
+        $class = '\\Tools\\Fieldtype\\' . ucfirst($options['class']);
+        $fieldtype = new $class();
 
         if (method_exists($fieldtype, 'reports_query')) {
             return $fieldtype->reports_query($options);
@@ -1094,58 +1098,66 @@ class Fields_types
     //use update_items_fields form any fields types where it's requred
     public static function update_items_fields($current_entity_id, $item_id)
     {
-        global $fieldtype_mysql_query_force;
-
         $fieldtype_mysql_query_force = true;
 
         //get item info
-        $item_info_query = db_query(
-            "select e.* " . fieldtype_formula::prepare_query_select(
+        $item_info = \K::model()->db_query_one(
+            'select e.* ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                 $current_entity_id,
                 ''
-            ) . " from app_entity_" . $current_entity_id . " e where e.id='" . db_input($item_id) . "'"
+            ) . ' from app_entity_' . $current_entity_id . ' e where e.id = ?',
+            $item_id
         );
-        $item_info = db_fetch_array($item_info_query);
+
+        //$item_info = $item_info_query[0] ?? '';
 
         //autoupdate fields in  fieldtype_mysql_query        
-        fieldtype_mysql_query::update_items_fields($current_entity_id, $item_id, $item_info);
+        \Tools\FieldsTypes\Fieldtype_mysql_query::update_items_fields($current_entity_id, $item_id, $item_info);
 
         //dynamic date
-        fieldtype_dynamic_date::update_items_fields($current_entity_id, $item_id, $item_info);
+        \Tools\FieldsTypes\Fieldtype_dynamic_date::update_items_fields($current_entity_id, $item_id, $item_info);
 
         //autoupdate time diff
-        fieldtype_days_difference::update_items_fields($current_entity_id, $item_id);
-        fieldtype_hours_difference::update_items_fields($current_entity_id, $item_id);
-        fieldtype_years_difference::update_items_fields($current_entity_id, $item_id);
-        fieldtype_months_difference::update_items_fields($current_entity_id, $item_id);
+        \Tools\FieldsTypes\Fieldtype_days_difference::update_items_fields($current_entity_id, $item_id);
+        \Tools\FieldsTypes\Fieldtype_hours_difference::update_items_fields($current_entity_id, $item_id);
+        \Tools\FieldsTypes\Fieldtype_years_difference::update_items_fields($current_entity_id, $item_id);
+        \Tools\FieldsTypes\Fieldtype_months_difference::update_items_fields($current_entity_id, $item_id);
 
         //maps
-        fieldtype_google_map::update_items_fields($current_entity_id, $item_id, $item_info);
-        fieldtype_google_map_directions::update_items_fields($current_entity_id, $item_id, $item_info);
-        fieldtype_yandex_map::update_items_fields($current_entity_id, $item_id, $item_info);
+        \Tools\FieldsTypes\Fieldtype_google_map::update_items_fields($current_entity_id, $item_id, $item_info);
+        \Tools\FieldsTypes\Fieldtype_google_map_directions::update_items_fields(
+            $current_entity_id,
+            $item_id,
+            $item_info
+        );
+        \Tools\FieldsTypes\Fieldtype_yandex_map::update_items_fields($current_entity_id, $item_id, $item_info);
 
         //autoupdate static text pattern
-        fieldtype_text_pattern_static::set($current_entity_id, $item_id, $item_info);
+        \Tools\FieldsTypes\Fieldtype_text_pattern_static::set($current_entity_id, $item_id, $item_info);
 
         //run php code
-        fieldtype_php_code::run($current_entity_id, $item_id, $item_info);
+        \Tools\FieldsTypes\Fieldtype_php_code::run($current_entity_id, $item_id, $item_info);
 
         //subentity form
-        fieldtype_subentity_form::update_items_fields($current_entity_id, $item_id);
+        \Tools\FieldsTypes\Fieldtype_subentity_form::update_items_fields($current_entity_id, $item_id);
 
         //barcode
-        fieldtype_barcode::update_items_fields($current_entity_id, $item_id, $item_info);
+        \Tools\FieldsTypes\Fieldtype_barcode::update_items_fields($current_entity_id, $item_id, $item_info);
 
         //prepare multiple users groups
-        fieldtype_user_accessgroups::prepare_multiple_access_groups($current_entity_id, $item_id);
+        \Tools\FieldsTypes\Fieldtype_user_accessgroups::prepare_multiple_access_groups($current_entity_id, $item_id);
 
         //tree table recalculated count/sum
-        fieldtype_nested_calculations::update_items_fields($current_entity_id, $item_id, $item_info['parent_id']);
+        \Tools\FieldsTypes\Fieldtype_nested_calculations::update_items_fields(
+            $current_entity_id,
+            $item_id,
+            $item_info['parent_id']
+        );
 
-        fieldtype_user_photo::prepare_filename($current_entity_id, $item_info);
+        \Tools\FieldsTypes\Fieldtype_user_photo::prepare_filename($current_entity_id, $item_info);
 
-        //atuoset fieldtype autostatus
-        fieldtype_autostatus::set($current_entity_id, $item_id, $item_info);
+        //autoset fieldtype autostatus
+        \Tools\FieldsTypes\Fieldtype_autostatus::set($current_entity_id, $item_id, $item_info);
     }
 
     public static function custom_error_handler($fields_id)

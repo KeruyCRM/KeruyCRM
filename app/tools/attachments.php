@@ -368,7 +368,7 @@ class Attachments
             }
         }
 
-        return (isset($result) ? $result : 0);
+        return ($result ?? 0);
     }
 
     public static function copy($files)

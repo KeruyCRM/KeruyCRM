@@ -313,32 +313,34 @@ END;";
 
     public static function update_items_fields($entities_id, $items_id)
     {
-        global $app_fields_cache;
-
-        if (isset($app_fields_cache[$entities_id])) {
-            foreach ($app_fields_cache[$entities_id] as $fields) {
+        if (isset(\K::$fw->app_fields_cache[$entities_id])) {
+            foreach (\K::$fw->app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_hours_difference') {
                     $cfg = new \Tools\Fields_types_cfg($fields['configuration']);
 
                     //skip dynamic query
                     if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1) {
-                        $item_info_query = db_query(
+                        $item_info = \K::model()->db_query_one(
                             "select " . self::prepare_query(
                                 $fields,
                                 'e',
                                 false,
                                 true
-                            ) . " from app_entity_{$entities_id} e where e.id={$items_id}"
+                            ) . " from app_entity_{$entities_id} e where e.id = ?",
+                            $items_id
                         );
-                        $item_info = db_fetch_array($item_info_query);
+                        //$item_info = $item_info_query[0] ?? '';
 
                         $fields_id = $fields['id'];
 
-                        db_query(
+                        /*db_query(
                             "update app_entity_{$entities_id} set field_{$fields_id}='" . $item_info['field_' . $fields_id] . "' where id='" . db_input(
                                 $items_id
                             ) . "'"
-                        );
+                        );*/
+                        \K::model()->db_update('app_entity_' . $entities_id, [
+                            'field_' . $fields_id => $item_info['field_' . $fields_id]
+                        ], ['id = ?', $items_id]);
                     }
                 }
             }

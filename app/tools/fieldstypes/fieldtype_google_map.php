@@ -193,10 +193,8 @@ class Fieldtype_google_map
 
     public static function update_items_fields($entities_id, $items_id, $item_info = false)
     {
-        global $app_fields_cache, $alerts;
-
-        if (isset($app_fields_cache[$entities_id])) {
-            foreach ($app_fields_cache[$entities_id] as $fields) {
+        if (isset(\K::$fw->app_fields_cache[$entities_id])) {
+            foreach (\K::$fw->app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_google_map') {
                     $fields_id = $fields['id'];
 
@@ -209,8 +207,13 @@ class Fieldtype_google_map
 
                     //get item info
                     if (!$item_info) {
-                        $item_info_query = db_query("select * from app_entity_{$entities_id} where id={$items_id}");
-                        $item_info = db_fetch_array($item_info_query);
+                        /*$item_info_query = db_query("select * from app_entity_{$entities_id} where id={$items_id}");
+                        $item_info = db_fetch_array($item_info_query);*/
+
+                        $item_info = \K::model()->db_fetch_one('app_entity_' . $entities_id, [
+                            'id = ?',
+                            $items_id
+                        ]);
                     }
 
                     //get address by pattern
@@ -221,15 +224,21 @@ class Fieldtype_google_map
                         'path' => $entities_id . '-' . $items_id,
                     ];
 
-                    $fieldtype_text_pattern = new fieldtype_text_pattern;
+                    $fieldtype_text_pattern = new \Tools\FieldsTypes\Fieldtype_text_pattern();
                     $use_address = urlencode(strip_tags($fieldtype_text_pattern->output($pattern_options)));
 
                     //skip if address empty
                     if (!strlen($use_address)) {
-                        db_query(
+                        /*db_query(
                             "update app_entity_{$entities_id} set field_{$fields_id}='' where id='" . db_input(
                                 $items_id
                             ) . "'"
+                        );*/
+
+                        \K::model()->db_update(
+                            'app_entity_' . $entities_id,
+                            ['field_' . $fields_id => ''],
+                            ['id = ?', $items_id]
                         );
 
                         return false;
@@ -267,7 +276,7 @@ class Fieldtype_google_map
                         //print_rr($result);
 
                         if (isset($result['error_message'])) {
-                            $alerts->add(
+                            \K::flash()->addMessage(
                                 \K::$fw->TEXT_FIELD . ' "' . $fields['name'] . '": ' . $result['error_message'],
                                 'error'
                             );
@@ -279,11 +288,14 @@ class Fieldtype_google_map
 
                             //echo $value;
 
-                            db_query(
+                            /*db_query(
                                 "update app_entity_{$entities_id} set field_{$fields_id}='" . db_input(
                                     $value
                                 ) . "' where id='" . db_input($items_id) . "'"
-                            );
+                            );*/
+                            \K::model()->db_update('app_entity_' . $entities_id, [
+                                'field_' . $fields_id => $value
+                            ], ['id = ?', $items_id]);
                         }
                     }
                 }

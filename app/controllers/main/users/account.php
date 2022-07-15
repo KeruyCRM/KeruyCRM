@@ -16,10 +16,10 @@ class Account extends \Controller
             \Helpers\Urls::redirect_to('main/dashboard');
         }
 
-        $current_entity_id = 1;
-        \K::$fw->entity_cfg = new \Models\Main\Entities_cfg($current_entity_id);
+        \K::$fw->current_entity_id = 1;
+        \K::$fw->entity_cfg = new \Models\Main\Entities_cfg(\K::$fw->current_entity_id);
 
-        $obj = \K::model()->db_query_exec(
+        \K::$fw->obj = \K::model()->db_query_exec(
             'select e.* ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                 1,
                 ''
@@ -48,9 +48,9 @@ class Account extends \Controller
         $msg = [];
 
         if (\K::fw()->exists('POST.fields.12')) {
-            if (CFG_ALLOW_CHANGE_USERNAME == 1) {
+            if (\K::$fw->CFG_ALLOW_CHANGE_USERNAME == 1) {
                 if (strlen($_POST['fields'][12]) == 0) {
-                    $msg[] = TEXT_ERROR_USERNAME_EMPTY;
+                    $msg[] = \K::$fw->TEXT_ERROR_USERNAME_EMPTY;
                 }
             }
         }
@@ -58,70 +58,94 @@ class Account extends \Controller
         if (\K::fw()->exists('POST.fields.9')) {
             if (strlen(\K::$fw->POST['fields'][9]) == 0) {
                 $msg[] = \K::$fw->TEXT_ERROR_USEREMAIL_EMPTY;
-            }elseif (strlen($_POST['fields'][9]) > 0 and CFG_ALLOW_REGISTRATION_WITH_THE_SAME_EMAIL == 0) {
-                $check_query = db_query(
+            } elseif (strlen(
+                    \K::$fw->POST['fields'][9]
+                ) > 0 and \K::$fw->CFG_ALLOW_REGISTRATION_WITH_THE_SAME_EMAIL == 0) {
+                /*$check_query = db_query(
                     "select count(*) as total from app_entity_1 where field_9='" . db_input(
                         $_POST['fields'][9]
-                    ) . "'  and id!='" . db_input($app_logged_users_id) . "'"
+                    ) . "'  and id!='" . db_input(\K::$fw->app_logged_users_id) . "'"
                 );
-                $check = db_fetch_array($check_query);
-                if ($check['total'] > 0) {
-                    $msg[] = TEXT_ERROR_USEREMAIL_EXIST;
+                $check = db_fetch_array($check_query);*/
+                $check = \K::model()->db_fetch_count('app_entity_1', [
+                    'field_9 = ? and id != ?',
+                    \K::$fw->POST['fields'][9],
+                    \K::$fw->app_logged_users_id
+                ]);
+
+                if ($check > 0) {
+                    $msg[] = \K::$fw->TEXT_ERROR_USEREMAIL_EXIST;
                 }
             }
         }
 
-        if (CFG_ALLOW_CHANGE_USERNAME == 1 and isset($_POST['fields'][12])) {
+        if (\K::$fw->CFG_ALLOW_CHANGE_USERNAME == 1 and isset($_POST['fields'][12])) {
             if (strlen($_POST['fields'][12]) > 0) {
-                $check_query = db_query(
+                /*$check_query = db_query(
                     "select count(*) as total from app_entity_1 where field_12='" . db_input(
                         $_POST['fields'][12]
-                    ) . "'  and id!='" . db_input($app_logged_users_id) . "'"
+                    ) . "'  and id!='" . db_input(\K::$fw->app_logged_users_id) . "'"
                 );
-                $check = db_fetch_array($check_query);
-                if ($check['total'] > 0) {
-                    $msg[] = TEXT_ERROR_USERNAME_EXIST;
+                $check = db_fetch_array($check_query);*/
+                $check = \K::model()->db_fetch_count('app_entity_1', [
+                    'field_12 = ? and id != ?',
+                    \K::$fw->POST['fields'][12],
+                    \K::$fw->app_logged_users_id
+                ]);
+
+                if ($check > 0) {
+                    $msg[] = \K::$fw->TEXT_ERROR_USERNAME_EXIST;
                 }
             }
         }
 
         if (count($msg) > 0) {
             foreach ($msg as $v) {
-                $alerts->add($v, 'error');
+                \K::flash()->addMessage($v, 'error');
             }
 
-            redirect_to('users/account');
+            \Helpers\Urls::redirect_to('main/users/account');
         }
 
-        if (isset($_POST['fields'])) {
-            $fields_values_cache = items::get_fields_values_cache(
-                $_POST['fields'],
-                [$current_entity_id],
-                $current_entity_id
+        if (\K::fw()->exists('POST.fields')) {
+            $fields_values_cache = \Tools\Items\Items::get_fields_values_cache(
+                \K::$fw->POST['fields'],
+                [\K::$fw->current_entity_id],
+                \K::$fw->current_entity_id
             );
         }
 
-        $fields_access_schema = users::get_fields_access_schema($current_entity_id, $app_user['group_id']);
-
-        $item_info_query = db_query(
-            "select * from app_entity_" . $current_entity_id . " where id='" . db_input($app_user['id']) . "'"
+        $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema(
+            \K::$fw->current_entity_id,
+            \K::$fw->app_user['group_id']
         );
-        $item_info = db_fetch_array($item_info_query);
+
+        /*$item_info_query = db_query(
+            "select * from app_entity_" . \K::$fw->current_entity_id . " where id='" . db_input(
+                \K::$fw->app_user['id']
+            ) . "'"
+        );
+        $item_info = db_fetch_array($item_info_query);*/
+
+        $item_info = \K::model()->db_fetch_one('app_entity_' . \K::$fw->current_entity_id, [
+            'id = ?',
+            \K::$fw->app_user['id']
+        ]);
 
         $sql_data = [];
 
-        $excluded_fileds_types = "'fieldtype_user_accessgroups','fieldtype_user_status','fieldtype_user_skin','fieldtype_user_last_login_date'";
+        $excluded_fields_types = "'fieldtype_user_accessgroups','fieldtype_user_status','fieldtype_user_skin','fieldtype_user_last_login_date'";
 
-        if (CFG_ALLOW_CHANGE_USERNAME == 0) {
-            $excluded_fileds_types .= ",'fieldtype_user_username'";
+        if (\K::$fw->CFG_ALLOW_CHANGE_USERNAME == 0) {
+            $excluded_fields_types .= ",'fieldtype_user_username'";
         }
 
-        $choices_values = new choices_values($current_entity_id);
+        $choices_values = new \Models\Main\Choices_values(\K::$fw->current_entity_id);
 
         $fields_query = db_query(
             "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
-            ) . "," . $excluded_fileds_types . ") and  f.entities_id='" . db_input(
-                $current_entity_id
+            ) . "," . $excluded_fields_types . ") and  f.entities_id='" . db_input(
+                \K::$fw->current_entity_id
             ) . "' order by f.sort_order, f.name"
         );
         while ($field = db_fetch_array($fields_query)) {
@@ -130,10 +154,10 @@ class Account extends \Controller
                 continue;
             }
 
-            $value = (isset($_POST['fields'][$field['id']]) ? $_POST['fields'][$field['id']] : '');
+            $value = (\K::$fw->POST['fields'][$field['id']] ?? '');
 
             //current field value
-            $current_field_value = (isset($item_info['field_' . $field['id']]) ? $item_info['field_' . $field['id']] : '');
+            $current_field_value = ($item_info['field_' . $field['id']] ?? '');
 
             $process_options = [
                 'class' => $field['type'],
@@ -144,45 +168,44 @@ class Account extends \Controller
                 'current_field_value' => $current_field_value,
             ];
 
-            $sql_data['field_' . $field['id']] = fields_types::process($process_options);
+            $sql_data['field_' . $field['id']] = \Models\Main\Fields_types::process($process_options);
 
             //prepare choices values for fields with multiple values
             $choices_values->prepare($process_options);
         }
 
         if (count($sql_data)) {
-            db_perform(
-                'app_entity_' . $current_entity_id,
+            \K::model()->db_perform(
+                'app_entity_' . \K::$fw->current_entity_id,
                 $sql_data,
-                'update',
-                "id='" . db_input($app_logged_users_id) . "'"
+                ['id = ?', \K::$fw->app_logged_users_id]
             );
         }
 
         //insert choices values for fields with multiple values
-        $choices_values->process($app_logged_users_id);
+        $choices_values->process(\K::$fw->app_logged_users_id);
 
         //autoupdate all field types
-        fields_types::update_items_fields($current_entity_id, $app_logged_users_id);
+        \Models\Main\Fields_types::update_items_fields(\K::$fw->current_entity_id, \K::$fw->app_logged_users_id);
 
         //set user configuration options
         $cfg = ['disable_notification', 'disable_internal_notification', 'disable_highlight_unread'];
         foreach ($cfg as $key) {
-            $app_users_cfg->set($key, (isset($_POST['cfg'][$key]) ? $_POST['cfg'][$key] : ''));
+            \K::app_users_cfg()->set($key, (\K::$fw->POST['cfg'][$key] ?? ''));
         }
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //subscribe
             $modules = new modules('mailing');
-            $mailing = new mailing($current_entity_id, $app_logged_users_id);
+            $mailing = new mailing(\K::$fw->current_entity_id, \K::$fw->app_logged_users_id);
             $mailing->update($item_info);
         }
 
         email_verification::check_if_user_email_is_updated();
 
-        $alerts->add(TEXT_ACCOUNT_UPDATED, 'success');
+        $alerts->add(\K::$fw->TEXT_ACCOUNT_UPDATED, 'success');
 
-        redirect_to('users/account');
+        \Helpers\Urls::redirect_to('main/users/account');
     }
 
     public function attachments_upload()

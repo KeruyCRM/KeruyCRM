@@ -189,9 +189,6 @@ class Controller
         \K::$fw->app_global_choices_cache = \Models\Main\Global_lists::get_cache();
         \K::$fw->app_access_groups_cache = \Models\Main\Access_groups::get_cache();
 
-        //TODO num2str
-        //$app_num2str = new num2str();
-
         \Models\Main\Custom_php::include();
 
         $this->_setCfgSession();
