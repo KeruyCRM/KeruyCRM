@@ -1640,7 +1640,7 @@ function app_handle_forms_fields_display_rules(container,fields_id, fileds_type,
 	
 	//if multiple dropdown then hidde all visible fields in rules and show all hidden filed
 	//then we will check all rules for these fields and apply them
-	$(container+' .disply-fields-rules-'+fields_id).each(function(){
+	$(container+' .display-fields-rules-'+fields_id).each(function(){
 		
 		choices = $(this).attr('data-choices').split(',')
 		type = $(this).attr('data-type') 
@@ -1668,7 +1668,7 @@ function app_handle_forms_fields_display_rules(container,fields_id, fileds_type,
 	});
 			
 	//prepare fields rules
-	$(container+' .disply-fields-rules-'+fields_id).each(function(){
+	$(container+' .display-fields-rules-'+fields_id).each(function(){
 							
 		choices = $(this).attr('data-choices').split(',')
 		type = $(this).attr('data-type') 

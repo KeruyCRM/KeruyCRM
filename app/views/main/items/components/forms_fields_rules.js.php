@@ -1,7 +1,7 @@
 <?php
 
 $form_fields_query = \K::model()->db_query_exec(
-    "select r.*, f.name, f.id as fields_id, f.type from app_forms_fields_rules r, app_fields f where r.is_active = 1 and  f.type in ('fieldtype_entity','fieldtype_entity_ajax','fieldtype_entity_multilevel','fieldtype_dropdown','fieldtype_dropdown_multiple','fieldtype_checkboxes','fieldtype_radioboxes','fieldtype_user_accessgroups','fieldtype_grouped_users','fieldtype_boolean_checkbox','fieldtype_boolean','fieldtype_autostatus', 'fieldtype_stages') and r.fields_id = f.id and r.entities_id = ?",
+    "select r.*, f.name, f.id as fields_id, f.type from app_forms_fields_rules r, app_fields f where r.is_active = 1 and f.type in ('fieldtype_entity','fieldtype_entity_ajax','fieldtype_entity_multilevel','fieldtype_dropdown','fieldtype_dropdown_multiple','fieldtype_checkboxes','fieldtype_radioboxes','fieldtype_user_accessgroups','fieldtype_grouped_users','fieldtype_boolean_checkbox','fieldtype_boolean','fieldtype_autostatus', 'fieldtype_stages') and r.fields_id = f.id and r.entities_id = ?",
     \K::$fw->current_entity_id
 );
 
@@ -14,12 +14,12 @@ if (count($form_fields_query) > 0) {
     foreach ($form_fields_query as $form_fields) {
         if (strlen($form_fields['visible_fields']) and strlen($form_fields['choices'])) {
             $html .= '
-				<input class="disply-fields-rules-' . $form_fields['fields_id'] . '" type="hidden" data-type="visible" data-choices="' . $form_fields['choices'] . '" value="' . $form_fields['visible_fields'] . '">';
+				<input class="display-fields-rules-' . $form_fields['fields_id'] . '" type="hidden" data-type="visible" data-choices="' . $form_fields['choices'] . '" value="' . $form_fields['visible_fields'] . '">';
         }
 
         if (strlen($form_fields['hidden_fields']) and strlen($form_fields['choices'])) {
             $html .= '
-				<input class="disply-fields-rules-' . $form_fields['fields_id'] . '" type="hidden" data-type="hidden" data-choices="' . $form_fields['choices'] . '" value="' . $form_fields['hidden_fields'] . '">';
+				<input class="display-fields-rules-' . $form_fields['fields_id'] . '" type="hidden" data-type="hidden" data-choices="' . $form_fields['choices'] . '" value="' . $form_fields['hidden_fields'] . '">';
         }
 
         $rules_for_fields[$form_fields['fields_id']] = $form_fields['type'];
