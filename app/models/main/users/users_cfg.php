@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Models\Main\Users;
 
@@ -41,7 +45,11 @@ class Users_cfg extends \Prefab
                     'configuration_value' => trim($value),
                     'users_id' => \K::$fw->app_user['id']
                 ],
-                ['users_id = ? and configuration_name = ?', \K::$fw->app_user['id'], $key]
+                [
+                    'users_id = ? and configuration_name = ?',
+                    \K::$fw->app_user['id'],
+                    $key
+                ]
             );
         }
     }

@@ -30,7 +30,7 @@ class Fieldtype_user_firstname
 
     public function render($field, $obj, $params = [])
     {
-        return input_tag(
+        return \Helpers\Html::input_tag(
             'fields[' . $field['id'] . ']',
             $obj['field_' . $field['id']],
             ['class' => 'form-control input-medium required noSpace']
@@ -39,7 +39,7 @@ class Fieldtype_user_firstname
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)

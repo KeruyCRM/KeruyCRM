@@ -664,7 +664,7 @@ class App
                 $value = $color;
             }
 
-            $rgb = convert_html_color_to_RGB($color);
+            $rgb = self::convert_html_color_to_RGB($color);
 
             if (($rgb[0] + $rgb[1] + $rgb[2]) < 480) {
                 return '<div class="bg-color-value" style="background: ' . $color . '; color: white;">' . $value . '</div>';

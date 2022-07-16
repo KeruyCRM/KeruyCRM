@@ -219,14 +219,12 @@ class Fieldtype_input_encrypted
 
     public static function prepare_query_select($entities_id, $listing_sql_query_select = '')
     {
-        global $app_fields_cache;
-
-        foreach ($app_fields_cache[$entities_id] as $field) {
+        foreach (\K::$fw->app_fields_cache[$entities_id] as $field) {
             if (in_array($field['type'], ['fieldtype_input_encrypted', 'fieldtype_textarea_encrypted']
-                ) and db_has_encryption_key()) {
-                $listing_sql_query_select .= ", AES_DECRYPT(field_" . $field['id'] . ",'" . db_input(
+                ) and \K::model()->db_has_encryption_key()) {
+                $listing_sql_query_select .= ", AES_DECRYPT(field_" . $field['id'] . "," . \K::model()->quote(
                         \K::$fw->DB_ENCRYPTION_KEY
-                    ) . "') as field_" . $field['id'];
+                    ) . ") as field_" . $field['id'];
             }
         }
 

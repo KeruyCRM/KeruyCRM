@@ -19,9 +19,9 @@ class Fieldtype_user_language
         $selected = (strlen(
             $obj['field_' . $field['id']]
         ) > 0 ? $obj['field_' . $field['id']] : \K::$fw->CFG_APP_LANGUAGE);
-        return select_tag(
+        return \Helpers\Html::select_tag(
             'fields[' . $field['id'] . ']',
-            app_get_languages_choices(),
+            \Helpers\App::app_get_languages_choices(),
             $selected,
             ['class' => 'form-control input-medium required']
         );
@@ -29,7 +29,7 @@ class Fieldtype_user_language
 
     public function process($options)
     {
-        return db_prepare_input(str_replace(['..', '/', '\/'], '', $options['value']));
+        return \K::model()->db_prepare_input(str_replace(['..', '/', '\/'], '', $options['value']));
     }
 
     public function output($options)

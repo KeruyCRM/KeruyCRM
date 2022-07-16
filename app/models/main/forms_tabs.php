@@ -1,8 +1,9 @@
 <?php
 
-class forms_tabs
-{
+namespace Models\Main;
 
+class Forms_tabs
+{
     public static function get_name_by_id($id)
     {
         $obj = db_find('app_forms_tabs', $id);
@@ -63,11 +64,20 @@ class forms_tabs
 
     static function get_tree($entities_id, $parent_id = 0, $tree = [], $level = 0, $parent_name = '')
     {
-        $tabs_query = db_query(
+        /*$tabs_query = db_query(
             "select * from app_forms_tabs where parent_id=" . $parent_id . " and entities_id={$entities_id} order by sort_order, name"
-        );
+        );*/
 
-        while ($tabs = db_fetch_array($tabs_query)) {
+        $tabs_query = \K::model()->db_fetch('app_forms_tabs', [
+            'parent_id = ? and entities_id = ?',
+            $parent_id,
+            $entities_id
+        ], ['order' => 'sort_order,name']);
+
+        //while ($tabs = db_fetch_array($tabs_query)) {
+        foreach ($tabs_query as $tabs) {
+            $tabs = $tabs->cast();
+
             $tabs['level'] = $level;
             $tabs['parent_name'] = $parent_name;
 
@@ -82,20 +92,39 @@ class forms_tabs
     static function render_tabs_nav($entities_id)
     {
         $html = '';
-        $tabs_query = db_query(
+        /*$tabs_query = db_query(
             "select * from app_forms_tabs where parent_id=0 and entities_id={$entities_id} order by sort_order, name"
-        );
-        while ($tabs = db_fetch_array($tabs_query)) {
+        );*/
+
+        $tabs_query = \K::model()->db_fetch('app_forms_tabs', [
+            'parent_id = 0 and entities_id = ?',
+            $entities_id
+        ], ['order' => 'sort_order,name'], 'id,name,is_folder');
+
+        //while ($tabs = db_fetch_array($tabs_query)) {
+        foreach ($tabs_query as $tabs) {
+            $tabs = $tabs->cast();
+
             if ($tabs['is_folder']) {
                 $html .= '
                     <li class="dropdown check-form-tabs-dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">' . $tabs['name'] . ' <i class="fa fa-angle-down"></i></a>
                             <ul class="dropdown-menu" role="menu">';
 
-                $subtabs_query = db_query(
+                /*$subtabs_query = db_query(
                     "select * from app_forms_tabs where parent_id={$tabs['id']} and entities_id={$entities_id} order by sort_order, name"
-                );
-                while ($subtabs = db_fetch_array($subtabs_query)) {
+                );*/
+
+                $subtabs_query = \K::model()->db_fetch('app_forms_tabs', [
+                    'parent_id = ? and entities_id = ?',
+                    $tabs['id'],
+                    $entities_id
+                ], ['order' => 'sort_order,name'], 'id,name');
+
+                //while ($subtabs = db_fetch_array($subtabs_query)) {
+                foreach ($subtabs_query as $subtabs) {
+                    $subtabs = $subtabs->cast();
+
                     $html .= '<li class="form_tab_' . $subtabs['id'] . ' check-form-tabs" cfg_tab_id="form_tab_' . $subtabs['id'] . '"><a data-toggle="tab" href="#form_tab_' . $subtabs['id'] . '">' . $subtabs['name'] . '</a></li>';
                 }
 
@@ -109,5 +138,4 @@ class forms_tabs
 
         return $html;
     }
-
 }

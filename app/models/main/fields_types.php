@@ -984,7 +984,8 @@ class Fields_types
     public static function render($class, $field, $obj, $params = [])
     {
         $class = ucfirst($class);
-        $className = "\\Tools\\FieldsTypes\\{$class}";
+        $className = "\\Tools\\Fieldstypes\\{$class}";
+
         $fieldtype = new $className();
 
         return $fieldtype->render($field, $obj, $params);
@@ -992,7 +993,7 @@ class Fields_types
 
     public static function process($options = [])
     {
-        $class = '\\Tools\\Fieldtype\\' . ucfirst($options['class']);
+        $class = '\\Tools\\Fieldstypes\\' . ucfirst($options['class']);
         $fieldtype = new $class();
 
         return $fieldtype->process($options);
@@ -1000,7 +1001,7 @@ class Fields_types
 
     public static function output($options = [])
     {
-        $class = '\\Tools\\Fieldtype\\' . ucfirst($options['class']);
+        $class = '\\Tools\\Fieldstypes\\' . ucfirst($options['class']);
         $fieldtype = new $class();
 
         return $fieldtype->output($options);
@@ -1008,7 +1009,7 @@ class Fields_types
 
     public static function reports_query($options = [])
     {
-        $class = '\\Tools\\Fieldtype\\' . ucfirst($options['class']);
+        $class = '\\Tools\\Fieldstypes\\' . ucfirst($options['class']);
         $fieldtype = new $class();
 
         if (method_exists($fieldtype, 'reports_query')) {
@@ -1025,7 +1026,7 @@ class Fields_types
         }
 
         $class = ucfirst($class);
-        $className = "\\Tools\\FieldsTypes\\{$class}";
+        $className = "\\Tools\\Fieldstypes\\{$class}";
 
         $fieldtype = new $className();
 

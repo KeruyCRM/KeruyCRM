@@ -266,13 +266,7 @@ class Fields
 
     public static function get_heading_id($entity_id)
     {
-        //global $app_heading_fields_id_cache;
-
-        if (isset(\K::$fw->app_heading_fields_id_cache[$entity_id])) {
-            return \K::$fw->app_heading_fields_id_cache[$entity_id];
-        } else {
-            return false;
-        }
+        return \K::$fw->app_heading_fields_id_cache[$entity_id] ?? false;
     }
 
     public static function get_last_sort_number($forms_tabs_id)
@@ -360,25 +354,19 @@ class Fields
 
     public static function render_unique_fields_rules($entities_id, $item_id = false)
     {
-        //global $app_items_form_name, $public_form, $app_session_token, $app_path;
-        $app_items_form_name = \K::$fw->app_items_form_name;
-        $public_form = \K::$fw->public_form;
-        $app_session_token = \K::$fw->app_session_token;
-        $app_path = \K::$fw->app_path;
-
-        if ($app_items_form_name == 'registration_form') {
-            $url = url_for("users/registration", "action=check_unique&entities_id=1");
-        } elseif ($app_items_form_name == 'public_form') {
-            $url = url_for(
-                "ext/public/form",
-                "action=check_unique&entities_id=" . $public_form["entities_id"] . "&id=" . $public_form['id']
+        if (\K::$fw->app_items_form_name == 'registration_form') {
+            $url = \Helpers\Urls::url_for('main/users/registration/check_unique', 'entities_id=1');
+        } elseif (\K::$fw->app_items_form_name == 'public_form') {
+            $url = \Helpers\Urls::url_for(
+                'ext/public/form/check_unique',
+                'entities_id=' . \K::$fw->public_form["entities_id"] . '&id=' . \K::$fw->public_form['id']
             );
-        } elseif ($app_items_form_name == 'account_form') {
-            $url = url_for("users/account", "action=check_unique&entities_id=1");
+        } elseif (\K::$fw->app_items_form_name == 'account_form') {
+            $url = \Helpers\Urls::url_for('main/users/account/check_unique', 'entities_id=1');
         } else {
-            $url = url_for(
-                "items/items",
-                "action=check_unique&path=" . $app_path . ($item_id ? "&id=" . $item_id : "")
+            $url = \Helpers\Urls::url_for(
+                'main/items/items/check_unique',
+                'path=' . \K::$fw->app_path . ($item_id ? "&id=" . $item_id : "")
             );
         }
 
@@ -402,7 +390,6 @@ class Fields
                                 fields_value:  function () { 
                                   return $("#fields_' . $v['id'] . '").val() 
                                 },
-                                form_session_token: "' . $app_session_token . '",
                                 unique_for_each_parent: function () { 
                                     return $("#fields_' . $v['id'] . '").attr("unique-for-each-parent") 
                                 },

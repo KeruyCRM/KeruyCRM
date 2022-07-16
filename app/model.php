@@ -262,4 +262,9 @@ class Model extends \Prefab
 
         return $info;
     }
+
+    public function db_has_encryption_key()
+    {
+        return \K::fw()->exists('DB_ENCRYPTION_KEY') and strlen(\K::$fw->DB_ENCRYPTION_KEY);
+    }
 }

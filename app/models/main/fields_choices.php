@@ -236,7 +236,10 @@ class Fields_choices
             }
 
             foreach ($tree as $v) {
-                $choices[$v['id']] = ['name' => fields_choices . phpstr_repeat(' - ', $v['level']), 'color' => $v['bg_color']];
+                $choices[$v['id']] = [
+                    'name' => fields_choices . phpstr_repeat(' - ', $v['level']),
+                    'color' => $v['bg_color']
+                ];
             }
         }
 
@@ -263,26 +266,24 @@ class Fields_choices
 
     public static function render_value($values = [], $is_export = false)
     {
-        global $app_choices_cache;
-
         if (!is_array($values)) {
             $values = explode(',', $values);
         }
 
         $html = '';
         foreach ($values as $id) {
-            if (isset($app_choices_cache[$id])) {
+            if (isset(\K::$fw->app_choices_cache[$id])) {
                 if ($is_export) {
                     $html .= (strlen(
                         $html
-                    ) == 0 ? $app_choices_cache[$id]['name'] : ', ' . $app_choices_cache[$id]['name']);
-                } elseif (strlen($app_choices_cache[$id]['bg_color']) > 0) {
-                    $html .= render_bg_color_block(
-                        $app_choices_cache[$id]['bg_color'],
-                        $app_choices_cache[$id]['name']
+                    ) == 0 ? \K::$fw->app_choices_cache[$id]['name'] : ', ' . \K::$fw->app_choices_cache[$id]['name']);
+                } elseif (strlen(\K::$fw->app_choices_cache[$id]['bg_color']) > 0) {
+                    $html .= \Helpers\App::render_bg_color_block(
+                        \K::$fw->app_choices_cache[$id]['bg_color'],
+                        \K::$fw->app_choices_cache[$id]['name']
                     );
                 } else {
-                    $html .= '<div>' . $app_choices_cache[$id]['name'] . '</div>';
+                    $html .= '<div>' . \K::$fw->app_choices_cache[$id]['name'] . '</div>';
                 }
             }
         }

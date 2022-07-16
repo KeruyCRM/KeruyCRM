@@ -34,15 +34,13 @@ class Users_notifications
 
     public static function add($name, $type, $users_id, $entities_id, $items_id)
     {
-        global $app_user;
-
         //skip user with disabled notification
-        if (users_cfg::get_value_by_users_id($users_id, 'disable_internal_notification') == 1) {
+        if (\Models\Main\Users\Users_cfg::get_value_by_users_id($users_id, 'disable_internal_notification') == 1) {
             return false;
         }
 
         //skip current user
-        if ($app_user['id'] == $users_id) {
+        if (\K::$fw->app_user['id'] == $users_id) {
             return false;
         }
 
@@ -53,10 +51,10 @@ class Users_notifications
             'name' => $name,
             'type' => $type,
             'date_added' => time(),
-            'created_by' => $app_user['id'],
+            'created_by' => \K::$fw->app_user['id'],
         ];
 
-        db_perform('app_users_notifications', $sql_data);
+        \K::model()->db_perform('app_users_notifications', $sql_data);
     }
 
     public static function reset($entities_id, $items_id)
@@ -116,9 +114,9 @@ class Users_notifications
 
         $items_html = '';
 
-       /* $items_query = db_query(
-            "select * from app_users_notifications where users_id='" . \K::$fw->app_user['id'] . "' order by id desc limit " . $popup_items_limit
-        );*/
+        /* $items_query = db_query(
+             "select * from app_users_notifications where users_id='" . \K::$fw->app_user['id'] . "' order by id desc limit " . $popup_items_limit
+         );*/
 
         $items_query = \K::model()->db_fetch('app_users_notifications', [
             'users_id = ?',
@@ -126,10 +124,10 @@ class Users_notifications
         ], [
             'order' => 'id desc',
             'limit' => $popup_items_limit
-        ],'entities_id,items_id,type,name,created_by');
+        ], 'entities_id,items_id,type,name,created_by');
 
         //while ($items = db_fetch_array($items_query)) {
-        foreach ($items_query as $items){
+        foreach ($items_query as $items) {
             $path_info = \Tools\Items\Items::get_path_info($items['entities_id'], $items['items_id']);
 
             $items_html .= '

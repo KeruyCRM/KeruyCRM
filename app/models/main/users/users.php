@@ -265,7 +265,7 @@ class Users
 
     public static function use_email_pattern($pattern, $blocks = [])
     {
-        $content = file_get_contents('includes/patterns/email/' . $pattern . '.html');
+        $content = file_get_contents('app/views/patterns/email/' . $pattern . '.html');
 
         foreach ($blocks as $k => $v) {
             $v = users::use_email_pattern_style($v, $k);
@@ -279,7 +279,8 @@ class Users
     {
         $content = preg_replace('/data-content="(.*)"/', '', $content);
 
-        require('includes/patterns/email/styles.php');
+        $styles = require('app/views/patterns/email/styles.php');
+        $css_classes = require('app/views/patterns/email/css_classes.php');
 
         foreach ($styles[$style] as $tag => $css) {
             $content = str_replace(['<' . $tag . ' ', '<' . $tag . '>'],
@@ -296,11 +297,9 @@ class Users
 
     public static function send_to($send_to, $subject, $body, $attachments = [])
     {
-        //global $app_user, $app_users_cache;
-
         foreach ($send_to as $users_id) {
             if (strstr($users_id, '@')) {
-                if (app_validate_email($users_id)) {
+                if (\Helpers\App::app_validate_email($users_id)) {
                     $options = [
                         'to' => $users_id,
                         'to_name' => '',
@@ -311,21 +310,26 @@ class Users
                         'attachments' => $attachments,
                     ];
 
-                    users::send_email($options);
+                    self::send_email($options);
                 }
             } else {
                 if (\K::$fw->CFG_EMAIL_COPY_SENDER == 0 and $users_id == \K::$fw->app_user['id']) {
                     continue;
                 }
 
-                if (users_cfg::get_value_by_users_id($users_id, 'disable_notification') == 1) {
+                if (\Models\Main\Users\Users_cfg::get_value_by_users_id($users_id, 'disable_notification') == 1) {
                     continue;
                 }
 
-                $users_info_query = db_query(
+                /*$users_info_query = db_query(
                     "select * from app_entity_1 where id='" . db_input($users_id) . "' and field_5=1"
-                );
-                if ($users_info = db_fetch_array($users_info_query) and isset(\K::$fw->app_user['email'])) {
+                );*/
+                $users_info = \K::model()->db_fetch_one('app_entity_1', [
+                    'id = ? and field_5 = 1',
+                    $users_id
+                ]);
+
+                if ($users_info and isset(\K::$fw->app_user['email'])) {
                     $options = [
                         'to' => $users_info['field_9'],
                         'to_name' => \K::$fw->app_users_cache[$users_info['id']]['name'],
@@ -336,7 +340,7 @@ class Users
                         'attachments' => $attachments,
                     ];
 
-                    users::send_email($options);
+                    self::send_email($options);
                 }
             }
         }
@@ -448,23 +452,13 @@ class Users
 
             $mail->send();
         } catch (\Exception $e) {
-            if (is_object($alerts)) {
-                $alerts->add(
-                    sprintf(
-                        \K::$fw->TEXT_MAILER_ERROR,
-                        $options['to']
-                    ) . ': ' . $mail->ErrorInfo . (\K::$fw->CFG_EMAIL_SMTP_DEBUG ? '<br>' . \K::$fw->TEXT_MORE_INFO . ': log/smtp_log.txt' : ''),
-                    'error'
-                );
-            } else {
-                error_log(
-                    date(
-                        "Y-m-d H:i:s"
-                    ) . ' Error sending message to ' . $options['to'] . ': ' . $mail->ErrorInfo . "\n",
-                    3,
-                    "log/Email_Errors_" . date("M_Y") . ".txt"
-                );
-            }
+            \K::flash()->addMessage(
+                sprintf(
+                    \K::$fw->TEXT_MAILER_ERROR,
+                    $options['to']
+                ) . ': ' . $mail->ErrorInfo . (\K::$fw->CFG_EMAIL_SMTP_DEBUG ? '<br>' . \K::$fw->TEXT_MORE_INFO . ': log/smtp_log.txt' : ''),
+                'error'
+            );
 
             if (\K::$fw->CFG_EMAIL_SMTP_DEBUG) {
                 error_log("\n", 3, "log/smtp_log.txt");

@@ -19,7 +19,7 @@ class Account extends \Controller
         \K::$fw->current_entity_id = 1;
         \K::$fw->entity_cfg = new \Models\Main\Entities_cfg(\K::$fw->current_entity_id);
 
-        \K::$fw->obj = \K::model()->db_query_exec(
+        \K::$fw->obj = \K::model()->db_query_exec_one(
             'select e.* ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                 1,
                 ''

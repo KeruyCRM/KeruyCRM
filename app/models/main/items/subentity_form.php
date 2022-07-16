@@ -461,7 +461,7 @@ class Subentity_form
 
                 \Models\Main\Items\Items::send_new_item_nofitication($current_entity_id, $item_id);
 
-                if (is_ext_installed()) {
+                if (\Helpers\App::is_ext_installed()) {
                     //subscribe
                     $modules = new modules('mailing');
                     $mailing = new mailing($current_entity_id, $item_id);
@@ -478,14 +478,23 @@ class Subentity_form
         if (isset(\K::$fw->app_subentity_form_items_deleted[$this->field_id]) and is_array(
                 \K::$fw->app_subentity_form_items_deleted[$this->field_id]
             ) and count(\K::$fw->app_subentity_form_items_deleted[$this->field_id])) {
-            $items_query = db_query(
+            /*$items_query = db_query(
                 "select id from app_entity_{$current_entity_id} where parent_item_id={$this->items_id}  and id in (" . implode(
                     ',',
                     \K::$fw->app_subentity_form_items_deleted[$this->field_id]
                 ) . ")"
-            );
-            while ($items = db_fetch_array($items_query)) {
-                items::delete($current_entity_id, $items['id']);
+            );*/
+            $items_query = \K::model()->db_fetch('app_entity_' . $current_entity_id, [
+                'parent_item_id = ? and id in (' . \K::model()->quoteToString(
+                    \K::$fw->app_subentity_form_items_deleted[$this->field_id]
+                ) . ')',
+                $this->items_id
+            ], [], 'id');
+            //while ($items = db_fetch_array($items_query)) {
+            foreach ($items_query as $items) {
+                $items = $items->cast();
+
+                \Models\Main\Items\Items::delete($current_entity_id, $items['id']);
             }
         }
     }

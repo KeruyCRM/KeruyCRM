@@ -462,9 +462,9 @@ class Fieldtype_dropdown_multilevel
                 $value = '';
 
                 if (isset($level_values[$level])) {
-                    $value = ($cfg->get('use_global_list') ? global_lists::render_value(
+                    $value = ($cfg->get('use_global_list') ? \Models\Main\Global_lists::render_value(
                         $level_values[$level]
-                    ) : fields_choices::render_value($level_values[$level]));
+                    ) : \Models\Main\Fields_choices::render_value($level_values[$level]));
                 }
 
                 if ($is_export) {
@@ -483,9 +483,9 @@ class Fieldtype_dropdown_multilevel
         } else {
             //render global list value
             if ($cfg->get('use_global_list') > 0) {
-                $value = global_lists::render_value($options['value']);
+                $value = \Models\Main\Global_lists::render_value($options['value']);
             } else {
-                $value = fields_choices::render_value($options['value']);
+                $value = \Models\Main\Fields_choices::render_value($options['value']);
             }
 
             $field_name = $options['field']['name'];

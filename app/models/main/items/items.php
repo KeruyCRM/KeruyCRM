@@ -41,36 +41,41 @@ class Items
 
     public static function delete($entities_id, $items_id)
     {
-        global $app_user;
-
-        //stop delete yourself 
-        if ($entities_id == 1 and $items_id == $app_user['id']) {
+        //stop delete yourself
+        if ($entities_id == 1 and $items_id == \K::$fw->app_user['id']) {
             return false;
         }
 
         //run process before delete
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //run actions before delete records
             $processes = new processes($entities_id);
             $processes->run_before_delete($items_id);
         }
 
-        $item_info = db_find("app_entity_" . $entities_id, $items_id);
+        $item_info = \K::model()->db_find("app_entity_" . $entities_id, $items_id);
 
-        $parent_item_id = ($item_info['parent_id'] > 0 ? tree_table::get_top_parent_item_id(
+        $parent_item_id = ($item_info['parent_id'] > 0 ? \Models\Main\Items\Tree_table::get_top_parent_item_id(
             $entities_id,
             $item_info['parent_id']
         ) : 0);
 
         //reset parent items
-        db_query(
+        /*db_query(
             "update app_entity_" . $entities_id . "  set parent_id='" . $item_info['parent_id'] . "' where parent_id='" . $items_id . "'"
-        );
+        );*/
 
-        attachments::delete_attachments($entities_id, $items_id);
+        \K::model()->db_update('app_entity_' . $entities_id, [
+            'parent_id' => $item_info['parent_id']
+        ], [
+            'parent_id = ?',
+            $items_id
+        ]);
+
+        \Tools\Attachments::delete_attachments($entities_id, $items_id);
 
         //handle actions before delete
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //subscribe
             $modules = new modules('mailing');
             $mailing = new mailing($entities_id, $items_id);
@@ -252,10 +257,8 @@ class Items
 
     public static function get_heading_field($entity_id, $item_id, $item_info = null)
     {
-        global $app_users_cache;
-
         if ($entity_id == 1) {
-            return (isset($app_users_cache[$item_id]) ? $app_users_cache[$item_id]['name'] : '');
+            return (isset(\K::$fw->app_users_cache[$item_id]) ? \K::$fw->app_users_cache[$item_id]['name'] : '');
         }
 
         $heading_field_id = fields::get_heading_id($entity_id);
@@ -269,16 +272,14 @@ class Items
 
     public static function get_heading_field_value($heading_field_id, $item_info)
     {
-        global $app_choices_cache, $app_users_cache, $app_heading_fields_cache;
-
         $heading_field_value = '';
 
         if (isset($item_info['field_' . $heading_field_id])) {
             $heading_field_value = $item_info['field_' . $heading_field_id];
         }
 
-        if (isset($app_heading_fields_cache[$heading_field_id])) {
-            $field_info = $app_heading_fields_cache[$heading_field_id];
+        if (isset(\K::$fw->app_heading_fields_cache[$heading_field_id])) {
+            $field_info = \K::$fw->app_heading_fields_cache[$heading_field_id];
 
             if (strlen($heading_field_value) == 0 and !in_array(
                     $field_info['type'],
@@ -298,7 +299,7 @@ class Items
                         'path' => $field_info['entities_id']
                     ];
 
-                    return fields_types::output($output_options);
+                    return \Models\Main\Fields_types::output($output_options);
                     break;
                 case 'fieldtype_text_pattern':
                     $output_options = [
@@ -310,7 +311,7 @@ class Items
                         'path' => $field_info['entities_id']
                     ];
 
-                    return fields_types::output($output_options);
+                    return \Models\Main\Fields_types::output($output_options);
                     break;
                 case 'fieldtype_id':
                     return (strlen(
@@ -318,20 +319,20 @@ class Items
                     ) ? $field_info['name'] . ': ' . $item_info['id'] : $item_info['id']);
                     break;
                 case 'fieldtype_created_by':
-                    if (isset($app_users_cache[$item_info['created_by']])) {
-                        return $app_users_cache[$item_info['created_by']]['name'];
+                    if (isset(\K::$fw->app_users_cache[$item_info['created_by']])) {
+                        return \K::$fw->app_users_cache[$item_info['created_by']]['name'];
                     } else {
                         return '';
                     }
                     break;
                 case 'fieldtype_date_added':
-                    return format_date_time($item_info['date_added']);
+                    return \Helpers\App::format_date_time($item_info['date_added']);
                     break;
                 case 'fieldtype_input_date':
-                    return format_date($heading_field_value);
+                    return \Helpers\App::format_date($heading_field_value);
                     break;
                 case 'fieldtype_input_datetime':
-                    return format_date_time($heading_field_value);
+                    return \Helpers\App::format_date_time($heading_field_value);
                     break;
                 case 'fieldtype_checkboxes':
                 case 'fieldtype_radioboxes':
@@ -343,44 +344,54 @@ class Items
                 case 'fieldtype_tags':
                 case 'fieldtype_autostatus':
 
-                    $cfg = new fields_types_cfg($field_info['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg($field_info['configuration']);
 
                     if ($cfg->get('use_global_list') > 0) {
-                        return global_lists::render_value($heading_field_value, true);
+                        return \Models\Main\Global_lists::render_value($heading_field_value, true);
                     } else {
-                        return fields_choices::render_value($heading_field_value, true);
+                        return \Models\Main\Fields_choices::render_value($heading_field_value, true);
                     }
                     break;
                 case 'fieldtype_entity_multilevel':
                 case 'fieldtype_entity_ajax':
                 case 'fieldtype_entity':
-                    $cfg = fields_types::parse_configuration($field_info['configuration']);
+                    $cfg = \Models\Main\Fields_types::parse_configuration($field_info['configuration']);
 
                     $entity_heading_field_id = false;
-                    $fields_query = db_query(
+                    /*$fields_query = db_query(
                         "select f.* from app_fields f where f.is_heading=1 and  f.entities_id='" . db_input(
                             $cfg['entity_id']
                         ) . "'"
-                    );
-                    if ($fields = db_fetch_array($fields_query)) {
+                    );*/
+
+                    $fields = \K::model()->db_fetch_one('app_fields', [
+                        'is_heading = 1 and entities_id = ?',
+                        $cfg['entity_id']
+                    ]);
+
+                    if ($fields) {
                         $entity_heading_field_id = $fields['id'];
                     }
 
                     $output = [];
                     foreach (explode(',', $heading_field_value) as $item_id) {
-                        $items_info_sql = "select e.* from app_entity_" . $cfg['entity_id'] . " e where e.id='" . db_input(
+                        /*$items_info_sql = "select e.* from app_entity_" . $cfg['entity_id'] . " e where e.id='" . db_input(
                                 $item_id
                             ) . "'";
-                        $items_query = db_query($items_info_sql);
-                        if ($item = db_fetch_array($items_query)) {
+                        $items_query = db_query($items_info_sql);*/
+
+                        $item = \K::model()->db_fetch_one('app_entity_' . $cfg['entity_id'], [
+                            'id = ?',
+                            $item_id
+                        ]);
+
+                        if ($item) {
                             if ($cfg['entity_id'] == 1) {
-                                $output[] = $app_users_cache[$item['id']]['name'];
+                                $output[] = \K::$fw->app_users_cache[$item['id']]['name'];
+                            } elseif ($entity_heading_field_id) {
+                                $output[] = self::get_heading_field_value($entity_heading_field_id, $item);
                             } else {
-                                if ($entity_heading_field_id) {
-                                    $output[] = self::get_heading_field_value($entity_heading_field_id, $item);
-                                } else {
-                                    $output[] = $item['id'];
-                                }
+                                $output[] = $item['id'];
                             }
                         }
                     }
@@ -392,8 +403,8 @@ class Items
                 case 'fieldtype_users_ajax':
                     $users_list = [];
                     foreach (explode(',', $heading_field_value) as $id) {
-                        if (isset($app_users_cache[$id])) {
-                            $users_list[] = $app_users_cache[$id]['name'];
+                        if (isset(\K::$fw->app_users_cache[$id])) {
+                            $users_list[] = \K::$fw->app_users_cache[$id]['name'];
                         }
                     }
 
@@ -415,10 +426,9 @@ class Items
 
         foreach ($path_array as $v) {
             $breadcrumb[] = $v['name'];
-            $breadcrumb_html[] = '<a href="' . url_for(
-                    'items/info',
-                    'path=' . $v['path'],
-                    true
+            $breadcrumb_html[] = '<a href="' . \Helpers\Urls::url_for(
+                    'main/items/info',
+                    'path=' . $v['path']
                 ) . '">' . $v['name'] . '</a>';
         }
 
@@ -647,46 +657,87 @@ class Items
 
     public static function render_info_box($entity_id, $item_id, $users_id = false, $exclude_fields_types = true)
     {
-        global $current_path, $app_user, $app_users_cache, $current_item_info;
-
-        $entity_cfg = new entities_cfg($entity_id);
+        $entity_cfg = new \Models\Main\Entities_cfg($entity_id);
 
         if ($users_id > 0) {
             $is_email = true;
-            $user_info = db_find('app_entity_1', $users_id);
-            $fields_access_schema = users::get_fields_access_schema($entity_id, $user_info['field_6']);
+            $user_info = \K::model()->db_find('app_entity_1', $users_id);
+            $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema(
+                $entity_id,
+                $user_info['field_6']
+            );
         } else {
             $is_email = false;
-            $fields_access_schema = users::get_fields_access_schema($entity_id, $app_user['group_id']);
+            $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema(
+                $entity_id,
+                \K::$fw->app_user['group_id']
+            );
         }
 
         $fields_display_rules = [];
 
         $listing_sql_query_select = '';
 
-        //prepare forumulas query
-        $listing_sql_query_select = fieldtype_formula::prepare_query_select($entity_id, $listing_sql_query_select);
-
-        $item_query = db_query(
-            "select e.* " . $listing_sql_query_select . " from app_entity_" . $entity_id . " e where id='" . $item_id . "'",
-            false
+        //prepare formulas query
+        $listing_sql_query_select = \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
+            $entity_id,
+            $listing_sql_query_select
         );
-        $current_item_info = $item = db_fetch_array($item_query);
+
+        $item = \K::model()->db_query_exec_one(
+            "select e.* " . $listing_sql_query_select . " from app_entity_" . $entity_id . " e where id = ?",
+            $item_id
+        );
+
+        \K::$fw->current_item_info = $item;
 
         $html = '';
 
-        /**
-         * display entity fields
-         */
+        $include_fields = [
+            'fieldtype_id',
+            'fieldtype_date_added',
+            'fieldtype_date_updated',
+            'fieldtype_created_by'
+        ];
+        $in = \K::model()->quoteToString($include_fields);
+
+        $exclude_fields = [
+            'fieldtype_action',
+            'fieldtype_subentity_form'
+        ];
         if ($exclude_fields_types == true) {
-            $exclude_fields_types = ",'fieldtype_image_map_nested','fieldtype_textarea_encrypted','fieldtype_video','fieldtype_iframe','fieldtype_google_map_directions','fieldtype_google_map','fieldtype_yandex_map','fieldtype_mind_map','fieldtype_image_map','fieldtype_todo_list','fieldtype_textarea','fieldtype_textarea_wysiwyg','fieldtype_attachments','fieldtype_image','fieldtype_image_ajax','fieldtype_related_records','fieldtype_parent_item_id','fieldtype_mapbbcode'";
+            $exclude_fields_types = [
+                'fieldtype_image_map_nested',
+                'fieldtype_textarea_encrypted',
+                'fieldtype_video',
+                'fieldtype_iframe',
+                'fieldtype_google_map_directions',
+                'fieldtype_google_map',
+                'fieldtype_yandex_map',
+                'fieldtype_mind_map',
+                'fieldtype_image_map',
+                'fieldtype_todo_list',
+                'fieldtype_textarea',
+                'fieldtype_textarea_wysiwyg',
+                'fieldtype_attachments',
+                'fieldtype_image',
+                'fieldtype_image_ajax',
+                'fieldtype_related_records',
+                'fieldtype_parent_item_id',
+                'fieldtype_mapbbcode'
+            ];
         } else {
-            $exclude_fields_types = ",'fieldtype_related_records','fieldtype_parent_item_id'";
+            $exclude_fields_types = [
+                'fieldtype_related_records',
+                'fieldtype_parent_item_id'
+            ];
         }
+
+        $notIn = \K::model()->quoteToString(array_merge($exclude_fields, $exclude_fields_types));
 
         $count = 0;
 
-        $tabs_tree = forms_tabs::get_tree($entity_id);
+        $tabs_tree = \Models\Main\Forms_tabs::get_tree($entity_id);
         foreach ($tabs_tree as $tabs) {
             if ($tabs['is_folder']) {
                 continue;
@@ -694,19 +745,17 @@ class Items
 
             $html_fields = '';
 
-            $fields_query = db_query(
-                "select f.*, fr.sort_order as form_rows_sort_order,right(f.forms_rows_position,1) as forms_rows_pos, t.name as tab_name, if(f.type in ('fieldtype_id','fieldtype_date_added','fieldtype_date_updated','fieldtype_created_by'),-1,t.sort_order) as tab_sort_order from app_fields f left join app_forms_rows fr on fr.id=LEFT(f.forms_rows_position,length(f.forms_rows_position)-2), app_forms_tabs t where f.type not in ('fieldtype_action','fieldtype_subentity_form' {$exclude_fields_types} )  and f.entities_id='" . db_input(
-                    $entity_id
-                ) . "' and f.forms_tabs_id=t.id and f.forms_tabs_id='" . db_input(
+            $fields_query = \K::model()->db_query_exec(
+                "select f.*, fr.sort_order as form_rows_sort_order,right(f.forms_rows_position,1) as forms_rows_pos, t.name as tab_name, if(f.type in ( {$in} ),-1,t.sort_order) as tab_sort_order from app_fields f left join app_forms_rows fr on fr.id = LEFT(f.forms_rows_position,length(f.forms_rows_position)-2), app_forms_tabs t where f.type not in ( {$notIn} ) and f.entities_id = ? and f.forms_tabs_id = t.id and f.forms_tabs_id = ? order by tab_sort_order, t.name, form_rows_sort_order, forms_rows_pos, f.sort_order, f.name",
+                [
+                    $entity_id,
                     $tabs['id']
-                ) . "' order by tab_sort_order, t.name, form_rows_sort_order, forms_rows_pos, f.sort_order, f.name",
-                false
+                ]
             );
-            while ($field = db_fetch_array($fields_query)) {
-                //print_rr($field);
-
+            //while ($field = db_fetch_array($fields_query)) {
+            foreach ($fields_query as $field) {
                 //exclude fields in email
-                if ($is_email and in_array($field['type'], fields_types::get_types_excluded_in_email())) {
+                if ($is_email and in_array($field['type'], \Models\Main\Fields_types::get_types_excluded_in_email())) {
                     continue;
                 }
 
@@ -726,17 +775,20 @@ class Items
                     'field' => $field,
                     'item' => $item,
                     'display_user_photo' => true,
-                    'path' => $current_path,
+                    'path' => \K::$fw->current_path,
                 ];
 
                 if ($is_email) {
                     $output_options['is_email'] = true;
                 }
 
-                $cfg = new fields_types_cfg($field['configuration']);
+                $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
                 //hide if empty
-                if ($cfg->get('hide_field_if_empty') == 1 and fields_types::is_empty_value($value, $field['type'])) {
+                if ($cfg->get('hide_field_if_empty') == 1 and \Models\Main\Fields_types::is_empty_value(
+                        $value,
+                        $field['type']
+                    )) {
                     continue;
                 }
 
@@ -746,8 +798,13 @@ class Items
                 }
 
                 //check fields display rules
-                $check_query = db_query("select * from app_forms_fields_rules where fields_id='" . $field['id'] . "'");
-                if ($check = db_fetch_array($check_query)) {
+                //$check_query = db_query("select * from app_forms_fields_rules where fields_id='" . $field['id'] . "'");
+                $check = \K::model()->db_fetch_count('app_forms_fields_rules', [
+                    'fields_id = ?',
+                    $field['id']
+                ]);
+
+                if ($check) {
                     $is_multiple = false;
 
                     if (in_array($field['type'], ['fieldtype_dropdown_multiple', 'fieldtype_checkboxes'])) {
@@ -777,7 +834,7 @@ class Items
                         ) ? $value : '') . '",' . (int)$is_multiple . '); ';
                 }
 
-                //skip heading or hidden fields from list but inlucde fields display rules before
+                //skip heading or hidden fields from list but include fields display rules before
                 if ($field['is_heading'] == 1) {
                     continue;
                 }
@@ -788,9 +845,9 @@ class Items
                     }
                 }
 
-                $field_name = fields_types::get_option($field['type'], 'name', $field['name']);
+                $field_name = \Models\Main\Fields_types::get_option($field['type'], 'name', $field['name']);
 
-                $field_name .= fields::get_item_info_tooltip($field);
+                $field_name .= \Models\Main\Fields::get_item_info_tooltip($field);
 
                 if ($field['type'] == 'fieldtype_section') {
                     $html_fields .= '
@@ -799,12 +856,12 @@ class Items
             </tr>
           ';
                 } elseif ($field['type'] == 'fieldtype_dropdown_multilevel') {
-                    $html_fields .= fieldtype_dropdown_multilevel::output_info_box($output_options);
+                    $html_fields .= \Tools\FieldsTypes\Fieldtype_dropdown_multilevel::output_info_box($output_options);
                 } //hide field name to save space to display value
                 elseif ($cfg->get('hide_field_name') == 1) {
                     $html_fields .= '
             <tr class="form-group form-group-' . $field['id'] . '">                          
-              <td colspan="2">' . fields_types::output($output_options) . '</td>
+              <td colspan="2">' . \Models\Main\Fields_types::output($output_options) . '</td>
             </tr>
           ';
                 } elseif ($field['type'] == 'fieldtype_users') {
@@ -813,14 +870,14 @@ class Items
               <th colspan="2" ' . (strlen($field_name) > 25 ? 'class="white-space-normal"' : '') . '>' . $field_name . '</th>
         	  </tr>
         	  <tr class="form-group-' . $field['id'] . '">            		
-              <td colspan="2">' . fields_types::output($output_options) . '</td>
+              <td colspan="2">' . \Models\Main\Fields_types::output($output_options) . '</td>
             </tr>
           ';
                 } elseif ($field['type'] == 'fieldtype_mapbbcode') {
                     $html_fields .= '
             <tr class="form-group form-group-' . $field['id'] . '">
             	<th ' . (strlen($field_name) > 25 ? 'class="white-space-normal"' : '') . '>' . $field_name . '</th>
-              <td style="width: 100%">' . fields_types::output($output_options) . '</td>
+              <td style="width: 100%">' . \Models\Main\Fields_types::output($output_options) . '</td>
             </tr>
           ';
                 } else {
@@ -828,10 +885,10 @@ class Items
 
                     //add dwonload All Attachments link if more then 1 files
                     if ($field['type'] == 'fieldtype_attachments' and count(explode(',', $value)) > 1) {
-                        $field_name_html = '<br><span class="download-all-attachments"><a style="margin-left: 0; font-weight: normal" href="' . url_for(
-                                'items/info',
-                                'action=download_all_attachments&id=' . $field['id'] . '&path=' . $current_path
-                            ) . '"><i class="fa fa-download"></i> ' . TEXT_DOWNLOAD_ALL_ATTACHMENTS . '</a></span>';
+                        $field_name_html = '<br><span class="download-all-attachments"><a style="margin-left: 0; font-weight: normal" href="' . \Helpers\Urls::url_for(
+                                'main/items/info/download_all_attachments',
+                                'id=' . $field['id'] . '&path=' . \K::$fw->current_path
+                            ) . '"><i class="fa fa-download"></i> ' . \K::$fw->TEXT_DOWNLOAD_ALL_ATTACHMENTS . '</a></span>';
                     }
 
                     $html_fields .= '
@@ -839,7 +896,7 @@ class Items
               <th ' . (strlen($field_name) > 25 ? 'class="white-space-normal"' : '') . '>' .
                         $field_name . $field_name_html .
                         '</th>
-              <td>' . fields_types::output($output_options) . '</td>
+              <td>' . \Models\Main\Fields_types::output($output_options) . '</td>
             </tr>
           ';
                 }
@@ -1034,22 +1091,21 @@ class Items
 
     public static function get_path_array($entities_id, $items_id, $path_array = [], $current_item_info = false)
     {
-        global $app_entities_cache, $items_holder;
+        $entities = \K::$fw->app_entities_cache[$entities_id];
 
-        $entities = $app_entities_cache[$entities_id];
-
-        if (!isset($items_holder[$entities_id][$items_id])) {
+        if (!isset(\K::$fw->items_holder[$entities_id][$items_id])) {
             if ($current_item_info) {
-                $items = $items_holder[$entities_id][$items_id] = $current_item_info;
+                $items = \K::$fw->items_holder[$entities_id][$items_id] = $current_item_info;
             } else {
-                $items_query = db_query("select * from app_entity_" . $entities_id . " where id='" . $items_id . "'");
-                $items = $items_holder[$entities_id][$items_id] = db_fetch_array($items_query);
+                //$items = db_query("select * from app_entity_" . $entities_id . " where id='" . $items_id . "'");
+                $items = \K::model()->db_fetch_one('app_entity_' . $entities_id, ['id = ?', $items_id]);
+                \K::$fw->items_holder[$entities_id][$items_id] = $items;
             }
         } else {
-            $items = $items_holder[$entities_id][$items_id];
+            $items = \K::$fw->items_holder[$entities_id][$items_id];
         }
 
-        if ($heading_field_id = fields::get_heading_id($entities_id)) {
+        if ($heading_field_id = \Models\Main\Fields::get_heading_id($entities_id)) {
             $name = self::get_heading_field_value($heading_field_id, $items);
         } else {
             $name = $items['id'];
@@ -1063,7 +1119,7 @@ class Items
         ];
 
         if ($entities['parent_id'] > 0) {
-            $path_array = items::get_path_array($entities['parent_id'], $items['parent_item_id'], $path_array);
+            $path_array = self::get_path_array($entities['parent_id'], $items['parent_item_id'], $path_array);
         }
 
         return $path_array;
@@ -1454,58 +1510,58 @@ class Items
             $email_rules->send_insert_msg();
         }
 
-        $breadcrumb = items::get_breadcrumb_by_item_id($current_entity_id, $item_id);
+        $breadcrumb = self::get_breadcrumb_by_item_id($current_entity_id, $item_id);
         $item_name = $breadcrumb['text'];
 
-        $entity_cfg = new entities_cfg($current_entity_id);
+        $entity_cfg = new \Models\Main\Entities_cfg($current_entity_id);
 
         //subject for new item
         $subject = (strlen($entity_cfg->get('email_subject_new_item')) > 0 ? $entity_cfg->get(
                 'email_subject_new_item'
-            ) . ' ' . $item_name : TEXT_DEFAULT_EMAIL_SUBJECT_NEW_ITEM . ' ' . $item_name);
+            ) . ' ' . $item_name : \K::$fw->TEXT_DEFAULT_EMAIL_SUBJECT_NEW_ITEM . ' ' . $item_name);
 
         //Send notification if there are assigned users and items is new or there is changed fields or new assigned users
         if (count($app_send_to) > 0) {
             $users_notifications_type = 'new_item';
 
             //default email heading
-            $heading = users::use_email_pattern_style(
-                '<div><a href="' . url_for(
-                    'items/info',
-                    'path=' . $current_entity_id . '-' . $item_id,
-                    true
+            $heading = \Models\Main\Users\Users::use_email_pattern_style(
+                '<div><a href="' . \Helpers\Urls::url_for(
+                    'main/items/info',
+                    'path=' . $current_entity_id . '-' . $item_id
                 ) . '"><h3>' . $subject . '</h3></a></div>',
                 'email_heading_content'
             );
 
             //start sending email
             foreach (array_unique($app_send_to) as $send_to) {
-                //prepare body
-                //prepare body
                 if ($entity_cfg->get('item_page_details_columns', '2') == 1) {
-                    $body = users::use_email_pattern(
+                    $body = \Models\Main\Users\Users::use_email_pattern(
                         'single_column',
-                        ['email_single_column' => items::render_info_box($current_entity_id, $item_id, $send_to, false)]
+                        ['email_single_column' => self::render_info_box($current_entity_id, $item_id, $send_to, false)]
                     );
                 } else {
-                    $body = users::use_email_pattern(
+                    $body = \Models\Main\Users\Users::use_email_pattern(
                         'single',
                         [
-                            'email_body_content' => items::render_content_box($current_entity_id, $item_id, $send_to),
-                            'email_sidebar_content' => items::render_info_box($current_entity_id, $item_id, $send_to)
+                            'email_body_content' => self::render_content_box($current_entity_id, $item_id, $send_to),
+                            'email_sidebar_content' => self::render_info_box($current_entity_id, $item_id, $send_to)
                         ]
                     );
                 }
 
-                //echo $subject . $body;
-                //exit();
-
-                if (users_cfg::get_value_by_users_id($send_to, 'disable_notification') != 1) {
-                    users::send_to([$send_to], $subject, $heading . $body);
+                if (\Models\Main\Users\Users_cfg::get_value_by_users_id($send_to, 'disable_notification') != 1) {
+                    \Models\Main\Users\Users::send_to([$send_to], $subject, $heading . $body);
                 }
 
                 //add users notification
-                users_notifications::add($subject, $users_notifications_type, $send_to, $current_entity_id, $item_id);
+                \Models\Main\Users\Users_notifications::add(
+                    $subject,
+                    $users_notifications_type,
+                    $send_to,
+                    $current_entity_id,
+                    $item_id
+                );
             }
         }
 

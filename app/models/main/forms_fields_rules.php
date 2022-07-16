@@ -1,20 +1,29 @@
 <?php
 
-class forms_fields_rules
+namespace Models\Main;
+
+class Forms_fields_rules
 {
 
     static function prepare_hidden_fields($entity_id, $item, $fields_access_schema)
     {
-        global $app_module_path;
-
         $html = '';
-        $form_fields_query = db_query(
+        /*$form_fields_query = db_query(
             "select r.* from app_forms_fields_rules r where r.entities_id='" . $entity_id . "' and is_active=1 group by r.fields_id"
-        );
-        while ($v = db_fetch_array($form_fields_query)) {
+        );*/
+
+        $form_fields_query = \K::model()->db_fetch('app_forms_fields_rules', [
+            'entities_id = ? and is_active = 1',
+            $entity_id
+        ], ['group' => 'fields_id'], 'fields_id');
+
+        //while ($v = db_fetch_array($form_fields_query)) {
+        foreach ($form_fields_query as $v) {
+            $v = $v->cast();
+
             //check if there is limited access or field ID is 6 (user group)
-            if (isset($fields_access_schema[$v['fields_id']]) or ($v['fields_id'] == 6 and $app_module_path == 'users/account')) {
-                $html .= input_hidden_tag(
+            if (isset($fields_access_schema[$v['fields_id']]) or ($v['fields_id'] == 6 and \K::$fw->app_module_path == 'users/account')) {
+                $html .= \Helpers\Html::input_hidden_tag(
                     'fields[' . $v['fields_id'] . ']',
                     $item['field_' . $v['fields_id']],
                     ['class' => 'field_' . $v['fields_id']]
@@ -27,14 +36,12 @@ class forms_fields_rules
 
     static function hidden_form_fields($entity_id, $check_user_group = true)
     {
-        global $app_user;
-
         //admin can view all fields
-        if ($check_user_group and app_session_is_registered('app_logged_users_id') and $app_user['group_id'] == 0) {
+        if ($check_user_group and \K::app_session_is_registered('app_logged_users_id') and \K::$fw->app_user['group_id'] == 0) {
             return '';
         }
 
-        $entity_cfg = new entities_cfg($entity_id);
+        $entity_cfg = new \Models\Main\Entities_cfg($entity_id);
 
         $hidden_form_fields = $entity_cfg->get('hidden_form_fields');
 

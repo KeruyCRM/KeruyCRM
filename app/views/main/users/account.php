@@ -1,11 +1,9 @@
-<h3 class="page-title"><?php
-    echo TEXT_HEADING_MY_ACCOUNT ?></h3>
+<h3 class="page-title"><?= \K::$fw->TEXT_HEADING_MY_ACCOUNT ?></h3>
 
 <div class="portlet">
     <div class="portlet-title">
         <div class="caption">
-            <i class="fa fa-reorder"></i><?php
-            echo TEXT_DETAILS ?>
+            <i class="fa fa-reorder"></i><?= \K::$fw->TEXT_DETAILS ?>
         </div>
     </div>
     <div class="portlet-body form paretn-items-form">
@@ -13,13 +11,13 @@
 
         <?php
         $is_new_item = false;
-        $app_items_form_name = 'account_form';
-        $_GET['id'] = $app_user['id'];
-        $current_path = 1;
-        $_GET['path'] = 1;
-        echo form_tag(
+        \K::$fw->app_items_form_name = 'account_form';
+        \K::$fw->GET['id'] = \K::$fw->app_user['id'];
+        \K::$fw->current_path = 1;
+        \K::$fw->GET['path'] = 1;
+        echo \Helpers\Html::form_tag(
             'account_form',
-            url_for('users/account', 'action=update'),
+            \Helpers\Urls::url_for('main/users/account/update'),
             ['enctype' => 'multipart/form-data', 'class' => 'form-horizontal']
         )
         ?>
@@ -29,106 +27,117 @@
 
             $excluded_fileds_types = "'fieldtype_user_accessgroups','fieldtype_user_status','fieldtype_user_skin','fieldtype_text_pattern'";
 
-            if (CFG_ALLOW_CHANGE_USERNAME == 0) {
+            if (\K::$fw->CFG_ALLOW_CHANGE_USERNAME == 0) {
                 $excluded_fileds_types .= ",'fieldtype_user_username'";
             }
 
-            $count_tabs = db_count('app_forms_tabs', $current_entity_id, "entities_id");
-
+            $count_tabs = \K::model()->db_count('app_forms_tabs', \K::$fw->current_entity_id, 'entities_id');
 
             $html_cfg = '
 		   <div class="form-group">
-        	<label class="col-md-3 control-label" for="cfg_disable_notification">' . tooltip_icon(
-                    TEXT_DISABLE_NOTIFICATIONS_INFO
-                ) . TEXT_DISABLE_EMAIL_NOTIFICATIONS . '</label>
+        	<label class="col-md-3 control-label" for="cfg_disable_notification">' . \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXT_DISABLE_NOTIFICATIONS_INFO
+                ) . \K::$fw->TEXT_DISABLE_EMAIL_NOTIFICATIONS . '</label>
           <div class="col-md-9">	
-        	  <p class="form-control-static">' . input_checkbox_tag(
+        	  <p class="form-control-static">' . \Helpers\Html::input_checkbox_tag(
                     'cfg[disable_notification]',
                     1,
-                    ['checked' => $app_users_cfg->get('disable_notification')]
+                    ['checked' => \K::app_users_cfg()->get('disable_notification')]
                 ) . '</p>               
           </div>			
        </div>
   		<div class="form-group">
-        	<label class="col-md-3 control-label" for="cfg_disable_internal_notification">' . tooltip_icon(
-                    TEXT_DISABLE_INTERNAL_NOTIFICATIONS_INFO
-                ) . TEXT_DISABLE_INTERNAL_NOTIFICATIONS . '</label>
+        	<label class="col-md-3 control-label" for="cfg_disable_internal_notification">' . \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXT_DISABLE_INTERNAL_NOTIFICATIONS_INFO
+                ) . \K::$fw->TEXT_DISABLE_INTERNAL_NOTIFICATIONS . '</label>
           <div class="col-md-9">	
-        	  <p class="form-control-static">' . input_checkbox_tag(
+        	  <p class="form-control-static">' . \Helpers\Html::input_checkbox_tag(
                     'cfg[disable_internal_notification]',
                     1,
-                    ['checked' => $app_users_cfg->get('disable_internal_notification')]
+                    ['checked' => \K::app_users_cfg()->get('disable_internal_notification')]
                 ) . '</p>               
           </div>			
        </div>
        <div class="form-group">
-        	<label class="col-md-3 control-label" for="cfg_disable_highlight_unread">' . tooltip_icon(
-                    TEXT_DISABLE_HIGHLIGHT_UNREAD_INFO
-                ) . TEXT_DISABLE_HIGHLIGHT_UNREAD . '</label>
+        	<label class="col-md-3 control-label" for="cfg_disable_highlight_unread">' . \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXT_DISABLE_HIGHLIGHT_UNREAD_INFO
+                ) . \K::$fw->TEXT_DISABLE_HIGHLIGHT_UNREAD . '</label>
           <div class="col-md-9">	
-        	  <p class="form-control-static">' . input_checkbox_tag(
+        	  <p class="form-control-static">' . \Helpers\Html::input_checkbox_tag(
                     'cfg[disable_highlight_unread]',
                     1,
-                    ['checked' => $app_users_cfg->get('disable_highlight_unread')]
+                    ['checked' => \K::app_users_cfg()->get('disable_highlight_unread')]
                 ) . '</p>               
           </div>			
        </div> 	  		
 				  		
 		';
 
-            $fields_access_schema = users::get_fields_access_schema($current_entity_id, $app_user['group_id']);
+            $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema(
+                \K::$fw->current_entity_id,
+                \K::$fw->app_user['group_id']
+            );
 
             $html = '';
 
             if ($count_tabs > 1) {
                 $count = 0;
 
-                $html = '<ul class="nav nav-tabs" id="form_tabs"> ' . forms_tabs::render_tabs_nav(
-                        $current_entity_id
+                $html = '<ul class="nav nav-tabs" id="form_tabs"> ' . \Models\Main\Forms_tabs::render_tabs_nav(
+                        \K::$fw->current_entity_id
                     ) . '</ul>';
 
                 $html .= '<div class="tab-content">';
                 $count = 0;
 
-                $tabs_tree = forms_tabs::get_tree($current_entity_id);
+                $tabs_tree = \Models\Main\Forms_tabs::get_tree(\K::$fw->current_entity_id);
                 foreach ($tabs_tree as $tabs) {
                     $html .= '
         <div class="tab-pane ' . ($count == 0 ? 'active' : '') . '" id="form_tab_' . $tabs['id'] . '">
           ' . (strlen($tabs['description']) ? '<p>' . $tabs['description'] . '</p>' : '');
 
                     $count_fields = 0;
-                    $fields_query = db_query(
-                        "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_type_list_excluded_in_form(
-                        ) . "," . $excluded_fileds_types . ") and  f.entities_id='" . db_input(
-                            $current_entity_id
-                        ) . "' and f.forms_tabs_id=t.id and f.forms_tabs_id='" . db_input(
+                    $fields_query = \K::model()->db_query_exec(
+                        "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_type_list_excluded_in_form(
+                        ) . "," . $excluded_fileds_types . ") and f.entities_id = ? and f.forms_tabs_id = t.id and f.forms_tabs_id = ? and length(f.forms_rows_position) = 0 order by t.sort_order, t.name, f.sort_order, f.name",
+                        [
+                            \K::$fw->current_entity_id,
                             $tabs['id']
-                        ) . "' and length(f.forms_rows_position)=0 order by t.sort_order, t.name, f.sort_order, f.name"
+                        ]
                     );
-                    while ($v = db_fetch_array($fields_query)) {
-                        if ($v['type'] == 'fieldtype_user_language' and count(app_get_languages_choices()) == 1) {
-                            $html .= input_hidden_tag('fields[' . $v['id'] . ']', CFG_APP_LANGUAGE);
+
+                    //while ($v = db_fetch_array($fields_query)) {
+                    foreach ($fields_query as $v) {
+                        if ($v['type'] == 'fieldtype_user_language' and count(
+                                \Helpers\App::app_get_languages_choices()
+                            ) == 1) {
+                            $html .= \Helpers\Html::input_hidden_tag(
+                                'fields[' . $v['id'] . ']',
+                                \K::$fw->CFG_APP_LANGUAGE
+                            );
                             continue;
                         }
 
                         if (isset($fields_access_schema[$v['id']])) {
                             if ($fields_access_schema[$v['id']] == 'hide') {
                                 continue;
-                            } elseif ($fields_access_schema[$v['id']] == 'view' and strlen($obj['field_' . $v['id']])) {
+                            } elseif ($fields_access_schema[$v['id']] == 'view' and strlen(
+                                    \K::$fw->obj['field_' . $v['id']]
+                                )) {
                                 $output_options = [
                                     'class' => $v['type'],
-                                    'value' => $obj['field_' . $v['id']],
+                                    'value' => \K::$fw->obj['field_' . $v['id']],
                                     'field' => $v,
-                                    'item' => $obj,
-                                    'path' => $current_entity_id . '-' . $app_user['id']
+                                    'item' => \K::$fw->obj,
+                                    'path' => \K::$fw->current_entity_id . '-' . \K::$fw->app_user['id']
                                 ];
 
-                                $output = fields_types::output($output_options);
+                                $output = \Models\Main\Fields_types::output($output_options);
 
                                 if (strlen($output)) {
                                     $html .= '
 			          <div class="form-group form-group-' . $v['id'] . '">
-			          	<label class="col-md-3 control-label" for="fields_' . $v['id'] . '">' . fields_types::get_option(
+			          	<label class="col-md-3 control-label" for="fields_' . $v['id'] . '">' . \Models\Main\Fields_types::get_option(
                                             $v['type'],
                                             'name',
                                             $v['name']
@@ -141,19 +150,19 @@
                                 }
                             }
                         } elseif ($v['type'] == 'fieldtype_section') {
-                            $html .= '<div class="form-group-' . $v['id'] . '">' . fields_types::render(
+                            $html .= '<div class="form-group-' . $v['id'] . '">' . \Models\Main\Fields_types::render(
                                     $v['type'],
                                     $v,
-                                    $obj,
+                                    \K::$fw->obj,
                                     ['count_fields' => $count_fields]
                                 ) . '</div>';
                         } elseif ($v['type'] == 'fieldtype_dropdown_multilevel') {
-                            $html .= fields_types::render(
+                            $html .= \Models\Main\Fields_types::render(
                                 $v['type'],
                                 $v,
-                                $obj,
+                                \K::$fw->obj,
                                 [
-                                    'parent_entity_item_id' => $parent_entity_item_id,
+                                    'parent_entity_item_id' => \K::$fw->parent_entity_item_id,
                                     'form' => 'item',
                                     'is_new_item' => $is_new_item
                                 ]
@@ -173,20 +182,22 @@
 	        <div class="form-group form-group-' . $v['id'] . ' form-group-' . $v['type'] . '">
 	            <label class="col-md-3 control-label" for="fields_' . $v['id'] . '">' .
                                 ($v['is_required'] == 1 ? '<span class="required-label">*</span>' : '') .
-                                ($v['tooltip_display_as'] == 'icon' ? tooltip_icon($v['tooltip']) : '') .
-                                fields_types::get_option($v['type'], 'name', $v['name']) . '</label>
+                                ($v['tooltip_display_as'] == 'icon' ? \Helpers\App::tooltip_icon($v['tooltip']) : '') .
+                                \Models\Main\Fields_types::get_option($v['type'], 'name', $v['name']) . '</label>
 	            <div class="col-md-9">	
-	          	' . fields_types::render(
+	          	' . \Models\Main\Fields_types::render(
                                     $v['type'],
                                     $v,
-                                    $obj,
+                                    \K::$fw->obj,
                                     [
                                         'is_new_item' => false,
-                                        'parent_entity_item_id' => $obj['parent_item_id'],
+                                        'parent_entity_item_id' => \K::$fw->obj['parent_item_id'],
                                         'form' => 'item'
                                     ]
                                 )
-                                . ($v['tooltip_display_as'] != 'icon' ? tooltip_text($v['tooltip']) : '') . '
+                                . ($v['tooltip_display_as'] != 'icon' ? \Helpers\App::tooltip_text(
+                                    $v['tooltip']
+                                ) : '') . '
 	            </div>			
 	         </div>
 	        ';
@@ -196,11 +207,11 @@
                     }
 
                     //handle rows
-                    $forms_rows = new forms_rows($current_entity_id, $tabs['id']);
+                    $forms_rows = new \Models\Main\Forms_rows(\K::$fw->current_entity_id, $tabs['id']);
                     $forms_rows->fields_access_schema = $fields_access_schema;
-                    $forms_rows->obj = $obj;
+                    $forms_rows->obj = \K::$fw->obj;
                     $forms_rows->is_new_item = $is_new_item;
-                    $forms_rows->parent_entity_item_id = $obj['parent_item_id'];
+                    $forms_rows->parent_entity_item_id = \K::$fw->obj['parent_item_id'];
                     $forms_rows->excluded_fileds_types = $excluded_fileds_types;
                     $html .= $forms_rows->render();
 
@@ -215,43 +226,63 @@
 
                 $html .= '</div>';
             } else {
-                $tabs_query = db_fetch_all(
+                /*$tabs_query = db_fetch_all(
                     'app_forms_tabs',
-                    "entities_id='" . db_input($current_entity_id) . "' order by  sort_order, name"
+                    "entities_id='" . db_input(\K::$fw->current_entity_id) . "' order by  sort_order, name"
                 );
-                $tabs = db_fetch_array($tabs_query);
+
+                $tabs = db_fetch_array($tabs_query);*/
+
+                $tabs = \K::model()->db_fetch_one('app_forms_tabs', [
+                    'entities_id = ?',
+                    \K::$fw->current_entity_id
+                ], ['order' => 'sort_order,name']);
 
                 $count_fields = 0;
-                $fields_query = db_query(
+                /*$fields_query = db_query(
                     "select f.* from app_fields f where f.type not in (" . fields_types::get_type_list_excluded_in_form(
                     ) . "," . $excluded_fileds_types . ") and  f.entities_id='" . db_input(
-                        $current_entity_id
+                        \K::$fw->current_entity_id
                     ) . "' and length(f.forms_rows_position)=0 order by f.sort_order, f.name"
-                );
-                while ($v = db_fetch_array($fields_query)) {
-                    if ($v['type'] == 'fieldtype_user_language' and count(app_get_languages_choices()) == 1) {
-                        $html .= input_hidden_tag('fields[' . $v['id'] . ']', CFG_APP_LANGUAGE);
+                );*/
+
+                $fields_query = \K::model()->db_fetch('app_fields', [
+                    'type not in (' . \Models\Main\Fields_types::get_type_list_excluded_in_form(
+                    ) . "," . $excluded_fileds_types . ') and entities_id = ? and length(forms_rows_position) = 0',
+                    \K::$fw->current_entity_id
+                ], ['order' => 'sort_order,name']);
+
+                //while ($v = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $v) {
+                    $v = $v->cast();
+
+                    if ($v['type'] == 'fieldtype_user_language' and count(
+                            \Helpers\App::app_get_languages_choices()
+                        ) == 1) {
+                        $html .= \Helpers\Html::input_hidden_tag('fields[' . $v['id'] . ']', \K::$fw->CFG_APP_LANGUAGE);
                         continue;
                     }
 
                     if (isset($fields_access_schema[$v['id']])) {
                         if ($fields_access_schema[$v['id']] == 'hide') {
                             continue;
-                        } elseif ($fields_access_schema[$v['id']] == 'view' and strlen($obj['field_' . $v['id']])) {
+                        } elseif ($fields_access_schema[$v['id']] == 'view' and strlen(
+                                \K::$fw->obj['field_' . $v['id']]
+                            )) {
                             $output_options = [
                                 'class' => $v['type'],
-                                'value' => $obj['field_' . $v['id']],
+                                'value' => \K::$fw->obj['field_' . $v['id']],
                                 'field' => $v,
-                                'item' => $obj,
-                                'path' => $current_entity_id . '-' . $app_user['id']
+                                'item' => \K::$fw->obj,
+                                'path' => \K::$fw->current_entity_id . '-' . \K::$fw->app_user['id']
                             ];
 
-                            $output = fields_types::output($output_options);
+                            $output = \Models\Main\Fields_types::output($output_options);
 
                             if (strlen($output)) {
                                 $html .= '
 		          <div class="form-group form-group-' . $v['id'] . '">
-		          	<label class="col-md-3 control-label" for="fields_' . $v['id'] . '">' . fields_types::get_option(
+		          	<label class="col-md-3 control-label" for="fields_' . $v['id'] . '">' . \Models\Main\Fields_types::get_option(
                                         $v['type'],
                                         'name',
                                         $v['name']
@@ -264,19 +295,19 @@
                             }
                         }
                     } elseif ($v['type'] == 'fieldtype_section') {
-                        $html .= '<div class="form-group-' . $v['id'] . '">' . fields_types::render(
+                        $html .= '<div class="form-group-' . $v['id'] . '">' . \Models\Main\Fields_types::render(
                                 $v['type'],
                                 $v,
-                                $obj,
+                                \K::$fw->obj,
                                 ['count_fields' => $count_fields]
                             ) . '</div>';
                     } elseif ($v['type'] == 'fieldtype_dropdown_multilevel') {
-                        $html .= fields_types::render(
+                        $html .= \Models\Main\Fields_types::render(
                             $v['type'],
                             $v,
-                            $obj,
+                            \K::$fw->obj,
                             [
-                                'parent_entity_item_id' => $parent_entity_item_id,
+                                'parent_entity_item_id' => \K::$fw->parent_entity_item_id,
                                 'form' => 'item',
                                 'is_new_item' => $is_new_item
                             ]
@@ -296,21 +327,21 @@
 	        <div class="form-group form-group-' . $v['id'] . '">
                     <label class="col-md-3 control-label" for="fields_' . $v['id'] . '">' .
                             ($v['is_required'] == 1 ? '<span class="required-label">*</span>' : '') .
-                            ($v['tooltip_display_as'] == 'icon' ? tooltip_icon($v['tooltip']) : '') .
-                            fields_types::get_option($v['type'], 'name', $v['name']) . '</label>
+                            ($v['tooltip_display_as'] == 'icon' ? \Helpers\App::tooltip_icon($v['tooltip']) : '') .
+                            \Models\Main\Fields_types::get_option($v['type'], 'name', $v['name']) . '</label>
                         
                     <div class="col-md-9">	
-	        	' . fields_types::render(
+	        	' . \Models\Main\Fields_types::render(
                                 $v['type'],
                                 $v,
-                                $obj,
+                                \K::$fw->obj,
                                 [
                                     'is_new_item' => false,
-                                    'parent_entity_item_id' => $obj['parent_item_id'],
+                                    'parent_entity_item_id' => \K::$fw->obj['parent_item_id'],
                                     'form' => 'item'
                                 ]
                             )
-                            . ($v['tooltip_display_as'] != 'icon' ? tooltip_text($v['tooltip']) : '') . '
+                            . ($v['tooltip_display_as'] != 'icon' ? \Helpers\App::tooltip_text($v['tooltip']) : '') . '
                     </div>			
 	        </div>
 	      ';
@@ -320,11 +351,11 @@
                 }
 
                 //handle rows
-                $forms_rows = new forms_rows($current_entity_id, $tabs['id']);
+                $forms_rows = new \Models\Main\Forms_rows(\K::$fw->current_entity_id, $tabs['id']);
                 $forms_rows->fields_access_schema = $fields_access_schema;
-                $forms_rows->obj = $obj;
+                $forms_rows->obj = \K::$fw->obj;
                 $forms_rows->is_new_item = $is_new_item;
-                $forms_rows->parent_entity_item_id = $obj['parent_item_id'];
+                $forms_rows->parent_entity_item_id = \K::$fw->obj['parent_item_id'];
                 $forms_rows->excluded_fileds_types = $excluded_fileds_types;
                 $html .= $forms_rows->render();
 
@@ -333,8 +364,12 @@
 
             echo $html;
 
-            //check ruels for hidden fields by access
-            echo forms_fields_rules::prepare_hidden_fields($current_entity_id, $obj, $fields_access_schema);
+            //check rules for hidden fields by access
+            echo \Models\Main\Forms_fields_rules::prepare_hidden_fields(
+                \K::$fw->current_entity_id,
+                \K::$fw->obj,
+                $fields_access_schema
+            );
 
             ?>
 
@@ -346,8 +381,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="col-md-offset-3 col-md-9">
-                        <?php
-                        echo submit_tag(TEXT_BUTTON_SAVE, ['class' => 'btn btn-primary']) ?>
+                        <?= \Helpers\Html::submit_tag(\K::$fw->TEXT_BUTTON_SAVE, ['class' => 'btn btn-primary']) ?>
                     </div>
                 </div>
             </div>
@@ -355,7 +389,7 @@
 
         <?php
         //hidden user group value to handle fileds displays rules.
-        echo '<input type="hidden" value="' . $app_user['group_id'] . '" id="field_6" class="field_6">';
+        echo '<input type="hidden" value="' . \K::$fw->app_user['group_id'] . '" id="field_6" class="field_6">';
         ?>
 
         </form>
@@ -370,21 +404,18 @@
 </style>
 
 <?php
-if (is_ext_installed()) {
-    $smart_input = new smart_input($current_entity_id);
+if (\Helpers\App::is_ext_installed()) {
+    $smart_input = new smart_input(\K::$fw->current_entity_id);
     echo $smart_input->render();
 }
 ?>
 
-<?php
-require(component_path('items/items_form.js')); ?>
+<?= \K::view()->render(\Helpers\Urls::component_path('main/items/items_form.js')); ?>
 
-<?php
-echo forms_fields_rules::hidden_form_fields($current_entity_id) ?>
+<?= \Models\Main\Forms_fields_rules::hidden_form_fields(\K::$fw->current_entity_id) ?>
 
 <script>
     $(function () {
-
         //validate user photo
         $("#fields_10").rules("add", {
             required: false,
@@ -395,6 +426,5 @@ echo forms_fields_rules::hidden_form_fields($current_entity_id) ?>
             e.preventDefault();
             $(this).tab('show');
         })
-
     });
 </script>

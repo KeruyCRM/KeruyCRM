@@ -16,16 +16,16 @@ class Fieldtype_user_photo
 
     public function render($field, $obj, $params = [])
     {
-        global $app_module_path;
-
         $filename = $obj['field_' . $field['id']];
 
         $html = '<div class="user-photo-preview">';
         if (strlen($filename) > 0) {
-            $file = attachments::parse_filename($filename);
+            $file = \Tools\Attachments::parse_filename($filename);
 
-            $html .= image_tag(\K::$fw->DIR_WS_USERS . $file['file_sha1'], ['class' => 'user-photo-in-form']
-                ) . input_hidden_tag(
+            $html .= \Helpers\Html::image_tag(
+                    \K::$fw->DIR_WS_USERS . $file['file_sha1'],
+                    ['class' => 'user-photo-in-form']
+                ) . \Helpers\Html::input_hidden_tag(
                     'user_photo',
                     $filename
                 );
@@ -33,19 +33,19 @@ class Fieldtype_user_photo
 
         $html .= '</div>';
 
-        if (IS_AJAX or $app_module_path == 'users/registration') {
-            $html .= '<a href="javascript: open_sub_dialog(\'' . url_for(
-                    'users/photo'
+        if (\K::$fw->AJAX or \K::$fw->app_module_path == 'users/registration') {
+            $html .= '<a href="javascript: open_sub_dialog(\'' . \Helpers\Urls::url_for(
+                    'main/users/photo'
                 ) . '\')" class="btn btn-sm btn-default">' . \K::$fw->TEXT_UPLOAD . '</a>';
         } else {
-            $html .= '<a href="javascript: open_dialog(\'' . url_for(
-                    'users/photo'
+            $html .= '<a href="javascript: open_dialog(\'' . \Helpers\Urls::url_for(
+                    'main/users/photo'
                 ) . '\')" class="btn btn-sm btn-default">' . \K::$fw->TEXT_UPLOAD . '</a>';
         }
 
         $html .= ' <a style="' . (!strlen(
                 $filename
-            ) ? 'display:none' : '') . '" href="javascript: delete_user_photo()" class="btn btn-sm btn-default btn-delete-user-photo"><i class="fa fa-trash-o"></i></a>' . input_hidden_tag(
+            ) ? 'display:none' : '') . '" href="javascript: delete_user_photo()" class="btn btn-sm btn-default btn-delete-user-photo"><i class="fa fa-trash-o"></i></a>' . \Helpers\Html::input_hidden_tag(
                 'delete_user_photo',
                 0
             );

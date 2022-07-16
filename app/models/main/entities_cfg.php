@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Models\Main;
 
@@ -8,7 +12,7 @@ class Entities_cfg
 
     public $entities_id;
 
-    function __construct($entities_id)
+    public function __construct($entities_id)
     {
         $this->entities_id = $entities_id;
 
@@ -26,12 +30,12 @@ class Entities_cfg
         }
     }
 
-    function get($key, $default = '')
+    public function get($key, $default = '')
     {
         return $this->cfg[$key] ?? $default;
     }
 
-    function set($key, $value)
+    public function set($key, $value)
     {
         if (strlen($key) > 0) {
             $value = (is_array($value) ? implode(',', $value) : $value);
@@ -49,25 +53,6 @@ class Entities_cfg
                     $this->entities_id
                 ]
             );
-            /*$cfq_query = db_query(
-                "select * from app_entities_configuration where configuration_name='" . db_input(
-                    $key
-                ) . "' and entities_id='" . db_input($this->entities_id) . "'"
-            );
-
-            if (!$cfq = db_fetch_array($cfq_query)) {
-                db_perform(
-                    'app_entities_configuration',
-                    ['configuration_value' => $value, 'configuration_name' => $key, 'entities_id' => $this->entities_id]
-                );
-            } else {
-                db_perform(
-                    'app_entities_configuration',
-                    ['configuration_value' => $value],
-                    'update',
-                    "configuration_name='" . db_input($key) . "' and entities_id='" . db_input($this->entities_id) . "'"
-                );
-            }*/
         }
     }
 }

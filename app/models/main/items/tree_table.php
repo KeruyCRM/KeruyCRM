@@ -1,5 +1,7 @@
 <?php
 
+namespace Models\Main\Items;
+
 class tree_table
 {
     function __construct($entities_id, $listing_fields, $fields_access_schema)
@@ -93,7 +95,6 @@ class tree_table
                     $this->listing->listing_type
                 );
 
-
                 //prepare field value
                 $value = items::prepare_field_value_by_type($field, $item);
 
@@ -111,10 +112,8 @@ class tree_table
                     'listing_type' => $this->listing->get_listing_type(),
                 ];
 
-
                 if ($field['is_heading'] == 1) {
                     $path = $this->entities_id . '-' . $item['id'];
-
 
                     $data_sort_url = (users::has_access('create') ? ' data-tt-sort-url="' . url_for(
                             'items/sort_nested',
@@ -290,7 +289,6 @@ class tree_table
         
         ';
 
-
         return $html;
     }
 
@@ -310,8 +308,13 @@ class tree_table
 
     static function get_top_parent_item_id($entities_id, $item_id)
     {
-        $item_info = db_query("select id, parent_id from app_entity_{$entities_id} where id = {$item_id}");
-        if ($item = db_fetch_array($item_info)) {
+        //$item_info = db_query("select id, parent_id from app_entity_{$entities_id} where id = {$item_id}");
+        $item = \K::model()->db_fetch_one('app_entity_' . $entities_id, [
+            'id = ?',
+            $item_id
+        ], [], 'id,parent_id');
+
+        if ($item) {
             $item_id = $item['id'];
 
             if ($item['parent_id'] > 0) {
@@ -406,6 +409,4 @@ class tree_table
             $sort_order++;
         }
     }
-
 }
-

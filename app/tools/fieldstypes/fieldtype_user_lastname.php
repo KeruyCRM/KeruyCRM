@@ -34,24 +34,24 @@ class Fieldtype_user_lastname
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $html = '';
-        $requried_class = 'required';
+        $required_class = 'required';
 
         if ($cfg->get('is_disabled') == 1) {
-            $requried_class = '';
+            $required_class = '';
             $html = '<style>.form-group-8{display:none}</style>';
             $obj['field_' . $field['id']] = '';
         }
 
-        return input_tag(
+        return \Helpers\Html::input_tag(
                 'fields[' . $field['id'] . ']',
                 $obj['field_' . $field['id']],
-                ['class' => 'form-control input-medium noSpace ' . $requried_class]
+                ['class' => 'form-control input-medium noSpace ' . $required_class]
             ) . $html;
     }
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
