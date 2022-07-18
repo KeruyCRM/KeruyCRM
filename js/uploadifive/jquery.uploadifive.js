@@ -418,6 +418,7 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
 
                             // Open the AJAX call
                             xhr.open(settings.method, settings.uploadScript, true);
+                            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 
                             // On progress function
                             xhr.upload.addEventListener('progress', function(e) {

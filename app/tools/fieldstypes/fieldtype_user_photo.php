@@ -136,12 +136,10 @@ class Fieldtype_user_photo
 
     public static function tmp_filename($filepath = '')
     {
-        global $app_session_token;
-
         $mime_type = (strlen($filepath) and is_file($filepath)) ? mime_content_type($filepath) : 'image/png';
         $ext = str_replace('image/', '', $mime_type);
 
-        return 'tmp_photo_' . $app_session_token . '.' . $ext;
+        return 'tmp_photo_' . \K::$fw->app_session_token . '.' . $ext;
     }
 
     public static function prepare_filename($entity_id, $item)

@@ -41,7 +41,7 @@
         </div>
 
 
-        <img id="user_photo_image" src="images/pixel_trans.gif" alt="" style="max-height: 450px;">
+        <img id="user_photo_image" src="<?= \K::$fw->DOMAIN ?>images/pixel_trans.gif" alt="" style="max-height: 450px;">
     </div>
 
 </div>
@@ -87,6 +87,9 @@ foreach (['gif', 'jpg', 'png'] as $v) {
             fileSizeLimit: "4MB",
             multi: false,
             uploadScript: "<?= \Helpers\Urls::url_for('main/users/photo/upload') ?>",
+            formData         : {
+                "form_session_token" : "<?= \K::$fw->app_session_token ?>"
+            },
             onUpload: function (filesToUpload) {
 
             },
@@ -103,7 +106,7 @@ foreach (['gif', 'jpg', 'png'] as $v) {
 
                 $('#user_photo_form').attr('attr_filename', data.name);
 
-                $image.attr('src', 'uploads/users/' + data.file + '?r=' + Math.random())
+                $image.attr('src', '<?= \K::$fw->DOMAIN ?>uploads/users/' + data.file + '?r=' + Math.random())
 
                 $image.cropper({
                     aspectRatio: 1 / 1,
