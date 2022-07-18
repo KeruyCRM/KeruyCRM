@@ -262,9 +262,6 @@ class Fieldtype_dropdown_multilevel
                 $cfg->get('level_settings')
             ) : []);
 
-            //print_r($listing_order_fields_id);
-            //print_r($listing_order_clauses);
-
             foreach ($level_settings as $level => $level_cfg) {
                 $level_cfg_array = explode(',', $level_cfg);
                 $level_name = $level_cfg_array[0];

@@ -30,19 +30,34 @@ class Filters_panels
 
     static function get_fields_list($entities_id)
     {
-        //global $app_user;
-
         $list = [];
 
-        $panels_query = db_query(
-            "select * from app_filters_panels where length(type)=0 and (length(users_groups)=0 or find_in_set(" . \K::$fw->app_user['group_id'] . ",users_groups)) and is_active=1 and entities_id='" . $entities_id . "' order by sort_order"
-        );
-        //$count_panels = db_num_rows($panels_query);
-        while ($panels = db_fetch_array($panels_query)) {
-            $fields_query = db_query(
+        /* $panels_query = db_query(
+             "select * from app_filters_panels where length(type)=0 and (length(users_groups)=0 or find_in_set(" . \K::$fw->app_user['group_id'] . ",users_groups)) and is_active=1 and entities_id='" . $entities_id . "' order by sort_order"
+         );*/
+        $panels_query = \K::model()->db_fetch('app_filters_panels', [
+            'length(type) = 0 and (length(users_groups) = 0 or find_in_set( ? ,users_groups)) and is_active = 1 and entities_id = ?',
+            \K::$fw->app_user['group_id'],
+            $entities_id
+        ], ['order' => 'sort_order'], 'id');
+
+        //while ($panels = db_fetch_array($panels_query)) {
+        foreach ($panels_query as $panels) {
+            $panels = $panels->cast();
+
+            /*$fields_query = db_query(
                 "select * from app_filters_panels_fields where panels_id='" . $panels['id'] . "' order by sort_order"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
+            );*/
+
+            $fields_query = \K::model()->db_fetch('app_filters_panels_fields', [
+                'panels_id = ?',
+                $panels['id']
+            ], ['order' => 'sort_order'], 'fields_id');
+
+            //while ($fields = db_fetch_array($fields_query)) {
+            foreach ($fields_query as $fields) {
+                $fields = $fields->cast();
+
                 $list[] = $fields['fields_id'];
             }
         }
@@ -63,8 +78,6 @@ class Filters_panels
 
     function render_horizontal()
     {
-        //global $app_user, $app_module_path;
-
         $html = '<div class="filters-panels horizontal-filters-panels">';
 
         $panels_query = db_query(

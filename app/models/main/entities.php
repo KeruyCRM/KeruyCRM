@@ -313,10 +313,6 @@ class Entities
 
     public static function get_parents($entities_id, $parents = [])
     {
-        //global $app_entities_cache;
-
-        ////$entities_query = db_query("select * from app_entities where id='" . $entities_id . "'");
-        ////if($entities = db_fetch_array($entities_query))
         if (isset(\K::$fw->app_entities_cache[$entities_id])) {
             $entities = \K::$fw->app_entities_cache[$entities_id];
 
@@ -477,7 +473,7 @@ class Entities
     {
         $db_type = self::prepare_field_type($type);
         $sql = 'ALTER TABLE  app_entity_' . (int)$entities_id . ' ADD  field_' . (int)$fields_id . ' ' . $db_type . ' NOT NULL';
-        db_query($sql);
+        \K::model()->db_query_exec($sql);
 
         //add index
         self::prepare_field_index($entities_id, $fields_id, $type);
@@ -505,12 +501,12 @@ class Entities
             'fieldtype_autostatus',
             'fieldtype_random_value',
         ])) {
-            if (entities::prepare_field_type($type) == 'TEXT') {
-                db_query(
+            if (self::prepare_field_type($type) == 'TEXT') {
+                \K::model()->db_query_exec(
                     "ALTER TABLE app_entity_" . (int)$entities_id . " ADD INDEX idx_field_" . (int)$fields_id . " (field_" . (int)$fields_id . "(128));"
                 );
             } else {
-                db_query(
+                \K::model()->db_query_exec(
                     "ALTER TABLE app_entity_" . (int)$entities_id . " ADD INDEX idx_field_" . (int)$fields_id . " (field_" . (int)$fields_id . ");"
                 );
             }
