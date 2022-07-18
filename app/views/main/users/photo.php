@@ -1,15 +1,13 @@
-<?php
-echo ajax_modal_template_header(TEXT_FIELDTYPE_USER_PHOTO_TITLE) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_FIELDTYPE_USER_PHOTO_TITLE) ?>
 
-<?php
-echo form_tag('user_photo_form', url_for('users/photo', 'action=save')) ?>
+<?= \Helpers\Html::form_tag('user_photo_form', \Helpers\Urls::url_for('main/users/photo/save')) ?>
 <div class="modal-body ">
 
 
     <center class="uploadifive-user-photo">
         <input style="cursor: pointer" type="file" name="uploadifive_user_photo" id="uploadifive_user_photo"/>
-        <button type="button" class="btn btn-default btn-camera" style="display:none"><i class="fa fa-camera"></i> <?php
-            echo TEXT_CAMERA ?> </button>
+        <button type="button" class="btn btn-default btn-camera" style="display:none"><i
+                    class="fa fa-camera"></i> <?= \K::$fw->TEXT_CAMERA ?> </button>
 
         <div id="uploadifive_user_photo_queue"></div>
     </center>
@@ -17,8 +15,8 @@ echo form_tag('user_photo_form', url_for('users/photo', 'action=save')) ?>
     <div class="snap-photo-box" style="display:none">
         <video id="camera_video" style="width: 100%; max-height: 350px;" autoplay></video>
         <center>
-            <button type="button" class="btn btn-default btn-snap-photo"><i class="fa fa-camera"></i> <?php
-                echo TEXT_SNAP_PHOTO ?> </button>
+            <button type="button" class="btn btn-default btn-snap-photo"><i
+                        class="fa fa-camera"></i> <?= \K::$fw->TEXT_SNAP_PHOTO ?> </button>
         </center>
         <canvas id="canvas" style="display:none"></canvas>
     </div>
@@ -48,16 +46,15 @@ echo form_tag('user_photo_form', url_for('users/photo', 'action=save')) ?>
 
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 </form>
 
-<script src="js/cropper/4.1.0/dist/cropper.js"></script>
-<script src="js/cropper/4.1.0/dist/jquery-cropper.js"></script>
-<link rel="stylesheet" href="js/cropper/4.1.0/dist/cropper.css">
+<script src="<?= \K::$fw->DOMAIN ?>js/cropper/4.1.0/dist/cropper.js"></script>
+<script src="<?= \K::$fw->DOMAIN ?>js/cropper/4.1.0/dist/jquery-cropper.js"></script>
+<link rel="stylesheet" href="<?= \K::$fw->DOMAIN ?>js/cropper/4.1.0/dist/cropper.css">
 
 <?php
-$mime_types = fieldtype_attachments::get_mime_types();
+$mime_types = \Tools\FieldsTypes\Fieldtype_attachments::get_mime_types();
 $fileTypeList = [];
 foreach (['gif', 'jpg', 'png'] as $v) {
     foreach ($mime_types[$v] as $vv) {
@@ -78,18 +75,18 @@ foreach (['gif', 'jpg', 'png'] as $v) {
 
         var $image = $('#user_photo_image');
 
-//upload photo
+        //upload photo
         $("#uploadifive_user_photo").uploadifive({
             auto: true,
             dnd: false,
-            fileType: <?php echo "['" . implode("','", $fileTypeList) . "']" ?>,
+            fileType: <?= "['" . implode("','", $fileTypeList) . "']" ?>,
             fileTypeExtra: "gif,jpg,png,jpeg",
             buttonClass: "btn btn-default btn-upload",
-            buttonText: "<i class=\"fa fa-upload\"></i> <?php echo TEXT_SELECT_IMAGE ?>",
+            buttonText: "<i class=\"fa fa-upload\"></i> <?= \K::$fw->TEXT_SELECT_IMAGE ?>",
             queueID: "uploadifive_user_photo_queue",
             fileSizeLimit: "4MB",
             multi: false,
-            uploadScript: "<?php echo url_for('users/photo', 'action=upload') ?>",
+            uploadScript: "<?= \Helpers\Urls::url_for('main/users/photo/upload') ?>",
             onUpload: function (filesToUpload) {
 
             },
@@ -129,8 +126,8 @@ foreach (['gif', 'jpg', 'png'] as $v) {
             }
         });
 
-//snap photo     
-// Get access to the camera!
+        //snap photo
+        // Get access to the camera!
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({video: true}).then(function (stream) {
                 $('.btn-camera').show()
@@ -222,7 +219,7 @@ foreach (['gif', 'jpg', 'png'] as $v) {
 
         })
 
-//process form   
+        //process form
         $('#user_photo_form').submit(function () {
             //alert(1)
             result = $image.cropper('getCroppedCanvas');
@@ -254,7 +251,6 @@ foreach (['gif', 'jpg', 'png'] as $v) {
 
             return false;
         })
-
 
         var options = {
             aspectRatio: 1 / 1,
@@ -304,9 +300,7 @@ foreach (['gif', 'jpg', 'png'] as $v) {
                         if (cropped && options.viewMode > 0) {
                             $image.cropper('clear');
                         }
-
                         break;
-
                 }
 
                 result = $image.cropper(data.method, data.option, data.secondOption);
@@ -316,19 +310,14 @@ foreach (['gif', 'jpg', 'png'] as $v) {
                         if (cropped && options.viewMode > 0) {
                             $image.cropper('crop');
                         }
-
                         break;
 
                     case 'scaleX':
                     case 'scaleY':
                         $(this).data('option', -data.option);
                         break;
-
                 }
-
             }
         });
-
-
     })
 </script>
