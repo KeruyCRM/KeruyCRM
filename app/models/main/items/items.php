@@ -1401,32 +1401,40 @@ class Items
         $items_id = false,
         $unique_for_each_parent = false
     ) {
-        $field_info = db_find('app_fields', $fields_id);
-        $cfg = new settings($field_info['configuration']);
+        $field_info = \K::model()->db_find('app_fields', $fields_id);
+        $cfg = new \Tools\Settings($field_info['configuration']);
 
         switch ($field_info['type']) {
             case 'fieldtype_input_datetime':
             case 'fieldtype_input_date':
-                $fields_value = get_date_timestamp($fields_value);
+                $fields_value = \Helpers\App::get_date_timestamp($fields_value);
                 break;
             case 'fieldtype_input_ip':
                 $fields_value = ip2long($fields_value);
                 break;
         }
 
-        $check_query = db_query(
+        /*$check_query = db_query(
             "select count(*) as total from app_entity_" . $entities_id . " where field_" . $field_info['id'] . "='" . db_input(
                 $fields_value
             ) . "'" . ($items_id ? " and id!='" . db_input(
                     $items_id
                 ) . "'" : "") . ($unique_for_each_parent ? " and parent_item_id='" . $unique_for_each_parent . "'" : "")
         );
-        $check = db_fetch_array($check_query);
+        $check = db_fetch_array($check_query);*/
 
-        if ($check['total'] > 0) {
+        $check = \K::model()->db_fetch_count(
+            'app_entity_' . $entities_id,
+            [
+                'where field_' . $field_info['id'] . ' = :fields_value' . ($items_id ? ' and id != :items_id' : '') . ($unique_for_each_parent ? ' and parent_item_id = :unique_for_each_parent' : ''),
+                ':fields_value' => $fields_value
+            ] + ($items_id ? [':items_id' => $items_id] : []) + ($unique_for_each_parent ? [':unique_for_each_parent' => $unique_for_each_parent] : [])
+        );
+
+        if ($check > 0) {
             $msg = strlen(trim($cfg->get('unique_error_msg'))) ? trim(
                 $cfg->get('unique_error_msg')
-            ) : TEXT_UNIQUE_FIELD_VALUE_ERROR;
+            ) : \K::$fw->TEXT_UNIQUE_FIELD_VALUE_ERROR;
             return json_encode($msg);
         } else {
             return json_encode(true);

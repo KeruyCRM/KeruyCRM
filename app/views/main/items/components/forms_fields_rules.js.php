@@ -48,8 +48,8 @@ if (count($form_fields_query) > 0) {
 
             //handle comments and process forms
             if ((\K::$fw->app_module_path == 'items/comments_form' or \K::$fw->app_module_path == 'items/processes') and isset($item_info)) {
-                $field = db_find('app_fields', $fields_id);
-                $cfg = new fields_types_cfg($field['configuration']);
+                $field = \K::model()->db_find('app_fields', $fields_id);
+                $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
                 $is_multiple = false;
 
@@ -64,7 +64,7 @@ if (count($form_fields_query) > 0) {
                     $is_multiple = true;
                 }
 
-                $value = items::prepare_field_value_by_type($field, $item_info);
+                $value = \Models\Main\Items\Items::prepare_field_value_by_type($field, $item_info);
 
                 $html .= 'app_handle_forms_fields_display_rules(\'\',' . $field['id'] . ',"","' . (strlen(
                         $value

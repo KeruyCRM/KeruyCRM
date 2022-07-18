@@ -401,10 +401,17 @@ class Attachments
     {
         //skip resize for some field types
         if ($field_id) {
-            $field_query = db_query(
+            /*$field_query = db_query(
                 "select id from app_fields where id={$field_id} and type in ('fieldtype_image_map_nested')"
-            );
-            if ($field = db_fetch_array($field_query)) {
+            );*/
+
+            $field = \K::model()->db_fetch_count('app_fields', [
+                'id = ? and type in ( ? )',
+                $field_id,
+                'fieldtype_image_map_nested'
+            ]);
+
+            if ($field) {
                 return false;
             }
         }
@@ -412,7 +419,9 @@ class Attachments
         $max_img_width = (int)\K::$fw->CFG_MAX_IMAGE_WIDTH;
         $max_img_height = (int)\K::$fw->CFG_MAX_IMAGE_HEIGHT;
 
-        if (($max_img_width > 0 or $max_img_height > 0) and \K::$fw->CFG_RESIZE_IMAGES == 1 and is_image($filepath)) {
+        if (($max_img_width > 0 or $max_img_height > 0) and \K::$fw->CFG_RESIZE_IMAGES == 1 and \Helpers\App::is_image(
+                $filepath
+            )) {
             $img = getimagesize($filepath);
 
             //skip large images
@@ -433,9 +442,9 @@ class Attachments
             //resize image
             if ($img[0] > $max_img_width or $img[1] > $max_img_height) {
                 if ($img[0] > $img[1]) {
-                    image_resize($filepath, $filepath, $max_img_width);
+                    \Helpers\App::image_resize($filepath, $filepath, $max_img_width);
                 } else {
-                    image_resize($filepath, $filepath, '', $max_img_height);
+                    \Helpers\App::image_resize($filepath, $filepath, '', $max_img_height);
                 }
             }
         }

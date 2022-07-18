@@ -29,8 +29,6 @@ class Email_verification
 
     public static function check_if_user_email_is_updated()
     {
-        //global $app_user, $app_email_verification_code;
-
         if (\K::fw()->exists('POST.fields.9')
             and \K::$fw->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION == 'email'
             and \K::$fw->CFG_USE_PUBLIC_REGISTRATION == 1) {
@@ -39,7 +37,7 @@ class Email_verification
 
                 //db_query("update app_entity_1 set is_email_verified=0 where id='" . \K::$fw->app_user['id'] . "'");
 
-                \K::model()->db_perform(
+                \K::model()->db_update(
                     'app_entity_1',
                     ['is_email_verified' => 0],
                     ['id = ?', \K::$fw->app_user['id']]
