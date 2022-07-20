@@ -42,21 +42,32 @@ class Fields_choices
         $where_sql = '';
 
         if ($check_status) {
-            $where_sql = " and (is_active=1 " . (strlen($selected_values) ? " or id in (" . implode(
+            /*$where_sql = " and (is_active = 1 " . (strlen($selected_values) ? " or id in (" . implode(
                         ',',
                         array_map(function ($v) {
                             return (int)$v;
                         }, explode(',', $selected_values))
-                    ) . ")" : '') . ") ";
+                    ) . ")" : '') . ") ";*/
+            $where_sql = " and (is_active = 1 " . (strlen($selected_values) ? " or id in (" . \K::model(
+                    )->quoteToString(explode(',', $selected_values), \PDO::PARAM_INT) . ")" : '') . ") ";
         }
 
-        $choices_query = db_query(
+        /*$choices_query = db_query(
             "select * from app_fields_choices where fields_id = '" . db_input(
                 $fields_id
             ) . "' and parent_id='" . db_input($parent_id) . "' {$where_sql} order by sort_order, name"
-        );
+        );*/
 
-        while ($v = db_fetch_array($choices_query)) {
+        $choices_query = \K::model()->db_fetch('app_fields_choices', [
+            'fields_id = ? and parent_id = ?' . $where_sql,
+            $fields_id,
+            $parent_id
+        ], ['order' => 'sort_order,name']);
+
+        //while ($v = db_fetch_array($choices_query)) {
+        foreach ($choices_query as $v) {
+            $v = $v->cast();
+
             if ($display_choices_values == 1) {
                 $v['name'] = $v['name'] . (strlen(
                         $v['value']
@@ -65,7 +76,7 @@ class Fields_choices
 
             $tree[] = array_merge($v, ['level' => $level]);
 
-            $tree = fields_choices::get_tree(
+            $tree = self::get_tree(
                 $fields_id,
                 $v['id'],
                 $tree,

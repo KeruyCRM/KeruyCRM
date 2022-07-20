@@ -1258,12 +1258,13 @@ class Items
 
     public static function add_access_query($current_entity_id, $listing_sql_query, $force_access_query = false)
     {
-        global $app_user, $current_path_array;
+        $access_schema = \Models\Main\Users\Users::get_entities_access_schema(
+            $current_entity_id,
+            \K::$fw->app_user['group_id']
+        );
 
-        $access_schema = users::get_entities_access_schema($current_entity_id, $app_user['group_id']);
-
-        //get users entiteis tree
-        $users_entities_tree = entities::get_tree(1);
+        //get users entities tree
+        $users_entities_tree = \Models\Main\Entities::get_tree(1);
 
         //get users entities id list
         $users_entities = [];
@@ -1272,38 +1273,58 @@ class Items
         }
 
         //force check users entities tree access
-        if (in_array($current_entity_id, $users_entities) and users::has_access(
+        if (in_array($current_entity_id, $users_entities) and \Models\Main\Users\Users::has_access(
                 'view_assigned',
                 $access_schema
-            ) and $app_user['group_id'] > 0) {
+            ) and \K::$fw->app_user['group_id'] > 0) {
             $listing_sql_query .= self::add_access_query_for_user_parent_entities($current_entity_id);
             /* echo '<pre>';
               print_r($users_entities);
               print_r($listing_sql_query);
               exit(); */
-        } elseif ((users::has_access(
+        } elseif ((\Models\Main\Users\Users::has_access(
                     'view_assigned',
                     $access_schema
-                ) and $app_user['group_id'] > 0) or $force_access_query) {
+                ) and \K::$fw->app_user['group_id'] > 0) or $force_access_query) {
             $users_fields = [];
-            $fields_query = db_query(
+            /*$fields_query = db_query(
                 "select f.id from app_fields f where f.type in ('fieldtype_users','fieldtype_users_ajax','fieldtype_user_roles','fieldtype_users_approve') and  f.entities_id='" . db_input(
                     $current_entity_id
                 ) . "'"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
+            );*/
+
+            $in = ['fieldtype_users', 'fieldtype_users_ajax', 'fieldtype_user_roles', 'fieldtype_users_approve'];
+            $fields_query = \K::model()->db_fetch('app_fields', [
+                'type in (' . \K::model()->quoteToString($in) . ') and entities_id = ?',
+                $current_entity_id
+            ], [], 'id');
+
+            //while ($fields = db_fetch_array($fields_query)) {
+            foreach ($fields_query as $fields) {
+                $fields = $fields->cast();
+
                 $users_fields[] = $fields['id'];
             }
 
             $grouped_users_fields = [];
             $grouped_global_users_fields = [];
-            $fields_query = db_query(
+            /*$fields_query = db_query(
                 "select f.id, f.configuration from app_fields f where f.type in ('fieldtype_grouped_users') and  f.entities_id='" . db_input(
                     $current_entity_id
                 ) . "'"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
-                $cfg = new fields_types_cfg($fields['configuration']);
+            );*/
+
+            $fields_query = \K::model()->db_fetch('app_fields', [
+                'type in ( ? ) and entities_id = ?',
+                'fieldtype_grouped_users',
+                $current_entity_id
+            ], [], 'id,configuration');
+
+            //while ($fields = db_fetch_array($fields_query)) {
+            foreach ($fields_query as $fields) {
+                $fields = $fields->cast();
+
+                $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
                 if ($cfg->get('use_global_list') > 0) {
                     $grouped_global_users_fields[$cfg->get('use_global_list')] = $fields['id'];
@@ -1313,12 +1334,21 @@ class Items
             }
 
             $access_group_fields = [];
-            $fields_query = db_query(
+            /*$fields_query = db_query(
                 "select f.id from app_fields f where f.type in ('fieldtype_access_group') and  f.entities_id='" . db_input(
                     $current_entity_id
                 ) . "'"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
+            );*/
+            $fields_query = \K::model()->db_fetch('app_fields', [
+                'type in ( ? ) and entities_id = ?',
+                'fieldtype_access_group',
+                $current_entity_id
+            ], [], 'id');
+
+            //while ($fields = db_fetch_array($fields_query)) {
+            foreach ($fields_query as $fields) {
+                $fields = $fields->cast();
+
                 $access_group_fields[] = $fields['id'];
             }
 
@@ -1326,37 +1356,37 @@ class Items
             //check users fields
             $sql_query_array = [];
             foreach ($users_fields as $id) {
-                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where  cv.items_id=e.id and cv.fields_id='" . $id . "' and cv.value='" . $app_user['id'] . "')>0";
+                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where  cv.items_id = e.id and cv.fields_id = '" . $id . "' and cv.value = '" . \K::$fw->app_user['id'] . "')>0";
             }
 
             //check gouped users
             foreach ($grouped_users_fields as $id) {
-                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id=e.id and cv.fields_id='" . $id . "' and cv.value in (select id from app_fields_choices fc where fc.fields_id='" . $id . "' and find_in_set(" . $app_user['id'] . ",fc.users)))>0";
+                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id = e.id and cv.fields_id = '" . $id . "' and cv.value in (select id from app_fields_choices fc where fc.fields_id = '" . $id . "' and find_in_set(" . \K::$fw->app_user['id'] . ",fc.users)))>0";
             }
 
             //check gouped users with globallist
             foreach ($grouped_global_users_fields as $list_id => $id) {
-                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id=e.id and cv.fields_id='" . $id . "' and cv.value in (select id from app_global_lists_choices fc where fc.lists_id='" . $list_id . "' and find_in_set(" . $app_user['id'] . ",fc.users)))>0";
+                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id = e.id and cv.fields_id = '" . $id . "' and cv.value in (select id from app_global_lists_choices fc where fc.lists_id = '" . $list_id . "' and find_in_set(" . \K::$fw->app_user['id'] . ",fc.users)))>0";
             }
 
             //check access group fields
             foreach ($access_group_fields as $id) {
-                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id=e.id and cv.fields_id='" . $id . "' and cv.value='" . $app_user['group_id'] . "')>0";
+                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id = e.id and cv.fields_id = '" . $id . "' and cv.value = '" . \K::$fw->app_user['group_id'] . "')>0";
             }
 
             //check created by
-            $sql_query_array[] = "e.created_by='" . $app_user['id'] . "'";
+            $sql_query_array[] = "e.created_by = '" . \K::$fw->app_user['id'] . "'";
 
             //check user entity
             if ($current_entity_id == 1) {
-                $sql_query_array[] = "e.id='" . $app_user['id'] . "'";
+                $sql_query_array[] = "e.id = '" . \K::$fw->app_user['id'] . "'";
             }
 
             $listing_sql_query .= " and (" . implode(' or ', $sql_query_array) . ") ";
         }
 
         //add visibility access query
-        $listing_sql_query .= records_visibility::add_access_query($current_entity_id);
+        $listing_sql_query .= \Models\Main\Users\Records_visibility::add_access_query($current_entity_id);
 
         return $listing_sql_query;
     }

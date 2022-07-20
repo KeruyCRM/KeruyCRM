@@ -113,12 +113,10 @@ class Fieldtype_nested_calculations
 
     public static function update_items_fields($entities_id, $item_id, $parent_id)
     {
-        global $app_fields_cache;
-
-        foreach ($app_fields_cache[$entities_id] as $field) {
+        foreach (\K::$fw->app_fields_cache[$entities_id] as $field) {
             if ($field['type'] == 'fieldtype_nested_calculations') {
                 if ($parent_id != 0) {
-                    $item_id = tree_table::get_top_parent_item_id($entities_id, $parent_id);
+                    $item_id = \Models\Main\Items\Tree_table::get_top_parent_item_id($entities_id, $parent_id);
                 }
 
                 $cfg = new \Tools\Settings($field['configuration']);
@@ -128,7 +126,7 @@ class Fieldtype_nested_calculations
                 $update_field_id = $field['id'];
 
                 //stop calculation if field not exist
-                if ($calc_function == 'SUM' and !isset($app_fields_cache[$entities_id][$calc_field_id])) {
+                if ($calc_function == 'SUM' and !isset(\K::$fw->app_fields_cache[$entities_id][$calc_field_id])) {
                     return false;
                 }
 
@@ -137,17 +135,36 @@ class Fieldtype_nested_calculations
                         if ($cfg->get('calc_type') == 'top_level') {
                             $sum = self::calc_sum($entities_id, $item_id, $calc_field_id);
 
-                            db_query(
+                            /*db_query(
                                 "update app_entity_{$entities_id} set field_{$update_field_id}={$sum} where id={$item_id}"
+                            );*/
+
+                            \K::model()->db_update(
+                                'app_entity_' . $entities_id,
+                                ['field_' . $update_field_id => $sum],
+                                [
+                                    'id = ?',
+                                    $item_id
+                                ]
                             );
                         } else {
                             foreach (
-                                tree_table::get_items_tree($entities_id, $item_id, [$item_id]) as $update_item_id
+                                \Models\Main\Items\Tree_table::get_items_tree($entities_id, $item_id, [$item_id]
+                                ) as $update_item_id
                             ) {
                                 $sum = self::calc_sum($entities_id, $update_item_id, $calc_field_id);
 
-                                db_query(
+                                /*db_query(
                                     "update app_entity_{$entities_id} set field_{$update_field_id}={$sum} where id={$update_item_id}"
+                                );*/
+
+                                \K::model()->db_update(
+                                    'app_entity_' . $entities_id,
+                                    ['field_' . $update_field_id => $sum],
+                                    [
+                                        'id = ?',
+                                        $update_item_id
+                                    ]
                                 );
                             }
                         }
@@ -157,17 +174,36 @@ class Fieldtype_nested_calculations
                         if ($cfg->get('calc_type') == 'top_level') {
                             $sum = self::calc_count($entities_id, $item_id);
 
-                            db_query(
+                            /*db_query(
                                 "update app_entity_{$entities_id} set field_{$update_field_id}={$sum} where id={$item_id}"
+                            );*/
+
+                            \K::model()->db_update(
+                                'app_entity_' . $entities_id,
+                                ['field_' . $update_field_id => $sum],
+                                [
+                                    'id = ?',
+                                    $item_id
+                                ]
                             );
                         } else {
                             foreach (
-                                tree_table::get_items_tree($entities_id, $item_id, [$item_id]) as $update_item_id
+                                \Models\Main\Items\Tree_table::get_items_tree($entities_id, $item_id, [$item_id]
+                                ) as $update_item_id
                             ) {
                                 $sum = self::calc_count($entities_id, $update_item_id);
 
-                                db_query(
+                                /*db_query(
                                     "update app_entity_{$entities_id} set field_{$update_field_id}={$sum} where id={$update_item_id}"
+                                );*/
+
+                                \K::model()->db_update(
+                                    'app_entity_' . $entities_id,
+                                    ['field_' . $update_field_id => $sum],
+                                    [
+                                        'id = ?',
+                                        $update_item_id
+                                    ]
                                 );
                             }
                         }
@@ -180,12 +216,19 @@ class Fieldtype_nested_calculations
 
     public static function calc_sum($entities_id, $item_id, $calc_field_id, $sum = 0)
     {
-        global $app_fields_cache;
-
-        $items_query = db_query(
+        /*$items_query = db_query(
             "select id, field_{$calc_field_id} from app_entity_{$entities_id} where parent_id={$item_id}"
-        );
-        while ($items = db_fetch_array($items_query)) {
+        );*/
+
+        $items_query = \K::model()->db_fetch('app_entity_' . $entities_id, [
+            'parent_id = ?',
+            $item_id
+        ], [], 'id,field_' . $calc_field_id);
+
+        //while ($items = db_fetch_array($items_query)) {
+        foreach ($items_query as $items) {
+            $items = $items->cast();
+
             if (isset($items['field_' . $calc_field_id]) and strlen($items['field_' . $calc_field_id])) {
                 $sum += (float)$items['field_' . $calc_field_id];
             }

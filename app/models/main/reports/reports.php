@@ -265,19 +265,28 @@ class Reports
     ) {
         //global $sql_query_having, $app_entities_cache;
 
-        $reports_info_query = db_query("select * from app_reports where id='" . db_input($reports_id) . "'");
-        if ($reports_info = db_fetch_array($reports_info_query)) {
+        //$reports_info_query = db_query("select * from app_reports where id='" . db_input($reports_id) . "'");
+
+        $reports_info = \K::model()->db_fetch_one('app_reports', [
+            'id = ?',
+            $reports_id
+        ]);
+
+        if ($reports_info) {
             $sql_query = [];
 
-            $filters_query = db_query(
-                "select rf.*, f.name,f.type from app_reports_filters rf left join app_fields f on rf.fields_id=f.id where rf.reports_id='" . db_input(
-                    $reports_info['id']
-                ) . "' and is_active=1 " . (count($exclude_fields) ? " and f.id not in (" . implode(
-                        ',',
-                        $exclude_fields
-                    ) . ")" : "") . " order by rf.id"
+            $filters_query = \K::model()->db_query_exec(
+                'select rf.*, f.name, f.type from app_reports_filters rf left join app_fields f on rf.fields_id = f.id where rf.reports_id = ? and is_active = 1 ' . (count(
+                    $exclude_fields
+                ) ? ' and f.id not in (' . \K::model()->quoteToString(
+                        $exclude_fields,
+                        \PDO::PARAM_INT
+                    ) . ')' : '') . ' order by rf.id',
+                $reports_info['id']
             );
-            while ($filters = db_fetch_array($filters_query)) {
+
+            //while ($filters = db_fetch_array($filters_query)) {
+            foreach ($filters_query as $filters) {
                 if ($filters['filters_condition'] == 'empty_value') {
                     switch ($filters['type']) {
                         case 'fieldtype_date_updated':
@@ -315,13 +324,13 @@ class Reports
                             $sql_query[] = "length(field_" . $filters['fields_id'] . ")>0";
                             break;
                     }
-                } elseif (in_array($filters['type'], fields_types::get_types_for_search()) and !in_array(
+                } elseif (in_array($filters['type'], \Models\Main\Fields_types::get_types_for_search()) and !in_array(
                         $filters['type'],
                         ['fieldtype_tags']
                     )) {
                     $sql_query = self::add_search_query($filters, $reports_info['entities_id'], $sql_query);
                 } elseif (strlen($filters['filters_values']) > 0) {
-                    $sql_query = fields_types::reports_query(
+                    $sql_query = \Models\Main\Fields_types::reports_query(
                         [
                             'class' => $filters['type'],
                             'filters' => $filters,
@@ -338,37 +347,49 @@ class Reports
                 $listing_sql_query .= ' and (' . implode(' and ', $sql_query) . ')';
             }
 
-            //add having queries for paretn report only
+            //add having queries for parent report only
             if ($is_parent_report and isset(\K::$fw->sql_query_having[$reports_info['entities_id']])) {
-                $listing_sql_query .= reports::prepare_filters_having_query(
+                $listing_sql_query .= self::prepare_filters_having_query(
                     \K::$fw->sql_query_having[$reports_info['entities_id']]
                 );
             }
 
             //add filters for parent report if exist
             if ($reports_info['parent_id'] > 0) {
-                $report_info_query = db_query(
+                /*$report_info_query = db_query(
                     "select entities_id from app_reports where id='" . db_input($reports_info['parent_id']) . "'"
-                );
-                if ($report_info = db_fetch_array($report_info_query)) {
+                );*/
+
+                $report_info = \K::model()->db_fetch_one('app_reports', [
+                    'id = ?',
+                    $reports_info['parent_id']
+                ], [], 'entities_id');
+
+                if ($report_info) {
                     /**
                      * The sql query "(select item_id from (select e.id ..." need to prepare filters by formula fileds with using having
                      */
-                    $check_query = db_query(
+                    /*$check_query = db_query(
                         "select count(*) as total from app_fields where entities_id='" . db_input(
                             $report_info['entities_id']
                         ) . "' and type='fieldtype_formula'"
                     );
-                    $check = db_fetch_array($check_query);
+                    $check = db_fetch_array($check_query);*/
 
-                    if ($check['total'] > 0) {
-                        $listing_sql_query .= ' and e.parent_item_id in (select item_id from (select e.id as item_id ' . fieldtype_formula::prepare_query_select(
+                    $check = \K::model()->db_fetch_count('app_fields', [
+                        'entities_id = ? and type = ?',
+                        $report_info['entities_id'],
+                        'fieldtype_formula'
+                    ]);
+
+                    if ($check > 0) {
+                        $listing_sql_query .= ' and e.parent_item_id in (select item_id from (select e.id as item_id ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                                 $report_info['entities_id'],
                                 ''
-                            ) . ' from app_entity_' . $report_info['entities_id'] . ' e where e.id>0 ' . items::add_access_query(
+                            ) . ' from app_entity_' . $report_info['entities_id'] . ' e where e.id>0 ' . \Models\Main\Items\Items::add_access_query(
                                 $report_info['entities_id'],
                                 ''
-                            ) . ' ' . reports::add_filters_query(
+                            ) . ' ' . \Models\Main\Reports\Reports::add_filters_query(
                                 $reports_info['parent_id'],
                                 '',
                                 '',
@@ -395,30 +416,26 @@ class Reports
 
     public static function add_search_query($field, $current_entity_id, $main_sql_query)
     {
-        //global $search_keywords, $sql_query_having;
-
         $filters_values = $field['filters_values'];
 
         $sql_query = [];
 
-        if (app_parse_search_string($filters_values, \K::$fw->search_keywords)) {
+        if (\Helpers\App::app_parse_search_string($filters_values, \K::$fw->search_keywords)) {
             $sql_query = [];
 
-            /**
-             *  search in fields
-             */
             {
                 //handle search by ID
                 if ($field['type'] == 'fieldtype_id') {
                     if (is_numeric(\K::$fw->search_keywords[0])) {
-                        $sql_query[] = "e.id='" . db_input(\K::$fw->search_keywords[0]) . "'";
+                        $sql_query[] = 'e.id = ' . \K::model()->quote(\K::$fw->search_keywords[0], \PDO::PARAM_INT);
                     }
                 } //handle search by phone
                 elseif ($field['type'] == 'fieldtype_phone') {
                     if (strlen(preg_replace('/\D/', '', $filters_values))) {
-                        $sql_query[] = "keruycrm_regex_replace('[^0-9]','',e.field_" . $field['fields_id'] . ") like '%" . db_input(
-                                preg_replace('/\D/', '', $filters_values)
-                            ) . "%'";
+                        $sql_query[] = "keruycrm_regex_replace('[^0-9]','',e.field_" . $field['fields_id'] . ") like " . \K::model(
+                            )->quote(
+                                '%' . preg_replace('/\D/', '', $filters_values) . '%'
+                            );
                     }
                 } //handle search by IP
                 elseif ($field['type'] == 'fieldtype_input_ip') {
@@ -429,28 +446,39 @@ class Reports
                     }
                 } //handle search by tag
                 elseif ($field['type'] == 'fieldtype_tags') {
-                    $cfg = new fields_types_cfg($field['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
                     if ($cfg->get('use_global_list') > 0) {
-                        $sql_query[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id=e.id and cv.fields_id='" . $field['fields_id'] . "' and cv.value in (select id from app_global_lists_choices fc where fc.lists_id='" . $cfg->get(
+                        $sql_query[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id = e.id and cv.fields_id = " . \K::model(
+                            )->quote(
+                                $field['fields_id'],
+                                \PDO::PARAM_INT
+                            ) . " and cv.value in (select id from app_global_lists_choices fc where fc.lists_id = '" . $cfg->get(
                                 'use_global_list'
                             ) . "' and name like '%" . str_replace(['and', 'or'],
                                 ' ',
                                 implode('', \K::$fw->search_keywords)) . "%'))>0";
                     } else {
-                        $sql_query[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where  cv.items_id=e.id and cv.fields_id='" . $field['fields_id'] . "' and cv.value in (select id from app_fields_choices fc where fc.fields_id='" . $field['fields_id'] . "' and name like '%" . str_replace(
-                                ['and', 'or'],
-                                ' ',
-                                implode('', \K::$fw->search_keywords)
-                            ) . "%'))>0";
+                        $sql_query[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where  cv.items_id = e.id and cv.fields_id = " . \K::model(
+                            )->quote(
+                                $field['fields_id'],
+                                \PDO::PARAM_INT
+                            ) . " and cv.value in (select id from app_fields_choices fc where fc.fields_id = " . \K::model(
+                            )->quote($field['fields_id'], \PDO::PARAM_INT) . " and name like " . \K::model()->quote(
+                                '%' . str_replace(
+                                    ['and', 'or'],
+                                    ' ',
+                                    implode('', \K::$fw->search_keywords)
+                                ) . '%'
+                            ) . "))>0";
                     }
                 } //handle search by entity
                 elseif ($field['type'] == 'fieldtype_entity') {
-                    $cfg = new fields_types_cfg($field['configuration']);
-                    if ($heading_field_id = fields::get_heading_id($cfg->get('entity_id'))) {
+                    $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
+                    if ($heading_field_id = \Models\Main\Fields::get_heading_id($cfg->get('entity_id'))) {
                         $where_str = "select es.id from app_entity_" . $cfg->get(
                                 'entity_id'
-                            ) . " as es where es.id='" . (int)$filters_values . "'";
+                            ) . " as es where es.id = " . \K::model()->quote($filters_values);
 
                         $where_str .= " or (";
                         for ($i = 0, $n = sizeof(\K::$fw->search_keywords); $i < $n; $i++) {
@@ -467,9 +495,9 @@ class Reports
                                 default:
                                     $keyword = \K::$fw->search_keywords[$i];
 
-                                    $where_str .= "es.field_" . $heading_field_id . " like '%" . db_input(
-                                            $keyword
-                                        ) . "%'";
+                                    $where_str .= "es.field_" . $heading_field_id . " like " . \K::model()->quote(
+                                            '%' . $keyword . '%'
+                                        );
                                     break;
                             }
                         }
@@ -478,9 +506,10 @@ class Reports
                         $where_str = (int)$filters_values;
                     }
 
-                    $sql_query[] = "(select count(*) from app_entity_" . $current_entity_id . "_values as cv where cv.items_id=e.id and cv.fields_id='" . db_input(
+                    $sql_query[] = "(select count(*) from app_entity_" . $current_entity_id . "_values as cv where cv.items_id = e.id and cv.fields_id = " . \K::model(
+                        )->quote(
                             $field['fields_id']
-                        ) . "' and cv.value in (" . $where_str . "))>0";
+                        ) . " and cv.value in (" . $where_str . "))>0";
                 } elseif (in_array($field['type'], ['fieldtype_input_encrypted', 'fieldtype_textarea_encrypted'])) {
                     $where_str = "(";
                     for ($i = 0, $n = sizeof(\K::$fw->search_keywords); $i < $n; $i++) {
@@ -497,7 +526,9 @@ class Reports
                             default:
                                 $keyword = \K::$fw->search_keywords[$i];
 
-                                $where_str .= "field_" . $field['fields_id'] . " like '%" . db_input($keyword) . "%'";
+                                $where_str .= "field_" . $field['fields_id'] . " like " . \K::model()->quote(
+                                        '%' . $keyword . '%'
+                                    );
 
                                 break;
                         }
@@ -521,7 +552,9 @@ class Reports
                             default:
                                 $keyword = \K::$fw->search_keywords[$i];
 
-                                $where_str .= "e.field_" . $field['fields_id'] . " like '%" . db_input($keyword) . "%'";
+                                $where_str .= "e.field_" . $field['fields_id'] . " like " . \K::model()->quote(
+                                        '%' . $keyword . '%'
+                                    );
 
                                 break;
                         }
@@ -534,10 +567,7 @@ class Reports
         }
 
         if (count($sql_query) > 0) {
-            //print_r($sql_query);
-
             $main_sql_query[] = implode(' or ', $sql_query);
-            //print_r($main_sql_query);
         }
 
         return $main_sql_query;

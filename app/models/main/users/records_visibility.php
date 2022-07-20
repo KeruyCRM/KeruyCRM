@@ -92,29 +92,45 @@ class Records_visibility
 
     public static function add_access_query($entities_id)
     {
-        global $app_user, $app_fields_cache;
-
-        //print_rr($app_user);
-
         $sql = [];
 
         //skip admins
-        if (!isset($app_user['group_id']) or !strlen($app_user['group_id']) or $app_user['group_id'] == 0) {
+        if (!isset(\K::$fw->app_user['group_id']) or !strlen(
+                \K::$fw->app_user['group_id']
+            ) or \K::$fw->app_user['group_id'] == 0) {
             return '';
         }
 
-        $rules_query = db_query(
-            "select * from app_records_visibility_rules where is_active=1 and entities_id='" . $entities_id . "' and find_in_set(" . $app_user['group_id'] . ",users_groups)",
+        /*$rules_query = db_query(
+            "select * from app_records_visibility_rules where is_active=1 and entities_id='" . $entities_id . "' and find_in_set(" . \K::$fw->app_user['group_id'] . ",users_groups)",
             false
-        );
-        while ($rules = db_fetch_array($rules_query)) {
-            $listing_sql_query = "";
+        );*/
 
-            $reports_info_query = db_query(
+        $rules_query = \K::model()->db_fetch('app_records_visibility_rules', [
+            'is_active = 1 and entities_id = ? and find_in_set( ? ,users_groups)',
+            $entities_id,
+            \K::$fw->app_user['group_id']
+        ]);
+
+        //while ($rules = db_fetch_array($rules_query)) {
+        foreach ($rules_query as $rules) {
+            $rules = $rules->cast();
+            $listing_sql_query = '';
+
+            /*$reports_info_query = db_query(
                 "select id from app_reports where reports_type='records_visibility" . $rules['id'] . "'"
-            );
-            if ($reports_info = db_fetch_array($reports_info_query)) {
-                $listing_sql_query = reports::add_filters_query($reports_info['id'], $listing_sql_query);
+            );*/
+
+            $reports_info = \K::model()->db_fetch_one('app_reports', [
+                'reports_type = ?',
+                'records_visibility' . $rules['id']
+            ], [], 'id');
+
+            if ($reports_info) {
+                $listing_sql_query = \Models\Main\Reports\Reports::add_filters_query(
+                    $reports_info['id'],
+                    $listing_sql_query
+                );
             }
 
             if (strlen($rules['merged_fields'])) {
@@ -125,57 +141,51 @@ class Records_visibility
 
                     //ruels for current users and users fields types
                     if ($users_fields_id == 'current_user') {
-                        if ($app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_created_by') {
-                            $listing_sql_query .= " and e.created_by=" . $app_user['id'];
-                        } elseif ($app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_access_group') {
-                            $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id=e.id and cv.fields_id='" . db_input(
-                                    $fields_id
-                                ) . "' and cv.value = " . $app_user['group_id'] . ")>0 ";
-                        } elseif ($app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_grouped_users') {
-                            $cfg = new \Models\Main\Fields_types_cfg($app_fields_cache[$entities_id][$fields_id]['configuration']);
+                        if (\K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_created_by') {
+                            $listing_sql_query .= " and e.created_by = " . \K::$fw->app_user['id'];
+                        } elseif (\K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_access_group') {
+                            $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id = e.id and cv.fields_id = " . (int)$fields_id . " and cv.value = " . \K::$fw->app_user['group_id'] . ")>0 ";
+                        } elseif (\K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_grouped_users') {
+                            $cfg = new \Models\Main\Fields_types_cfg(
+                                \K::$fw->app_fields_cache[$entities_id][$fields_id]['configuration']
+                            );
 
                             if ($cfg->get('use_global_list') > 0) {
-                                $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id=e.id and cv.fields_id='" . db_input(
-                                        $fields_id
-                                    ) . "' and cv.value in (select id from app_global_lists_choices fc where fc.lists_id='" . $cfg->get(
+                                $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id = e.id and cv.fields_id = " . (int)$fields_id . " and cv.value in (select id from app_global_lists_choices fc where fc.lists_id = '" . $cfg->get(
                                         'use_global_list'
-                                    ) . "' and find_in_set(" . $app_user['id'] . ",fc.users)))>0 ";
+                                    ) . "' and find_in_set(" . \K::$fw->app_user['id'] . ",fc.users)))>0 ";
                             } else {
-                                $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id=e.id and cv.fields_id='" . db_input(
-                                        $fields_id
-                                    ) . "' and cv.value in (select id from app_fields_choices fc where fc.fields_id='" . $fields_id . "' and find_in_set(" . $app_user['id'] . ",fc.users)))>0 ";
+                                $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id = e.id and cv.fields_id = " . (int)$fields_id
+                                    . " and cv.value in (select id from app_fields_choices fc where fc.fields_id = " . (int)$fields_id . " and find_in_set(" . \K::$fw->app_user['id'] . ",fc.users)))>0 ";
                             }
-                        } elseif ($app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_mysql_query') {
-                            $listing_sql_query .= " and find_in_set({$app_user['id']}," . fieldtype_mysql_query::prepare_query(
-                                    $app_fields_cache[$entities_id][$fields_id],
+                        } elseif (\K::$fw->app_fields_cache[$entities_id][$fields_id]['type'] == 'fieldtype_mysql_query') {
+                            $listing_sql_query .= " and find_in_set(" . \K::$fw->app_user['id'] . "," . \Tools\FieldsTypes\Fieldtype_mysql_query::prepare_query(
+                                    \K::$fw->app_fields_cache[$entities_id][$fields_id],
                                     'e',
                                     true
                                 ) . ")";
                         } else {
-                            $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id=e.id and cv.fields_id='" . db_input(
-                                    $fields_id
-                                ) . "' and cv.value = " . $app_user['id'] . ")>0 ";
+                            $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id = e.id and cv.fields_id = " . (int)$fields_id
+                                . " and cv.value = " . \K::$fw->app_user['id'] . ")>0 ";
                         }
                     } else {
-                        if (!isset($app_user['fields']['field_' . $users_fields_id])) {
+                        if (!isset(\K::$fw->app_user['fields']['field_' . $users_fields_id])) {
                             continue;
                         }
 
-                        $value = $app_user['fields']['field_' . $users_fields_id];
+                        $value = \K::$fw->app_user['fields']['field_' . $users_fields_id];
 
                         if (!strlen($value)) {
                             $value = 0;
                         }
 
                         if (in_array(
-                            $app_fields_cache[$entities_id][$fields_id]['type'],
+                            \K::$fw->app_fields_cache[$entities_id][$fields_id]['type'],
                             ['fieldtype_entity_multilevel']
                         )) {
                             $listing_sql_query .= " and e.field_{$fields_id}='{$value}'";
                         } else {
-                            $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id=e.id and cv.fields_id='" . db_input(
-                                    $fields_id
-                                ) . "' and cv.value in (" . $value . "))>0 ";
+                            $listing_sql_query .= " and (select count(*) from app_entity_" . $entities_id . "_values as cv where cv.items_id = e.id and cv.fields_id = " . (int)$fields_id . " and cv.value in (" . $value . "))>0 ";
                         }
                     }
                 }
@@ -184,16 +194,16 @@ class Records_visibility
             //check empty values
             if (strlen($rules['merged_fields_empty_values'])) {
                 foreach (explode(',', $rules['merged_fields_empty_values']) as $fields_id) {
-                    if (isset($app_fields_cache[$entities_id][$fields_id])) {
-                        switch ($app_fields_cache[$entities_id][$fields_id]['type']) {
+                    if (isset(\K::$fw->app_fields_cache[$entities_id][$fields_id])) {
+                        switch (\K::$fw->app_fields_cache[$entities_id][$fields_id]['type']) {
                             case 'fieldtype_entity_multilevel':
                             case 'fieldtype_dropdown':
                             case 'fieldtype_radioboxes':
                             case 'fieldtype_created_by':
-                                $listing_sql_query .= " and e.field_{$fields_id}=0 ";
+                                $listing_sql_query .= " and e.field_{$fields_id} = 0 ";
                                 break;
                             default:
-                                $listing_sql_query .= " and length(e.field_{$fields_id})=0 ";
+                                $listing_sql_query .= " and length(e.field_{$fields_id}) = 0 ";
                                 break;
                         }
                     }

@@ -2,47 +2,47 @@
 
 namespace Tools\FieldsTypes;
 
-require('includes/libs/tcpdf_min_barcode_generator/6.3.2/tcpdf_barcodes_2d.php');
+require('app/libs/tcpdf_min_barcode_generator/6.3.2/tcpdf_barcodes_2d.php');
 
-require('includes/libs/php-barcode-generator-master/src/Exceptions/BarcodeException.php');
-require('includes/libs/php-barcode-generator-master/src/Exceptions/InvalidCharacterException.php');
-require('includes/libs/php-barcode-generator-master/src/Exceptions/InvalidCheckDigitException.php');
-require('includes/libs/php-barcode-generator-master/src/Exceptions/InvalidFormatException.php');
-require('includes/libs/php-barcode-generator-master/src/Exceptions/InvalidLengthException.php');
-require('includes/libs/php-barcode-generator-master/src/Exceptions/UnknownTypeException.php');
-require('includes/libs/php-barcode-generator-master/src/Helpers/BinarySequenceConverter.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeInterface.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCodabar.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCode11.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCode128.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCode128A.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCode128B.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCode128C.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCode39.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCode39Checksum.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCode39Extended.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCode39ExtendedChecksum.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeCode93.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeEanUpcBase.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeEan13.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeEan8.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeIntelligentMailBarcode.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeInterleaved25Checksum.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeInterleaved25.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeRms4cc.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeKix.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeMsiChecksum.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeMsi.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypePharmacode.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypePharmacodeTwoCode.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypePostnet.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypePlanet.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeStandard2of5.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeStandard2of5Checksum.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeUpcA.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeUpcE.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeUpcExtension2.php');
-require('includes/libs/php-barcode-generator-master/src/Types/TypeUpcExtension5.php');
+require('app/libs/php-barcode-generator-master/src/Exceptions/BarcodeException.php');
+require('app/libs/php-barcode-generator-master/src/Exceptions/InvalidCharacterException.php');
+require('app/libs/php-barcode-generator-master/src/Exceptions/InvalidCheckDigitException.php');
+require('app/libs/php-barcode-generator-master/src/Exceptions/InvalidFormatException.php');
+require('app/libs/php-barcode-generator-master/src/Exceptions/InvalidLengthException.php');
+require('app/libs/php-barcode-generator-master/src/Exceptions/UnknownTypeException.php');
+require('app/libs/php-barcode-generator-master/src/Helpers/BinarySequenceConverter.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeInterface.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCodabar.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCode11.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCode128.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCode128A.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCode128B.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCode128C.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCode39.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCode39Checksum.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCode39Extended.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCode39ExtendedChecksum.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeCode93.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeEanUpcBase.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeEan13.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeEan8.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeIntelligentMailBarcode.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeInterleaved25Checksum.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeInterleaved25.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeRms4cc.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeKix.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeMsiChecksum.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeMsi.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypePharmacode.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypePharmacodeTwoCode.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypePostnet.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypePlanet.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeStandard2of5.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeStandard2of5Checksum.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeUpcA.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeUpcE.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeUpcExtension2.php');
+require('app/libs/php-barcode-generator-master/src/Types/TypeUpcExtension5.php');
 
 class Fieldtype_barcode
 {
@@ -372,19 +372,17 @@ class Fieldtype_barcode
 
     public static function update_items_fields($entities_id, $items_id, $item_info)
     {
-        global $app_fields_cache;
-
-        if (isset($app_fields_cache[$entities_id])) {
-            foreach ($app_fields_cache[$entities_id] as $fields) {
+        if (isset(\K::$fw->app_fields_cache[$entities_id])) {
+            foreach (\K::$fw->app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_barcode' and !strlen($item_info['field_' . $fields['id']])) {
                     $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
-                    //skip empyt template
+                    //skip empty template
                     if (!strlen($cfg->get('template'))) {
                         continue;
                     }
 
-                    $fieldtype_text_pattern = new fieldtype_text_pattern();
+                    $fieldtype_text_pattern = new \Tools\FieldsTypes\Fieldtype_text_pattern();
                     $value = $fieldtype_text_pattern->output_singe_text(
                         $cfg->get('template'),
                         $entities_id,
@@ -399,13 +397,16 @@ class Fieldtype_barcode
                         $value = str_replace($matches[0], $rand_str, $value);
                     }
 
-                    //echo $value;                    
-                    //exit();
-
-                    db_query(
+                    /*db_query(
                         "update app_entity_" . $entities_id . " set field_" . $fields['id'] . " = '" . db_input(
                             $value
                         ) . "' where id='" . $items_id . "'"
+                    );*/
+
+                    \K::model()->db_update(
+                        'app_entity_' . $entities_id,
+                        ['field_' . $fields['id'] => $value],
+                        ['id = ?' => $items_id]
                     );
                 }
             }

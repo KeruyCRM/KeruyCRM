@@ -60,9 +60,12 @@ class Model extends \Prefab
         return $this->db->quote($val, $type);
     }
 
-    public function quoteToString($array)
+    public function quoteToString($array, $type = \PDO::PARAM_STR)
     {
-        $array_map = array_map(['self', 'quote'], $array);
+        //$array_map = array_map(['self', 'quote'], $array);
+        $array_map = array_map(function ($val) use ($type) {
+            return $this->quote($val, $type);
+        }, $array);
         return implode(',', $array_map);
     }
 

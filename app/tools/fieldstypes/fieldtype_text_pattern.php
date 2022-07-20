@@ -287,7 +287,7 @@ class Fieldtype_text_pattern
         $text = $this->output($output_options);
 
         //prepare url
-        $text = str_replace('[url]', url_for('items/info', 'path=' . $path), $text);
+        $text = str_replace('[url]', \Helpers\Urls::url_for('main/items/info', 'path=' . $path), $text);
 
         //prepare last comment
         if (strstr($text, '[comment]')) {

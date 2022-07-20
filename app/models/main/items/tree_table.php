@@ -2,7 +2,7 @@
 
 namespace Models\Main\Items;
 
-class tree_table
+class Tree_table
 {
     function __construct($entities_id, $listing_fields, $fields_access_schema)
     {
@@ -327,8 +327,17 @@ class tree_table
 
     static function get_items_tree($entities_id, $item_id, $tree)
     {
-        $items_query = db_query("select id from app_entity_{$entities_id} where parent_id={$item_id}");
-        while ($items = db_fetch_array($items_query)) {
+        //$items_query = db_query("select id from app_entity_{$entities_id} where parent_id={$item_id}");
+
+        $items_query = \K::model()->db_fetch('app_entity_' . $entities_id, [
+            'parent_id = ?',
+            $item_id
+        ], [], 'id');
+
+        //while ($items = db_fetch_array($items_query)) {
+        foreach ($items_query as $items){
+            $items = $items->cast();
+
             $tree[] = $items['id'];
 
             $tree = self::get_items_tree($entities_id, $items['id'], $tree);

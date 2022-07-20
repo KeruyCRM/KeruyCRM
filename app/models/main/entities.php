@@ -268,21 +268,25 @@ class Entities
         $add_id_to_name = false,
         $entities_filter = 0
     ) {
-        global $app_user;
-
-        if ($app_user['group_id'] == 0) {
-            $entities_query = db_query(
-                "select e.* from app_entities e left join app_entities_groups eg on e.group_id=eg.id  where e.parent_id='" . $parent_id . "' " . (($parent_id == 0 and $entities_filter > 0) ? " and e.group_id={$entities_filter}" : "") . " order by eg.sort_order, eg.name, e.sort_order, e.name"
+        if (\K::$fw->app_user['group_id'] == 0) {
+            $entities_query = \K::model()->db_query_exec(
+                "select e.* from app_entities e left join app_entities_groups eg on e.group_id = eg.id  where e.parent_id = :parent_id " . (($parent_id == 0 and $entities_filter > 0) ? " and e.group_id = :entities_filter" : "") . " order by eg.sort_order, eg.name, e.sort_order, e.name",
+                [
+                    ':parent_id' => $parent_id,
+                ] + (($parent_id == 0 and $entities_filter > 0) ? [':entities_filter' => $entities_filter] : [])
             );
         } else {
-            $entities_query = db_query(
-                "select e.* from app_entities e, app_entities_access ea where e.parent_id='" . $parent_id . "' and e.id=ea.entities_id and length(ea.access_schema)>0 and ea.access_groups_id='" . db_input(
-                    $app_user['group_id']
-                ) . "' order by e.sort_order, e.name"
+            $entities_query = \K::model()->db_query_exec(
+                "select e.* from app_entities e, app_entities_access ea where e.parent_id = ? and e.id = ea.entities_id and length(ea.access_schema)>0 and ea.access_groups_id = ? order by e.sort_order, e.name",
+                [
+                    $parent_id,
+                    \K::$fw->app_user['group_id']
+                ]
             );
         }
 
-        while ($entities = db_fetch_array($entities_query)) {
+        //while ($entities = db_fetch_array($entities_query)) {
+        foreach ($entities_query as $entities) {
             if (in_array($entities['id'], $skip)) {
                 continue;
             }

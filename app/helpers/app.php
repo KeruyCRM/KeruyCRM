@@ -1009,23 +1009,12 @@ class App
         }
     }
 
-////
-// Parse search string into indivual objects
+    // Parse search string into individual objects
     public static function app_parse_search_string($search_str = '', &$objects = [], $search_operator = 'or')
     {
-        /* if (function_exists('mb_strtolower')) 
-          {
-          mb_internal_encoding('UTF-8');
-          $search_str = trim(mb_strtolower($search_str));
-          }
-          else
-          {
-          $search_str = trim(strtolower($search_str));
-          } */
-
         $search_str = trim(str_replace(['AND', 'OR'], ['and', 'or'], $search_str));
 
-// Break up $search_str on whitespace; quoted string will be reconstructed later
+        // Break up $search_str on whitespace; quoted string will be reconstructed later
         $pieces = preg_split('/[[:space:]]+/u', $search_str);
         $objects = [];
         $tmpstring = '';
@@ -1054,8 +1043,7 @@ class App
                 }
             }
 
-// Check individual words
-
+            // Check individual words
             if ((substr($pieces[$k], -1) != '"') && (substr($pieces[$k], 0, 1) != '"')) {
                 $objects[] = trim($pieces[$k]);
 
@@ -1068,12 +1056,12 @@ class App
                   end of the string or run out of pieces.
                  */
 
-// Add this word to the $tmpstring, starting the $tmpstring
+                // Add this word to the $tmpstring, starting the $tmpstring
                 $tmpstring = trim(preg_replace('/"/', ' ', $pieces[$k]));
 
-// Check for one possible exception to the rule. That there is a single quoted word.
+                // Check for one possible exception to the rule. That there is a single quoted word.
                 if (substr($pieces[$k], -1) == '"') {
-// Turn the flag off for future iterations
+                    // Turn the flag off for future iterations
                     $flag = 'off';
 
                     $objects[] = trim(preg_replace('/"/', ' ', $pieces[$k]));
@@ -1084,17 +1072,17 @@ class App
 
                     unset($tmpstring);
 
-// Stop looking for the end of the string and move onto the next word.
+                    // Stop looking for the end of the string and move onto the next word.
                     continue;
                 }
 
-// Otherwise, turn on the flag to indicate no quotes have been found attached to this word in the string.
+                // Otherwise, turn on the flag to indicate no quotes have been found attached to this word in the string.
                 $flag = 'on';
 
-// Move on to the next word
+                // Move on to the next word
                 $k++;
 
-// Keep reading until the end of the string as long as the $flag is on
+                // Keep reading until the end of the string as long as the $flag is on
 
                 while (($flag == 'on') && ($k < count($pieces))) {
                     while (substr($pieces[$k], -1) == ')') {
@@ -1106,12 +1094,12 @@ class App
                         }
                     }
 
-// If the word doesn't end in double quotes, append it to the $tmpstring.
+                    // If the word doesn't end in double quotes, append it to the $tmpstring.
                     if (substr($pieces[$k], -1) != '"') {
-// Tack this word onto the current string entity
+                        // Tack this word onto the current string entity
                         $tmpstring .= ' ' . $pieces[$k];
 
-// Move on to the next word
+                        // Move on to the next word
                         $k++;
                         continue;
                     } else {
@@ -1121,7 +1109,7 @@ class App
                          */
                         $tmpstring .= ' ' . trim(preg_replace('/"/', ' ', $pieces[$k]));
 
-// Push the $tmpstring onto the array of stuff to search for
+                        // Push the $tmpstring onto the array of stuff to search for
                         $objects[] = trim($tmpstring);
 
                         for ($j = 0; $j < count($post_objects); $j++) {
@@ -1130,14 +1118,14 @@ class App
 
                         unset($tmpstring);
 
-// Turn off the flag to exit the loop
+                        // Turn off the flag to exit the loop
                         $flag = 'off';
                     }
                 }
             }
         }
 
-// add default logical operators if needed
+        // add default logical operators if needed
         $temp = [];
         for ($i = 0; $i < (count($objects) - 1); $i++) {
             $temp[] = $objects[$i];
@@ -1177,7 +1165,7 @@ class App
         }
     }
 
-//For PHP5.3 this public static function replace json_encode($v,JSON_UNESCAPED_UNICODE) in 5.4.0   
+    //For PHP5.3 this public static function replace json_encode($v,JSON_UNESCAPED_UNICODE) in 5.4.0
     public static function app_json_encode($arr)
     {
         //convmap since 0x80 char codes so it takes all multibyte codes (above ASCII 127). So such characters are being "hidden" from normal json_encoding

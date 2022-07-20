@@ -159,25 +159,46 @@ class Fieldtype_user_accessgroups
 
     public static function prepare_multiple_access_groups($entity_id, $item_id)
     {
-        global $sql_data, $app_module_path;
-
-        //handle process aciton
-        if ($app_module_path == 'items/processes' and $entity_id == 1 and isset($sql_data['field_6'])) {
-            db_query(
+        //handle process action
+        if (\K::$fw->app_module_path == 'items/processes' and $entity_id == 1 and isset(\K::$fw->sql_data['field_6'])) {
+            /*db_query(
                 "update app_entity_1 set multiple_access_groups='" . (count(
-                    explode(',', $sql_data['field_6'])
-                ) > 1 ? $sql_data['field_6'] : '') . "' where id='" . $item_id . "'"
-            );
+                    explode(',', \K::$fw->sql_data['field_6'])
+                ) > 1 ? \K::$fw->sql_data['field_6'] : '') . "' where id='" . $item_id . "'"
+            );*/
+
+            \K::model()->db_update('app_entity_1', [
+                'multiple_access_groups' => (count(
+                    explode(',', \K::$fw->sql_data['field_6'])
+                ) > 1 ? \K::$fw->sql_data['field_6'] : '')
+            ], [
+                'id = ?',
+                $item_id
+            ]);
         } //handle default form post
-        elseif ($entity_id == 1 and isset($_POST['fields'][6])) {
-            if (is_array($_POST['fields'][6]) and count($_POST['fields'][6]) > 1) {
-                db_query(
+        elseif ($entity_id == 1 and isset(\K::$fw->POST['fields'][6])) {
+            if (is_array(\K::$fw->POST['fields'][6]) and count(\K::$fw->POST['fields'][6]) > 1) {
+                /*db_query(
                     "update app_entity_1 set multiple_access_groups='" . db_input(
-                        implode(',', $_POST['fields'][6])
+                        implode(',', \K::$fw->POST['fields'][6])
                     ) . "' where id='" . $item_id . "'"
-                );
+                );*/
+
+                \K::model()->db_update('app_entity_1', [
+                    'multiple_access_groups' => implode(',', \K::$fw->POST['fields'][6])
+                ], [
+                    'id = ?',
+                    $item_id
+                ]);
             } else {
-                db_query("update app_entity_1 set multiple_access_groups='' where id='" . $item_id . "'");
+                /*db_query("update app_entity_1 set multiple_access_groups='' where id='" . $item_id . "'");*/
+
+                \K::model()->db_update('app_entity_1', [
+                    'multiple_access_groups' => ''
+                ], [
+                    'id = ?',
+                    $item_id
+                ]);
             }
         }
     }

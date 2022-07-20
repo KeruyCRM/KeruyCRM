@@ -153,7 +153,9 @@ class Fieldtype_user_photo
             $new_name = 'user_' . $item['id'] . '.' . $pathinfo['extension'];
             rename(\K::$fw->DIR_WS_USERS . $item['field_10'], \K::$fw->DIR_WS_USERS . $new_name);
 
-            db_query("update app_entity_1 set field_10='{$new_name}' where id={$item['id']}");
+            //db_query("update app_entity_1 set field_10='{$new_name}' where id={$item['id']}");
+
+            \K::model()->db_update('app_entity_1', ['field_10' => $new_name], ['id = ?', $item['id']]);
         }
     }
 }

@@ -112,47 +112,65 @@ class Fieldtype_autostatus
 
     public static function set($entities_id, $items_id)
     {
-        global $sql_query_having, $app_changed_fields, $app_choices_cache;
-
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select * from app_fields where entities_id='" . db_input(
                 $entities_id
             ) . "' and type='fieldtype_autostatus'"
-        );
-        while ($fields = db_fetch_array($fields_query)) {
+        );*/
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'entities_id = ? and type = ?',
+            $entities_id,
+            'fieldtype_autostatus'
+        ]);
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
-            foreach (fields_choices::get_tree($fields['id'], 0, [], 0, '', '', true) as $choices) {
-                $reports_info_query = db_query(
+            $fields_choices = \Models\Main\Fields_choices::get_tree($fields['id'], 0, [], 0, '', '', true);
+            foreach ($fields_choices as $choices) {
+                /*$reports_info_query = db_query(
                     "select * from app_reports where entities_id='" . db_input(
                         $entities_id
                     ) . "' and reports_type='fields_choices" . $choices['id'] . "'"
-                );
-                if ($reports_info = db_fetch_array($reports_info_query)) {
-                    $sql_query_having = [];
+                );*/
 
-                    $listing_sql_query = reports::add_filters_query($reports_info['id'], '');
+                $reports_info = \K::model()->db_fetch_one('app_reports', [
+                    'entities_id = ? and reports_type = ?',
+                    $entities_id,
+                    'fields_choices' . $choices['id']
+                ], [], 'id');
+
+                if ($reports_info) {
+                    \K::$fw->sql_query_having = [];
+
+                    $listing_sql_query = \Models\Main\Reports\Reports::add_filters_query($reports_info['id'], '');
 
                     //prepare having query for formula fields
-                    if (isset($sql_query_having[$entities_id])) {
-                        $listing_sql_query .= reports::prepare_filters_having_query($sql_query_having[$entities_id]);
+                    if (isset(\K::$fw->sql_query_having[$entities_id])) {
+                        $listing_sql_query .= \Models\Main\Reports\Reports::prepare_filters_having_query(
+                            \K::$fw->sql_query_having[$entities_id]
+                        );
                     }
 
-                    $item_info_query = db_query(
-                        "select e.* " . fieldtype_formula::prepare_query_select(
+                    $item_info_query = \K::model()->db_query_exec(
+                        "select e.* " . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                             $entities_id,
                             ''
-                        ) . " from app_entity_" . $entities_id . " e where e.id='" . db_input(
-                            $items_id
-                        ) . "' " . $listing_sql_query
+                        ) . " from app_entity_" . $entities_id . " e where e.id = ? " . $listing_sql_query,
+                        $items_id
                     );
-                    if ($item_info = db_fetch_array($item_info_query)) {
+                    if (isset($item_info_query[0])) {
+                        $item_info = $item_info_query[0];
+
                         if ($choices['id'] != $item_info['field_' . $fields['id']] and $cfg->get(
                                 'notify_when_changed'
                             ) == 1) {
-                            $app_changed_fields[] = [
+                            \K::$fw->app_changed_fields[] = [
                                 'name' => $fields['name'],
-                                'value' => $app_choices_cache[$choices['id']]['name'],
+                                'value' => \K::$fw->app_choices_cache[$choices['id']]['name'],
                                 'fields_id' => $fields['id'],
                                 'fields_value' => $choices['id'],
                             ];
@@ -162,27 +180,35 @@ class Fieldtype_autostatus
                             'field_' . $fields['id'] => $choices['id']
                         ];
 
-                        db_perform(
+                        \K::model()->db_perform(
                             'app_entity_' . $entities_id,
                             $sql_data,
-                            'update',
-                            "id='" . db_input($items_id) . "'"
+                            [
+                                'id = ?',
+                                $items_id
+                            ]
                         );
 
                         //run process
                         if (\Helpers\App::is_ext_installed() and ($process_id = (int)$cfg->get(
                                 'run_process_for_choice_' . $choices['id']
                             )) > 0 and $choices['id'] != $item_info['field_' . $fields['id']]) {
-                            $process_info_query = db_query("select * from app_ext_processes where id={$process_id}");
-                            if ($process_info = db_fetch_array($process_info_query)) {
-                                $_post_fields = $_POST['fields'] ?? []; //save post fields
-                                $_POST['fields'] = []; //reset post fields
+                            //$process_info_query = db_query("select * from app_ext_processes where id={$process_id}");
+
+                            $process_info = \K::model()->db_fetch_one('app_ext_processes', [
+                                'id = ?',
+                                $process_id
+                            ]);
+
+                            if ($process_info) {
+                                $_post_fields = \K::$fw->POST['fields'] ?? []; //save post fields
+                                \K::$fw->POST['fields'] = []; //reset post fields
 
                                 $processes = new processes($entities_id);
                                 $processes->items_id = $items_id;
                                 $processes->run($process_info, false, true);
 
-                                $_POST['fields'] = $_post_fields; //restore post fields;
+                                \K::$fw->POST['fields'] = $_post_fields; //restore post fields;
                             }
                         }
                         //break from current fields choices

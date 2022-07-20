@@ -433,7 +433,10 @@ class Subentity_form
 
             if (is_numeric($item_id)) {
                 $sql_data['date_updated'] = time();
-                \K::model()->db_perform('app_entity_' . $current_entity_id, $sql_data, ['id = ?' => $item_id]);
+                \K::model()->db_perform('app_entity_' . $current_entity_id, $sql_data, [
+                    'id = ?',
+                    $item_id
+                ]);
 
                 //insert choices values for fields with multiple values
                 $choices_values->process($item_id);
@@ -486,7 +489,8 @@ class Subentity_form
             );*/
             $items_query = \K::model()->db_fetch('app_entity_' . $current_entity_id, [
                 'parent_item_id = ? and id in (' . \K::model()->quoteToString(
-                    \K::$fw->app_subentity_form_items_deleted[$this->field_id]
+                    \K::$fw->app_subentity_form_items_deleted[$this->field_id],
+                    \PDO::PARAM_INT
                 ) . ')',
                 $this->items_id
             ], [], 'id');
