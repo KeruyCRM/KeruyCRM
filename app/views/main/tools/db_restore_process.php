@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?><?php
+
 $html = '
 	<h3 class="form-title">' . TEXT_DB_RESTORE_PROCESS . '</h3>
 	<p>' . TEXT_DB_RESTORE_PROCESS_INFO . '</p>			

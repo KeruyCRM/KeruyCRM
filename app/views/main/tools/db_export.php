@@ -1,4 +1,8 @@
 <?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?><?php
 echo ajax_modal_template_header(TEXT_DATABASE_EXPORT_APPLICATION) ?>
 
 <div class="modal-body">

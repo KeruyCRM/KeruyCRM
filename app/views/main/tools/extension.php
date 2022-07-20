@@ -1,4 +1,9 @@
-<link href="template/css/pages/pricing-tables.css" rel="stylesheet" type="text/css"/>
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+    <link href="template/css/pages/pricing-tables.css" rel="stylesheet" type="text/css"/>
 
 <div class="row margin-bottom-40">
     <!-- Pricing -->

@@ -1,4 +1,8 @@
 <?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?><?php
 echo ajax_modal_template_header(TEXT_HEADING_DB_BACKUP) ?>
 
 <?php

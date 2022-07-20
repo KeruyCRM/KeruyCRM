@@ -1,4 +1,8 @@
-<h3 class="page-title"><?php
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?><h3 class="page-title"><?php
     echo TEXT_HEADING_DB_BACKUP ?></h3>
 
 <div>

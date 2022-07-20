@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title"><?php
     echo TEXT_USERS_LOGIN_LOG ?></h3>
 
