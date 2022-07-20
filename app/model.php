@@ -290,12 +290,11 @@ class Model extends \Prefab
     private function getTTL($table, $ttl)
     {
         if (isset(\K::$fw->SKIP_CACHE_TABLE[$table])) {
-            $ttl = 0;
+            return 0;
         }
 
         if (!$ttl) {
-            $ttl = [\K::$fw->TTL_QUERY, $table];
+            return [\K::$fw->TTL_QUERY, $table];
         }
-        return $ttl;
     }
 }

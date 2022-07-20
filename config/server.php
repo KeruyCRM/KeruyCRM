@@ -68,6 +68,6 @@
     'TTL_QUERY' => 3600,
 
     'SKIP_CACHE_TABLE' => [
-        '' => '',
+        'app_' => '',
     ]
 ]);
