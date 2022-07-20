@@ -74,13 +74,17 @@ class Model extends \Prefab
         return $this->db->quotekey($key, $split);
     }
 
-    public function db_fetch_all($table, $column = null, $ttl = null)
+    public function db_fetch_all($table, $column = null, $ttl = 0)
     {
+        $ttl = $this->getTTL($table, $ttl);
+
         return $this->db_fetch($table, [], [], $column, $ttl);
     }
 
-    public function db_fetch($table, $filter = [], $options = [], $column = null, $ttl = null)
+    public function db_fetch($table, $filter = [], $options = [], $column = null, $ttl = 0)
     {
+        $ttl = $this->getTTL($table, $ttl);
+
         $mapper = $this->mapper($table, $column);
         return $mapper->find(
             $filter,
@@ -89,8 +93,10 @@ class Model extends \Prefab
         );
     }
 
-    public function db_fetch_one($table, $filter = [], $options = [], $column = null, $ttl = null)
+    public function db_fetch_one($table, $filter = [], $options = [], $column = null, $ttl = 0)
     {
+        $ttl = $this->getTTL($table, $ttl);
+
         $mapper = $this->mapper($table, $column);
         $value = $mapper->findone(
             $filter,
@@ -104,8 +110,10 @@ class Model extends \Prefab
         }
     }
 
-    public function db_fetch_count($table, $filter = [], $ttl = null)
+    public function db_fetch_count($table, $filter = [], $ttl = 0)
     {
+        $ttl = $this->getTTL($table, $ttl);
+
         $mapper = $this->mapper($table);
         return $mapper->count(
             $filter,
@@ -113,12 +121,16 @@ class Model extends \Prefab
         );
     }
 
-    public function db_find($table, $value, $column = 'id')
+    public function db_find($table, $value, $column = 'id', $ttl = 0)
     {
+        $ttl = $this->getTTL($table, $ttl);
+
         $mapper = $this->mapper($table);
 
         $info_query = $mapper->findone(
-            [$column . ' = ?', $value]
+            [$column . ' = ?', $value],
+            null,
+            $ttl
         );
 
         if ($info_query) {
@@ -130,12 +142,16 @@ class Model extends \Prefab
         }
     }
 
-    public function db_count($table, $value = '', $column = 'id')
+    public function db_count($table, $value = '', $column = 'id', $ttl = 0)
     {
+        $ttl = $this->getTTL($table, $ttl);
+
         $mapper = $this->mapper($table);
 
         return $mapper->count(
-            (strlen($value) > 0 ? [$column . ' = ?', $value] : [])
+            (strlen($value) > 0 ? [$column . ' = ?', $value] : []),
+            null,
+            $ttl
         );
     }
 
@@ -161,7 +177,7 @@ class Model extends \Prefab
         return $query[0] ?? '';
     }
 
-    public function db_query($query, $debug = false, $link = 'db_link')
+    public function db_query_($query, $debug = false, $link = 'db_link')
     {
         //global $$link, $app_db_query_log, $app_db_slow_query_log;
         return $this->db->exec($query);
@@ -269,5 +285,17 @@ class Model extends \Prefab
     public function db_has_encryption_key()
     {
         return \K::fw()->exists('DB_ENCRYPTION_KEY') and strlen(\K::$fw->DB_ENCRYPTION_KEY);
+    }
+
+    private function getTTL($table, $ttl)
+    {
+        if (isset(\K::$fw->SKIP_CACHE_TABLE[$table])) {
+            $ttl = 0;
+        }
+
+        if (!$ttl) {
+            $ttl = [\K::$fw->TTL_QUERY, $table];
+        }
+        return $ttl;
     }
 }

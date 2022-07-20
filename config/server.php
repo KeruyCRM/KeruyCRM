@@ -65,4 +65,9 @@
     'TYPE_DATABASE' => 'mysql',//sqlite?
     'TTL_SCHEMA' => 3600,
     'TTL_APP' => 3600,
+    'TTL_QUERY' => 3600,
+
+    'SKIP_CACHE_TABLE' => [
+        '' => '',
+    ]
 ]);
