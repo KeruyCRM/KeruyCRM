@@ -37,8 +37,12 @@ class Account extends \Controller
 
     public function set_cfg()
     {
-        if (\K::$fw->POST['key'] and \K::$fw->POST['value']) {
-            \K::app_users_cfg()->set(\K::$fw->POST['key'], \K::$fw->POST['value']);
+        if (\K::$fw->VERB == 'POST') {
+            if (\K::$fw->POST['key'] and \K::$fw->POST['value']) {
+                \K::app_users_cfg()->set(\K::$fw->POST['key'], \K::$fw->POST['value']);
+            }
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 
@@ -313,11 +317,15 @@ class Account extends \Controller
 
     public function check_unique()
     {
-        echo \Models\Main\Items\Items::check_unique(
-            \K::$fw->{'GET.entities_id'},
-            \K::$fw->{'POST.fields_id'},
-            \K::$fw->POST['fields_value'],
-            \K::$fw->app_user['id']
-        );
+        if (\K::$fw->VERB == 'POST') {
+            echo \Models\Main\Items\Items::check_unique(
+                \K::$fw->{'GET.entities_id'},
+                \K::$fw->{'POST.fields_id'},
+                \K::$fw->POST['fields_value'],
+                \K::$fw->app_user['id']
+            );
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 }
