@@ -214,7 +214,7 @@ class Fields_choices
             }
 
             foreach ($tree as $v) {
-                $choices[$v['id']] = fields_choices . phpstr_repeat(' - ', $v['level']);
+                $choices[$v['id']] = str_repeat(' - ', $v['level']) . $v['name'];
             }
         }
 
@@ -247,10 +247,7 @@ class Fields_choices
             }
 
             foreach ($tree as $v) {
-                $choices[$v['id']] = [
-                    'name' => fields_choices . phpstr_repeat(' - ', $v['level']),
-                    'color' => $v['bg_color']
-                ];
+                $choices[$v['id']] = ['name' => str_repeat(' - ', $v['level']) . $v['name'], 'color' => $v['bg_color']];
             }
         }
 
@@ -316,10 +313,10 @@ class Fields_choices
                 continue;
             }
 
-            $name = fields_choices . phpself::get_parents_names(
+            $name = self::get_parents_names(
                     $app_choices_cache[$id]['parent_id'],
                     $separator
-                );
+                ) . $app_choices_cache[$id]['name'];
 
             if (isset($app_choices_cache[$id])) {
                 if ($is_export) {
@@ -361,7 +358,7 @@ class Fields_choices
             $parents[] = $app_choices_cache[$id]['name'];
         }
 
-        return count($parents) ? fields_choices . phpimplode($separator, $parents) : '';
+        return count($parents) ? implode($separator, $parents) . $separator : '';
     }
 
     static function has_nested($id)

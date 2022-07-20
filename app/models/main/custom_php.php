@@ -74,7 +74,7 @@ class Custom_php
 
         foreach (self::get_tree() as $v) {
             if ($v['is_folder']) {
-                $choices[$v['id']] = custom_php . phpstr_repeat(' - ', $v['level']);
+                $choices[$v['id']] = str_repeat(' - ', $v['level']) . $v['name'];
             }
         }
 

@@ -253,7 +253,7 @@ class Entities
         $choices = [];
 
         foreach (self::get_tree(0, [], 0, [], [], $add_id_to_name) as $v) {
-            $choices[$v['id']] = entities . phpstr_repeat('- ', $v['level']);
+            $choices[$v['id']] = str_repeat('- ', $v['level']) . $v['name'];
         }
 
         return $choices;

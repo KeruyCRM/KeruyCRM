@@ -10,7 +10,7 @@ class Entities_menu
         $choices[''] = '';
 
         foreach (self::get_tree() as $menu) {
-            $choices[$menu['id']] = entities_menu . phpstr_repeat(' - ', $menu['level']);
+            $choices[$menu['id']] = str_repeat(' - ', $menu['level']) . $menu['name'];
         }
 
         return $choices;

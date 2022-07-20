@@ -179,7 +179,7 @@ class Global_lists
             }
 
             foreach ($tree as $v) {
-                $choices[$v['id']] = global_lists . phpstr_repeat(' - ', $v['level']);
+                $choices[$v['id']] = str_repeat(' - ', $v['level']) . $v['name'];
             }
         }
 
@@ -203,10 +203,7 @@ class Global_lists
             }
 
             foreach ($tree as $v) {
-                $choices[$v['id']] = [
-                    'name' => global_lists . phpstr_repeat(' - ', $v['level']),
-                    'color' => $v['bg_color']
-                ];
+                $choices[$v['id']] = ['name' => str_repeat(' - ', $v['level']) . $v['name'], 'color' => $v['bg_color']];
             }
         }
 
@@ -293,10 +290,10 @@ class Global_lists
                 continue;
             }
 
-            $name = global_lists . phpself::get_parents_names(
+            $name = self::get_parents_names(
                     $app_global_choices_cache[$id]['parent_id'],
                     $separator
-                );
+                ) . $app_global_choices_cache[$id]['name'];
 
             if (isset($app_global_choices_cache[$id])) {
                 if ($is_export) {
@@ -338,7 +335,7 @@ class Global_lists
             $parents[] = $app_global_choices_cache[$id]['name'];
         }
 
-        return count($parents) ? global_lists . phpimplode($separator, $parents) : '';
+        return count($parents) ? implode($separator, $parents) . $separator : '';
     }
 
     public static function has_nested($id)
