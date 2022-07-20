@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title"><?= \K::$fw->TEXT_BUTTON_SEND_TEST_EMAIL ?></h3>
 
 <p><?= sprintf(\K::$fw->TEXT_SEND_TEST_EMAIL_INFO, \K::$fw->TEXT_TEST_EMAIL_SUBJECT) ?></p>

@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<?php
+
 //tabs
 echo \K::$fw->render_dashboard_tabs;
 

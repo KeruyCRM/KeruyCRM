@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <div class="row">
     <div class="col-sm-8" style="min-width: 255px;">
         <div class="entitly-listing-buttons-left">

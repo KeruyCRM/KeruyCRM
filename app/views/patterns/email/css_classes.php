@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $css_classes = [];
 
 $css_classes['user-photo-box'] = 'text-align: center; float: left; width: 50px; margin-right: 5px;';

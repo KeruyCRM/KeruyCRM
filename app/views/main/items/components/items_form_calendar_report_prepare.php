@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $calendar_reports_id = str_replace('calendarreport', '', $app_redirect_to);
 $calendar_reports_query = db_query("select * from app_ext_calendar where id='" . db_input($calendar_reports_id) . "'");
 if ($calendar_reports = db_fetch_array($calendar_reports_query)) {

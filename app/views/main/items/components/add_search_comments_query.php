@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 if (app_parse_search_string($_POST['search_keywords'], $search_keywords)) {
     if (isset($search_keywords) && (sizeof($search_keywords) > 0)) {
         $listing_sql_query .= " and (";
@@ -18,7 +22,6 @@ if (app_parse_search_string($_POST['search_keywords'], $search_keywords)) {
             }
         }
         $listing_sql_query .= ")";
-
 
         if (count($search_keywords) == 1 and is_numeric($search_keywords[0]) and $entity_cfg->get(
                 'display_comments_id'

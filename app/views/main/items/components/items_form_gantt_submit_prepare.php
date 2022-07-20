@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $item_info = db_find('app_entity_' . $current_entity_id, $item_id);
 
 $reports_query = db_query(
@@ -51,7 +55,6 @@ if ($heading_field_id > 0) {
             'path=' . $app_path
         ) . '" target="_blank">' . fields_types::output($output_options) . '</a>';
 }
-
 
 //add fields in listing
 if (strlen($reports['fields_in_listing'])) {

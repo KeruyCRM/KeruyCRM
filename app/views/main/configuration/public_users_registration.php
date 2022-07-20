@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title"><?= \K::$fw->TEXT_MENU_USERS_REGISTRATION ?></h3>
 
 <p><?= \K::$fw->TEXT_PUBLIC_REGISTRATION_TIP ?></p>

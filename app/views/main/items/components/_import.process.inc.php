@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 //start build item sql data
 $sql_data = [];
 
@@ -360,7 +364,6 @@ if ($entities_id == 1 and $_POST['import_action'] == 'import') {
     $sql_data['password'] = $hasher->HashPassword($password);
 }
 
-
 //prepare multilevel import
 if ($multilevel_import > 0) {
     if ($_POST['import_action'] == 'import') {
@@ -424,7 +427,6 @@ if (!$item_has_updated and ($_POST['import_action'] == 'import' or $_POST['impor
         $sql_data['date_added'] = time();
         $sql_data['created_by'] = $app_logged_users_id;
         $sql_data['parent_item_id'] = (int)$import_entity_parent_item_id;
-
 
         //print_rr($sql_data);
         //exit();

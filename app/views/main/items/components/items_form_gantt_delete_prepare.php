@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 if (strstr($app_redirect_to, 'ganttreport')) {
     $check_query = db_query("select id from app_entities where parent_id='" . $current_entity_id . "'");
     $check = db_fetch_array($check_query);

@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_COPY) ?>
 
 <?= \Helpers\Html::form_tag(

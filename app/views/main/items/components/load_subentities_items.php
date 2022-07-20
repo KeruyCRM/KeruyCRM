@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 app_reset_selected_items();
 
 if (isset($subentities_items_position)) {
@@ -50,7 +54,6 @@ if (isset($subentities_items_position)) {
             $subentity_cfg = new entities_cfg($entities['id']);
 
             $listing_container = 'entity_items_listing' . $subentity_report['id'] . '_' . $subentity_report['entities_id'];
-
 
             //get report entity access schema
             $access_schema = users::get_entities_access_schema($subentity_report['entities_id'], $app_user['group_id']);

@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <div class="forget-password guest-login">
     <?php
     echo '<a href="' . \Helpers\Urls::url_for(

@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $search_fields = fields::get_search_feidls($current_entity_id);
 
 $use_search_fields = [];
@@ -95,7 +99,6 @@ if (count($search_fields) > 0) {
                     }
                 }
                 $where_str .= ")";
-
 
                 $sql_query[] = "(select count(*) from app_entity_" . $current_entity_id . "_values as cv where cv.items_id=e.id and cv.fields_id='" . db_input(
                         $field['id']
@@ -209,7 +212,6 @@ if (count($search_fields) > 0) {
                 $sql_query[] = $where_str;
             }
         }
-
 
         /**
          *  Search in comments

@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $msg = [];
 
 if (strlen($_POST['fields'][9]) == 0) {

@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_FIELDTYPE_USER_PHOTO_TITLE) ?>
 
 <?= \Helpers\Html::form_tag('user_photo_form', \Helpers\Urls::url_for('main/users/photo/save')) ?>
@@ -87,8 +92,8 @@ foreach (['gif', 'jpg', 'png'] as $v) {
             fileSizeLimit: "4MB",
             multi: false,
             uploadScript: "<?= \Helpers\Urls::url_for('main/users/photo/upload') ?>",
-            formData         : {
-                "form_session_token" : "<?= \K::$fw->app_session_token ?>"
+            formData: {
+                "form_session_token": "<?= \K::$fw->app_session_token ?>"
             },
             onUpload: function (filesToUpload) {
 

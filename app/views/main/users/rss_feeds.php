@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title"><?php
     echo TEXT_EXT_AVAILABLE_RSS_FEEDS ?></h3>
 
@@ -34,7 +39,7 @@
                     echo input_tag('url[]', $url, ['class' => 'form-control select-all', 'readonly' => 'readonly']
                     ) ?></td>
             </tr>
-        <?php
+            <?php
         } ?>
         </tbody>
     </table>

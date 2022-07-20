@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $calendar_reports_id = str_replace('pivot_calendars', '', $app_redirect_to);
 $calendar_reports_query = db_query(
     "select * from app_ext_pivot_calendars_entities where id='" . db_input($calendar_reports_id) . "'"

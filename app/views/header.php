@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <div class="header navbar navbar-inverse navbar-fixed-top noprint">
     <!-- BEGIN TOP NAVIGATION BAR -->
     <div class="header-inner">
@@ -45,7 +50,10 @@
                             <ul class="dropdown-menu-list scroller" style="height: 80px;">
                                 <li>
                                     <a href="https://www.keruy.com.ua/new_release.php"
-                                       target="_new"><?= sprintf( \K::$fw->TEXT_NEW_PROJECT_VERSION_INFO,  \K::$fw->app_current_version) ?></a>
+                                       target="_new"><?= sprintf(
+                                            \K::$fw->TEXT_NEW_PROJECT_VERSION_INFO,
+                                            \K::$fw->app_current_version
+                                        ) ?></a>
                                 </li>
                             </ul>
                         </li>
@@ -76,21 +84,23 @@
                    data-close-others="true">
 
                     <?php
-                    echo(is_file( \K::$fw->DIR_FS_USERS .  \K::$fw->app_user['photo']) ? \Helpers\Html::image_tag(
-                        \K::$fw->DIR_WS_USERS .  \K::$fw->app_user['photo'],
+                    echo(is_file(\K::$fw->DIR_FS_USERS . \K::$fw->app_user['photo']) ? \Helpers\Html::image_tag(
+                        \K::$fw->DIR_WS_USERS . \K::$fw->app_user['photo'],
                         ['class' => 'user-photo-header']
                     ) : \Helpers\Html::image_tag('images/' . 'no_photo.png', ['class' => 'user-photo-header'])) ?>
                     <span class="username">
                  <?php
-                 echo  \K::$fw->app_user['name'] ?>
+                 echo \K::$fw->app_user['name'] ?>
         </span>
 
                     <?php
-                    if ( \K::$fw->CFG_DISPLAY_USER_GROUP_IN_MENU == 1 and (!strlen( \K::$fw->CFG_DISPLAY_USER_GROUP_ID_IN_MENU) or in_array(
+                    if (\K::$fw->CFG_DISPLAY_USER_GROUP_IN_MENU == 1 and (!strlen(
+                                \K::$fw->CFG_DISPLAY_USER_GROUP_ID_IN_MENU
+                            ) or in_array(
                                 \K::$fw->app_user['group_id'],
-                                explode(',',  \K::$fw->CFG_DISPLAY_USER_GROUP_ID_IN_MENU)
+                                explode(',', \K::$fw->CFG_DISPLAY_USER_GROUP_ID_IN_MENU)
                             ))) {
-                        echo '<span class="username usergroup">(' . ( \K::$fw->app_user['group_id'] == 0 ?  \K::$fw->TEXT_ADMINISTRATOR :  \K::$fw->app_user['group_name']) . ')</span>';
+                        echo '<span class="username usergroup">(' . (\K::$fw->app_user['group_id'] == 0 ? \K::$fw->TEXT_ADMINISTRATOR : \K::$fw->app_user['group_name']) . ')</span>';
                     }
                     ?>
 
@@ -104,11 +114,14 @@
             <!-- END USER LOGIN DROPDOWN -->
 
             <?php
-            if ( \K::$fw->app_previously_logged_user > 0) {
+            if (\K::$fw->app_previously_logged_user > 0) {
                 echo '<li class="dropdown">' . \Helpers\Urls::link_to(
                         '<i class="fa fa-undo"></i>&nbsp;&nbsp;',
-                        \Helpers\Urls::url_for('main/users/login_as/login_back', 'users_id=' . \K::$fw->app_previously_logged_user),
-                        ['class' => 'dropdown-toggle', 'title' =>  \K::$fw->TEXT_LOGIN_BACK_AS_ADMIN]
+                        \Helpers\Urls::url_for(
+                            'main/users/login_as/login_back',
+                            'users_id=' . \K::$fw->app_previously_logged_user
+                        ),
+                        ['class' => 'dropdown-toggle', 'title' => \K::$fw->TEXT_LOGIN_BACK_AS_ADMIN]
                     ) . '</li>';
             }
             ?>

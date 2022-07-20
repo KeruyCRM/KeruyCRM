@@ -1,5 +1,8 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
 
 $listing_type = $listing->get_listing_type_info('list');
 
@@ -52,13 +55,11 @@ foreach ($listing_type['sections'] as $section) {
   ';
 }
 
-
 $html .= '
     </tr>
   </thead>
   <tbody>
 ';
-
 
 while ($item = db_fetch_array($items_query)) {
     $html .= '
@@ -139,7 +140,6 @@ while ($item = db_fetch_array($items_query)) {
                 'hide_actions_buttons' => $hide_actions_buttons,
             ];
 
-
             if ($field['is_heading'] == 1) {
                 //get fields in popup
                 $popup_html = '';
@@ -189,7 +189,6 @@ while ($item = db_fetch_array($items_query)) {
             ];
         }
 
-
         if ($section['display_as'] == 'list') {
             $html .= '<table class="listing-section-table">';
 
@@ -224,16 +223,13 @@ while ($item = db_fetch_array($items_query)) {
             $html .= '</ul>';
         }
 
-
         $html .= '</td>';
     }
-
 
     $html .= '
       </tr>
   ';
 }
-
 
 if ($listing_split->number_of_rows == 0) {
     $html .= '
@@ -249,7 +245,6 @@ $html .= '
   </div>
 </div>
 ';
-
 
 //add pager
 $html .= '

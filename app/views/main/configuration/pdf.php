@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title"><?= \K::$fw->TEXT_PDF_EXPORT_FONTS ?></h3>
 <p><?= \K::$fw->TEXT_PDF_EXPORT_FONTS_INFO ?></p>
 

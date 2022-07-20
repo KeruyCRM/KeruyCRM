@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title" style="float:left"><?php
     echo TEXT_FAVORITES ?></h3>
 

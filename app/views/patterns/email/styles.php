@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $styles = [];
 
 $styles['email_heading_content'] = [

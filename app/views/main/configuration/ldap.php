@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title"><?= \K::$fw->TEXT_HEADING_LDAP ?></h3>
 
 <p><?= \K::$fw->TEXT_LDAP_INFO ?></p>

@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $reports_query = db_query(
     "select * from app_ext_ganttchart where id='" . str_replace('ganttreport', '', $app_redirect_to) . "'"
 );

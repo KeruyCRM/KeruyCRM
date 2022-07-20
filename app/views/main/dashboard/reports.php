@@ -1,10 +1,15 @@
-<div class="dashboard-reports-config hidden-xs hidden-sm" style="margin-right: 0;">
-    <div class="toggler" title="<?php
-    echo TEXT_NAV_VIEW_CONFIG ?>" onClick="open_dialog('<?php
-    echo url_for('dashboard/reports_configure', 'id=' . $app_reports_groups_id) ?>')">
-        <i class="fa fa-bars"></i>
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+    <div class="dashboard-reports-config hidden-xs hidden-sm" style="margin-right: 0;">
+        <div class="toggler" title="<?php
+        echo TEXT_NAV_VIEW_CONFIG ?>" onClick="open_dialog('<?php
+        echo url_for('dashboard/reports_configure', 'id=' . $app_reports_groups_id) ?>')">
+            <i class="fa fa-bars"></i>
+        </div>
     </div>
-</div>
 
 <?php
 

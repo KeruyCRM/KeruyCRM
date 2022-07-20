@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?><?php
+
 //get report entity info
 $entity_info = \K::model()->db_find('app_entities', \K::$fw->reports['entities_id']);
 $entity_cfg = new \Models\Main\Entities_cfg(\K::$fw->reports['entities_id']);

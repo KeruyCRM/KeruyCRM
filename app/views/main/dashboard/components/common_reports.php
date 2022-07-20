@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<?php
 return;
 $where_sql = '';
 if (strlen($app_users_cfg->get('hidden_common_reports')) > 0) {

@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="form-title"><?= \K::$fw->TEXT_LOGIN_BY_PHONE_NUMBER ?></h3>
 
 <p><?= \K::$fw->TEXT_ENTER_YOUR_PHONE_NUMBER ?></p>

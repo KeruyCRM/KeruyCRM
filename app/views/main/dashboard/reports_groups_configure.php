@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<?php
+
 $reports_groups_info = db_find('app_reports_groups', _get::int('id'));
 $reports_list = (strlen($reports_groups_info['reports_list']) ? $reports_groups_info['reports_list'] : 0);
 $counters_list = (strlen($reports_groups_info['counters_list']) ? $reports_groups_info['counters_list'] : 0);

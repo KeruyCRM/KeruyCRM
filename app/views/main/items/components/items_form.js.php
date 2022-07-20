@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <script>
     var form_vlidator_<?= \K::$fw->app_items_form_name ?> = false
 
@@ -209,7 +214,7 @@
             /*$report_query = db_query(
                 "select * from app_reports where entities_id='" . \K::$fw->current_entity_id . "' and reports_type='parent_item_info_page'"
             );*/
-            $report = \K::model()->db_fetch_one('app_reports',[
+            $report = \K::model()->db_fetch_one('app_reports', [
                 'entities_id = ? and reports_type = ?',
                 \K::$fw->current_entity_id,
                 'parent_item_info_page'

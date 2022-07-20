@@ -1,4 +1,8 @@
 <?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?><?php
 //$sidebar_pos_option = 'page-sidebar-reversed';
 ?>
 

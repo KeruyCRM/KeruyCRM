@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="form-title"><?= (strlen(
         \K::$fw->CFG_LOGIN_PAGE_HEADING
     ) > 0 ? \K::$fw->CFG_LOGIN_PAGE_HEADING : \K::$fw->TEXT_HEADING_LOGIN) ?></h3>

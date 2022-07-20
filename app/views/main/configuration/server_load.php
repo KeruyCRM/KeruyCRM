@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title"><?= \K::$fw->TEXT_SERVER_LOAD ?></h3>
 
 <p><?= \K::$fw->TEXT_SERVER_LOAD_INFO ?></p>
@@ -26,7 +31,9 @@
     </div>
 
     <div class="form-group">
-        <label class="col-md-3 control-label" for="CFG_LDAP_SERVER_NAME"><?= \Helpers\App::tooltip_icon(\K::$fw->TEXT_CACHE_LIVETIME_INFO) . \K::$fw->TEXT_CACHE_LIVETIME ?></label>
+        <label class="col-md-3 control-label" for="CFG_LDAP_SERVER_NAME"><?= \Helpers\App::tooltip_icon(
+                \K::$fw->TEXT_CACHE_LIVETIME_INFO
+            ) . \K::$fw->TEXT_CACHE_LIVETIME ?></label>
         <div class="col-md-9">
             <?= \Helpers\Html::input_tag(
                 'CFG[CACHE_REPORTS_IN_HEADER_LIFETIME]',

@@ -1,4 +1,8 @@
 <?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+}
 $module->select_certificate('account') ?>
 
 

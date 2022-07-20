@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="form-title"><?= \K::$fw->page_title ?></h3>
 
 <p><?= \K::$fw->page_body ?></p>

@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="form-title"><?php
     echo TEXT_HEADING_RESTORE_PASSWORD ?></h3>
 

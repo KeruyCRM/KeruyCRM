@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 //prepare forumulas query
 $formulas_sql_query_select_array = fieldtype_formula::prepare_query_select($current_entity_id, []);
 

@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $javascript_code = trim($entity_cfg->get('javascript_in_item_page'));
 $php_code = trim($entity_cfg->get('php_in_item_page'));
 

@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<?php
+
 if ($app_user['group_id'] == 0) {
     $breadcrumb = [];
     $breadcrumb[] = '<li>' . link_to(

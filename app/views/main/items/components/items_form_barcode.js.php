@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 $("#" + form.name + " .atuogenerate-value-by-template").each(function () {
     if ($(this).val().length == 0) {
         template = $(this).attr('data-template');

@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<?php
 echo ajax_modal_template_header(TEXT_SEARCH_HELP) ?>
 
     <div class="modal-body ajax-modal-width-790">

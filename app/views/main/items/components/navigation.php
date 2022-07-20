@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <div class="row">
     <div class="col-md-12">
 
@@ -46,7 +51,6 @@
         <?php
         if ($current_item_id == 0) {
             $help_pages = new help_pages($current_entity_id);
-
 
             $title = $app_breadcrumb[count($app_breadcrumb) - 1]['title'] . $help_pages->render_icon('listing');
 

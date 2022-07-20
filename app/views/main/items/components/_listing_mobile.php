@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $listing_type = $listing->get_listing_type_info('mobile');
 
 $html .= '<div class="hidden">' . input_checkbox_tag(
@@ -18,7 +22,6 @@ while ($item = db_fetch_array($items_query)) {
                 'disable_highlight_unread'
             ) != 1) ? 'class="unread-item-row"' : '') . '>
 			';
-
 
     //perpare selected checkbox
     $hide_actions_buttons = false;
@@ -87,7 +90,6 @@ while ($item = db_fetch_array($items_query)) {
                 'hide_actions_buttons' => $hide_actions_buttons,
             ];
 
-
             if ($field['is_heading'] == 1) {
                 //get fields in popup
                 $popup_html = '';
@@ -138,7 +140,6 @@ while ($item = db_fetch_array($items_query)) {
             ];
         }
 
-
         if ($section['display_as'] == 'list') {
             $html .= '<table class="listing-section-table" style="width: 100%">';
 
@@ -165,7 +166,6 @@ while ($item = db_fetch_array($items_query)) {
 
             $html .= '</ul>';
         }
-
 
         $html .= '				
 					</td>

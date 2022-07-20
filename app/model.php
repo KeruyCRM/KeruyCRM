@@ -294,6 +294,7 @@ class Model extends \Prefab
         }
 
         if (!$ttl) {
+            //TODO add rand time
             return [\K::$fw->TTL_QUERY, $table];
         }
     }

@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $cfg_tree_table_editable_fields_in_listing = $listing->settings->get('editable_fields_in_listing');
 
 $html .= '
@@ -35,7 +39,6 @@ while ($v = db_fetch_array($fields_query)) {
         continue;
     }
 
-
     if ($v['type'] == 'fieldtype_dropdown_multilevel') {
         $html .= fieldtype_dropdown_multilevel::output_listing_heading($v, false, $listing);
     } else {
@@ -70,13 +73,11 @@ while ($v = db_fetch_array($fields_query)) {
     }
 }
 
-
 $html .= '
     </tr>
   </thead>
   <tbody>
 ';
-
 
 while ($item = db_fetch_array($items_query)) {
     $html .= '
@@ -119,7 +120,6 @@ while ($item = db_fetch_array($items_query)) {
         $path_info_in_report = items::get_path_info($_POST['reports_entities_id'], $item['id'], $item);
     }
 
-
     foreach ($listing_fields as $field) {
         //check field access
         if (isset($fields_access_schema[$field['id']])) {
@@ -127,7 +127,6 @@ while ($item = db_fetch_array($items_query)) {
                 continue;
             }
         }
-
 
         if ($field['type'] == 'fieldtype_parent_item_id' and (strlen(
                     $app_redirect_to
@@ -146,7 +145,6 @@ while ($item = db_fetch_array($items_query)) {
             $listing->listing_type
         );
 
-
         //prepare field value
         $value = items::prepare_field_value_by_type($field, $item);
 
@@ -163,7 +161,6 @@ while ($item = db_fetch_array($items_query)) {
             'hide_actions_buttons' => $hide_actions_buttons,
             'listing_type' => $listing->get_listing_type(),
         ];
-
 
         if ($field['is_heading'] == 1) {
             //get fields in popup

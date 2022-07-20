@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<?php
+
 $reports_id = str_replace(entities_menu::get_reports_types(), '', \K::$fw->section_report);
 
 switch (true) {

@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <div id="email_verification_section">
     <h3 class="form-title"><?= \K::$fw->TEXT_EMAIL_VERIFICATION_EMAIL_SUBJECT ?></h3>
 

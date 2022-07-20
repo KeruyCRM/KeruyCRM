@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="form-title"><?php
     echo(strlen(
         CFG_PUBLIC_REGISTRATION_PAGE_HEADING
@@ -43,7 +48,6 @@ $fields_where_sql = (strlen(
             </div>			
           </div>        
         ';
-
 
         $fields_access_schema = users::get_fields_access_schema($current_entity_id, $app_user['group_id']);
 
@@ -173,7 +177,6 @@ $fields_where_sql = (strlen(
 
                 $count_tabs++;
             }
-
 
             //render nav-tabs
             $html = '<ul class="nav nav-tabs" id="form_tabs"> ' . forms_tabs::render_tabs_nav(
@@ -312,7 +315,6 @@ $fields_where_sql = (strlen(
 
     <?php
 
-
     if (strlen(CFG_PUBLIC_REGISTRATION_USER_AGREEMENT)) {
         echo '
 	   <div class="form-group form-group-single-checkbox">
@@ -322,7 +324,6 @@ $fields_where_sql = (strlen(
 		 </div>
 	  ';
     }
-
 
     $forms_wizard = new forms_wizard($app_items_form_name, $current_entity_id, $entity_cfg);
 
@@ -339,7 +340,6 @@ $fields_where_sql = (strlen(
     	<a href="' . url_for('users/login') . '" class="btn btn-default">' . TEXT_BUTTON_BACK . '</a>
   </div>';
     }
-
 
     echo $html;
     ?>

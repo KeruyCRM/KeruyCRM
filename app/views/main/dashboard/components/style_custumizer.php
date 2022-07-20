@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <!-- BEGIN STYLE CUSTOMIZER -->
 
 <div class="dashboard-reports-config hidden-xs hidden-sm">

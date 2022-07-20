@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title"><?= \K::$fw->TEXT_GUEST_LOGIN ?></h3>
 
 <p><?= \K::$fw->TEXT_GUEST_LOGIN_INFO ?></p>

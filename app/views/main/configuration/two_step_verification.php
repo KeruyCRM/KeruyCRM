@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title"><?= \K::$fw->TEXT_2STEP_VERIFICATION ?></h3>
 
 <p><?= \K::$fw->TEXT_2STEP_VERIFICATION_INFO ?></p>
@@ -10,7 +15,8 @@
 <?= \Helpers\Html::input_hidden_tag('redirect_to', 'main/configuration/two_step_verification') ?>
 <div class="form-body">
     <div class="form-group">
-        <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_ENABLED"><?= \K::$fw->TEXT_ENABLE_TEXT_2STEP_VERIFICATION ?></label>
+        <label class="col-md-3 control-label"
+               for="CFG_2STEP_VERIFICATION_ENABLED"><?= \K::$fw->TEXT_ENABLE_TEXT_2STEP_VERIFICATION ?></label>
         <div class="col-md-9">
             <?= \Helpers\Html::select_tag(
                 'CFG[2STEP_VERIFICATION_ENABLED]',
@@ -29,7 +35,8 @@
     ?>
 
     <div class="form-group">
-        <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_TYPE"><?= \K::$fw->TEXT_SEND_CODE_BY ?></label>
+        <label class="col-md-3 control-label"
+               for="CFG_2STEP_VERIFICATION_TYPE"><?= \K::$fw->TEXT_SEND_CODE_BY ?></label>
         <div class="col-md-9">
             <?= \Helpers\Html::select_tag(
                 'CFG[2STEP_VERIFICATION_TYPE]',
@@ -48,7 +55,8 @@
             $choices = $modules->get_active_modules();
             ?>
             <div class="form-group">
-                <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_SMS_MODULE"><?= \K::$fw->TEXT_EXT_SMS_MODULE ?></label>
+                <label class="col-md-3 control-label"
+                       for="CFG_2STEP_VERIFICATION_SMS_MODULE"><?= \K::$fw->TEXT_EXT_SMS_MODULE ?></label>
                 <div class="col-md-9">
                     <?= \Helpers\Html::select_tag(
                         'CFG[2STEP_VERIFICATION_SMS_MODULE]',
@@ -60,7 +68,8 @@
             </div>
 
             <div class="form-group">
-                <label class="col-md-3 control-label" for="CFG_2STEP_VERIFICATION_USER_PHONE"><?= \K::$fw->TEXT_PHONE ?></label>
+                <label class="col-md-3 control-label"
+                       for="CFG_2STEP_VERIFICATION_USER_PHONE"><?= \K::$fw->TEXT_PHONE ?></label>
                 <div class="col-md-9">
                     <?= \Helpers\Html::select_tag(
                         'CFG[2STEP_VERIFICATION_USER_PHONE]',
@@ -73,7 +82,8 @@
             </div>
 
             <div class="form-group">
-                <label class="col-md-3 control-label" for="CFG_LOGIN_BY_PHONE_NUMBER"><?= \K::$fw->TEXT_ALLOW_LOGIN_BY_PHONE_NUMBER ?></label>
+                <label class="col-md-3 control-label"
+                       for="CFG_LOGIN_BY_PHONE_NUMBER"><?= \K::$fw->TEXT_ALLOW_LOGIN_BY_PHONE_NUMBER ?></label>
                 <div class="col-md-9">
                     <?= \Helpers\Html::select_tag(
                         'CFG[LOGIN_BY_PHONE_NUMBER]',

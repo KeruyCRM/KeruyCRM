@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <h3 class="page-title"><?= \K::$fw->TEXT_HEADING_MAINTENANCE_MODE ?></h3>
 
 <?= \Helpers\Html::form_tag(

@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<?php
 echo ajax_modal_template_header(TEXT_LOGIN_AS_USER) ?>
 
     <div class="modal-body">

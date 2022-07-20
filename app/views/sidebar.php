@@ -1,3 +1,8 @@
+<?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
 <div class="page-sidebar-wrapper noprint">
     <div class="page-sidebar-wrapper">
         <div class="page-sidebar main-navbar-collapse collapse">

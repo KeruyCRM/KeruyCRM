@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+}
+
 $hasher = new PasswordHash(11, false);
 
 if (strlen(trim($_POST['password'])) > 0) {

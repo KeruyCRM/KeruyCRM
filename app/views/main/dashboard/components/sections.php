@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<?php
+
 if (!\K::fw()->exists('GET.id', $reports_groups_id)) {
     $reports_groups_id = 0;
 };

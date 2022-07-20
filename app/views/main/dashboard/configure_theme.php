@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<?php
 echo ajax_modal_template_header(TEXT_CONFIGURE_THEME) ?>
 
 <?php
