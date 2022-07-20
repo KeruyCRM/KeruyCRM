@@ -297,5 +297,7 @@ class Model extends \Prefab
             //TODO add rand time
             return [\K::$fw->TTL_QUERY, $table];
         }
+
+        return $ttl;
     }
 }
