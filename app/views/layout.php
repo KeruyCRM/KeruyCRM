@@ -15,6 +15,7 @@ if (!defined('KERUY_CRM')) {
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title><?= \K::$fw->app_title ?></title>
+    <meta name="form_session_token" content="<?= \K::$fw->app_session_token ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport"/>
     <meta content="" name="description"/>
@@ -325,7 +326,7 @@ if (\Helpers\App::is_ext_installed()) {
 
 <script>
     //Add csrf_token to all POST AJAX request
-    var csrf_token = $('input[id=form_session_token]').attr('value');
+    var csrf_token = $('meta[name=form_session_token]').attr('content');
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
         if (options.type.toLowerCase() === "post") {
             // initialize `data` to empty string if it does not exist

@@ -38,7 +38,7 @@ class Account extends \Controller
     public function set_cfg()
     {
         if (\K::$fw->VERB == 'POST') {
-            if (\K::$fw->POST['key'] and \K::$fw->POST['value']) {
+            if (\K::$fw->POST['key'] and isset(\K::$fw->POST['value'])) {
                 \K::app_users_cfg()->set(\K::$fw->POST['key'], \K::$fw->POST['value']);
             }
         } else {
