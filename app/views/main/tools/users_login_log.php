@@ -3,28 +3,28 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<h3 class="page-title"><?php
-    echo TEXT_USERS_LOGIN_LOG ?></h3>
+<h3 class="page-title"><?= \K::$fw->TEXT_USERS_LOGIN_LOG ?></h3>
 
 
 <form class="form-inline" role="form" id="users_login_log_filters" action="#" method="post">
     <div class="form-group">
-        <label for="type"><?php
-            echo TEXT_TYPE ?></label>
-        <?php
-        echo select_tag('type', users_login_log::get_type_choiсes(), '', ['class' => 'form-control']) ?>
+        <label for="type"><?= \K::$fw->TEXT_TYPE ?></label>
+        <?= \Helpers\Html::select_tag(
+            'type',
+            \Models\Main\Users\Users_login_log::get_type_choiсes(),
+            '',
+            ['class' => 'form-control']
+        ) ?>
     </div>
 
     <div class="form-group">
         <table>
             <tr>
-                <td><label for="created_by">&nbsp;<?php
-                        echo TEXT_USERS ?></label></td>
-                <td><?php
-                    echo select_tag(
+                <td><label for="created_by">&nbsp;<?= \K::$fw->TEXT_USERS ?></label></td>
+                <td><?= \Helpers\Html::select_tag(
                         'users_id',
-                        ['' => TEXT_NONE] + users::get_choices(),
-                        (isset($_GET['users_id']) ? (int)$_GET['users_id'] : ''),
+                        ['' => \K::$fw->TEXT_NONE] + \Models\Main\Users\Users::get_choices(),
+                        (isset(\K::$fw->GET['users_id']) ? (int)\K::$fw->GET['users_id'] : ''),
                         ['class' => 'form-control input-large chosen-select']
                     ) ?></td>
             </tr>
@@ -32,13 +32,13 @@ if (!defined('KERUY_CRM')) {
     </div>
 
     <div class="form-group" style="float:right">
-        <?php
-        echo '<a class="btn btn-default" href="' . url_for(
-                "tools/users_login_log",
-                'action=reset'
-            ) . '" onclick="return confirm(\'' . htmlspecialchars(
-                TEXT_ARE_YOU_SURE
-            ) . '\')">' . TEXT_DELETE_DATA . '</a>'; ?>
+        <?= '<a class="btn btn-default" href="' . \Helpers\Urls::url_for(
+            "main/tools/users_login_log/reset",
+            '',
+            true
+        ) . '" onclick="return confirm(\'' . htmlspecialchars(
+            \K::$fw->TEXT_ARE_YOU_SURE
+        ) . '\')">' . \K::$fw->TEXT_DELETE_DATA . '</a>'; ?>
     </div>
 
 </form>
@@ -64,7 +64,7 @@ if (!defined('KERUY_CRM')) {
 
         var filters = $('#users_login_log_filters').serializeArray();
 
-        $('#' + listing_container).load('<?php echo url_for("tools/users_login_log", 'action=listing') ?>', {
+        $('#' + listing_container).load('<?= \Helpers\Urls::url_for("main/tools/users_login_log/listing") ?>', {
                 page: page,
                 filters: filters
             },
@@ -80,10 +80,8 @@ if (!defined('KERUY_CRM')) {
         );
     }
 
-
     $(function () {
         load_items_listing('users_login_log_listing', 1, '');
     });
-
 
 </script> 

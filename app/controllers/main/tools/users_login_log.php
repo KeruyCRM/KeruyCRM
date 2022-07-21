@@ -25,58 +25,93 @@ class users_login_log extends \Controller
         echo \K::view()->render($this->app_layout);
     }
 
-    public function reset(){
-        db_query("delete from app_users_login_log");
+    public function reset()
+    {
+        if (\K::security()->checkCsrfTokenUrl()) {
+            //db_query("delete from app_users_login_log");
+            \K::model()->db_delete('app_users_login_log');
 
-        redirect_to('tools/users_login_log');
+            \Helpers\Urls::redirect_to('main/tools/users_login_log');
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 
-    public function listing(){
+    public function listing()
+    {
         $html = '
 			<div class="table-scrollable">
 				<table class="table table-striped table-bordered table-hover">
 				<thead>
 				  <tr>
-						<th>' . TEXT_TYPE . '</th>
-						<th>' . TEXT_DATE_ADDED . '</th>
-						<th>' . TEXT_IP . '</th>		
-						<th>' . TEXT_USERNAME . '</th>										    				    
-						<th width="100%">' . TEXT_NAME . '</th>
-						<th>' . TEXT_USERS_GROUPS . '</th>
-						<th>' . TEXT_EMAIL . '</th>
+						<th>' . \K::$fw->TEXT_TYPE . '</th>
+						<th>' . \K::$fw->TEXT_DATE_ADDED . '</th>
+						<th>' . \K::$fw->TEXT_IP . '</th>		
+						<th>' . \K::$fw->TEXT_USERNAME . '</th>										    				    
+						<th width="100%">' . \K::$fw->TEXT_NAME . '</th>
+						<th>' . \K::$fw->TEXT_USERS_GROUPS . '</th>
+						<th>' . \K::$fw->TEXT_EMAIL . '</th>
 				  </tr>
 				</thead>
 				<tbody>
 		';
 
         $where_sql = '';
+        $where_value = [];
 
-        foreach ($_POST['filters'] as $filter) {
+        foreach (\K::$fw->POST['filters'] as $filter) {
             if (strlen($filter['value']) > 0) {
                 switch ($filter['name']) {
                     case 'type':
-                        $where_sql .= " and is_success='" . $filter['value'] . "'";
+                        $where_sql .= " and is_success = :type";
+                        $where_value[':type'] = $filter['value'];
                         break;
                     case 'users_id':
-                        $where_sql .= " and users_id='" . $filter['value'] . "'";
+                        $where_sql .= " and users_id = :users_id";
+                        $where_value[':users_id'] = $filter['value'];
                         break;
                 }
             }
         }
 
-        $listing_sql = "select * from app_users_login_log where id>0 {$where_sql} order by date_added desc";
-        $listing_split = new split_page($listing_sql, 'users_login_log_listing', '', CFG_APP_ROWS_PER_PAGE);
-        $items_query = db_query($listing_split->sql_query);
-        while ($item = db_fetch_array($items_query)) {
+        //$listing_sql = "select * from app_users_login_log where id > 0 {$where_sql} order by date_added desc";
+
+        $listing_sql = [
+            'table' => 'app_users_login_log',
+            'filter' => [
+                    'id > 0 ' . $where_sql,
+                ] + $where_value,
+            'options' => ['order' => 'date_added desc'],
+            'column' => null
+        ];
+
+        $listing_split = new \Tools\Split_page(
+            $listing_sql,
+            'users_login_log_listing',
+            '',
+            \K::$fw->CFG_APP_ROWS_PER_PAGE
+        );
+        //$items_query = db_query($listing_split->sql_query);
+        $items_query = \K::model()->db_fetch(
+            $listing_split->sql_query['table'],
+            $listing_split->sql_query['filter'],
+            $listing_split->sql_query['options'],
+            $listing_split->sql_query['column']
+        );
+
+        //while ($item = db_fetch_array($items_query)) {
+        foreach ($items_query as $item) {
+            $item = $item->cast();
+
             $html .= '
 							<tr>
-							  <td>' . ($item['is_success'] == 1 ? '<span class="label label-success">' . TEXT_SUCCESSFUL_LOGIN . '</span>' : '<span class="label label-warning">' . TEXT_LOGIN_ATTEMPT . '</span>') . '</td>			
-							  <td>' . format_date_time($item['date_added']) . '</td>
+							  <td>' . ($item['is_success'] == 1 ? '<span class="label label-success">' . \K::$fw->TEXT_SUCCESSFUL_LOGIN . '</span>' : '<span class="label label-warning">' . \K::$fw->TEXT_LOGIN_ATTEMPT . '</span>') . '</td>			
+							  <td>' . \Helpers\App::format_date_time($item['date_added']) . '</td>
 								<td>' . $item['identifier'] . '</td>
 								<td>' . htmlspecialchars($item['username']) . '</td>
-								<td>' . (isset($app_users_cache[$item['users_id']]) ? $app_users_cache[$item['users_id']]['name'] : '') . '</td>		
-								<td>' . (isset($app_users_cache[$item['users_id']]) ? ($app_users_cache[$item['users_id']]['group_id'] > 0 ? $app_users_cache[$item['users_id']]['group_name'] : TEXT_ADMINISTRATOR) : '') . '</td>
-								<td>' . (isset($app_users_cache[$item['users_id']]) ? $app_users_cache[$item['users_id']]['email'] : '') . '</td>
+								<td>' . (isset(\K::$fw->app_users_cache[$item['users_id']]) ? \K::$fw->app_users_cache[$item['users_id']]['name'] : '') . '</td>		
+								<td>' . (isset(\K::$fw->app_users_cache[$item['users_id']]) ? (\K::$fw->app_users_cache[$item['users_id']]['group_id'] > 0 ? \K::$fw->app_users_cache[$item['users_id']]['group_name'] : \K::$fw->TEXT_ADMINISTRATOR) : '') . '</td>
+								<td>' . (isset(\K::$fw->app_users_cache[$item['users_id']]) ? \K::$fw->app_users_cache[$item['users_id']]['email'] : '') . '</td>
 							</tr>
 					';
         }
@@ -84,7 +119,7 @@ class users_login_log extends \Controller
         if ($listing_split->number_of_rows == 0) {
             $html .= '
 				    <tr>
-				      <td colspan="6">' . TEXT_NO_RECORDS_FOUND . '</td>
+				      <td colspan="6">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</td>
 				    </tr>
 				  ';
         }

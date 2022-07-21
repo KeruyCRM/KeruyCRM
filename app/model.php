@@ -160,7 +160,7 @@ class Model extends \Prefab
         return self::db_delete($table, [$column . ' = ?', $value]);
     }
 
-    public function db_delete($table, $filter)
+    public function db_delete($table, $filter = null)
     {
         $mapper = $this->mapper($table);
         return $mapper->erase($filter);

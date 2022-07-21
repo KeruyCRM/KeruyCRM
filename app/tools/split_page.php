@@ -1,27 +1,27 @@
 <?php
 
-class split_page
-{
-    public $sql_query, $number_of_rows, $current_page_number, $number_of_pages, $number_of_rows_per_page, $page_name, $listing_container;
+namespace Tools;
 
-    public $listing_funciton;
+class Split_page
+{
+    public $sql_query = [], $number_of_rows, $current_page_number, $number_of_pages, $number_of_rows_per_page, $page_name, $listing_container;
+
+    public $listing_function;
 
     /* class constructor */
     function __construct($query, $listing_container, $count_sql_query = 'query_num_rows', $rows_per_page = 0)
     {
-        global $_GET, $_POST;
-
         $this->listing_container = $listing_container;
-        $this->listing_funciton = 'load_items_listing';
+        $this->listing_function = 'load_items_listing';
 
         $this->sql_query = $query;
         $page_holder = 'page';
         $this->page_name = $page_holder;
 
-        if (isset($_GET[$page_holder])) {
-            $page = (int)$_GET[$page_holder];
-        } elseif (isset($_POST[$page_holder])) {
-            $page = (int)$_POST[$page_holder];
+        if (isset(\K::$fw->GET[$page_holder])) {
+            $page = (int)\K::$fw->GET[$page_holder];
+        } elseif (isset(\K::$fw->POST[$page_holder])) {
+            $page = (int)\K::$fw->POST[$page_holder];
         } else {
             $page = '';
         }
@@ -31,7 +31,7 @@ class split_page
         }
         $this->current_page_number = $page;
 
-        $this->number_of_rows_per_page = ($rows_per_page > 0 ? $rows_per_page : CFG_APP_ROWS_PER_PAGE);
+        $this->number_of_rows_per_page = ($rows_per_page > 0 ? $rows_per_page : \K::$fw->CFG_APP_ROWS_PER_PAGE);
 
         if (strlen($count_sql_query) > 0) {
             if ($count_sql_query == 'query_num_rows') {
@@ -42,13 +42,15 @@ class split_page
                 $count = db_fetch_array($count_query);
             }
         } else {
-            $pos_to = strlen($this->sql_query);
+            /*$pos_to = strlen($this->sql_query);
             $pos_from = stripos($this->sql_query, ' from', 0);
 
             $count_query = db_query(
                 "select count(*) as total " . substr($this->sql_query, $pos_from, ($pos_to - $pos_from))
             );
-            $count = db_fetch_array($count_query);
+            $count = db_fetch_array($count_query);*/
+
+            $count['total'] = \K::model()->db_fetch_count($this->sql_query['table'], $this->sql_query['filter']);
         }
 
         $this->number_of_rows = $count['total'];
@@ -61,16 +63,15 @@ class split_page
 
         $offset = ($this->number_of_rows_per_page * ($this->current_page_number - 1));
 
-        $this->sql_query .= " limit " . max($offset, 0) . ", " . $this->number_of_rows_per_page;
+        $this->sql_query['options']['limit'] = $this->number_of_rows_per_page;
+        $this->sql_query['options']['offset'] = max($offset, 0);
     }
 
     /* class functions */
 
-// display split-page-number-links
+    // display split-page-number-links
     function display_links($parameters = '')
     {
-        global $PHP_SELF, $request_type;
-
         if ($this->number_of_pages == 1 or $this->number_of_rows == 0) {
             return '';
         }
@@ -82,14 +83,14 @@ class split_page
             $parameters .= '&';
         }
 
-// previous button - not displayed on first page
+        // previous button - not displayed on first page
         if ($this->current_page_number > 1) {
-            $html .= '<li><a href="#" onClick="' . $this->listing_funciton . '(\'' . $this->listing_container . '\',' . ($this->current_page_number - 1) . '); return false;"  title=" ' . TEXT_PREVNEXT_TITLE_PREVIOUS_PAGE . ' "><i class="fa fa-angle-left"></i></a></li>';
+            $html .= '<li><a href="#" onClick="' . $this->listing_function . '(\'' . $this->listing_container . '\',' . ($this->current_page_number - 1) . '); return false;"  title=" ' . \K::$fw->TEXT_PREVNEXT_TITLE_PREVIOUS_PAGE . ' "><i class="fa fa-angle-left"></i></a></li>';
         } else {
             $html .= '<li class="active"><a href="#" onClick="return false"><i class="fa fa-angle-left"></i></a></li>';
         }
 
-// check if number_of_pages > $max_page_links
+        // check if number_of_pages > $max_page_links
         $cur_window_num = intval($this->current_page_number / $max_page_links);
         if ($this->current_page_number % $max_page_links) {
             $cur_window_num++;
@@ -100,37 +101,37 @@ class split_page
             $max_window_num++;
         }
 
-// previous window of pages
+        // previous window of pages
         if ($cur_window_num > 1) {
-            $html .= '<li><a href="#" onClick="' . $this->listing_funciton . '(\'' . $this->listing_container . '\',' . (($cur_window_num - 1) * $max_page_links) . '); return false;" title=" ' . sprintf(
-                    TEXT_PREVNEXT_TITLE_PREV_SET_OF_NO_PAGE,
+            $html .= '<li><a href="#" onClick="' . $this->listing_function . '(\'' . $this->listing_container . '\',' . (($cur_window_num - 1) * $max_page_links) . '); return false;" title=" ' . sprintf(
+                    \K::$fw->TEXT_PREVNEXT_TITLE_PREV_SET_OF_NO_PAGE,
                     $max_page_links
                 ) . ' ">...</a></li>';
         }
 
-// page nn button
+        // page nn button
         for ($jump_to_page = 1 + (($cur_window_num - 1) * $max_page_links); ($jump_to_page <= ($cur_window_num * $max_page_links)) && ($jump_to_page <= $this->number_of_pages); $jump_to_page++) {
             if ($jump_to_page == $this->current_page_number) {
                 $html .= '<li class="active"><a href="#"  onClick="return false">' . $jump_to_page . '</a></li>';
             } else {
-                $html .= '<li><a href="#" onClick="' . $this->listing_funciton . '(\'' . $this->listing_container . '\',' . $jump_to_page . '); return false;" title=" ' . sprintf(
-                        TEXT_PREVNEXT_TITLE_PAGE_NO,
+                $html .= '<li><a href="#" onClick="' . $this->listing_function . '(\'' . $this->listing_container . '\',' . $jump_to_page . '); return false;" title=" ' . sprintf(
+                        \K::$fw->TEXT_PREVNEXT_TITLE_PAGE_NO,
                         $jump_to_page
                     ) . ' ">' . $jump_to_page . '</a></li>';
             }
         }
 
-// next window of pages
+        // next window of pages
         if ($cur_window_num < $max_window_num) {
-            $html .= '<li><a href="#"  onClick="' . $this->listing_funciton . '(\'' . $this->listing_container . '\',' . ($cur_window_num * $max_page_links + 1) . ')" title=" ' . sprintf(
-                    TEXT_PREVNEXT_TITLE_NEXT_SET_OF_NO_PAGE,
+            $html .= '<li><a href="#"  onClick="' . $this->listing_function . '(\'' . $this->listing_container . '\',' . ($cur_window_num * $max_page_links + 1) . ')" title=" ' . sprintf(
+                    \K::$fw->TEXT_PREVNEXT_TITLE_NEXT_SET_OF_NO_PAGE,
                     $max_page_links
                 ) . ' ">...</a></li>';
         }
 
-// next button
+        // next button
         if (($this->current_page_number < $this->number_of_pages) && ($this->number_of_pages != 1)) {
-            $html .= '<li><a href="#"  onClick="' . $this->listing_funciton . '(\'' . $this->listing_container . '\',' . ($this->current_page_number + 1) . '); return false;" title=" ' . TEXT_PREVNEXT_TITLE_NEXT_PAGE . ' "><i class="fa fa-angle-right"></i></a></li>';
+            $html .= '<li><a href="#"  onClick="' . $this->listing_function . '(\'' . $this->listing_container . '\',' . ($this->current_page_number + 1) . '); return false;" title=" ' . \K::$fw->TEXT_PREVNEXT_TITLE_NEXT_PAGE . ' "><i class="fa fa-angle-right"></i></a></li>';
         } else {
             $html .= '<li class="active"><a href="#"  onClick="return false"><i class="fa fa-angle-right"></i></a></li>';
         }
@@ -140,7 +141,7 @@ class split_page
         return $html;
     }
 
-// display number of total products found
+    // display number of total products found
     function display_count()
     {
         $to_num = ($this->number_of_rows_per_page * $this->current_page_number);
@@ -156,6 +157,6 @@ class split_page
             $from_num++;
         }
 
-        return sprintf(TEXT_DISPLAY_NUMBER_OF_ITEMS, $from_num, $to_num, $this->number_of_rows);
+        return sprintf(\K::$fw->TEXT_DISPLAY_NUMBER_OF_ITEMS, $from_num, $to_num, $this->number_of_rows);
     }
 }
