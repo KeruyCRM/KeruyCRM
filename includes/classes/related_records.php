@@ -2,7 +2,6 @@
 
 class related_records
 {
-
     public $entities_id;
     public $items_id;
     public $field;
@@ -824,5 +823,4 @@ class related_records
 
         db_perform($table_info['table_name'], $sql_data);
     }
-
 }

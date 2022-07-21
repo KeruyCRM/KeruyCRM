@@ -2,7 +2,7 @@
 
 class split_page
 {
-    var $sql_query, $number_of_rows, $current_page_number, $number_of_pages, $number_of_rows_per_page, $page_name, $listing_container;
+    public $sql_query, $number_of_rows, $current_page_number, $number_of_pages, $number_of_rows_per_page, $page_name, $listing_container;
 
     public $listing_funciton;
 
@@ -13,7 +13,6 @@ class split_page
 
         $this->listing_container = $listing_container;
         $this->listing_funciton = 'load_items_listing';
-
 
         $this->sql_query = $query;
         $page_holder = 'page';
@@ -33,7 +32,6 @@ class split_page
         $this->current_page_number = $page;
 
         $this->number_of_rows_per_page = ($rows_per_page > 0 ? $rows_per_page : CFG_APP_ROWS_PER_PAGE);
-
 
         if (strlen($count_sql_query) > 0) {
             if ($count_sql_query == 'query_num_rows') {
