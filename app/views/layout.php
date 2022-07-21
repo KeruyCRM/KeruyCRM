@@ -110,7 +110,12 @@ if (!defined('KERUY_CRM')) {
         });
 
         function keep_session() {
-            $.ajax({url: '<?php echo \Helpers\Urls::url_for("main/dashboard/dashboard/keep_session") ?>'});
+            $.ajax({
+                url: '<?php echo \Helpers\Urls::url_for("main/dashboard/dashboard/keep_session") ?>',
+                success: function (val) {
+                    $('meta[name=form_session_token]').attr('content', val);
+                }
+            });
         }
 
         $(function () {
@@ -326,8 +331,9 @@ if (\Helpers\App::is_ext_installed()) {
 
 <script>
     //Add csrf_token to all POST AJAX request
-    var csrf_token = $('meta[name=form_session_token]').attr('content');
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+        var csrf_token = $('meta[name=form_session_token]').attr('content');
+        console.log(csrf_token);
         if (options.type.toLowerCase() === "post") {
             // initialize `data` to empty string if it does not exist
             options.data = options.data || "";

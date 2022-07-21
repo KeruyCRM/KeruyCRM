@@ -93,7 +93,7 @@ class Dashboard extends \Controller
 
     public function keep_session()
     {
-        return true;
+        echo \K::security()->getAppSessionToken();
     }
 
     public function sort_reports()

@@ -29,7 +29,7 @@
     'CFG_ALLOWED_IP_LIST' => '',
 
     'CFG_VERIFICATION_CODE_LENGTH' => 6,
-    'CFG_TOKEN_LIFE' => 600,
+    'CFG_TOKEN_LIFE' => 1200,
     'CFG_TOKEN_LENGTH' => 32,
     'CFG_SESSION_CHECK_IP' => false,
     'CFG_SESSION_CHECK_BROWSER' => true,
