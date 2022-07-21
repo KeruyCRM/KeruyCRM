@@ -6,7 +6,7 @@
 
 namespace Controllers\Main\Tools;
 
-class users_login_log extends \Controller
+class Users_login_log extends \Controller
 {
     private $app_layout = 'layout.php';
 

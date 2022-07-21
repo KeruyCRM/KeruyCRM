@@ -3,8 +3,7 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<h3 class="page-title"><?php
-    echo TEXT_HEADING_SERVER_INFORMATION ?></h3>
+<h3 class="page-title"><?= \K::$fw->TEXT_HEADING_SERVER_INFORMATION ?></h3>
 
 <?php
 
