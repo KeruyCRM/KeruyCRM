@@ -163,7 +163,8 @@ class Model extends \Prefab
     public function db_delete($table, $filter = null)
     {
         $mapper = $this->mapper($table);
-        return $mapper->erase($filter);
+        $mapper->load($filter);
+        return $mapper->erase();
     }
 
     public function db_query_exec($cmds, $args = null, $ttl = 0, $log = true, $stamp = false)
