@@ -163,7 +163,7 @@ class Fieldtype_hours_difference
 CREATE FUNCTION `keruycrm_hours_diff`(`start_date` INT, `end_date` INT, `include_hours` VARCHAR(255), `exclude_days` VARCHAR(64), `exclude_holidays` TINYINT(1)) RETURNS FLOAT
 BEGIN
   DECLARE minutes_diff INT;
-  DECLARE inc_minue TINYINT;		
+  DECLARE inc_minute TINYINT;		
 	DECLARE minutes_start TINYINT;
 	DECLARE use_minutes_start TINYINT;
 	DECLARE minutes_end TINYINT;
@@ -184,16 +184,16 @@ BEGIN
 			SET start_date = start_date-(minutes_start*60);
 		
   	  WHILE start_date<end_date  DO 
-      	SET inc_minue=1;
+      	SET inc_minute=1;
       					
         #exclude day of week
       	IF find_in_set(DAYOFWEEK(FROM_UNIXTIME(start_date,'%Y-%m-%d')),exclude_days) THEN
-      		SET inc_minue=0;  
+      		SET inc_minute=0;  
       	END IF;
 		
 				#exclude not working hours
 				IF find_in_set(HOUR(FROM_UNIXTIME(start_date,'%Y-%m-%d  %H:%i')),include_hours)=0 and length(include_hours)>0 THEN
-      		SET inc_minue=0;					
+      		SET inc_minute=0;					
       	END IF;
                         
         #exclude holidays
@@ -201,16 +201,16 @@ BEGIN
         	SET @start_date_var = FROM_UNIXTIME(start_date,'%Y-%m-%d'); 
         	SET @is_holiday = (select count(*) from app_holidays h where h.start_date<= @start_date_var and h.end_date>=@start_date_var);
             if @is_holiday!=0 THEN
-            SET inc_minue=0;  
+            SET inc_minute=0;  
             END if;
         END IF;
         
-      	IF inc_minue=1 THEN
+      	IF inc_minute=1 THEN
       		SET minutes_diff =minutes_diff+60; 							
       	END IF;
 		
 				#handle first hour minute
-				IF inc_minue=1 and use_minutes_start=0 THEN
+				IF inc_minute=1 and use_minutes_start=0 THEN
 					SET use_minutes_start=1;
 				ELSEIF use_minutes_start=0 THEN
 					SET use_minutes_start=2;
@@ -226,7 +226,7 @@ BEGIN
 		END IF;
 		
 		#handle end minutes
-		IF minutes_end>0 and inc_minue=1 THEN
+		IF minutes_end>0 and inc_minute=1 THEN
 			SET minutes_diff =(minutes_diff-60)+minutes_end;
 		END IF;
 		
@@ -241,15 +241,19 @@ BEGIN
 END;";
 
         $is_function = false;
-        $check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . \K::$fw->DB_name . "'");
-        while ($check = db_fetch_array($check_query)) {
+        //$check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . \K::$fw->DB_name . "'");
+        $check_query = \K::model()->db_query_exec(
+            'SHOW FUNCTION STATUS WHERE Db = ' . \K::model()->quote(\K::$fw->DB_name)
+        );
+        //while ($check = db_fetch_array($check_query)) {
+        foreach ($check_query as $check) {
             if ($check['Name'] == 'keruycrm_hours_diff') {
                 $is_function = true;
             }
         }
 
         if (!$is_function) {
-            db_query($sql);
+            \K::model()->db_query_exec($sql);
         }
     }
 

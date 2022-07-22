@@ -152,8 +152,6 @@ class Users
 
     public static function get_name_by_id($id)
     {
-        //global $app_users_cache;
-
         if (isset(\K::$fw->app_users_cache[$id])) {
             return \K::$fw->app_users_cache[$id]['name'];
         }

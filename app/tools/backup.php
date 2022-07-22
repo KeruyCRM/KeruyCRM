@@ -4,7 +4,6 @@ namespace Tools;
 
 class Backup
 {
-
     public $description;
     public $is_export;
     public $filename;
@@ -16,7 +15,7 @@ class Backup
         $this->is_export = false;
         $this->filename = '';
         $this->is_auto = $is_auto;
-        $this->backup_dir = $this->is_auto ? DIR_FS_BACKUPS_AUTO : DIR_FS_BACKUPS;
+        $this->backup_dir = $this->is_auto ? \K::$fw->DIR_FS_BACKUPS_AUTO : \K::$fw->DIR_FS_BACKUPS;
         $this->description = '';
     }
 
@@ -33,32 +32,33 @@ class Backup
 
     function create()
     {
-        global $app_user;
-
         set_time_limit(0);
 
         $tables_list = [];
 
-        $tables_query = db_query("show tables");
-        while ($tables = db_fetch_array($tables_query)) {
+        $tables_query = \K::model()->db_query_exec('show tables');
+        //while ($tables = db_fetch_array($tables_query)) {
+        foreach ($tables_query as $tables) {
             $tables_list[] = current($tables);
         }
 
         //if export we just save filename	
         if ($this->is_export) {
+            $backups_id = '0';
             $filename = $this->filename;
         } else {
             $timestamp = time();
 
             $sql_data = [
                 'description' => $this->description,
-                'users_id' => (isset($app_user['id']) ? $app_user['id'] : 0),
+                'users_id' => (\K::$fw->app_user['id'] ?? 0),
                 'date_added' => $timestamp,
                 'is_auto' => $this->is_auto,
+                'filename' => ''
             ];
 
-            db_perform('app_backups', $sql_data);
-            $backups_id = db_insert_id();
+            $mapper = \K::model()->db_perform('app_backups', $sql_data);
+            $backups_id = \K::model()->db_insert_id($mapper);
 
             $filename = self::prepare_filename($backups_id, $timestamp, $this->is_auto);
         }
@@ -66,7 +66,9 @@ class Backup
         $fp = fopen($this->backup_dir . $filename, 'w+');
 
         //add description
-        $description = 'KeruyCRM ' . PROJECT_VERSION . (strlen($this->description) ? "\n" . $this->description : '');
+        $description = 'KeruyCRM ' . \K::$fw->PROJECT_VERSION . (strlen(
+                $this->description
+            ) ? "\n" . $this->description : '');
         foreach (preg_split('/\r\n|\r|\n/', $description) as $text) {
             fwrite($fp, "#" . $text . ";\n");
         }
@@ -85,8 +87,9 @@ class Backup
         fwrite($fp, "\n\n");
 
         foreach ($tables_list as $table) {
-            $show_query = db_query('SHOW CREATE TABLE ' . $table);
-            $show = db_fetch_array($show_query);
+            $show = \K::model()->db_query_exec_one('SHOW CREATE TABLE ' . $table);
+
+            //$show = db_fetch_array($show_query);
 
             $show['Create Table'] = str_replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $show['Create Table']);
 
@@ -142,7 +145,7 @@ class Backup
 
                 ];
 
-                $reports_where_sql = " where (created_by='" . $app_user['id'] . "' or reports_type in ('common','default','parent_item_info_page')) or LOCATE('entityfield',reports_type) or LOCATE('fields_choices',reports_type) or LOCATE('process',reports_type) or LOCATE('process_action',reports_type) or LOCATE('functions',reports_type)";
+                $reports_where_sql = " where (created_by = " . (int)\K::$fw->app_user['id'] . " or reports_type in ('common','default','parent_item_info_page')) or LOCATE('entityfield',reports_type) or LOCATE('fields_choices',reports_type) or LOCATE('process',reports_type) or LOCATE('process_action',reports_type) or LOCATE('functions',reports_type)";
 
                 //get reports
                 if ($table == 'app_reports') {
@@ -152,13 +155,13 @@ class Backup
                     $where_sql = " where reports_id in (select id from app_reports " . $reports_where_sql . ")";
                 } //users filters
                 elseif ($table == 'app_users_filters') {
-                    $where_sql = " where users_id='" . $app_user['id'] . "'";
+                    $where_sql = " where users_id = " . (int)\K::$fw->app_user['id'];
                 } //users filters
                 elseif ($table == 'app_user_filters_values') {
-                    $where_sql = " where filters_id in (select id from app_users_filters where users_id='" . $app_user['id'] . "')";
+                    $where_sql = " where filters_id in (select id from app_users_filters where users_id = " . (int)\K::$fw->app_user['id'] . ")";
                 } //get only current user
                 elseif ($table == 'app_entity_1') {
-                    $where_sql = " where id='" . $app_user['id'] . "'";
+                    $where_sql = " where id = " . (int)\K::$fw->app_user['id'];
                 } elseif (strstr($table, 'app_entity_') or in_array($table, $skip_insert) or preg_match(
                         '/app_related_items_(\d+)_(\d+)/',
                         $table
@@ -172,22 +175,25 @@ class Backup
                 continue;
             }
 
-            $count_query = db_query('SELECT COUNT(*) as total FROM  ' . $table);
-            $count = db_fetch_array($count_query);
+            /*$count_query = db_query('SELECT COUNT(*) as total FROM  ' . $table);
+            $count = db_fetch_array($count_query);*/
 
-            if ($count['total'] > 0) {
+            $count = \K::model()->db_fetch_count($table);
+
+            if ($count > 0) {
                 $columns_null = [];
 
-                $columns_query = db_query('SHOW COLUMNS FROM  ' . $table);
-                while ($columns = db_fetch_array($columns_query)) {
+                $columns_query = \K::model()->db_query_exec('SHOW COLUMNS FROM  ' . $table);
+                //while ($columns = db_fetch_array($columns_query)) {
+                foreach ($columns_query as $columns) {
                     if ($columns['Null'] == 'YES') {
                         $columns_null[] = $columns['Field'];
                     }
                 }
 
                 //check if items exists
-                $items_query = db_query('SELECT * FROM  ' . $table . $where_sql . ' limit 1');
-                if ($items = db_fetch_array($items_query)) {
+                $items = \K::model()->db_query_exec_one('SELECT * FROM  ' . $table . $where_sql);
+                if ($items) {
                     fwrite($fp, "INSERT INTO " . $table . " VALUES");
                 }
 
@@ -196,24 +202,25 @@ class Backup
                 $i = 0;
 
                 do {
-                    $items_query = db_query(
+                    $items_query = \K::model()->db_query_exec(
                         'SELECT * FROM  ' . $table . $where_sql . ' LIMIT ' . $from . ', ' . $limit
                     );
 
-                    if (db_num_rows($items_query) > 0 and $from > 0) {
+                    if (count($items_query) > 0 and $from > 0) {
                         fwrite($fp, ";\n\n");
                         fwrite($fp, "INSERT INTO " . $table . " VALUES");
                         $i = 0;
                     }
 
-                    while ($items = db_fetch_array($items_query)) {
+                    //while ($items = db_fetch_array($items_query)) {
+                    foreach ($items_query as $items) {
                         $i++;
 
                         foreach ($items as $k => $v) {
                             if (is_null($v) or (strlen($v) == 0 and in_array($k, $columns_null))) {
                                 $items[$k] = "NULL";
                             } else {
-                                $items[$k] = "'" . db_input($v) . "'";
+                                $items[$k] = \K::model()->quote($v);
                             }
                         }
 
@@ -221,7 +228,7 @@ class Backup
                     }
 
                     $from += $limit;
-                } while ($from < ($count['total'] + $limit));
+                } while ($from < ($count + $limit));
 
                 fwrite($fp, ";\n\n");
             }
@@ -231,12 +238,12 @@ class Backup
 
         //create zip archive if not export
         if (!$this->is_export) {
-            $zip = new ZipArchive();
+            $zip = new \ZipArchive();
             $zip_filename = $filename . ".zip";
             $zip_filepath = $this->backup_dir . $zip_filename;
 
             //open zip archive
-            $zip->open($zip_filepath, ZipArchive::CREATE);
+            $zip->open($zip_filepath, \ZipArchive::CREATE);
 
             //add files to archive
             $zip->addFile($this->backup_dir . $filename, '/' . $filename);
@@ -245,7 +252,7 @@ class Backup
 
             unlink($this->backup_dir . $filename);
 
-            db_perform('app_backups', ['filename' => $zip_filename], 'update', "id='" . $backups_id . "'");
+            \K::model()->db_update('app_backups', ['filename' => $zip_filename], ['id = ?', $backups_id]);
         }
 
         if ($this->is_auto) {
@@ -255,16 +262,16 @@ class Backup
 
     function reset_backup_auto_dir()
     {
-        if (CFG_AUTOBACKUP_KEEP_FILES_DAYS == 0) {
+        if (\K::$fw->CFG_AUTOBACKUP_KEEP_FILES_DAYS == 0) {
             return false;
         }
 
-        $files = glob(DIR_FS_BACKUPS_AUTO . '*');
+        $files = glob(\K::$fw->DIR_FS_BACKUPS_AUTO . '*');
 
         if ($files) {
             foreach ($files as $file) {
                 if (is_file($file)) {
-                    if (time() - filemtime($file) >= 3600 * 24 * CFG_AUTOBACKUP_KEEP_FILES_DAYS) {
+                    if (time() - filemtime($file) >= 3600 * 24 * \K::$fw->CFG_AUTOBACKUP_KEEP_FILES_DAYS) {
                         unlink($file);
                     }
                 }
@@ -277,24 +284,28 @@ class Backup
         return ($is_auto ? 'autobackup' : $id) . '_' . date(
                 'Y-m-d_H-i',
                 $timestamp
-            ) . '_KeruyCRM_' . PROJECT_VERSION . '.sql';
+            ) . '_KeruyCRM_' . \K::$fw->PROJECT_VERSION . '.sql';
     }
 
     static function reset($is_auto = false)
     {
-        global $app_user;
-
-        $backup_dir = $is_auto ? DIR_FS_BACKUPS_AUTO : DIR_FS_BACKUPS;
+        $backup_dir = $is_auto ? \K::$fw->DIR_FS_BACKUPS_AUTO : \K::$fw->DIR_FS_BACKUPS;
 
         //remove db records if files not exist
-        $backups_query = db_query("select * from app_backups where is_auto='{$is_auto}' order by date_added desc");
-        while ($backups = db_fetch_array($backups_query)) {
+        //$backups_query = db_query("select * from app_backups where is_auto = '{$is_auto}' order by date_added desc");
+        $backups_query = \K::model()->db_fetch('app_backups', [
+            'is_auto = ?',
+            $is_auto
+        ], ['order' => 'date_added desc']);
+
+        //while ($backups = db_fetch_array($backups_query)) {
+        foreach ($backups_query as $backups) {
             if (!is_file($backup_dir . $backups['filename'])) {
-                db_delete_row('app_backups', $backups['id']);
+                \K::model()->db_delete_row('app_backups', $backups['id']);
             }
         }
 
-        //check if new fiels are loaded
+        //check if new files are loaded
         $dir = dir($backup_dir);
         $backups = [];
         while ($file = $dir->read()) {
@@ -302,13 +313,19 @@ class Backup
                         $file,
                         -4
                     ) == '.sql')) {
-                $count_query = db_query(
+                /*$count_query = db_query(
                     "select count(*) as total from app_backups where filename='" . db_input(
                         $file
                     ) . "' and is_auto='{$is_auto}'"
                 );
                 $count = db_fetch_array($count_query);
-                $count = $count['total'];
+                $count = $count['total'];*/
+
+                $count = \K::model()->db_fetch_count('app_backups', [
+                    'filename = ? and is_auto = ?',
+                    $file,
+                    $is_auto
+                ]);
 
                 if ($count == 0) {
                     //remove any special chars in filename
@@ -328,12 +345,12 @@ class Backup
                     $sql_data = [
                         'description' => '',
                         'filename' => $file,
-                        'users_id' => (isset($app_user['id']) ? $app_user['id'] : 0),
+                        'users_id' => (\K::$fw->app_user['id'] ?? 0),
                         'date_added' => filemtime($backup_dir . $file),
                         'is_auto' => $is_auto,
                     ];
 
-                    db_perform('app_backups', $sql_data);
+                    \K::model()->db_perform('app_backups', $sql_data);
                 }
             }
         }
@@ -341,36 +358,34 @@ class Backup
 
     static function restore_fp_read_str($fp)
     {
-        global $file_cache;
-
-        if (is_null($file_cache)) {
-            $file_cache = '';
+        if (is_null(\K::$fw->file_cache)) {
+            \K::$fw->file_cache = '';
         }
 
         $string = '';
-        $file_cache = ltrim($file_cache);
+        \K::$fw->file_cache = ltrim(\K::$fw->file_cache);
 
-        $pos = strpos($file_cache, "\n", 0);
+        $pos = strpos(\K::$fw->file_cache, "\n", 0);
 
         if ($pos < 1) {
             while (!strlen($string) && ($str = fread($fp, 4096))) {
                 $pos = strpos($str, "\n", 0);
 
                 if ($pos === false) {
-                    $file_cache .= $str;
+                    \K::$fw->file_cache .= $str;
                 } elseif ($pos == 0) {
-                    $string = $file_cache . substr($str, 0, 1);
-                    $file_cache = substr($str, 1);
+                    $string = \K::$fw->file_cache . substr($str, 0, 1);
+                    \K::$fw->file_cache = substr($str, 1);
                 } else {
-                    $string = $file_cache . substr($str, 0, $pos);
-                    $file_cache = substr($str, $pos + 1);
+                    $string = \K::$fw->file_cache . substr($str, 0, $pos);
+                    \K::$fw->file_cache = substr($str, $pos + 1);
                 }
             }
 
             if (!$str) {
-                if (strlen($file_cache)) {
-                    $string = $file_cache;
-                    $file_cache = '';
+                if (strlen(\K::$fw->file_cache)) {
+                    $string = \K::$fw->file_cache;
+                    \K::$fw->file_cache = '';
 
                     return trim($string);
                 }
@@ -378,8 +393,8 @@ class Backup
                 return false;
             }
         } else {
-            $string = substr($file_cache, 0, $pos);
-            $file_cache = substr($file_cache, $pos + 1);
+            $string = substr(\K::$fw->file_cache, 0, $pos);
+            \K::$fw->file_cache = substr(\K::$fw->file_cache, $pos + 1);
         }
 
         return trim($string);
@@ -387,20 +402,19 @@ class Backup
 
     static function restore($filename, $is_auto = false)
     {
-        global $alerts;
-
-        $backup_dir = $is_auto ? DIR_FS_BACKUPS_AUTO : DIR_FS_BACKUPS;
+        $backup_dir = $is_auto ? \K::$fw->DIR_FS_BACKUPS_AUTO : \K::$fw->DIR_FS_BACKUPS;
 
         if (is_file($backup_dir . $filename)) {
             set_time_limit(0);
 
-            $tables_query = db_query("show tables");
-            while ($tables = db_fetch_array($tables_query)) {
+            $tables_query = \K::model()->db_query_exec("show tables");
+            //while ($tables = db_fetch_array($tables_query)) {
+            foreach ($tables_query as $tables) {
                 if (current($tables) == 'app_backups') {
                     continue;
                 }
 
-                db_query('DROP TABLE ' . current($tables));
+                \K::model()->db_query_exec('DROP TABLE ' . current($tables));
             }
 
             $fp = fopen($backup_dir . $filename, 'r');
@@ -447,7 +461,7 @@ class Backup
                     }
 
                     if ($execute) {
-                        db_query($sql);
+                        \K::model()->db_query_exec($sql);
 
                         $sql = '';
                         $query_len = 0;
@@ -457,14 +471,13 @@ class Backup
             }
 
             //prepare procedures			
-            fieldtype_days_difference::prepare_procedure();
-            fieldtype_hours_difference::prepare_procedure();
-            fieldtype_years_difference::prepare_procedure();
-            fieldtype_months_difference::prepare_procedure();
-            fieldtype_phone::prepare_procedure();
+            \Tools\FieldsTypes\Fieldtype_days_difference::prepare_procedure();
+            \Tools\FieldsTypes\Fieldtype_hours_difference::prepare_procedure();
+            \Tools\FieldsTypes\Fieldtype_years_difference::prepare_procedure();
+            \Tools\FieldsTypes\Fieldtype_months_difference::prepare_procedure();
+            \Tools\FieldsTypes\Fieldtype_phone::prepare_procedure();
 
-            $alerts->add(TEXT_BACKUP_RESTORED, 'success');
+            \K::flash()->addMessage(\K::$fw->TEXT_BACKUP_RESTORED, 'success');
         }
     }
-
 }

@@ -2,19 +2,26 @@
 
 if (!defined('KERUY_CRM')) {
     exit;
-} ?><h3 class="page-title"><?php
-    echo TEXT_HEADING_DB_BACKUP ?></h3>
+} ?>
+<h3 class="page-title"><?= \K::$fw->TEXT_HEADING_DB_BACKUP ?></h3>
 
 <div>
-    <?php
-    echo button_tag(TEXT_BUTTON_CREATE_BACKUP, url_for('tools/db_backup_form')) . ' ' .
-        button_tag(TEXT_MENU_DATABASE_EXPORT, url_for('tools/db_export'), true, ['class' => 'btn btn-default']) . ' ' .
-        button_tag(
-            '<i class="fa fa-repeat" aria-hidden="true"></i> ' . TEXT_BUTTON_DB_RESTORE_FROM_FILE,
-            url_for('tools/db_restore_file'),
-            true,
-            ['class' => 'btn btn-default']
-        );
+    <?= \Helpers\Html::button_tag(
+        \K::$fw->TEXT_BUTTON_CREATE_BACKUP,
+        \Helpers\Urls::url_for('main/tools/db_backup_form')
+    ) . ' ' .
+    \Helpers\Html::button_tag(
+        \K::$fw->TEXT_MENU_DATABASE_EXPORT,
+        \Helpers\Urls::url_for('main/tools/db_export'),
+        true,
+        ['class' => 'btn btn-default']
+    ) . ' ' .
+    \Helpers\Html::button_tag(
+        '<i class="fa fa-repeat" aria-hidden="true"></i> ' . \K::$fw->TEXT_BUTTON_DB_RESTORE_FROM_FILE,
+        \Helpers\Urls::url_for('main/tools/db_restore_file'),
+        true,
+        ['class' => 'btn btn-default']
+    );
     ?>
 </div>
 
@@ -22,88 +29,74 @@ if (!defined('KERUY_CRM')) {
     <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr>
-            <th><?php
-                echo TEXT_ACTION ?></th>
-            <th><?php
-                echo TEXT_ID ?></th>
-            <th><?php
-                echo TEXT_FILENAME ?></th>
-            <th><?php
-                echo TEXT_SIZE ?></th>
-            <th><?php
-                echo TEXT_DATE_ADDED ?></th>
-            <th><?php
-                echo TEXT_CREATED_BY ?></th>
-            <th width="100%"><?php
-                echo TEXT_COMMENT ?></th>
+            <th><?= \K::$fw->TEXT_ACTION ?></th>
+            <th><?= \K::$fw->TEXT_ID ?></th>
+            <th><?= \K::$fw->TEXT_FILENAME ?></th>
+            <th><?= \K::$fw->TEXT_SIZE ?></th>
+            <th><?= \K::$fw->TEXT_DATE_ADDED ?></th>
+            <th><?= \K::$fw->TEXT_CREATED_BY ?></th>
+            <th width="100%"><?= \K::$fw->TEXT_COMMENT ?></th>
         </tr>
         </thead>
         <tbody>
         <?php
-        if (db_count('app_backups') == 0) {
-            echo '<tr><td colspan="7">' . TEXT_NO_RECORDS_FOUND . '</td></tr>';
+        if (count(\K::$fw->backups_query) == 0) {
+            echo '<tr><td colspan="7">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</td></tr>';
         } ?>
         <?php
-        $backups_query = "select * from app_backups where is_auto=0 order by date_added desc";
-        $listing_split = new split_page($backups_query, 'records_listing');
-        $backups_query = db_query($listing_split->sql_query);
-        while ($backups = db_fetch_array($backups_query)):
+
+        //while ($backups = db_fetch_array($backups_query)):
+        foreach (\K::$fw->backups_query as $backups):
+            $backups = $backups->cast();
             ?>
             <tr>
-                <td class="nowrap"><?php
-                    echo button_icon_delete(
-                            url_for('tools/db_backup_delete', 'id=' . $backups['id'])
-                        ) . ' ' . button_icon(
-                            TEXT_BUTTON_RESTORE,
-                            'fa fa fa-repeat',
-                            url_for('tools/db_restore', 'id=' . $backups['id'])
-                        ) . ' ' . button_icon(
-                            TEXT_BUTTON_DOWNLOAD,
-                            'fa fa-download',
-                            url_for('tools/db_backup', 'action=download&id=' . $backups['id']),
-                            false
-                        ); ?></td>
-                <td><?php
-                    echo $backups['id'] ?></td>
+                <td class="nowrap"><?= \Helpers\Html::button_icon_delete(
+                        \Helpers\Urls::url_for('main/tools/db_backup_delete', 'id=' . $backups['id'])
+                    ) . ' ' . \Helpers\Html::button_icon(
+                        \K::$fw->TEXT_BUTTON_RESTORE,
+                        'fa fa fa-repeat',
+                        \Helpers\Urls::url_for('main/tools/db_restore', 'id=' . $backups['id'])
+                    ) . ' ' . \Helpers\Html::button_icon(
+                        \K::$fw->TEXT_BUTTON_DOWNLOAD,
+                        'fa fa-download',
+                        \Helpers\Urls::url_for('main/tools/db_backup/download', '&id=' . $backups['id']),
+                        false
+                    ); ?></td>
+                <td><?= $backups['id'] ?></td>
 
+                <td><?= $backups['filename']; ?></td>
                 <td><?php
-                    echo $backups['filename']; ?></td>
-                <td><?php
-                    if (is_file($file_path = DIR_FS_BACKUPS . $backups['filename'])) {
-                        echo attachments::file_size_convert(filesize($file_path));
+                    if (is_file($file_path = \K::$fw->DIR_FS_BACKUPS . $backups['filename'])) {
+                        echo \Tools\Attachments::file_size_convert(filesize($file_path));
                     }
                     ?></td>
+                <td><?= \Helpers\App::format_date_time($backups['date_added']) ?></td>
                 <td><?php
-                    echo format_date_time($backups['date_added']) ?></td>
-                <td><?php
-                    echo($backups['users_id'] > 0 ? users::get_name_by_id(
+                    echo($backups['users_id'] > 0 ? \Models\Main\Users\Users::get_name_by_id(
                         $backups['users_id']
-                    ) : TEXT_BACKUP_TYPE_AUTO) ?></td>
-                <td class="white-space-nomral"><?php
-                    echo nl2br($backups['description']) ?></td>
+                    ) : \K::$fw->TEXT_BACKUP_TYPE_AUTO) ?></td>
+                <td class="white-space-normal"><?= nl2br($backups['description']) ?></td>
             </tr>
         <?php
-        endwhile ?>
+        endforeach; ?>
 
         <tbody>
     </table>
 </div>
 
-<?php
-echo '
+<?= '
   <table width="100%">
     <tr>
-      <td>' . $listing_split->display_count() . '</td>
-      <td align="right">' . $listing_split->display_links() . '</td>
+      <td>' . \K::$fw->listing_split->display_count() . '</td>
+      <td align="right">' . \K::$fw->listing_split->display_links() . '</td>
     </tr>
   </table>';
 ?>
 
-<div><?php
-    echo TEXT_BACKUP_FOLDER . ': ' . DIR_FS_BACKUPS ?></div>
+<div><?= \K::$fw->TEXT_BACKUP_FOLDER . ': ' . \K::$fw->DIR_FS_BACKUPS ?></div>
 
 <script>
     function load_items_listing(listing_container, page) {
-        location.href = "<?php echo url_for('tools/db_backup') ?>&page=" + page;
+        location.href = "<?= \Helpers\Urls::url_for('main/tools/db_backup') ?>&page=" + page;
     }
 </script>

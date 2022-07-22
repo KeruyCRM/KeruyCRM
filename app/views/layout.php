@@ -333,7 +333,6 @@ if (\Helpers\App::is_ext_installed()) {
     //Add csrf_token to all POST AJAX request
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
         var csrf_token = $('meta[name=form_session_token]').attr('content');
-        console.log(csrf_token);
         if (options.type.toLowerCase() === "post") {
             // initialize `data` to empty string if it does not exist
             options.data = options.data || "";

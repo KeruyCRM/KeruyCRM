@@ -4,3 +4,5 @@ cache
 /.idea/inspectionProfiles/
 /css/custom.css
 /uploads/users/
+/backups/*.zip
+/backups/*.sql

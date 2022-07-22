@@ -187,15 +187,18 @@ BEGIN
 END;";
 
         $is_function = false;
-        $check_query = db_query("SHOW FUNCTION STATUS WHERE Db = '" . \K::$fw->DB_name . "'");
-        while ($check = db_fetch_array($check_query)) {
+        $check_query = \K::model()->db_query_exec(
+            'SHOW FUNCTION STATUS WHERE Db = ' . \K::model()->quote(\K::$fw->DB_name)
+        );
+        //while ($check = db_fetch_array($check_query)) {
+        foreach ($check_query as $check) {
             if ($check['Name'] == 'keruycrm_days_diff') {
                 $is_function = true;
             }
         }
 
         if (!$is_function) {
-            db_query($sql);
+            \K::model()->db_query_exec($sql);
         }
     }
 

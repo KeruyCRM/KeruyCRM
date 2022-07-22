@@ -11,6 +11,19 @@ class Split_page
     /* class constructor */
     function __construct($query, $listing_container, $count_sql_query = 'query_num_rows', $rows_per_page = 0)
     {
+        /*$query = [
+            'table' => '',
+            'filter' => [],
+            'options' => [],
+            'column' => null
+        ];*/
+        /*\K::$fw->backups_query = \K::model()->db_fetch(
+            $listing_split->sql_query['table'],
+            $listing_split->sql_query['filter'],
+            $listing_split->sql_query['options'],
+            $listing_split->sql_query['column']
+        );*/
+
         $this->listing_container = $listing_container;
         $this->listing_function = 'load_items_listing';
 
@@ -35,8 +48,9 @@ class Split_page
 
         if (strlen($count_sql_query) > 0) {
             if ($count_sql_query == 'query_num_rows') {
-                $count_query = db_query($this->sql_query);
-                $count['total'] = db_num_rows($count_query);
+                //$count_query = db_query($this->sql_query);
+                //$count['total'] = db_num_rows($count_query);
+                $count['total'] = \K::model()->db_fetch_count($this->sql_query['table'], $this->sql_query['filter']);
             } else {
                 $count_query = db_query($count_sql_query);
                 $count = db_fetch_array($count_query);

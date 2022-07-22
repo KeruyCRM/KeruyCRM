@@ -2,30 +2,25 @@
 
 if (!defined('KERUY_CRM')) {
     exit;
-} ?><?php
-echo ajax_modal_template_header(TEXT_HEADING_DB_BACKUP) ?>
+} ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_HEADING_DB_BACKUP) ?>
 
-<?php
-echo form_tag('backup_form', url_for('tools/db_backup', 'action=backup'), ['class' => 'form-horizontal']) ?>
+<?= \Helpers\Html::form_tag('backup_form', \Helpers\Urls::url_for('main/tools/db_backup/backup'), ['class' => 'form-horizontal']) ?>
 <div class="modal-body">
     <div class="form-body">
 
         <div class="form-group">
-            <label class="col-md-3 control-label" for="sort_order"><?php
-                echo TEXT_COMMENT ?></label>
+            <label class="col-md-3 control-label" for="sort_order"><?= \K::$fw->TEXT_COMMENT ?></label>
             <div class="col-md-9">
-                <?php
-                echo textarea_tag('description', '', ['class' => 'form-control']) ?>
-                <?php
-                echo tooltip_text(TEXT_BACKUP_DESCRIPTION_TIP) ?>
+                <?= \Helpers\Html::textarea_tag('description', '', ['class' => 'form-control']) ?>
+                <?= \Helpers\App::tooltip_text(\K::$fw->TEXT_BACKUP_DESCRIPTION_TIP) ?>
             </div>
         </div>
 
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer(TEXT_BUTTON_CREATE_BACKUP) ?>
+<?= \Helpers\App::ajax_modal_template_footer(\K::$fw->TEXT_BUTTON_CREATE_BACKUP) ?>
 
 </form>
 
@@ -38,5 +33,4 @@ echo ajax_modal_template_footer(TEXT_BUTTON_CREATE_BACKUP) ?>
             }
         });
     });
-
 </script>
