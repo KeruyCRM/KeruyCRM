@@ -20,19 +20,16 @@ class Db_backup extends \Controller
 
     public function index()
     {
-        $backups_query = [
-            'table' => 'app_backups',
-            'filter' => ['is_auto = 0'],
-            'options' => ['order' => 'date_added desc'],
-            'column' => null,
-        ];
+        $backups_query = \Tools\Split_page::makeQuery(
+            'app_backups',
+            ['is_auto = 0'],
+            ['order' => 'date_added desc']
+        );
+
         \K::$fw->listing_split = $listing_split = new \Tools\Split_page($backups_query, 'records_listing');
 
-        \K::$fw->backups_query = \K::model()->db_fetch(
-            $listing_split->sql_query['table'],
-            $listing_split->sql_query['filter'],
-            $listing_split->sql_query['options'],
-            $listing_split->sql_query['column']
+        \K::$fw->backups_query = \K::model()->db_fetch_split(
+            $listing_split->sql_query()
         );
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'db_backup.php';
@@ -123,11 +120,11 @@ class Db_backup extends \Controller
 
     public function export_template()
     {
-        $filename = mb_ereg_replace('_+', '_', mb_ereg_replace("[^[:alnum:]]", '_', CFG_APP_NAME));
+        $filename = mb_ereg_replace('_+', '_', mb_ereg_replace("[^[:alnum:]]", '_', \K::$fw->CFG_APP_NAME));
 
-        $filename = $filename . '_' . date('Y-m-d_H-i') . '_KeruyCRM_' . PROJECT_VERSION . '.sql';
+        $filename = $filename . '_' . date('Y-m-d_H-i') . '_KeruyCRM_' . \K::$fw->PROJECT_VERSION . '.sql';
 
-        $backup = new backup();
+        $backup = new \Tools\Backup();
         $backup->set_filename($filename);
         $backup->create();
 
@@ -138,9 +135,9 @@ class Db_backup extends \Controller
         header("Content-Type: Application/octet-stream");
         header("Content-disposition: attachment; filename=" . $filename);
 
-        readfile(DIR_FS_BACKUPS . $filename);
+        readfile(\K::$fw->DIR_FS_BACKUPS . $filename);
 
-        unlink(DIR_FS_BACKUPS . $filename);
+        unlink(\K::$fw->DIR_FS_BACKUPS . $filename);
 
         exit();
     }

@@ -76,14 +76,13 @@ class Users_login_log extends \Controller
 
         //$listing_sql = "select * from app_users_login_log where id > 0 {$where_sql} order by date_added desc";
 
-        $listing_sql = [
-            'table' => 'app_users_login_log',
-            'filter' => [
-                    'id > 0 ' . $where_sql,
-                ] + $where_value,
-            'options' => ['order' => 'date_added desc'],
-            'column' => null
-        ];
+        $listing_sql = \Tools\Split_page::makeQuery(
+            'app_users_login_log',
+            [
+                'id > 0 ' . $where_sql,
+            ] + $where_value,
+            ['order' => 'date_added desc']
+        );
 
         $listing_split = new \Tools\Split_page(
             $listing_sql,
@@ -92,11 +91,8 @@ class Users_login_log extends \Controller
             \K::$fw->CFG_APP_ROWS_PER_PAGE
         );
         //$items_query = db_query($listing_split->sql_query);
-        $items_query = \K::model()->db_fetch(
-            $listing_split->sql_query['table'],
-            $listing_split->sql_query['filter'],
-            $listing_split->sql_query['options'],
-            $listing_split->sql_query['column']
+        $items_query = \K::model()->db_fetch_split(
+            $listing_split->sql_query()
         );
 
         //while ($item = db_fetch_array($items_query)) {
