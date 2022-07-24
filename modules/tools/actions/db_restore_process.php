@@ -13,7 +13,7 @@ switch ($app_module_action) {
                 //check if file is ZIP archive and unzip it
                 $is_zip_archive = false;
                 if (substr($filename, -4) == '.zip') {
-                    $zip = new ZipArchive;
+                    $zip = new ZipArchive();
                     $res = $zip->open($backup_dir . $filename);
                     if ($res === true) {
                         $zip->extractTo($backup_dir);
@@ -45,11 +45,16 @@ switch ($app_module_action) {
                 $is_zip_archive = false;
                 if (substr($filename, -4) == '.zip') {
                     $zip_filename = $filename;
-                    $zip = new ZipArchive;
+                    $zip = new ZipArchive();
                     $res = $zip->open(DIR_FS_BACKUPS . $filename);
                     if ($res === true) {
                         $filename = $zip->getNameIndex(0);
                         $zip->extractTo(DIR_FS_BACKUPS);
+
+                        for ($x = 1; $x < $zip->numFiles; $x++) {
+                            @unlink(DIR_FS_BACKUPS . $zip->getNameIndex($x));
+                        }
+
                         $zip->close();
 
                         unlink(DIR_FS_BACKUPS . $zip_filename);
