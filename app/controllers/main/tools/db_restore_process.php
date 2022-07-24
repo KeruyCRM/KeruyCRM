@@ -20,121 +20,148 @@ class Db_restore_process extends \Controller
 
     public function index()
     {
-        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'db_restore_process.php';
-
-        echo \K::view()->render(\K::$fw->subTemplate);
+        \Helpers\Urls::redirect_to('main/dashboard');
     }
 
     public function restore()
     {
-        //public_layout
-        $info_query = db_query("select * from app_backups where id='" . db_input($_GET['id']) . "'");
-        if ($info = db_fetch_array($info_query)) {
-            $filename = $info['filename'];
+        if (\K::$fw->VERB == 'POST') {
+            //$info_query = db_query("select * from app_backups where id='" . db_input(\K::$fw->GET['id']) . "'");
 
-            $backup_dir = $info['is_auto'] ? DIR_FS_BACKUPS_AUTO : DIR_FS_BACKUPS;
+            $info = \K::model()->db_fetch_one('app_backups', [
+                'id = ?',
+                \K::$fw->POST['id']
+            ]);
 
-            if (is_file($backup_dir . $filename)) {
-                //check if file is ZIP archive and unzip it
-                $is_zip_archive = false;
-                if (substr($filename, -4) == '.zip') {
-                    $zip = new \ZipArchive();
-                    $res = $zip->open($backup_dir . $filename);
-                    if ($res === true) {
-                        $zip->extractTo($backup_dir);
-                        $zip->close();
+            if ($info) {
+                $filename = $info['filename'];
+
+                $backup_dir = $info['is_auto'] ? \K::$fw->DIR_FS_BACKUPS_AUTO : \K::$fw->DIR_FS_BACKUPS;
+
+                if (is_file($backup_dir . $filename)) {
+                    //check if file is ZIP archive and unzip it
+                    $is_zip_archive = false;
+                    if (substr($filename, -4) == '.zip') {
+                        $zip = new \ZipArchive();
+                        $res = $zip->open($backup_dir . $filename);
+                        if ($res === true) {
+                            $zip->extractTo($backup_dir);
+                            $zip->close();
+                        }
+
+                        $filename = substr($filename, 0, -4);
+
+                        $is_zip_archive = true;
                     }
 
-                    $filename = substr($filename, 0, -4);
+                    //restore database
+                    \Tools\Backup::restore($filename, $info['is_auto']);
 
-                    $is_zip_archive = true;
-                }
-
-                //restore database
-                backup::restore($filename, $info['is_auto']);
-
-                if ($is_zip_archive) {
-                    unlink($backup_dir . $filename);
+                    if ($is_zip_archive) {
+                        unlink($backup_dir . $filename);
+                    }
                 }
             }
-        }
 
-        redirect_to('users/login', 'action=logoff');
+            \Helpers\Urls::redirect_to('main/users/login/logoff', '', true);
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 
     public function restore_file()
     {
-        //public_layout
-        $filename = $_POST['filename'];
+        if (\K::$fw->VERB == 'POST') {
+            $filename = \K::$fw->POST['filename'];
 
-        if (substr($filename, -4) == '.sql' or substr($filename, -4) == '.zip') {
-            if (is_file(DIR_FS_BACKUPS . $filename)) {
-                $is_zip_archive = false;
-                if (substr($filename, -4) == '.zip') {
-                    $zip_filename = $filename;
-                    $zip = new ZipArchive;
-                    $res = $zip->open(DIR_FS_BACKUPS . $filename);
-                    if ($res === true) {
-                        $filename = $zip->getNameIndex(0);
-                        $zip->extractTo(DIR_FS_BACKUPS);
-                        $zip->close();
+            if (substr($filename, -4) == '.sql' or substr($filename, -4) == '.zip') {
+                if (is_file(\K::$fw->DIR_FS_BACKUPS . $filename)) {
+                    $is_zip_archive = false;
+                    if (substr($filename, -4) == '.zip') {
+                        $zip_filename = $filename;
+                        $zip = new \ZipArchive();
+                        $res = $zip->open(\K::$fw->DIR_FS_BACKUPS . $filename);
+                        if ($res === true) {
+                            $filename = $zip->getNameIndex(0);
+                            $zip->extractTo(\K::$fw->DIR_FS_BACKUPS);
 
-                        unlink(DIR_FS_BACKUPS . $zip_filename);
+                            for ($x = 1; $x < $zip->numFiles; $x++) {
+                                @unlink(\K::$fw->DIR_FS_BACKUPS . $zip->getNameIndex($x));
+                            }
+
+                            $zip->close();
+
+                            unlink(\K::$fw->DIR_FS_BACKUPS . $zip_filename);
+                        }
+
+                        if (substr($filename, -4) != '.sql') {
+                            $filename .= '.sql';
+                        }
                     }
 
-                    if (substr($filename, -4) != '.sql') {
-                        $filename .= '.sql';
-                    }
+                    //restore database
+                    \Tools\Backup::restore($filename);
+
+                    unlink(\K::$fw->DIR_FS_BACKUPS . $filename);
                 }
-
-                //restore database
-                backup::restore($filename);
-
-                unlink(DIR_FS_BACKUPS . $filename);
             }
-        }
 
-        redirect_to('users/login', 'action=logoff');
+            \Helpers\Urls::redirect_to('main/users/login/logoff', '', true);
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 
     public function restore_by_id()
     {
-        $html .= '
+        \K::$fw->html .= '
 			<script>
 				$(function(){
-					$("#db_restore_process").load("' . url_for(
-                'tools/db_restore_process',
-                'action=restore&id=' . $_GET['id']
-            ) . '")
+					$("#db_restore_process").load("' . \Helpers\Urls::url_for(
+                'main/tools/db_restore_process/restore'
+            ) . '",{id:"' . \K::$fw->GET['id'] . '"})
 				})				
 			</script>
 		';
+        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'db_restore_process.php';
+
+        echo \K::view()->render($this->app_layout);
     }
 
     public function restore_from_file()
     {
-        $is_file = false;
-        if (strlen($filename = $_FILES['filename']['name']) > 0) {
-            if (substr($filename, -4) == '.sql' or substr($filename, -4) == '.zip') {
-                if (move_uploaded_file($_FILES['filename']['tmp_name'], DIR_FS_BACKUPS . $filename)) {
-                    $is_file = true;
+        if (\K::$fw->VERB == 'POST') {
+            $is_file = false;
+            if (strlen($filename = \K::$fw->FILES['filename']['name']) > 0) {
+                if (substr($filename, -4) == '.sql' or substr($filename, -4) == '.zip') {
+                    if (move_uploaded_file(
+                        \K::$fw->FILES['filename']['tmp_name'],
+                        \K::$fw->DIR_FS_BACKUPS . $filename
+                    )) {
+                        $is_file = true;
 
-                    $html .= '
+                        \K::$fw->html .= '
 					<script>
 						$(function(){
-							$("#db_restore_process").load("' . url_for(
-                            'tools/db_restore_process',
-                            'action=restore_file'
-                        ) . '",{filename:"' . $filename . '"})
+							$("#db_restore_process").load("' . \Helpers\Urls::url_for(
+                                'main/tools/db_restore_process/restore_file'
+                            ) . '",{filename:"' . $filename . '"})
 						})
 					</script>
 				';
+                    }
                 }
             }
-        }
 
-        if (!$is_file) {
-            $html = '<div class="alert alert-danger">' . TEXT_FILE_NOT_FOUND . '</div>';
+            if (!$is_file) {
+                \K::$fw->html = '<div class="alert alert-danger">' . \K::$fw->TEXT_FILE_NOT_FOUND . '</div>';
+            }
+
+            \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'db_restore_process.php';
+
+            echo \K::view()->render($this->app_layout);
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 }
