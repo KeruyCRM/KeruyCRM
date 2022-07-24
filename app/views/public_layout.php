@@ -16,6 +16,7 @@ if (!defined('KERUY_CRM')) {
     <meta charset="utf-8"/>
     <meta name="robots" content="noindex,nofollow">
     <title><?= \K::$fw->app_title ?></title>
+    <meta name="form_session_token" content="<?= \K::$fw->app_session_token ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport"/>
     <meta content="" name="description"/>
@@ -270,7 +271,22 @@ if (\Helpers\App::is_ext_installed()) {
 </script>
 
 <?= \Helpers\App::i18n_js() ?>
+<script>
+    //Add csrf_token to all POST AJAX request
+    $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+        var csrf_token = $('meta[name=form_session_token]').attr('content');
+        if (options.type.toLowerCase() === "post") {
+            // initialize `data` to empty string if it does not exist
+            options.data = options.data || "";
 
+            // add leading ampersand if `data` is non-empty
+            options.data += options.data ? "&" : "";
+
+            // add _token entry
+            options.data += "form_session_token=" + encodeURIComponent(csrf_token);
+        }
+    });
+</script>
 </body>
 <!-- END BODY -->
 </html>
