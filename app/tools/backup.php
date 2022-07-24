@@ -10,7 +10,7 @@ class Backup
     public $backup_dir;
     public $is_auto;
 
-    function __construct($is_auto = false)
+    public function __construct($is_auto = false)
     {
         $this->is_export = false;
         $this->filename = '';
@@ -19,18 +19,18 @@ class Backup
         $this->description = '';
     }
 
-    function set_description($description)
+    public function set_description($description)
     {
         $this->description = $description;
     }
 
-    function set_filename($filename)
+    public function set_filename($filename)
     {
         $this->is_export = true;
         $this->filename = $filename;
     }
 
-    function create()
+    public function create()
     {
         set_time_limit(0);
 
@@ -260,7 +260,7 @@ class Backup
         }
     }
 
-    function reset_backup_auto_dir()
+    public function reset_backup_auto_dir()
     {
         if (\K::$fw->CFG_AUTOBACKUP_KEEP_FILES_DAYS == 0) {
             return false;
@@ -279,7 +279,7 @@ class Backup
         }
     }
 
-    static function prepare_filename($id, $timestamp, $is_auto = false)
+    public static function prepare_filename($id, $timestamp, $is_auto = false)
     {
         return ($is_auto ? 'autobackup' : $id) . '_' . date(
                 'Y-m-d_H-i',
@@ -287,7 +287,7 @@ class Backup
             ) . '_KeruyCRM_' . \K::$fw->PROJECT_VERSION . '.sql';
     }
 
-    static function reset($is_auto = false)
+    public static function reset($is_auto = false)
     {
         $backup_dir = $is_auto ? \K::$fw->DIR_FS_BACKUPS_AUTO : \K::$fw->DIR_FS_BACKUPS;
 
@@ -356,7 +356,7 @@ class Backup
         }
     }
 
-    static function restore_fp_read_str($fp)
+    public static function restore_fp_read_str($fp)
     {
         if (is_null(\K::$fw->file_cache)) {
             \K::$fw->file_cache = '';
@@ -400,7 +400,7 @@ class Backup
         return trim($string);
     }
 
-    static function restore($filename, $is_auto = false)
+    public static function restore($filename, $is_auto = false)
     {
         $backup_dir = $is_auto ? \K::$fw->DIR_FS_BACKUPS_AUTO : \K::$fw->DIR_FS_BACKUPS;
 
