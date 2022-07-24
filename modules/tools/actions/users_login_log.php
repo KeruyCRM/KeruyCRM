@@ -60,7 +60,7 @@ switch ($app_module_action) {
         if ($listing_split->number_of_rows == 0) {
             $html .= '
 				    <tr>
-				      <td colspan="6">' . TEXT_NO_RECORDS_FOUND . '</td>
+				      <td colspan="7">' . TEXT_NO_RECORDS_FOUND . '</td>
 				    </tr>
 				  ';
         }
