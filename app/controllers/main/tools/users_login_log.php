@@ -112,7 +112,7 @@ class Users_login_log extends \Controller
 					';
         }
 
-        if ($listing_split->number_of_rows == 0) {
+        if ($listing_split->number_of_rows() == 0) {
             $html .= '
 				    <tr>
 				      <td colspan="6">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</td>

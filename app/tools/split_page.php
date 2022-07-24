@@ -4,10 +4,11 @@ namespace Tools;
 
 class Split_page
 {
-    public $number_of_rows, $current_page_number, $number_of_pages, $number_of_rows_per_page, $page_name, $listing_container;
+    public $current_page_number, $number_of_pages, $number_of_rows_per_page, $page_name, $listing_container;
 
     public $listing_function;
     private $sql_query = [];
+    private $number_of_rows;
 
     /* class constructor */
     public function __construct($query, $listing_container, $count_sql_query = 'query_num_rows', $rows_per_page = 0)
@@ -165,6 +166,11 @@ class Split_page
     public function sql_query()
     {
         return $this->sql_query;
+    }
+
+    public function number_of_rows()
+    {
+        return $this->number_of_rows;
     }
 
     public static function makeQuery($table, $filter = [], $options = [], $column = null)

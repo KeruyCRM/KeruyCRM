@@ -138,8 +138,6 @@ class Db_backup extends \Controller
         readfile(\K::$fw->DIR_FS_BACKUPS . $filename);
 
         unlink(\K::$fw->DIR_FS_BACKUPS . $filename);
-
-        exit();
     }
 
     public function __destruct()

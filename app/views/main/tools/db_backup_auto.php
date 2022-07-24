@@ -22,11 +22,7 @@ if (!defined('KERUY_CRM')) {
         </thead>
         <tbody>
         <?php
-        if (count(\K::$fw->backups_query) == 0) {
-            echo '<tr><td colspan="7">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</td></tr>';
-        } ?>
-        <?php
-        if (\K::$fw->listing_split->number_of_rows == 0) {
+        if (\K::$fw->listing_split->number_of_rows() == 0) {
             echo '<tr><td colspan="5">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</td></tr>';
         }
 

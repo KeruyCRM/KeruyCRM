@@ -105,6 +105,7 @@ class Backup
                     'app_comments_history',
                     'app_related_items',
                     'app_sessions',
+                    'app_sessions_new',
                     'app_users_configuration',
                     'app_users_notifications',
                     'app_users_search_settings',
