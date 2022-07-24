@@ -75,7 +75,7 @@
                     echo($backups['users_id'] > 0 ? users::get_name_by_id(
                         $backups['users_id']
                     ) : TEXT_BACKUP_TYPE_AUTO) ?></td>
-                <td class="white-space-nomral"><?php
+                <td class="white-space-normal"><?php
                     echo nl2br($backups['description']) ?></td>
             </tr>
         <?php
