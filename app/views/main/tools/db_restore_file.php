@@ -2,34 +2,31 @@
 
 if (!defined('KERUY_CRM')) {
     exit;
-} ?><?php
-echo ajax_modal_template_header(TEXT_BUTTON_DB_RESTORE_FROM_FILE) ?>
+} ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_BUTTON_DB_RESTORE_FROM_FILE) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'restore_file_form',
-    url_for('tools/db_restore_process', 'action=restore_from_file'),
+    \Helpers\Urls::url_for('main/tools/db_restore_process/restore_from_file'),
     ['class' => 'form-horizontal', 'enctype' => 'multipart/form-data']
 ) ?>
 <div class="modal-body">
     <div class="form-body">
 
         <div class="form-group">
-            <label class="col-md-3 control-label" for="sort_order"><?php
-                echo TEXT_FILE ?></label>
+            <label class="col-md-3 control-label" for="sort_order"><?= \K::$fw->TEXT_FILE ?></label>
             <div class="col-md-9">
-                <?php
-                echo input_file_tag('filename', ['class' => 'form-control']) ?>
-                <?php
-                echo tooltip_text('(*.sql | *.zip) ' . sprintf(TEXT_MAX_FILE_SIZE, CFG_SERVER_UPLOAD_MAX_FILESIZE)) ?>
+                <?= \Helpers\Html::input_file_tag('filename', ['class' => 'form-control']) ?>
+                <?= \Helpers\App::tooltip_text(
+                    '(*.sql | *.zip) ' . sprintf(\K::$fw->TEXT_MAX_FILE_SIZE, \K::$fw->CFG_SERVER_UPLOAD_MAX_FILESIZE)
+                ) ?>
             </div>
         </div>
 
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer(TEXT_BUTTON_RESTORE) ?>
+<?= \Helpers\App::ajax_modal_template_footer(\K::$fw->TEXT_BUTTON_RESTORE) ?>
 
 </form>
 
@@ -41,8 +38,7 @@ echo ajax_modal_template_footer(TEXT_BUTTON_RESTORE) ?>
                     required: true,
                     extension: "zip|sql"
                 }
-
             }
         });
     });
-</script>  
+</script>
