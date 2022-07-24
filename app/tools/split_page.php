@@ -4,26 +4,14 @@ namespace Tools;
 
 class Split_page
 {
-    public $sql_query = [], $number_of_rows, $current_page_number, $number_of_pages, $number_of_rows_per_page, $page_name, $listing_container;
+    public $number_of_rows, $current_page_number, $number_of_pages, $number_of_rows_per_page, $page_name, $listing_container;
 
     public $listing_function;
+    private $sql_query = [];
 
     /* class constructor */
-    function __construct($query, $listing_container, $count_sql_query = 'query_num_rows', $rows_per_page = 0)
+    public function __construct($query, $listing_container, $count_sql_query = 'query_num_rows', $rows_per_page = 0)
     {
-        /*$query = [
-            'table' => '',
-            'filter' => [],
-            'options' => [],
-            'column' => null
-        ];*/
-        /*\K::$fw->backups_query = \K::model()->db_fetch(
-            $listing_split->sql_query['table'],
-            $listing_split->sql_query['filter'],
-            $listing_split->sql_query['options'],
-            $listing_split->sql_query['column']
-        );*/
-
         $this->listing_container = $listing_container;
         $this->listing_function = 'load_items_listing';
 
@@ -84,7 +72,7 @@ class Split_page
     /* class functions */
 
     // display split-page-number-links
-    function display_links($parameters = '')
+    public function display_links($parameters = '')
     {
         if ($this->number_of_pages == 1 or $this->number_of_rows == 0) {
             return '';
@@ -156,7 +144,7 @@ class Split_page
     }
 
     // display number of total products found
-    function display_count()
+    public function display_count()
     {
         $to_num = ($this->number_of_rows_per_page * $this->current_page_number);
         if ($to_num > $this->number_of_rows) {
@@ -172,5 +160,20 @@ class Split_page
         }
 
         return sprintf(\K::$fw->TEXT_DISPLAY_NUMBER_OF_ITEMS, $from_num, $to_num, $this->number_of_rows);
+    }
+
+    public function sql_query()
+    {
+        return $this->sql_query;
+    }
+
+    public static function makeQuery($table, $filter = [], $options = [], $column = null)
+    {
+        return [
+            'table' => $table,
+            'filter' => $filter,
+            'options' => $options,
+            'column' => $column
+        ];
     }
 }

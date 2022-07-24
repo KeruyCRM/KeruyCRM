@@ -93,6 +93,16 @@ class Model extends \Prefab
         );
     }
 
+    public function db_fetch_split($sql_query)
+    {
+        return self::db_fetch(
+            $sql_query['table'],
+            $sql_query['filter'],
+            $sql_query['options'],
+            $sql_query['column']
+        );
+    }
+
     public function db_fetch_one($table, $filter = [], $options = [], $column = null, $ttl = 0)
     {
         $ttl = $this->getTTL($table, $ttl);
