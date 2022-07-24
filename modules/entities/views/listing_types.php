@@ -133,7 +133,7 @@ echo button_tag(TEXT_BUTTON_ADD, url_for('entities/listing_highlight_form', 'ent
                     echo $v['id'] ?></td>
                 <td><?php
                     echo render_bool_value($v['is_active']) ?></td>
-                <td class="white-space-nomral"><?php
+                <td class="white-space-normal"><?php
                     echo $v['name'] . tooltip_text('<i>' . $v['notes'] . '</i>') ?></td>
                 <td><?php
                     echo listing_highlight::get_field_value_by_type($v, $v['fields_values']) ?></td>
