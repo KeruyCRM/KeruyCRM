@@ -21,7 +21,7 @@ class Db_restore extends \Controller
     public function index()
     {
         if (isset(\K::$fw->GET['id'])) {
-            \K::$fw->backup_info = \K::model()->db_find('app_backups', \K::$fw->_GET['id']);
+            \K::$fw->backup_info = \K::model()->db_find('app_backups', \K::$fw->GET['id']);
 
             \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'db_restore.php';
 
