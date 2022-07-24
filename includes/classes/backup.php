@@ -52,6 +52,7 @@ class backup
                 'users_id' => (isset($app_user['id']) ? $app_user['id'] : 0),
                 'date_added' => $timestamp,
                 'is_auto' => $this->is_auto,
+                'filename' => ''
             ];
 
             db_perform('app_backups', $sql_data);
