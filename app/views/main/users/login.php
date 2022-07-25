@@ -114,13 +114,13 @@ endif ?>
 
 if (\Models\Main\Users\Guest_login::is_enabled()) {
     //include(component_path('users/guest_login'));
-    echo \K::view()->render(\Helpers\Urls::component_path('main/users/guest_login'));
+    echo \K::view()->render(\Helpers\Urls::components_path('main/users/guest_login'));
 }
 
 //social login
 if (\K::$fw->CFG_ENABLE_SOCIAL_LOGIN != 0) {
     //include(component_path('users/social_login'));
-    echo \K::view()->render(\Helpers\Urls::component_path('main/users/social_login'));
+    echo \K::view()->render(\Helpers\Urls::components_path('main/users/social_login'));
 }
 ?>
 

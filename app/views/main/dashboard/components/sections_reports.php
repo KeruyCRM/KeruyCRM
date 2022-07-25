@@ -19,7 +19,7 @@ switch (true) {
         if ($reports) {
             \K::$fw->reports = $reports;
 
-            echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/render_standard_reports'));
+            echo \K::view()->render(\Helpers\Urls::components_path('main/dashboard/render_standard_reports'));
         }
         break;
     case strstr(\K::$fw->section_report, 'common'):
@@ -33,7 +33,7 @@ switch (true) {
         if ($reports) {
             \K::$fw->reports = $reports;
 
-            echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/render_standard_reports'));
+            echo \K::view()->render(\Helpers\Urls::components_path('main/dashboard/render_standard_reports'));
         }
         break;
     case strstr(\K::$fw->section_report, 'graphicreport'):
@@ -54,7 +54,7 @@ switch (true) {
                         'id=' . $reports['id']
                     ) . '">' . $reports['name'] . '</a></h3>';
 
-                echo \K::view()->render(\Helpers\Urls::component_path('ext/graphicreport/view'));
+                echo \K::view()->render(\Helpers\Urls::components_path('ext/graphicreport/view'));
             }
         }
         break;
@@ -76,7 +76,7 @@ switch (true) {
                         'id=' . $reports['id']
                     ) . '">' . $reports['name'] . '</a></h3>';
 
-                echo \K::view()->render(\Helpers\Urls::component_path('ext/funnelchart/view'));
+                echo \K::view()->render(\Helpers\Urls::components_path('ext/funnelchart/view'));
             }
         }
         break;
@@ -96,7 +96,7 @@ switch (true) {
                 ) . '">' . $pivot_tables['name'] . '</a></h3>';
             $pivot_table = new pivot_tables($pivot_tables);
 
-            echo \K::view()->render(\Helpers\Urls::component_path('ext/pivot_tables/pivot_table'));
+            echo \K::view()->render(\Helpers\Urls::components_path('ext/pivot_tables/pivot_table'));
         }
         break;
     case strstr(\K::$fw->section_report, 'pivotreports'):
@@ -129,7 +129,7 @@ switch (true) {
                 //allow edit
                 \K::$fw->pivotreports = pivotreports::apply_allow_edit($pivotreports);
 
-                echo \K::view()->render(\Helpers\Urls::component_path('ext/pivotreports/pivottable'));
+                echo \K::view()->render(\Helpers\Urls::components_path('ext/pivotreports/pivottable'));
             }
         }
         break;
@@ -142,7 +142,7 @@ switch (true) {
                 'personal'
             ) . '</h3>';
 
-        echo \K::view()->render(\Helpers\Urls::component_path('ext/calendar/personal'));
+        echo \K::view()->render(\Helpers\Urls::components_path('ext/calendar/personal'));
         break;
     case strstr(\K::$fw->section_report, 'calendar_public'):
 
@@ -153,7 +153,7 @@ switch (true) {
                 'public'
             ) . '</h3>';
 
-        echo \K::view()->render(\Helpers\Urls::component_path('ext/calendar/public'));
+        echo \K::view()->render(\Helpers\Urls::components_path('ext/calendar/public'));
         break;
     case strstr(\K::$fw->section_report, 'calendarreport'):
 
@@ -186,7 +186,7 @@ switch (true) {
                     $reports['id']
                 ) . '</h3>';
 
-            echo \K::view()->render(\Helpers\Urls::component_path('ext/calendar/report'));
+            echo \K::view()->render(\Helpers\Urls::components_path('ext/calendar/report'));
         }
         break;
     case strstr(\K::$fw->section_report, 'pivot_calendars'):
@@ -208,7 +208,7 @@ switch (true) {
                         $reports['id']
                     ) . '</h3>';
 
-                echo \K::view()->render(\Helpers\Urls::component_path('ext/pivot_calendars/report'));
+                echo \K::view()->render(\Helpers\Urls::components_path('ext/pivot_calendars/report'));
             }
         }
         break;
@@ -226,7 +226,7 @@ switch (true) {
                     'id=' . $reports['id']
                 ) . '">' . $reports['name'] . '</a></h3>';
 
-            echo \K::view()->render(\Helpers\Urls::component_path('ext/resource_timeline/report'));
+            echo \K::view()->render(\Helpers\Urls::components_path('ext/resource_timeline/report'));
         }
         break;
 }

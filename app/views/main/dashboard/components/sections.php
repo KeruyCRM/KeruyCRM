@@ -28,14 +28,14 @@ foreach ($sections_query as $sections) {
 			';
 
         \K::$fw->section_report = \K::$fw->sections['report_left'];
-        echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/sections_reports'));
+        echo \K::view()->render(\Helpers\Urls::components_path('main/dashboard/sections_reports'));
 
         echo '
 			</div>
 			<div class="col-md-6">';
 
         \K::$fw->section_report = \K::$fw->sections['report_right'];
-        echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/sections_reports'));
+        echo \K::view()->render(\Helpers\Urls::components_path('main/dashboard/sections_reports'));
 
         echo '
 			</div>
@@ -47,7 +47,7 @@ foreach ($sections_query as $sections) {
 			';
 
         \K::$fw->section_report = \K::$fw->sections['report_left'];
-        echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/sections_reports'));
+        echo \K::view()->render(\Helpers\Urls::components_path('main/dashboard/sections_reports'));
 
         echo '
                             </div>

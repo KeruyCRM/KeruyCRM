@@ -14,13 +14,19 @@ class _Module
             \Helpers\Urls::redirect_to('main/dashboard/access_forbidden');
         }
 
-        $app_title = app_set_title(TEXT_ACCESS_ALLOCATION_RULES);
+        \K::$fw->app_title = \Helpers\App::app_set_title(\K::$fw->TEXT_ACCESS_ALLOCATION_RULES);
 
         //check if entity exist
-        if (isset($_GET['entities_id'])) {
-            $check_query = db_query("select * from app_entities where id='" . db_input($_GET['entities_id']) . "'");
-            if (!$check = db_fetch_array($check_query)) {
-                redirect_to('entities/entities');
+        if (isset(\K::$fw->GET['entities_id'])) {
+            //$check_query = db_query("select * from app_entities where id='" . db_input($_GET['entities_id']) . "'");
+
+            $check = \K::model()->db_fetch_one('app_entities', [
+                'id = ?',
+                \K::$fw->GET['entities_id']
+            ]);
+
+            if (!$check) {
+                \Helpers\Urls::redirect_to('main/entities/entities');
             }
         }
     }

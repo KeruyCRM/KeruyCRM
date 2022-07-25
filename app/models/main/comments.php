@@ -1,18 +1,18 @@
 <?php
 
-class comments
+namespace Models\Main;
+
+class Comments
 {
     public static function get_access_choices()
     {
-        $choices = [
-            '' => TEXT_NO,
-            'view_create_update_delete' => TEXT_YES,
-            'view_create' => TEXT_CREATE_ONLY_ACCESS,
-            'view' => TEXT_VIEW_ONLY_ACCESS,
-            'view_create_update_delete_full' => TEXT_FULL_ACCESS,
+        return [
+            '' => \K::$fw->TEXT_NO,
+            'view_create_update_delete' => \K::$fw->TEXT_YES,
+            'view_create' => \K::$fw->TEXT_CREATE_ONLY_ACCESS,
+            'view' => \K::$fw->TEXT_VIEW_ONLY_ACCESS,
+            'view_create_update_delete_full' => \K::$fw->TEXT_FULL_ACCESS,
         ];
-
-        return $choices;
     }
 
     public static function get_available_filedtypes_in_comments()

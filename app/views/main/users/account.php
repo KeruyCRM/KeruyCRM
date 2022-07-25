@@ -415,7 +415,7 @@ if (\Helpers\App::is_ext_installed()) {
 }
 ?>
 
-<?= \K::view()->render(\Helpers\Urls::component_path('main/items/items_form.js')); ?>
+<?= \K::view()->render(\Helpers\Urls::components_path('main/items/items_form.js')); ?>
 
 <?= \Models\Main\Forms_fields_rules::hidden_form_fields(\K::$fw->current_entity_id) ?>
 

@@ -117,16 +117,12 @@ class Access_groups
 
     public static function get_name_by_id($id)
     {
-        global $app_access_groups_cache;
-
         if ($id == 0) {
             return \K::$fw->TEXT_ADMINISTRATOR;
+        } elseif (isset(\K::$fw->app_access_groups_cache[$id])) {
+            return \K::$fw->app_access_groups_cache[$id];
         } else {
-            if (isset($app_access_groups_cache[$id])) {
-                return $app_access_groups_cache[$id];
-            } else {
-                return '';
-            }
+            return '';
         }
     }
 

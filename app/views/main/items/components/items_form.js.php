@@ -334,7 +334,7 @@ if (!defined('KERUY_CRM')) {
 </script>
 
 <!-- include form fields display rules  -->
-<?= \K::view()->render(\Helpers\Urls::component_path('main/items/forms_fields_rules.js')); ?>
+<?= \K::view()->render(\Helpers\Urls::components_path('main/items/forms_fields_rules.js')); ?>
 <?php
 //insert custom javascript code
 if (strlen(trim(\K::$fw->entity_cfg->get('javascript_in_from')))) {

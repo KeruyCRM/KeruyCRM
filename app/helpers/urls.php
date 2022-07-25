@@ -70,7 +70,7 @@ class Urls
             ) . '>' . $name . '</a>';
     }
 
-    public static function component_path($path)
+    public static function components_path($path)
     {
         $module_array = explode('/', $path);
 

@@ -17,7 +17,7 @@ echo \K::$fw->html;
 
 //include sections
 //require(component_path('dashboard/sections'));
-echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/sections'));
+echo \K::view()->render(\Helpers\Urls::components_path('main/dashboard/sections'));
 
 foreach (\K::$fw->reports as $reports) {
     if ($reports['check']) {
@@ -31,7 +31,7 @@ foreach (\K::$fw->reports as $reports) {
 			<div class="alert alert-warning">' . \K::$fw->TEXT_REPORT_ALREADY_ASSIGNED . '</div>';
     } else {
         //require(component_path('dashboard/render_standard_reports'));
-        echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/render_standard_reports'));
+        echo \K::view()->render(\Helpers\Urls::components_path('main/dashboard/render_standard_reports'));
     }
 
     \K::$fw->has_reports_on_dashboard = true;
@@ -39,7 +39,7 @@ foreach (\K::$fw->reports as $reports) {
 
 //include common reports
 //require(component_path('dashboard/common_reports'));
-echo \K::view()->render(\Helpers\Urls::component_path('main/dashboard/common_reports'));
+echo \K::view()->render(\Helpers\Urls::components_path('main/dashboard/common_reports'));
 
 //display default dashboard msg
 if (!\K::$fw->has_reports_on_dashboard and \K::$fw->app_user['group_id'] == 0) {
