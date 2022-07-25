@@ -236,7 +236,7 @@ class App
         if (strlen($date) > 0) {
             $v = date_parse($date);
 
-            $timestamp = mktime(
+            return mktime(
                 (int)$v['hour'],
                 (int)$v['minute'],
                 (int)$v['second'],
@@ -244,8 +244,6 @@ class App
                 $v['day'],
                 $v['year']
             );
-
-            return $timestamp;
         } else {
             return '';
         }

@@ -1,14 +1,18 @@
 <?php
-echo ajax_modal_template_header(TEXT_HEADING_DELETE) ?>
 
-<?php
-echo form_tag('login', url_for('users_alerts/', 'action=delete&id=' . $_GET['id'])) ?>
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_HEADING_DELETE) ?>
+
+<?= \Helpers\Html::form_tag(
+    'login',
+    \Helpers\Urls::url_for('main/users_alerts/users_alerts/delete', 'id=' . \K::$fw->GET['id'])
+) ?>
 <div class="modal-body">
-    <?php
-    echo TEXT_ARE_YOU_SURE ?>
+    <?= \K::$fw->TEXT_ARE_YOU_SURE ?>
 </div>
-<?php
-echo ajax_modal_template_footer(TEXT_BUTTON_DELETE) ?>
+<?= \Helpers\App::ajax_modal_template_footer(\K::$fw->TEXT_BUTTON_DELETE) ?>
 
 </form>   
     

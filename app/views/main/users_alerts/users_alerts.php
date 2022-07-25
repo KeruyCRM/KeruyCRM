@@ -1,99 +1,85 @@
-<h3 class="page-title"><?php
-    echo TEXT_USERS_ALERTS ?></h3>
-
-<p><?php
-    echo TEXT_USERS_ALERTS_INFO; ?></p>
-
 <?php
-echo button_tag(TEXT_BUTTON_ADD, url_for('users_alerts/form')) ?>
+
+if (!defined('KERUY_CRM')) {
+    exit;
+} ?>
+<h3 class="page-title"><?= \K::$fw->TEXT_USERS_ALERTS ?></h3>
+
+<p><?= \K::$fw->TEXT_USERS_ALERTS_INFO; ?></p>
+
+<?= \Helpers\Html::button_tag(\K::$fw->TEXT_BUTTON_ADD, \Helpers\Urls::url_for('main/users_alerts/form')) ?>
 
 <div class="table-scrollable">
     <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr>
-            <th><?php
-                echo TEXT_ACTION ?></th>
-            <th><?php
-                echo TEXT_TYPE ?></th>
-            <th width="100%"><?php
-                echo TEXT_TITLE ?></th>
-            <th><?php
-                echo TEXT_LOCATION ?></th>
-            <th><?php
-                echo TEXT_DATE_FROM ?></th>
-            <th><?php
-                echo TEXT_DATE_TO ?></th>
-            <th><?php
-                echo TEXT_ASSIGNED_TO ?></th>
-            <th><?php
-                echo TEXT_IS_ACTIVE ?></th>
-            <th><?php
-                echo TEXT_CREATED_BY ?></th>
+            <th><?= \K::$fw->TEXT_ACTION ?></th>
+            <th><?= \K::$fw->TEXT_TYPE ?></th>
+            <th width="100%"><?= \K::$fw->TEXT_TITLE ?></th>
+            <th><?= \K::$fw->TEXT_LOCATION ?></th>
+            <th><?= \K::$fw->TEXT_DATE_FROM ?></th>
+            <th><?= \K::$fw->TEXT_DATE_TO ?></th>
+            <th><?= \K::$fw->TEXT_ASSIGNED_TO ?></th>
+            <th><?= \K::$fw->TEXT_IS_ACTIVE ?></th>
+            <th><?= \K::$fw->TEXT_CREATED_BY ?></th>
         </tr>
         </thead>
         <tbody>
         <?php
-        $access_groups_cache = access_groups::get_cache();
-
-        $alets_query = db_query("select * from app_users_alerts order by id desc");
-        while ($alets = db_fetch_array($alets_query)):
+        //while ($alerts = db_fetch_array($alets_query)):
+        foreach (\K::$fw->alerts_query as $alerts):
+            $alerts = $alerts->cast();
             ?>
             <tr>
-                <td style="white-space: nowrap;"><?php
-                    echo button_icon_delete(
-                            url_for('users_alerts/delete', 'id=' . $alets['id'])
-                        ) . ' ' . button_icon_edit(url_for('users_alerts/form', 'id=' . $alets['id'])); ?></td>
-                <td><?php
-                    echo '<span class="label label-' . $alets['type'] . '">' . users_alerts::get_type_by_name(
-                            $alets['type']
-                        ) . '</span>' ?></td>
-                <td><?php
-                    echo $alets['title'] ?></td>
-                <td><?php
-                    echo($alets['location'] == 'all' ? TEXT_LOCATION_ON_ALL_PAGES : TEXT_LOCATION_ON_DASHBOARD) ?></td>
-                <td><?php
-                    echo($alets['start_date'] ? format_date($alets['start_date']) : '') ?></td>
-                <td><?php
-                    echo($alets['end_date'] ? format_date($alets['end_date']) : '') ?></td>
+                <td style="white-space: nowrap;"><?= \Helpers\Html::button_icon_delete(
+                        \Helpers\Urls::url_for('main/users_alerts/delete', 'id=' . $alerts['id'])
+                    ) . ' ' . \Helpers\Html::button_icon_edit(
+                        \Helpers\Urls::url_for('main/users_alerts/form', 'id=' . $alerts['id'])
+                    ); ?></td>
+                <td><?= '<span class="label label-' . $alerts['type'] . '">' . \Models\Main\Users\Users_alerts::get_type_by_name(
+                        $alerts['type']
+                    ) . '</span>' ?></td>
+                <td><?= $alerts['title'] ?></td>
+                <td><?= ($alerts['location'] == 'all' ? \K::$fw->TEXT_LOCATION_ON_ALL_PAGES : \K::$fw->TEXT_LOCATION_ON_DASHBOARD) ?></td>
+                <td><?= ($alerts['start_date'] ? \Helpers\App::format_date($alerts['start_date']) : '') ?></td>
+                <td><?= ($alerts['end_date'] ? \Helpers\App::format_date($alerts['end_date']) : '') ?></td>
                 <td>
                     <?php
-                    if (strlen($alets['users_groups']) > 0) {
+                    if (strlen($alerts['users_groups']) > 0) {
                         $users_groups = [];
-                        foreach (explode(',', $alets['users_groups']) as $id) {
-                            $users_groups[] = $access_groups_cache[$id];
+                        foreach (explode(',', $alerts['users_groups']) as $id) {
+                            $users_groups[] = \K::$fw->app_access_groups_cache[$id];
                         }
 
                         if (count($users_groups) > 0) {
                             echo '<span style="display:block" data-html="true" data-toggle="tooltip" data-placement="left" title="' . addslashes(
                                     implode(', ', $users_groups)
-                                ) . '">' . TEXT_USERS_GROUPS . ' (' . count($users_groups) . ')</span>';
+                                ) . '">' . \K::$fw->TEXT_USERS_GROUPS . ' (' . count($users_groups) . ')</span>';
                         }
                     }
 
-                    if ($alets['assigned_to'] > 0) {
+                    if ($alerts['assigned_to'] > 0) {
                         $assigned_to = [];
-                        foreach (explode(',', $alets['assigned_to']) as $id) {
-                            $assigned_to[] = $app_users_cache[$id]['name'];
+                        foreach (explode(',', $alerts['assigned_to']) as $id) {
+                            $assigned_to[] = \K::$fw->app_users_cache[$id]['name'];
                         }
 
                         if (count($assigned_to) > 0) {
                             echo '<span data-html="true" data-toggle="tooltip" data-placement="left" title="' . addslashes(
                                     implode(', ', $assigned_to)
-                                ) . '">' . TEXT_USERS_LIST . ' (' . count($assigned_to) . ')</span>';
+                                ) . '">' . \K::$fw->TEXT_USERS_LIST . ' (' . count($assigned_to) . ')</span>';
                         }
                     }
                     ?>
                 </td>
-                <td><?php
-                    echo render_bool_value($alets['is_active']) ?></td>
-                <td><?php
-                    echo users::get_name_by_id($alets['created_by']) ?></td>
+                <td><?= \Helpers\App::render_bool_value($alerts['is_active']) ?></td>
+                <td><?= \Models\Main\Users\Users::get_name_by_id($alerts['created_by']) ?></td>
             </tr>
         <?php
-        endwhile ?>
+        endforeach; ?>
         <?php
-        if (db_num_rows($alets_query) == 0) {
-            echo '<tr><td colspan="9">' . TEXT_NO_RECORDS_FOUND . '</td></tr>';
+        if (count(\K::$fw->alerts_query) == 0) {
+            echo '<tr><td colspan="9">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</td></tr>';
         } ?>
         </tbody>
     </table>

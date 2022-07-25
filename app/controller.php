@@ -593,3 +593,13 @@ class Controller
 //calclulate_diff_days
 //calclulate_totals
 //CFG_SOCAL_LOGIN_*
+
+/*alter table app_users_alerts_viewed
+    add id int;
+
+alter table app_users_alerts_viewed
+    add constraint app_users_alerts_viewed_pk
+        primary key (id);
+
+alter table app_users_alerts_viewed
+    modify id int auto_increment;*/
