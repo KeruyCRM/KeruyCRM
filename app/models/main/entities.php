@@ -145,34 +145,35 @@ class Entities
     public static function get_cfg($id)
     {
         $cfg = [];
-        $info_query = db_fetch_all('app_entities_configuration', "entities_id='" . db_input($id) . "'");
-        while ($info = db_fetch_array($info_query)) {
+        $info_query = \K::model()->db_fetch('app_entities_configuration', [
+            'entities_id = ? ',
+            $id
+        ], [], 'configuration_name,configuration_value');
+
+        //while ($info = db_fetch_array($info_query)) {
+        foreach ($info_query as $info) {
+            $info = $info->cast();
+
             $cfg[$info['configuration_name']] = $info['configuration_value'];
         }
 
         $cfg_keys = [
-            'menu_title',
-            'menu_icon',
-            'listing_heading',
-            'window_heading',
-            'insert_button',
-            'use_editor_in_comments',
-            'use_comments',
-            'email_subject_new_item',
-            'email_subject_updated_item',
-            'email_subject_new_comment',
-            'number_fixed_field_in_listing',
-            'heading_width_based_content',
-            'change_col_width_in_listing',
+            'menu_title' => '',
+            'menu_icon' => '',
+            'listing_heading' => '',
+            'window_heading' => '',
+            'insert_button' => '',
+            'use_editor_in_comments' => '',
+            'use_comments' => '',
+            'email_subject_new_item' => '',
+            'email_subject_updated_item' => '',
+            'email_subject_new_comment' => '',
+            'number_fixed_field_in_listing' => '',
+            'heading_width_based_content' => '',
+            'change_col_width_in_listing' => '',
         ];
 
-        foreach ($cfg_keys as $k) {
-            if (!isset($cfg[$k])) {
-                $cfg[$k] = '';
-            }
-        }
-
-        return $cfg;
+        return array_merge($cfg_keys, $cfg);
     }
 
     public static function check_before_delete($id)
@@ -568,17 +569,15 @@ class Entities
 
     static function render_goto_menu($entity_id)
     {
-        global $app_entities_cache;
-
         $html = '';
 
-        if ($app_entities_cache[$entity_id]['parent_id'] > 0 or self::has_subentities($entity_id)) {
+        if (\K::$fw->app_entities_cache[$entity_id]['parent_id'] > 0 or self::has_subentities($entity_id)) {
             $html = '
                 <li class="nav_entities_goto">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">' . TEXT_GO_TO . ' <i class="fa fa-angle-down"></i></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">' . \K::$fw->TEXT_GO_TO . ' <i class="fa fa-angle-down"></i></a>
                     <ul class="dropdown-menu tree-table-menu">    
                 ';
-            if ($app_entities_cache[$entity_id]['parent_id'] > 0) {
+            if (\K::$fw->app_entities_cache[$entity_id]['parent_id'] > 0) {
                 $parents = array_reverse(self::get_parents($entity_id));
                 $parent_entity_id = $parents[0];
             } else {
@@ -588,9 +587,9 @@ class Entities
             $html_tt = '<div class="tt" data-tt-id="entity_' . $parent_entity_id . '"></div> ';
             $html .= '
                     <li class="' . ($parent_entity_id == $entity_id ? 'active' : '') . '">
-                         ' . link_to(
-                    $html_tt . $app_entities_cache[$parent_entity_id]['name'],
-                    url_for('entities/fields&entities_id=' . $parent_entity_id)
+                         ' . \Helpers\Urls::link_to(
+                    $html_tt . \K::$fw->app_entities_cache[$parent_entity_id]['name'],
+                    \Helpers\Urls::url_for('main/entities/fields', 'entities_id=' . $parent_entity_id)
                 ) . '
                     </li>';
 
@@ -599,7 +598,10 @@ class Entities
 
                 $html .= '
                     <li class="' . ($v['id'] == $entity_id ? 'active' : '') . '">
-                        ' . link_to($html_tt . $v['name'], url_for('entities/fields&entities_id=' . $v['id'])) . '
+                        ' . \Helpers\Urls::link_to(
+                        $html_tt . $v['name'],
+                        \Helpers\Urls::url_for('main/entities/fields', 'entities_id=' . $v['id'])
+                    ) . '
                     </li>';
             }
             $html .= '</ul></li>';
