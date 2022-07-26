@@ -175,28 +175,22 @@ class entities
         }
 
         $cfg_keys = [
-            'menu_title',
-            'menu_icon',
-            'listing_heading',
-            'window_heading',
-            'insert_button',
-            'use_editor_in_comments',
-            'use_comments',
-            'email_subject_new_item',
-            'email_subject_updated_item',
-            'email_subject_new_comment',
-            'number_fixed_field_in_listing',
-            'heading_width_based_content',
-            'change_col_width_in_listing',
+            'menu_title' => '',
+            'menu_icon' => '',
+            'listing_heading' => '',
+            'window_heading' => '',
+            'insert_button' => '',
+            'use_editor_in_comments' => '',
+            'use_comments' => '',
+            'email_subject_new_item' => '',
+            'email_subject_updated_item' => '',
+            'email_subject_new_comment' => '',
+            'number_fixed_field_in_listing' => '',
+            'heading_width_based_content' => '',
+            'change_col_width_in_listing' => '',
         ];
 
-        foreach ($cfg_keys as $k) {
-            if (!isset($cfg[$k])) {
-                $cfg[$k] = '';
-            }
-        }
-
-        return $cfg;
+        return array_merge($cfg_keys,$cfg);
     }
 
     public static function check_before_delete($id)
