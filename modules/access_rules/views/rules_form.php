@@ -134,8 +134,8 @@ echo form_tag(
 
 
         <?php
-        $choices = ['-1' => ''];
-        $choices += comments::get_access_choices();
+        //$choices = ['-1' => ''];
+        //$choices += comments::get_access_choices();
 
         $choices = [
             'false' => '',
