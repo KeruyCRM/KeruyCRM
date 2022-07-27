@@ -71,21 +71,26 @@ class Global_lists
         $where_sql = '';
 
         if ($check_status) {
-            $where_sql = " and (is_active=1 " . (strlen($selected_values) ? " or id in (" . implode(
-                        ',',
-                        array_map(function ($v) {
-                            return (int)$v;
-                        }, explode(',', $selected_values))
-                    ) . ")" : '') . ") ";
+            $where_sql = " and (is_active = 1 " . (strlen($selected_values) ? " or id in (" . \K::model(
+                    )->quoteToString(explode(',', $selected_values), \PDO::PARAM_INT) . ")" : '') . ") ";
         }
 
-        $choices_query = db_query(
+        /*$choices_query = db_query(
             "select * from app_global_lists_choices where lists_id = '" . db_input(
                 $lists_id
             ) . "' and parent_id='" . db_input($parent_id) . "' {$where_sql} order by sort_order, name"
-        );
+        );*/
 
-        while ($v = db_fetch_array($choices_query)) {
+        $choices_query = \K::model()->db_fetch('app_global_lists_choices', [
+            'lists_id = ? and parent_id = ?' . $where_sql,
+            $lists_id,
+            $parent_id
+        ], ['order' => 'sort_order,name']);
+
+        //while ($v = db_fetch_array($choices_query)) {
+        foreach ($choices_query as $v) {
+            $v = $v->cast();
+
             if ($display_choices_values == 1) {
                 $v['name'] = $v['name'] . (strlen(
                         $v['value']

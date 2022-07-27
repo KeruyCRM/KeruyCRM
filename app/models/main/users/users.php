@@ -30,8 +30,10 @@ class Users
             and strlen(\K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS) > 0
             and $include_public_profile) {
             $fields_query = \K::model()->db_query_exec(
-                'select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (' . \Models\fields_types::get_reserverd_types_list(
-                ) . ') and f.id in (' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ') and  f.entities_id = 1 and f.forms_tabs_id = t.id order by field(f.id,' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ')'
+                'select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (' . \Models\Main\Fields_types::get_reserverd_types_list(
+                ) . ') and f.id in (' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ') and  f.entities_id = 1 and f.forms_tabs_id = t.id order by field(f.id,' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ')',
+                null,
+                'app_fields,app_forms_tabs'
             );
             //while ($v = db_fetch_array($fields_query)) {
             foreach ($fields_query as $v) {
@@ -50,7 +52,9 @@ class Users
         $field_heading_id = \Models\Main\Fields::get_heading_id(1);
 
         $users_query = \K::model()->db_query_exec(
-            'select e.* ' . $listing_sql_query_select . ', a.name as group_name, a.id as group_id from app_entity_1 e left join app_access_groups a on a.id = e.field_6 order by e.field_8, e.field_7'
+            'select e.* ' . $listing_sql_query_select . ', a.name as group_name, a.id as group_id from app_entity_1 e left join app_access_groups a on a.id = e.field_6 order by e.field_8, e.field_7',
+            null,
+            'app_entity_1,app_access_groups'
         );
         //while ($users = db_fetch_array($users_query)) {
         foreach ($users_query as $users) {
@@ -961,7 +965,8 @@ class Users
     {
         return \K::model()->db_query_exec(
             'select e.*, ag.name as group_name from app_entity_1 e left join app_access_groups ag on ag.id = e.field_6 where e.id = ? and e.field_5 = 1',
-            $users_id
+            $users_id,
+            'app_entity_1,app_access_groups'
         );
     }
 }

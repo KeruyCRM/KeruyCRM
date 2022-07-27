@@ -34,17 +34,33 @@ class Model extends \Prefab
     {
         $mapper = new DB\SQL\Mapper($this->db, $table, $fields, \K::$fw->TTL_SCHEMA);
 
-        $mapper->aftererase(function ($self) {
+        if (!$cache = \K::cache()->get($table . '.tags')) {
+            $cache = [];
+        }
+
+        $mapper->aftererase(function ($self) use ($cache) {
             \K::cache()->reset($self->table() . '.sql');
+            foreach ($cache as $key => $value) {
+                \K::cache()->reset($key . '.sql');
+            }
         });
-        $mapper->afterinsert(function ($self) {
+        $mapper->afterinsert(function ($self) use ($cache) {
             \K::cache()->reset($self->table() . '.sql');
+            foreach ($cache as $key => $value) {
+                \K::cache()->reset($key . '.sql');
+            }
         });
-        $mapper->aftersave(function ($self) {
+        $mapper->aftersave(function ($self) use ($cache) {
             \K::cache()->reset($self->table() . '.sql');
+            foreach ($cache as $key => $value) {
+                \K::cache()->reset($key . '.sql');
+            }
         });
-        $mapper->afterupdate(function ($self) {
+        $mapper->afterupdate(function ($self) use ($cache) {
             \K::cache()->reset($self->table() . '.sql');
+            foreach ($cache as $key => $value) {
+                \K::cache()->reset($key . '.sql');
+            }
         });
 
         return $mapper;
@@ -62,7 +78,6 @@ class Model extends \Prefab
 
     public function quoteToString($array, $type = \PDO::PARAM_STR)
     {
-        //$array_map = array_map(['self', 'quote'], $array);
         $array_map = array_map(function ($val) use ($type) {
             return $this->quote($val, $type);
         }, $array);
@@ -177,14 +192,53 @@ class Model extends \Prefab
         return $mapper->erase();
     }
 
-    public function db_query_exec($cmds, $args = null, $ttl = 0, $log = true, $stamp = false)
+    public function db_query_exec($cmds, $args = null, $tagCache = '', $log = true, $stamp = false)
     {
+        if ($tagCache) {
+            $tagCache = str_replace(' ', '', $tagCache);
+
+            $exp = explode(',', $tagCache);
+            sort($exp);
+
+            foreach ($exp as $value) {
+                if (isset(\K::$fw->SKIP_CACHE_TABLE[$value])) {
+                    return $this->db->exec($cmds, $args, 0, $log, $stamp);
+                }
+            }
+
+            $tagCache = implode(',', $exp);
+
+            if (!$cache = \K::cache()->get('tags')) {
+                $cache = [];
+            }
+
+            if (!isset($cache[$tagCache])) {
+                $cache[$tagCache] = '';
+                \K::cache()->set('tags', $cache, 60 * 60 * 24 * 365);
+
+                foreach ($exp as $value) {
+                    if (!$cache = \K::cache()->get($value . '.tags')) {
+                        $cache = [];
+                    }
+
+                    if (!isset($cache[$tagCache])) {
+                        $cache[$tagCache] = '';
+                        \K::cache()->set($value . '.tags', $cache, 60 * 60 * 24 * 365);
+                    }
+                }
+            }
+
+            $ttl = [\K::$fw->TTL_QUERY, $tagCache];
+        } else {
+            $ttl = 0;
+        }
+
         return $this->db->exec($cmds, $args, $ttl, $log, $stamp);
     }
 
-    public function db_query_exec_one($cmds, $args = null, $ttl = 0, $log = true, $stamp = false)
+    public function db_query_exec_one($cmds, $args = null, $tagCache = '', $log = true, $stamp = false)
     {
-        $query = $this->db->exec($cmds, $args, $ttl, $log, $stamp);
+        $query = $this->db_query_exec($cmds, $args, $tagCache, $log, $stamp);
         return $query[0] ?? '';
     }
 

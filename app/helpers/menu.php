@@ -372,7 +372,8 @@ class Menu
             [
                 \K::$fw->app_user['group_id'],
                 \K::$fw->app_user['group_id']
-            ]
+            ],
+            'app_reports,app_entities,app_entities_access'
         );
 
         //while ($v = db_fetch_array($reports_query)) {

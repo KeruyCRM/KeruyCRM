@@ -38,7 +38,8 @@ class Rules extends \Controller
     {
         \K::$fw->form_fields_query = \K::model()->db_query_exec(
             'select r.*, f.name, f.type, f.id as fields_id, f.configuration from app_access_rules r, app_fields f where r.fields_id = f.id and r.entities_id = ?',
-            \K::$fw->GET['entities_id']
+            \K::$fw->GET['entities_id'],
+            'app_access_rules,app_fields'
         );
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'rules.php';
@@ -48,40 +49,50 @@ class Rules extends \Controller
 
     public function save()
     {
-        $sql_data = [
-            'entities_id' => $_GET['entities_id'],
-            'fields_id' => _get::int('fields_id'),
-            'choices' => (isset($_POST['choices']) ? implode(',', $_POST['choices']) : ''),
-            'users_groups' => (isset($_POST['users_groups']) ? implode(',', $_POST['users_groups']) : ''),
-            'access_schema' => (isset($_POST['access_schema']) ? implode(',', $_POST['access_schema']) : ''),
-            'fields_view_only_access' => (isset($_POST['fields_view_only_access']) ? implode(
-                ',',
-                $_POST['fields_view_only_access']
-            ) : ''),
-            'comments_access_schema' => str_replace('_', ',', $_POST['comments_access_schema']),
-        ];
+        if (\K::$fw->VERB == 'POST') {
+            $sql_data = [
+                'entities_id' => \K::$fw->GET['entities_id'],
+                'fields_id' => \K::$fw->GET['fields_id'],
+                'choices' => (isset(\K::$fw->POST['choices']) ? implode(',', \K::$fw->POST['choices']) : ''),
+                'users_groups' => (isset(\K::$fw->POST['users_groups']) ? implode(
+                    ',',
+                    \K::$fw->POST['users_groups']
+                ) : ''),
+                'access_schema' => (isset(\K::$fw->POST['access_schema']) ? implode(
+                    ',',
+                    \K::$fw->POST['access_schema']
+                ) : ''),
+                'fields_view_only_access' => (isset(\K::$fw->POST['fields_view_only_access']) ? implode(
+                    ',',
+                    \K::$fw->POST['fields_view_only_access']
+                ) : ''),
+                'comments_access_schema' => str_replace('_', ',', \K::$fw->POST['comments_access_schema']),
+            ];
 
-        if (isset($_GET['id'])) {
-            db_perform('app_access_rules', $sql_data, 'update', "id='" . db_input($_GET['id']) . "'");
+            \K::model()->db_perform('app_access_rules', $sql_data, ['id = ?', \K::$fw->GET['id']]);
+
+            \Helpers\Urls::redirect_to(
+                'main/access_rules/rules',
+                'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . \K::$fw->GET['fields_id']
+            );
         } else {
-            db_perform('app_access_rules', $sql_data);
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
-
-        redirect_to(
-            'access_rules/rules',
-            'entities_id=' . $_GET['entities_id'] . '&fields_id=' . _get::int('fields_id')
-        );
     }
 
     public function delete()
     {
-        if (isset($_GET['id'])) {
-            db_delete_row('app_access_rules', $_GET['id']);
-        }
+        if (\K::$fw->VERB == 'POST') {
+            if (isset(\K::$fw->GET['id'])) {
+                \K::model()->db_delete_row('app_access_rules', \K::$fw->GET['id']);
+            }
 
-        redirect_to(
-            'access_rules/rules',
-            'entities_id=' . $_GET['entities_id'] . '&fields_id=' . _get::int('fields_id')
-        );
+            \Helpers\Urls::redirect_to(
+                'main/access_rules/rules',
+                'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . \K::$fw->GET['fields_id']
+            );
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 }

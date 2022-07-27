@@ -20,6 +20,7 @@ class _Module
         if (isset(\K::$fw->GET['entities_id'])) {
             //$check_query = db_query("select * from app_entities where id='" . db_input($_GET['entities_id']) . "'");
 
+            //TODO Use only id in check or full cache
             $check = \K::model()->db_fetch_one('app_entities', [
                 'id = ?',
                 \K::$fw->GET['entities_id']
