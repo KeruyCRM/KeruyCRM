@@ -31,7 +31,7 @@ if (isset($_GET['path'])) echo input_hidden_tag('path', $_GET['path']) ?>
                     'fields_id',
                     fields::get_filters_choices($reports_info['entities_id']),
                     $obj['fields_id'],
-                    ['class' => 'form-control required', 'onChange' => 'load_fitlers_options(this.value)']
+                    ['class' => 'form-control required', 'onChange' => 'load_filters_options(this.value)']
                 ) ?>
             </div>
         </div>
@@ -52,11 +52,11 @@ echo ajax_modal_template_footer() ?>
     $(function () {
         $('#reports_filters').validate();
 
-        load_fitlers_options($('#fields_id').val());
+        load_filters_options($('#fields_id').val());
     });
 
 
-    function load_fitlers_options(fields_id) {
+    function load_filters_options(fields_id) {
         $('#filters_options').html('<div class="ajax-loading"></div>');
 
         $('#filters_options').load('<?php echo url_for("reports/filters_options")?>', {

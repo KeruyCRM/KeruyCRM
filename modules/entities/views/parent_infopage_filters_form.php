@@ -22,7 +22,7 @@ echo form_tag(
                     'fields_id',
                     fields::get_filters_choices($reports_info['entities_id'], false),
                     $obj['fields_id'],
-                    ['class' => 'form-control chosen-select required', 'onChange' => 'load_fitlers_options(this.value)']
+                    ['class' => 'form-control chosen-select required', 'onChange' => 'load_filters_options(this.value)']
                 ) ?>
             </div>
         </div>
@@ -43,11 +43,11 @@ echo ajax_modal_template_footer() ?>
     $(function () {
         $('#reports_filters').validate();
 
-        load_fitlers_options($('#fields_id').val());
+        load_filters_options($('#fields_id').val());
     });
 
 
-    function load_fitlers_options(fields_id) {
+    function load_filters_options(fields_id) {
         if (fields_id > 0) {
             $('#filters_options').html('<div class="ajax-loading"></div>');
 
