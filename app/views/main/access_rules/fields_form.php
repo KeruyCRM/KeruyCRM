@@ -3,57 +3,36 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_RULE_FOR_FIELD) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_RULE_FOR_FIELD) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'rules_form',
-    url_for(
-        'access_rules/fields',
-        'action=save&entities_id=' . $_GET['entities_id'] . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '')
+    \Helpers\Urls::url_for(
+        'main/access_rules/fields/save',
+        'entities_id=' . \K::$fw->GET['entities_id'] . (isset(\K::$fw->GET['id']) ? '&id=' . \K::$fw->GET['id'] : '')
     ),
     ['class' => 'form-horizontal']
 ) ?>
 <div class="modal-body">
     <div class="form-body ajax-modal-width-790">
-
-        <?php
-        $choices = [];
-        $fields_query = db_query(
-            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in ('fieldtype_dropdown','fieldtype_radioboxes','fieldtype_autostatus','fieldtype_stages') and f.entities_id='" . _get::int(
-                'entities_id'
-            ) . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
-        );
-        while ($v = db_fetch_array($fields_query)) {
-            $choices[$v['id']] = fields_types::get_option($v['type'], 'name', $v['name']);
-        }
-        ?>
-
         <div class="form-group">
-            <label class="col-md-3 control-label" for="name"><?php
-                echo TEXT_SELECT_FIELD ?></label>
+            <label class="col-md-3 control-label" for="name"><?= \K::$fw->TEXT_SELECT_FIELD ?></label>
             <div class="col-md-9">
-                <?php
-                echo select_tag(
+                <?= \Helpers\Html::select_tag(
                     'fields_id',
-                    $choices,
-                    $obj['fields_id'],
+                    \K::$fw->choices,
+                    \K::$fw->obj['fields_id'],
                     ['class' => 'form-control input-large required ', 'onChange' => 'get_fields_choices()']
                 ) ?>
-                <?php
-                echo tooltip_text(
-                    TEXT_AVAILABLE_FIELDS . ': ' . TEXT_FIELDTYPE_DROPDOWN_TITLE . ', ' . TEXT_FIELDTYPE_RADIOBOXES_TITLE . ', ' . TEXT_FIELDTYPE_AUTOSTATUS_TITLE
+                <?= \Helpers\App::tooltip_text(
+                    \K::$fw->TEXT_AVAILABLE_FIELDS . ': ' . \K::$fw->TEXT_FIELDTYPE_DROPDOWN_TITLE . ', ' . \K::$fw->TEXT_FIELDTYPE_RADIOBOXES_TITLE . ', ' . \K::$fw->TEXT_FIELDTYPE_AUTOSTATUS_TITLE
                 ) ?>
             </div>
         </div>
-
-
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
@@ -66,6 +45,4 @@ echo ajax_modal_template_footer() ?>
             }
         });
     });
-</script>   
-    
- 
+</script>
