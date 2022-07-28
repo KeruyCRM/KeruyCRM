@@ -4,14 +4,14 @@ namespace Helpers;
 
 class Urls
 {
-    public static function redirect_to($module, $prams = '', $token = false)
+    public static function redirect_to($module, $params = '', $token = false)
     {
         if (\K::$fw->AJAX) {
-            echo '<script>window.top.location.href="' . self::url_for($module, $prams, $token) . '"</script>';
+            echo '<script>window.top.location.href="' . self::url_for($module, $params, $token) . '"</script>';
             exit();
         }
 
-        \K::fw()->reroute(self::url_for($module, $prams, $token));
+        \K::fw()->reroute(self::url_for($module, $params, $token));
     }
 
     public static function is_ssl()

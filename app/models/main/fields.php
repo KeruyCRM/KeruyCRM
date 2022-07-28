@@ -534,7 +534,8 @@ class Fields
             "select f.*, t.name as tab_name, if(f.type in ('fieldtype_id','fieldtype_date_added','fieldtype_date_updated','fieldtype_created_by','fieldtype_parent_item_id'),-1,t.sort_order) as tab_sort_order from app_fields f, app_forms_tabs t where f.type in (" . $types_for_filters_list . ") " . (strlen(
                 $exclude
             ) ? " and f.type not in ({$exclude})" : '') . " and f.entities_id = ? and f.forms_tabs_id = t.id order by tab_sort_order, t.name, f.sort_order, f.name",
-            $entity_id
+            $entity_id,
+            'app_fields,app_forms_tabs'
         );
         //while ($v = db_fetch_array($fields_query)) {
         foreach ($fields_query as $v) {
