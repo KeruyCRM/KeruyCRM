@@ -1140,9 +1140,7 @@ class Reports
         $separator = '<br>',
         $filters_condition = ''
     ) {
-        //global $app_choices_cache, $app_users_cache, $app_global_choices_cache;
-
-        $field_info = db_find('app_fields', $fields_id);
+        $field_info = \K::model()->db_find('app_fields', $fields_id);
 
         $html = '';
 
@@ -1150,7 +1148,7 @@ class Reports
             case 'fieldtype_user_accessgroups':
                 $list = [];
                 foreach (explode(',', $filters_values) as $id) {
-                    if (strlen($name = access_groups::get_name_by_id($id))) {
+                    if (strlen($name = \Models\Main\Access_groups::get_name_by_id($id))) {
                         $list[] = $name;
                     }
                 }
@@ -1161,17 +1159,22 @@ class Reports
                 $html = ($filters_values == 1 ? \K::$fw->TEXT_ACTIVE : \K::$fw->TEXT_INACTIVE);
                 break;
             case 'fieldtype_parent_item_id':
-
-                $entity_info = db_find('app_entities', $field_info['entities_id']);
+                $entity_info = \K::model()->db_find('app_entities', $field_info['entities_id']);
 
                 $output = [];
                 foreach (explode(',', $filters_values) as $item_id) {
-                    $items_info_sql = "select e.* from app_entity_" . $entity_info['parent_id'] . " e where e.id='" . db_input(
+                    /*$items_info_sql = "select e.* from app_entity_" . $entity_info['parent_id'] . " e where e.id='" . db_input(
                             $item_id
                         ) . "'";
-                    $items_query = db_query($items_info_sql);
-                    if ($item = db_fetch_array($items_query)) {
-                        $output[] = items::get_heading_field($entity_info['parent_id'], $item['id']);
+                    $items_query = db_query($items_info_sql);*/
+
+                    $item = \K::model()->db_fetch_one('app_entity_' . $entity_info['parent_id'], [
+                        'id = ?',
+                        $item_id
+                    ], [], 'id');
+
+                    if ($item) {
+                        $output[] = \Models\Main\Items\Items::get_heading_field($entity_info['parent_id'], $item['id']);
                     }
                 }
 
@@ -1186,29 +1189,41 @@ class Reports
             case 'fieldtype_entity_ajax':
             case 'fieldtype_entity':
 
-                $cfg = fields_types::parse_configuration($field_info['configuration']);
+                $cfg = \Models\Main\Fields_types::parse_configuration($field_info['configuration']);
 
                 $field_heading_id = 0;
-                $fields_query = db_query(
+                /*$fields_query = db_query(
                     "select f.* from app_fields f where f.is_heading=1 and  f.entities_id='" . db_input(
                         $cfg['entity_id']
                     ) . "'"
-                );
-                if ($fields = db_fetch_array($fields_query)) {
+                );*/
+
+                $fields = \K::model()->db_fetch_one('app_fields', [
+                    'is_heading = 1 and entities_id = ?',
+                    $cfg['entity_id']
+                ], [], 'id');
+
+                if ($fields) {
                     $field_heading_id = $fields['id'];
                 }
 
                 $output = [];
                 foreach (explode(',', $filters_values) as $item_id) {
-                    $items_info_sql = "select e.* from app_entity_" . $cfg['entity_id'] . " e where e.id='" . db_input(
+                    /*$items_info_sql = "select e.* from app_entity_" . $cfg['entity_id'] . " e where e.id='" . db_input(
                             $item_id
                         ) . "'";
-                    $items_query = db_query($items_info_sql);
-                    if ($item = db_fetch_array($items_query)) {
+                    $items_query = db_query($items_info_sql);*/
+
+                    $item = \K::model()->db_fetch_one('app_entity_' . $cfg['entity_id'], [
+                        'id = ?',
+                        $item_id
+                    ]);
+
+                    if ($item) {
                         if ($cfg['entity_id'] == 1) {
                             $output[] = \K::$fw->app_users_cache[$item['id']]['name'];
                         } elseif ($field_heading_id > 0) {
-                            $output[] = items::get_heading_field_value($field_heading_id, $item);
+                            $output[] = \Models\Main\Items\Items::get_heading_field_value($field_heading_id, $item);
                         } else {
                             $output[] = $item['id'];
                         }
@@ -1235,7 +1250,7 @@ class Reports
                     if ($id == 'current_user_group_id') {
                         $list[] = \K::$fw->TEXT_CURRENT_USER_GROUP;
                     } else {
-                        $list[] = access_groups::get_name_by_id($id);
+                        $list[] = \Models\Main\Access_groups::get_name_by_id($id);
                     }
                 }
 
@@ -1253,7 +1268,7 @@ class Reports
             case 'fieldtype_stages':
             case 'fieldtype_color':
 
-                $cfg = new fields_types_cfg($field_info['configuration']);
+                $cfg = new \Models\Main\Fields_types_cfg($field_info['configuration']);
 
                 $list = [];
                 foreach (explode(',', $filters_values) as $id) {
@@ -1261,10 +1276,8 @@ class Reports
                         if (isset(\K::$fw->app_global_choices_cache[$id])) {
                             $list[] = \K::$fw->app_global_choices_cache[$id]['name'];
                         }
-                    } else {
-                        if (isset(\K::$fw->app_choices_cache[$id])) {
-                            $list[] = \K::$fw->app_choices_cache[$id]['name'];
-                        }
+                    } elseif (isset(\K::$fw->app_choices_cache[$id])) {
+                        $list[] = \K::$fw->app_choices_cache[$id]['name'];
                     }
                 }
 
@@ -1280,7 +1293,7 @@ class Reports
                 break;
             case 'fieldtype_boolean_checkbox':
             case 'fieldtype_boolean':
-                $html = fieldtype_boolean::get_boolean_value($field_info, $filters_values);
+                $html = \Tools\FieldsTypes\Fieldtype_boolean::get_boolean_value($field_info, $filters_values);
                 break;
             case 'fieldtype_date_added':
             case 'fieldtype_date_updated':
@@ -1321,16 +1334,16 @@ class Reports
                     }
                 } else {
                     if (strlen($values[1]) > 0) {
-                        $value = ($field_info['type'] == 'fieldtype_input_date' ? format_date(
-                            get_date_timestamp($values[1])
-                        ) : format_date_time(get_date_timestamp($values[1])));
+                        $value = ($field_info['type'] == 'fieldtype_input_date' ? \Helpers\App::format_date(
+                            \Helpers\App::get_date_timestamp($values[1])
+                        ) : \Helpers\App::format_date_time(\Helpers\App::get_date_timestamp($values[1])));
                         $html = \K::$fw->TEXT_DATE_FROM . ': ' . $value . ' ';
                     }
 
                     if (strlen($values[2]) > 0) {
-                        $value = ($field_info['type'] == 'fieldtype_input_date' ? format_date(
-                            get_date_timestamp($values[2])
-                        ) : format_date_time(get_date_timestamp($values[2])));
+                        $value = ($field_info['type'] == 'fieldtype_input_date' ? \Helpers\App::format_date(
+                            \Helpers\App::get_date_timestamp($values[2])
+                        ) : \Helpers\App::format_date_time(\Helpers\App::get_date_timestamp($values[2])));
                         $html .= \K::$fw->TEXT_DATE_TO . ': ' . $value . ' ';
                     }
                 }
