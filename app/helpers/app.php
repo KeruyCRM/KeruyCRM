@@ -1531,7 +1531,7 @@ class App
 
     public static function app_truncate_text($text, $max_text_length = 60, $text_part_length = 25)
     {
-        if (strlen($text) > 60) {
+        if (\K::utf()->strlen($text) > 60) {
             $text = \K::utf()->substr($text, 0, $text_part_length) . '...' .
                 \K::utf()->substr($text, -$text_part_length);
         }
