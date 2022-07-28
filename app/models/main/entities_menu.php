@@ -18,11 +18,19 @@ class Entities_menu
 
     static function get_tree($parent_id = 0, $tree = [], $level = 0)
     {
-        $menu_query = db_query(
+        /*$menu_query = db_query(
             "select * from app_entities_menu where parent_id=" . $parent_id . " order by sort_order, name"
-        );
+        );*/
 
-        while ($menu = db_fetch_array($menu_query)) {
+        $menu_query = \K::model()->db_fetch('app_entities_menu', [
+            'parent_id = ?',
+            $parent_id
+        ], ['order' => 'sort_order,name']);
+
+        //while ($menu = db_fetch_array($menu_query)) {
+        foreach ($menu_query as $menu) {
+            $menu = $menu->cast();
+
             $menu['level'] = $level;
 
             $tree[] = $menu;
@@ -270,8 +278,14 @@ class Entities_menu
             }
 
             if (strlen($reports_table)) {
-                $reports_info_query = db_query("select name from {$reports_table} where id='" . $reports_id . "'");
-                if ($reports_info = db_fetch_array($reports_info_query)) {
+                //$reports_info_query = db_query("select name from {$reports_table} where id='" . $reports_id . "'");
+
+                $reports_info = \K::model()->db_fetch_one($reports_table, [
+                    'id = ?',
+                    $reports_id
+                ], [], 'name');
+
+                if ($reports_info) {
                     $choices[] = $reports_info['name'];
                 }
             }

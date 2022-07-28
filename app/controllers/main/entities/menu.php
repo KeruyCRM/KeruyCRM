@@ -20,6 +20,8 @@ class Menu extends \Controller
 
     public function index()
     {
+        \K::$fw->countMenu = \K::model()->db_count('app_entities_menu');
+
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'menu.php';
 
         echo \K::view()->render($this->app_layout);

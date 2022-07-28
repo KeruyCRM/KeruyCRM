@@ -365,4 +365,23 @@ class Model extends \Prefab
 
         return $ttl;
     }
+
+    public function db_check_privileges(
+        $required_privileges = ['Select', 'Insert', 'Update', 'Delete', 'Create', 'Drop', 'Alter']
+    ) {
+        //check user privileges
+        $user_privileges_list = [];
+        $user_privileges_query = $this->db_query_exec('SHOW PRIVILEGES');
+
+        //while ($user_privileges = db_fetch_array($user_privileges_query)) {
+        foreach ($user_privileges_query as $user_privileges) {
+            $user_privileges_list[] = $user_privileges['Privilege'];
+        }
+
+        foreach ($required_privileges as $v) {
+            if (!in_array($v, $user_privileges_list)) {
+                die ('Error: "' . $v . '" privilege for mysql user is required. Please update privileges for user "' . \K::$fw->DB_SERVER_USERNAME . '"');
+            }
+        }
+    }
 }
