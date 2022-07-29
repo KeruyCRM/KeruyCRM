@@ -272,7 +272,7 @@ class Controller
 
     public function afterroute()
     {
-        if (!\K::$fw->AJAX) {
+        if (!\K::$fw->AJAX and \K::$fw->DEBUG == 3) {
             echo '<PRE style="white-space: pre-wrap;">' . PHP_EOL . \K::model()->db->log() . '</PRE>';
         }
     }

@@ -69,4 +69,17 @@ foreach ($plugins as $plugin) {
 
 //require_once 'app/routing.php';
 
+\K::fw()->set(
+    'ONERROR',
+    function ($f3) {
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        echo '<PRE>';
+        echo $f3->get('ERROR.text') . "\n";
+        echo $f3->get('ERROR.trace');
+        echo '</PRE>';
+    }
+);
+
 \K::$fw->run();
