@@ -222,7 +222,9 @@ class Users
     {
         $choices = [];
         $users_query = \K::model()->db_query_exec(
-            "select u.*, a.name as group_name from app_entity_1 u left join app_access_groups a on a.id = u.field_6 where u.field_5 = 1 order by u.field_8, u.field_7"
+            'select u.*, a.name as group_name from app_entity_1 u left join app_access_groups a on a.id = u.field_6 where u.field_5 = 1 order by u.field_8, u.field_7',
+            null,
+            'app_entity_1,app_access_groups'
         );
         //while ($users = db_fetch_array($users_query)) {
         foreach ($users_query as $users) {

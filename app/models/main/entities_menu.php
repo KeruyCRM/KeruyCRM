@@ -43,116 +43,230 @@ class Entities_menu
 
     static function get_reports_choices()
     {
-        global $app_user;
-
         $choices = [];
 
-        $reports_query = db_query(
+        /*$reports_query = db_query(
             "select id, name from app_reports where created_by='" . db_input(
-                $app_user['id']
+                \K::$fw->app_user['id']
             ) . "' and reports_type in ('standard') order by name"
-        );
-        while ($v = db_fetch_array($reports_query)) {
-            $choices[TEXT_STANDARD_REPORTS]['standard' . $v['id']] = $v['name'];
+        );*/
+
+        $reports_query = \K::model()->db_fetch('app_reports', [
+            'created_by = ? and reports_type in (?)',
+            \K::$fw->app_user['id'],
+            'standard'
+        ], ['order' => 'name'], 'id,name');
+
+        //while ($v = db_fetch_array($reports_query)) {
+        foreach ($reports_query as $v) {
+            $v = $v->cast();
+
+            $choices[\K::$fw->TEXT_STANDARD_REPORTS]['standard' . $v['id']] = $v['name'];
         }
 
-        $reports_query = db_query(
+        /*$reports_query = db_query(
             "select id, name from app_reports_groups where created_by='" . db_input(
-                $app_user['id']
+                \K::$fw->app_user['id']
             ) . "' and is_common=0 order by sort_order, name"
-        );
-        while ($v = db_fetch_array($reports_query)) {
-            $choices[TEXT_REPORTS_GROUPS]['dashboard' . $v['id']] = $v['name'];
+        );*/
+
+        $reports_query = \K::model()->db_fetch('app_reports_groups', [
+            'created_by = ? and is_common = 0',
+            \K::$fw->app_user['id']
+        ], ['order' => 'sort_order,name'], 'id,name');
+
+        foreach ($reports_query as $v) {
+            $v = $v->cast();
+
+            $choices[\K::$fw->TEXT_REPORTS_GROUPS]['dashboard' . $v['id']] = $v['name'];
         }
 
         if (\Helpers\App::is_ext_installed()) {
             //get common reports
-            $reports_query = db_query(
-                "select r.id, r.name from app_reports r, app_entities e, app_entities_access ea  where r.entities_id = e.id and e.id=ea.entities_id and r.reports_type = 'common' order by r.dashboard_sort_order, name"
+            $reports_query = \K::model()->db_query_exec(
+                "select r.id, r.name from app_reports r, app_entities e, app_entities_access ea  where r.entities_id = e.id and e.id = ea.entities_id and r.reports_type = 'common' order by r.dashboard_sort_order, name",
+                null,
+                'app_reports,app_entities,app_entities_access'
             );
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_COMMON_REPORTS]['common' . $v['id']] = $v['name'];
+
+            foreach ($reports_query as $v) {
+                $choices[\K::$fw->TEXT_EXT_COMMON_REPORTS]['common' . $v['id']] = $v['name'];
             }
 
-            $reports_query = db_query(
+            /*$reports_query = db_query(
                 "select id, name from app_reports_groups where is_common=1 order by sort_order, name"
+            );*/
+
+            $reports_query = \K::model()->db_fetch('app_reports_groups', [
+                'is_common = 1'
+            ], ['order' => 'sort_order,name'], 'id,name');
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_COMMON_REPORTS_GROUPS]['dashboard' . $v['id']] = $v['name'];
+            }
+
+            //$reports_query = db_query("select id, name from app_ext_track_changes where is_active=1 order by name");
+
+            $reports_query = \K::model()->db_fetch('app_ext_track_changes', [
+                'is_active = 1'
+            ], ['order' => 'name'], 'id,name');
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_CHANGE_HISTORY]['track_changes' . $v['id']] = $v['name'];
+            }
+
+            $reports_query = \K::model()->db_query_exec(
+                'select g.id, g.name from app_ext_ganttchart g, app_entities e where e.id = g.entities_id order by name',
+                null,
+                'app_ext_ganttchart,app_entities'
             );
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_COMMON_REPORTS_GROUPS]['dashboard' . $v['id']] = $v['name'];
+
+            foreach ($reports_query as $v) {
+                $choices[\K::$fw->TEXT_EXT_GANTTCHART_REPORT]['ganttreport' . $v['id']] = $v['name'];
             }
 
-            $reports_query = db_query("select id, name from app_ext_track_changes where is_active=1 order by name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_CHANGE_HISTORY]['track_changes' . $v['id']] = $v['name'];
+            //$reports_query = db_query("select id, name from app_ext_graphicreport order by name");
+
+            $reports_query = \K::model()->db_fetch('app_ext_graphicreport', [], ['order' => 'name'], 'id,name');
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_GRAPHIC_REPORT]['graphicreport' . $v['id']] = $v['name'];
             }
 
-            $reports_query = db_query(
-                "select g.id, g.name from app_ext_ganttchart g, app_entities e where e.id=g.entities_id order by name"
+            //$reports_query = db_query("select id, name from app_ext_pivot_tables order by sort_order, name");
+
+            $reports_query = \K::model()->db_fetch(
+                'app_ext_pivot_tables',
+                [],
+                ['order' => 'sort_order,name'],
+                'id,name'
             );
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_GANTTCHART_REPORT]['ganttreport' . $v['id']] = $v['name'];
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_PIVOT_TABLES]['pivot_tables' . $v['id']] = $v['name'];
             }
 
-            $reports_query = db_query("select id, name from app_ext_graphicreport order by name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_GRAPHIC_REPORT]['graphicreport' . $v['id']] = $v['name'];
-            }
+            //$reports_query = db_query("select id, name from app_ext_pivotreports order by sort_order, name");
 
-            $reports_query = db_query("select id, name from app_ext_pivot_tables order by sort_order, name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_PIVOT_TABLES]['pivot_tables' . $v['id']] = $v['name'];
-            }
-
-            $reports_query = db_query("select id, name from app_ext_pivotreports order by sort_order, name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_PIVOTREPORTS]['pivotreports' . $v['id']] = $v['name'];
-            }
-
-            $reports_query = db_query("select id, name from app_ext_timeline_reports order by name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_TIMELINE_REPORTS]['timelinereport' . $v['id']] = $v['name'];
-            }
-
-            $reports_query = db_query("select id, name from app_ext_funnelchart order by name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_FUNNELCHART]['funnelchart' . $v['id']] = $v['name'];
-            }
-
-            $reports_query = db_query(
-                "select k.id, k.name from app_ext_kanban k, app_entities e where e.id=k.entities_id order by name"
+            $reports_query = \K::model()->db_fetch(
+                'app_ext_pivotreports',
+                [],
+                ['order' => 'sort_order,name'],
+                'id,name'
             );
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_KANBAN]['kanban' . $v['id']] = $v['name'];
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_PIVOTREPORTS]['pivotreports' . $v['id']] = $v['name'];
             }
 
-            $reports_query = db_query("select id, name from app_ext_calendar order by name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_СALENDAR]['calendarreport' . $v['id']] = $v['name'];
+            //$reports_query = db_query("select id, name from app_ext_timeline_reports order by name");
+
+            $reports_query = \K::model()->db_fetch('app_ext_timeline_reports', [], ['order' => 'name'], 'id,name');
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_TIMELINE_REPORTS]['timelinereport' . $v['id']] = $v['name'];
             }
 
-            $reports_query = db_query("select id, name from app_ext_pivot_calendars order by sort_order, name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_RESOURCE_TIMELINE]['pivot_calendars' . $v['id']] = $v['name'];
+            //$reports_query = db_query("select id, name from app_ext_funnelchart order by name");
+
+            $reports_query = \K::model()->db_fetch('app_ext_funnelchart', [], ['order' => 'name'], 'id,name');
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_FUNNELCHART]['funnelchart' . $v['id']] = $v['name'];
             }
 
-            $reports_query = db_query("select id, name from app_ext_resource_timeline order by sort_order, name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_PIVOT_СALENDAR]['resource_timeline' . $v['id']] = $v['name'];
+            $reports_query = \K::model()->db_query_exec(
+                'select k.id, k.name from app_ext_kanban k, app_entities e where e.id = k.entities_id order by name',
+                null,
+                'app_ext_kanban,app_entities'
+            );
+
+            foreach ($reports_query as $v) {
+                $choices[\K::$fw->TEXT_EXT_KANBAN]['kanban' . $v['id']] = $v['name'];
             }
 
-            $reports_query = db_query("select id, name from app_ext_image_map order by name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_IMAGE_MAP]['image_map' . $v['id']] = $v['name'];
+            //$reports_query = db_query("select id, name from app_ext_calendar order by name");
+
+            $reports_query = \K::model()->db_fetch('app_ext_calendar', [], ['order' => 'name'], 'id,name');
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_СALENDAR]['calendarreport' . $v['id']] = $v['name'];
             }
 
-            $reports_query = db_query("select id, name from app_ext_map_reports order by name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_MAP_REPORTS]['map_reports' . $v['id']] = $v['name'];
+            //$reports_query = db_query("select id, name from app_ext_pivot_calendars order by sort_order, name");
+
+            $reports_query = \K::model()->db_fetch(
+                'app_ext_pivot_calendars',
+                [],
+                ['order' => 'sort_order, name'],
+                'id,name'
+            );
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_RESOURCE_TIMELINE]['pivot_calendars' . $v['id']] = $v['name'];
             }
 
-            $reports_query = db_query("select id, name from app_ext_pivot_map_reports order by name");
-            while ($v = db_fetch_array($reports_query)) {
-                $choices[TEXT_EXT_PIVOT_MAP_REPORT]['pivot_map_reports' . $v['id']] = $v['name'];
+            //$reports_query = db_query("select id, name from app_ext_resource_timeline order by sort_order, name");
+
+            $reports_query = \K::model()->db_fetch(
+                'app_ext_resource_timeline',
+                [],
+                ['order' => 'sort_order, name'],
+                'id,name'
+            );
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_PIVOT_СALENDAR]['resource_timeline' . $v['id']] = $v['name'];
+            }
+
+            //$reports_query = db_query("select id, name from app_ext_image_map order by name");
+
+            $reports_query = \K::model()->db_fetch('app_ext_image_map', [], ['order' => 'name'], 'id,name');
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_IMAGE_MAP]['image_map' . $v['id']] = $v['name'];
+            }
+
+            //$reports_query = db_query("select id, name from app_ext_map_reports order by name");
+
+            $reports_query = \K::model()->db_fetch('app_ext_map_reports', [], ['order' => 'name'], 'id,name');
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_MAP_REPORTS]['map_reports' . $v['id']] = $v['name'];
+            }
+
+            //$reports_query = db_query("select id, name from app_ext_pivot_map_reports order by name");
+
+            $reports_query = \K::model()->db_fetch('app_ext_pivot_map_reports', [], ['order' => 'name'], 'id,name');
+
+            foreach ($reports_query as $v) {
+                $v = $v->cast();
+
+                $choices[\K::$fw->TEXT_EXT_PIVOT_MAP_REPORT]['pivot_map_reports' . $v['id']] = $v['name'];
             }
         }
 
@@ -167,8 +281,6 @@ class Entities_menu
 
                         foreach ($choices as $type1 => $report1) {
                             foreach ($report1 as $key1 => $name1) {
-                                //echo $name . '==' . $name1 . ' - ' . $key . '!=' . $key1 . '<br>';
-
                                 if ($name == $name1 and $key != $key1) {
                                     $check = true;
                                 }
