@@ -3,10 +3,7 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-    <h4 class="modal-title"><?= \K::$fw->TEXT_INFO ?></h4>
-</div>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_INFO) ?>
 
 <?= \Helpers\Html::form_tag(
     'menu_form',
@@ -14,6 +11,7 @@ if (!defined('KERUY_CRM')) {
     ['class' => 'form-horizontal']
 ) ?>
 <?= \Helpers\Html::input_hidden_tag('parent_id', \K::$fw->obj['parent_id']) ?>
+
 <div class="modal-body">
     <div class="form-body">
         <div class="form-group">

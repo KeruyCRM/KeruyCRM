@@ -3,27 +3,20 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-    <h4 class="modal-title"><?php
-        echo TEXT_HEADING_DELETE ?></h4>
-</div>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_HEADING_DELETE) ?>
 
-<?php
-echo form_tag('delete', url_for('entities/menu', 'action=delete&id=' . $_GET['id']), ['class' => 'form-horizontal']) ?>
+<?= \Helpers\Html::form_tag(
+    'delete',
+    \Helpers\Urls::url_for('main/entities/menu/delete', 'id=' . \K::$fw->GET['id']),
+    ['class' => 'form-horizontal']
+) ?>
+
 <div class="modal-body">
     <div class="form-body">
-
-        <?php
-        $obj = db_find('app_entities_menu', $_GET['id']);
-        echo sprintf(TEXT_DEFAULT_DELETE_CONFIRMATION, $obj['name']);
-        ?>
-
+        <?= sprintf(\K::$fw->TEXT_DEFAULT_DELETE_CONFIRMATION, \K::$fw->obj['name']); ?>
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer(TEXT_BUTTON_DELETE) ?>
+<?= \Helpers\App::ajax_modal_template_footer(\K::$fw->TEXT_BUTTON_DELETE) ?>
 
-</form>    
-    
+</form>

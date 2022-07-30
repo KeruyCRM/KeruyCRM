@@ -3,35 +3,28 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-    <h4 class="modal-title"><?php
-        echo TEXT_SORT ?></h4>
-</div>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_SORT) ?>
 
-<?php
-echo form_tag('menu', url_for('entities/menu')) ?>
+<?= \Helpers\Html::form_tag('menu', \Helpers\Urls::url_for('main/entities/menu')) ?>
+
 <div class="modal-body">
-
-
     <div class="cfg_forms_fields">
         <ul id="sort_items" class="sortable">
             <?php
-            $groups_query = db_fetch_all('app_entities_menu', '', 'sort_order, name');
-            while ($v = db_fetch_array($groups_query)) {
+            //while ($v = db_fetch_array($groups_query)) {
+            foreach (\K::$fw->groups_query as $v) {
+                $v = $v->cast();
+
                 echo '
     <li id="item_' . $v['id'] . '"><div>' . $v['name'] . '</div></li>
   ';
             }
-
             ?>
         </ul>
     </div>
-
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
@@ -45,10 +38,8 @@ echo ajax_modal_template_footer() ?>
                     data = data + '&' + $(this).attr('id') + '=' + $(this).sortable("toArray")
                 });
                 data = data.slice(1)
-                $.ajax({type: "POST", url: '<?php echo url_for("entities/menu", "action=sort")?>', data: data});
+                $.ajax({type: "POST", url: '<?= \Helpers\Urls::url_for('main/entities/menu/sort') ?>', data: data});
             }
         });
-
-
     });
-</script> 
+</script>
