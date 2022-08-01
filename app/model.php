@@ -30,6 +30,16 @@ class Model extends \Prefab
         }
     }
 
+    public function begin()
+    {
+        return $this->db->begin();
+    }
+
+    public function commit()
+    {
+        return $this->db->commit();
+    }
+
     public function mapper($table, $fields = null)
     {
         $mapper = new DB\SQL\Mapper($this->db, $table, $fields, \K::$fw->TTL_SCHEMA);
@@ -64,6 +74,11 @@ class Model extends \Prefab
         });
 
         return $mapper;
+    }
+
+    public function schema()
+    {
+        return new \DB\SQL\Schema($this->db);
     }
 
     public function count()
