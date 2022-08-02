@@ -66,6 +66,8 @@ class Entities extends \Controller
             } else {
                 if (isset(\K::$fw->POST['parent_id'])) {
                     $sql_data['parent_id'] = \K::$fw->POST['parent_id'];
+                }else{
+                    $sql_data['parent_id'] = 0;
                 }
 
                 \K::model()->begin();
