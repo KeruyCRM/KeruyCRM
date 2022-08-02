@@ -31,7 +31,13 @@ class Menu extends \Controller
     {
         if (isset(\K::$fw->POST['sort_items'])) {
             $sort_order = 0;
-            foreach (explode(',', \K::$fw->POST['sort_items']) as $v) {
+            $exp = explode(',', \K::$fw->POST['sort_items']);
+
+            if (count($exp)) {
+                \K::model()->begin();
+            }
+
+            foreach ($exp as $v) {
                 /*db_query(
                     "update app_entities_menu set sort_order='" . $sort_order . "' where id='" . str_replace(
                         'item_',
@@ -47,6 +53,10 @@ class Menu extends \Controller
                 );
 
                 $sort_order++;
+            }
+
+            if (\K::model()->trans()) {
+                \K::model()->commit();
             }
         } else {
             \Helpers\Urls::redirect_to('main/dashboard');

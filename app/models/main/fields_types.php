@@ -1096,11 +1096,9 @@ class Fields_types
         return $attributes;
     }
 
-    //use update_items_fields form any fields types where it's requred
+    //use update_items_fields form any fields types where it's required
     public static function update_items_fields($current_entity_id, $item_id)
     {
-        $fieldtype_mysql_query_force = true;
-
         //get item info
         $item_info = \K::model()->db_query_exec_one(
             'select e.* ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
@@ -1110,8 +1108,7 @@ class Fields_types
             $item_id
         );
 
-        //$item_info = $item_info_query[0] ?? '';
-
+        //TODO Add transaction
         //autoupdate fields in  fieldtype_mysql_query        
         \Tools\FieldsTypes\Fieldtype_mysql_query::update_items_fields($current_entity_id, $item_id, $item_info);
 

@@ -21,7 +21,7 @@ class Fields extends \Controller
     public function index()
     {
         \K::$fw->form_fields_query = \K::model()->db_query_exec(
-            'select r.*, f.name, f.type, f.id as fields_id, f.configuration from app_access_rules_fields r, app_fields f where r.fields_id = f.id and r.entities_id= ?',
+            'select r.*, f.name, f.type, f.id as fields_id, f.configuration from app_access_rules_fields r, app_fields f where r.fields_id = f.id and r.entities_id = ?',
             \K::$fw->GET['entities_id'],
             'app_access_rules_fields,app_fields'
         );
@@ -83,11 +83,16 @@ class Fields extends \Controller
 
             if (isset(\K::$fw->GET['id'])) {
                 $access_rules_fields_info = \K::model()->db_find('app_access_rules_fields', \K::$fw->GET['id']);
+
+                \K::model()->begin();
+
                 if ($access_rules_fields_info['fields_id'] != \K::$fw->POST['fields_id']) {
                     \K::model()->db_delete_row('app_access_rules', \K::$fw->GET['entities_id'], 'entities_id');
                 }
 
                 \K::model()->db_update('app_access_rules_fields', $sql_data, ['id = ?', \K::$fw->GET['id']]);
+
+                \K::model()->commit();
             } else {
                 \K::model()->db_perform('app_access_rules_fields', $sql_data);
             }
@@ -102,8 +107,12 @@ class Fields extends \Controller
     {
         if (\K::$fw->VERB == 'POST') {
             if (isset(\K::$fw->GET['id'])) {
+                \K::model()->begin();
+
                 \K::model()->db_delete_row('app_access_rules_fields', \K::$fw->GET['id']);
                 \K::model()->db_delete_row('app_access_rules', \K::$fw->GET['entities_id'], 'entities_id');
+
+                \K::model()->commit();
             }
 
             \Helpers\Urls::redirect_to('main/access_rules/fields', 'entities_id=' . \K::$fw->GET['entities_id']);

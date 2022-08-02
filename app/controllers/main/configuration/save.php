@@ -54,6 +54,8 @@ class Save extends \Controller
             }
 
             if (\K::fw()->exists('POST.CFG')) {
+                \K::model()->begin();
+
                 foreach (\K::fw()->POST['CFG'] as $k => $v) {
                     $k = 'CFG_' . $k;
 
@@ -137,6 +139,8 @@ class Save extends \Controller
 
                     \Models\Main\Configuration::set($k, $value);
                 }
+
+                \K::model()->commit();
 
                 \K::flash()->addMessage(\K::$fw->TEXT_CONFIGURATION_UPDATED, 'success');
             }

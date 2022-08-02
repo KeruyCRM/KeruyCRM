@@ -353,8 +353,6 @@ class Users
 
     public static function send_email($options = [])
     {
-        global $alerts;
-
         //check status
         if (\K::$fw->CFG_EMAIL_USE_NOTIFICATION == 0 and !isset($options['send_directly'])) {
             return false;

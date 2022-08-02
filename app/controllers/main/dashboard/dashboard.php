@@ -127,7 +127,13 @@ class Dashboard extends \Controller
         if (\K::$fw->VERB == 'POST') {
             if (\K::fw()->exists('POST.reports_counter_on_dashboard', $reports_counter_on_dashboard)) {
                 $sort_order = 0;
-                foreach (explode(',', $reports_counter_on_dashboard) as $v) {
+                $exp = explode(',', $reports_counter_on_dashboard);
+
+                if (count($exp)) {
+                    \K::model()->begin();
+                }
+
+                foreach ($exp as $v) {
                     $sql_data = ['in_dashboard_counter' => 1, 'dashboard_counter_sort_order' => $sort_order];
 
                     $this->_update_reports($sql_data, $v);
@@ -140,11 +146,21 @@ class Dashboard extends \Controller
                 'POST.reports_counter_excluded_from_dashboard',
                 $reports_counter_excluded_from_dashboard
             )) {
-                foreach (explode(',', $reports_counter_excluded_from_dashboard) as $v) {
+                $exp = explode(',', $reports_counter_excluded_from_dashboard);
+
+                if (!\K::model()->trans() and count($exp)) {
+                    \K::model()->begin();
+                }
+
+                foreach ($exp as $v) {
                     $sql_data = ['in_dashboard_counter' => 0, 'dashboard_counter_sort_order' => 0];
 
                     $this->_update_reports($sql_data, $v);
                 }
+            }
+
+            if (\K::model()->trans()) {
+                \K::model()->commit();
             }
         } else {
             \Helpers\Urls::redirect_to('main/dashboard');
@@ -156,7 +172,13 @@ class Dashboard extends \Controller
         if (\K::$fw->VERB == 'POST') {
             if (\K::fw()->exists('POST.reports_in_header', $reports_in_header)) {
                 $sort_order = 0;
-                foreach (explode(',', $reports_in_header) as $v) {
+                $exp = explode(',', $reports_in_header);
+
+                if (count($exp)) {
+                    \K::model()->begin();
+                }
+
+                foreach ($exp as $v) {
                     $sql_data = ['in_header' => 1, 'header_sort_order' => $sort_order];
 
                     $this->_update_reports($sql_data, $v);
@@ -166,11 +188,21 @@ class Dashboard extends \Controller
             }
 
             if (\K::fw()->exists('POST.reports_excluded_in_header', $reports_excluded_in_header)) {
-                foreach (explode(',', $reports_excluded_in_header) as $v) {
+                $exp = explode(',', $reports_excluded_in_header);
+
+                if (!\K::model()->trans() and count($exp)) {
+                    \K::model()->begin();
+                }
+
+                foreach ($exp as $v) {
                     $sql_data = ['in_header' => 0, 'header_sort_order' => 0];
 
                     $this->_update_reports($sql_data, $v);
                 }
+            }
+
+            if (\K::model()->trans()) {
+                \K::model()->commit();
             }
         } else {
             \Helpers\Urls::redirect_to('main/dashboard');

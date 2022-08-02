@@ -23,7 +23,7 @@ class Entities_groups extends \Controller
         //$groups_query = db_query("select * from app_entities_groups order by sort_order, name");
 
         \K::$fw->groups_query = \K::model()->db_fetch('app_entities_groups', [], ['order' => 'sort_order, name']);
-        \K::$fw->groups_query_count = \K::model()->count();
+        \K::$fw->groups_query_count = count(\K::$fw->groups_query);
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'entities_groups.php';
 

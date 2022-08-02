@@ -196,6 +196,7 @@ class Account extends \Controller
                 $choices_values->prepare($process_options);
             }
 
+            //TODO Add transaction
             if (count($sql_data)) {
                 \K::model()->db_perform(
                     'app_entity_' . \K::$fw->current_entity_id,

@@ -61,11 +61,7 @@ class Holidays extends \Controller
                 'end_date' => \K::$fw->POST['end_date'],
             ];
 
-            if (\K::fw()->exists('GET.id')) {
-                \K::model()->db_perform('app_holidays', $sql_data, ['id = ?', \K::$fw->GET['id']]);
-            } else {
-                \K::model()->db_perform('app_holidays', $sql_data);
-            }
+            \K::model()->db_perform('app_holidays', $sql_data, ['id = ?', \K::$fw->GET['id']]);
 
             \Helpers\Urls::redirect_to('main/holidays/holidays');
         } else {

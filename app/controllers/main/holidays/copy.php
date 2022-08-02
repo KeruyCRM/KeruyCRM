@@ -33,6 +33,10 @@ class Copy extends \Controller
 
             $explode = explode(',', $selected_items);
 
+            if (count($explode)) {
+                \K::model()->begin();
+            }
+
             foreach ($explode as $id) {
                 $holiday = \K::model()->db_fetch_one('app_holidays', ['id = ?', $id]);
 
@@ -45,6 +49,10 @@ class Copy extends \Controller
 
                     \K::model()->db_perform('app_holidays', $sql_data);
                 }
+            }
+
+            if (\K::model()->trans()) {
+                \K::model()->commit();
             }
 
             \K::$fw->holidays_filter = $year;
