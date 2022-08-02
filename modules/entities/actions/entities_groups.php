@@ -11,7 +11,6 @@ switch ($app_module_action) {
             db_perform('app_entities_groups', $sql_data, 'update', "id='" . db_input($_GET['id']) . "'");
         } else {
             db_perform('app_entities_groups', $sql_data);
-            $id = db_insert_id();
         }
 
         redirect_to('entities/entities_groups');
