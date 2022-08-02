@@ -65,6 +65,8 @@ class Users_alerts extends \Controller
             //db_query("delete from app_users_alerts where id='" . \K::$fw->GET['id'] . "'");
             //db_query("delete from app_users_alerts_viewed where alerts_id='" . \K::$fw->GET['id'] . "'");
 
+            \K::model()->begin();
+
             \K::model()->db_delete('app_users_alerts', [
                 'id = ?',
                 \K::$fw->GET['id']
@@ -73,6 +75,8 @@ class Users_alerts extends \Controller
                 'alerts_id = ?',
                 \K::$fw->GET['id']
             ]);
+
+            \K::model()->commit();
 
             \Helpers\Urls::redirect_to('main/users_alerts');
         } else {

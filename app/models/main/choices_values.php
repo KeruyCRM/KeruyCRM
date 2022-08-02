@@ -8,7 +8,7 @@ class Choices_values
     protected $use_for_fieldtypes;
     public $choices_values_list;
 
-    function __construct($entities_id)
+    public function __construct($entities_id)
     {
         $this->entities_id = $entities_id;
 
@@ -33,15 +33,21 @@ class Choices_values
         $this->choices_values_list = [];
     }
 
-    function prepare($options)
+    public function prepare($options)
     {
         if (in_array($options['class'], $this->use_for_fieldtypes)) {
             $this->choices_values_list[] = ['fields_id' => $options['field']['id'], 'value' => $options['value']];
         }
     }
 
-    function process($items_id)
+    public function process($items_id)
     {
+        $forceCommit = false;
+        if (!\K::model()->trans() and count($this->choices_values_list)) {
+            \K::model()->begin();
+            $forceCommit = true;
+        }
+
         foreach ($this->choices_values_list as $values) {
             //reset choices values for current item and field
             /*db_query(
@@ -62,22 +68,23 @@ class Choices_values
                 $values['value']
             ) : []));
 
-            $sql_data = [];
-
             //insert values
             foreach ($value as $v) {
-                $sql_data[] = [
+                $sql_data = [
                     'items_id' => $items_id,
                     'fields_id' => $values['fields_id'],
                     'value' => $v
                 ];
+                \K::model()->db_perform("app_entity_" . $this->entities_id . "_values", $sql_data);
             }
+        }
 
-            \K::model()->db_perform("app_entity_" . $this->entities_id . "_values", $sql_data);
+        if ($forceCommit) {
+            \K::model()->commit();
         }
     }
 
-    function process_by_field_id($items_id, $fields_id, $fields_type, $values)
+    public function process_by_field_id($items_id, $fields_id, $fields_type, $values)
     {
         //reset choices values for current item and field
         db_query(
@@ -110,12 +117,12 @@ class Choices_values
         }
     }
 
-    static function delete_by_item_id($entities_id, $items_id)
+    public static function delete_by_item_id($entities_id, $items_id)
     {
         db_query("delete from app_entity_" . $entities_id . "_values where items_id='" . db_input($items_id) . "'");
     }
 
-    static function delete_by_field_id($entities_id, $fields_id)
+    public static function delete_by_field_id($entities_id, $fields_id)
     {
         db_query("delete from app_entity_" . $entities_id . "_values where fields_id='" . db_input($fields_id) . "'");
     }
