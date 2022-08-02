@@ -40,6 +40,11 @@ class Model extends \Prefab
         return $this->db->commit();
     }
 
+    public function trans()
+    {
+        return $this->db->trans();
+    }
+
     public function mapper($table, $fields = null)
     {
         $mapper = new DB\SQL\Mapper($this->db, $table, $fields, \K::$fw->TTL_SCHEMA);
