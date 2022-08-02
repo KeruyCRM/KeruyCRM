@@ -10,10 +10,6 @@ switch ($app_module_action) {
         if (isset($_GET['id'])) {
             db_perform('app_entities_groups', $sql_data, 'update', "id='" . db_input($_GET['id']) . "'");
         } else {
-            if (isset($_POST['parent_id'])) {
-                $sql_data['parent_id'] = $_POST['parent_id'];
-            }
-
             db_perform('app_entities_groups', $sql_data);
             $id = db_insert_id();
         }
@@ -27,7 +23,6 @@ switch ($app_module_action) {
             entities_groups::delete(_GET('id'));
 
             $alerts->add(sprintf(TEXT_WARN_DELETE_SUCCESS, $name), 'success');
-
 
             redirect_to('entities/entities_groups');
         }
