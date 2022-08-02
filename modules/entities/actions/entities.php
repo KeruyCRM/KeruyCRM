@@ -29,6 +29,8 @@ switch ($app_module_action) {
         } else {
             if (isset($_POST['parent_id'])) {
                 $sql_data['parent_id'] = $_POST['parent_id'];
+            }else{
+                $sql_data['parent_id'] = 0;
             }
 
             db_perform('app_entities', $sql_data);
