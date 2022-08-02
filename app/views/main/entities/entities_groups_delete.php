@@ -3,16 +3,12 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_HEADING_DELETE) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_HEADING_DELETE) ?>
 
-<?php
-echo form_tag('login', url_for('entities/entities_groups', 'action=delete&id=' . $_GET['id'])) ?>
+<?= \Helpers\Html::form_tag('login', \Helpers\Urls::url_for('entities/entities_groups/delete', \K::$fw->GET['id'])) ?>
 <div class="modal-body">
-    <?php
-    echo TEXT_ARE_YOU_SURE ?>
+    <?= \K::$fw->TEXT_ARE_YOU_SURE ?>
 </div>
-<?php
-echo ajax_modal_template_footer(TEXT_DELETE) ?>
+<?= \Helpers\App::ajax_modal_template_footer(\K::$fw->TEXT_DELETE) ?>
 
-</form>  
+</form>

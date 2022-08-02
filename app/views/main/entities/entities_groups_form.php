@@ -3,43 +3,42 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_INFO) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_INFO) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'entities_form',
-    url_for('entities/entities_groups', 'action=save' . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '')),
+    \Helpers\Urls::url_for(
+        'main/entities/entities_groups/save',
+        (isset(\K::$fw->GET['id']) ? 'id=' . \K::$fw->GET['id'] : '')
+    ),
     ['class' => 'form-horizontal']
 ) ?>
 <div class="modal-body">
     <div class="form-body">
-
         <div class="form-group">
-            <label class="col-md-3 control-label" for="name"><?php
-                echo TEXT_NAME ?></label>
+            <label class="col-md-3 control-label" for="name"><?= \K::$fw->TEXT_NAME ?></label>
             <div class="col-md-9">
-                <?php
-                echo input_tag('name', $obj['name'], ['class' => 'form-control input-large required']) ?>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-md-3 control-label" for="sort_order"><?php
-                echo TEXT_SORT_ORDER ?></label>
-            <div class="col-md-9">
-                <?php
-                echo input_tag('sort_order', $obj['sort_order'], ['class' => 'form-control input-small required number']
+                <?= \Helpers\Html::input_tag(
+                    'name',
+                    \K::$fw->obj['name'],
+                    ['class' => 'form-control input-large required']
                 ) ?>
             </div>
         </div>
-
-
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="sort_order"><?= \K::$fw->TEXT_SORT_ORDER ?></label>
+            <div class="col-md-9">
+                <?= \Helpers\Html::input_tag(
+                    'sort_order',
+                    \K::$fw->obj['sort_order'],
+                    ['class' => 'form-control input-small required number']
+                ) ?>
+            </div>
+        </div>
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
@@ -52,7 +51,4 @@ echo ajax_modal_template_footer() ?>
             }
         });
     });
-
-</script>   
-
-
+</script>
