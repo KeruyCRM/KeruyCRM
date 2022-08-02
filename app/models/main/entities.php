@@ -185,23 +185,32 @@ class Entities
         if ($id == 1) {
             $msg = sprintf(\K::$fw->TEXT_WARN_DELETE_ENTITY_USERS, $name);
         } //check if there are sub entities
-        elseif (db_count('app_entities', $id, 'parent_id') > 0) {
+        elseif (\K::model()->db_count('app_entities', $id, 'parent_id') > 0) {
             $msg = sprintf(\K::$fw->TEXT_WARN_DELETE_ENTITY_HAS_PARENT, $name);
-        } //chec if there is items
-        elseif (db_count('app_entity_' . $id) > 0) {
+        } //check if there is items
+        elseif (\K::model()->db_count('app_entity_' . $id) > 0) {
             $msg = sprintf(\K::$fw->TEXT_WARN_DELETE_ENTITY_HAS_ITEMS, $name);
         } //check if there are relationship with other entities
         else {
             $relationship = [];
-            $fields_query = db_query(
+            /*$fields_query = db_query(
                 "select * from app_fields where entities_id!='" . db_input(
                     $id
                 ) . "' and type in ('fieldtype_entity','fieldtype_related_records')"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
+            );*/
+
+            $fields_query = \K::model()->db_fetch('app_fields', [
+                "entities_id != ? and type in ('fieldtype_entity','fieldtype_related_records')",
+                $id
+            ]);
+
+            //while ($fields = db_fetch_array($fields_query)) {
+            foreach ($fields_query as $fields) {
+                $fields = $fields->cast();
+
                 $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
                 if ($cfg->get('entity_id') == $id) {
-                    $relationship[] = entities::get_name_by_id($fields['entities_id']) . ': ' . $fields['name'];
+                    $relationship[] = self::get_name_by_id($fields['entities_id']) . ': ' . $fields['name'];
                 }
             }
 
@@ -219,8 +228,6 @@ class Entities
 
     public static function get_name_by_id($id)
     {
-        //global $app_entities_cache;
-
         return (isset(\K::$fw->app_entities_cache[$id]) ? \K::$fw->app_entities_cache[$id]['name'] : '');
     }
 
@@ -335,21 +342,39 @@ class Entities
 
     public static function prepare_tables($entities_id)
     {
-        $sql = '
-      CREATE TABLE IF NOT EXISTS app_entity_' . (int)$entities_id . ' (
-        id int(11) UNSIGNED NOT NULL auto_increment,
-        parent_id int(11) UNSIGNED default 0,
-        parent_item_id int(11) UNSIGNED default 0,
-        linked_id int(11) UNSIGNED default 0,
-        date_added BIGINT(11) default 0,
-      	date_updated BIGINT(11) default 0,	
-        created_by int(11) UNSIGNED default NULL,
-        sort_order int(11) default 0,
-        PRIMARY KEY  (`id`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    ';
+        $schema = \K::model()->schema();
 
-        db_query($sql);
+        /* $sql = '
+       CREATE TABLE IF NOT EXISTS app_entity_' . (int)$entities_id . ' (
+         id int(11) UNSIGNED NOT NULL auto_increment,
+         parent_id int(11) UNSIGNED default 0,
+         parent_item_id int(11) UNSIGNED default 0,
+         linked_id int(11) UNSIGNED default 0,
+         date_added BIGINT(11) default 0,
+           date_updated BIGINT(11) default 0,
+         created_by int(11) UNSIGNED default NULL,
+         sort_order int(11) default 0,
+         PRIMARY KEY  (`id`)
+       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+     ';*/
+        $table = $schema->createTable('app_entity_' . (int)$entities_id);
+        $table->setCharset('utf8mb4');
+
+        $table->addColumn('parent_id')->type('int(11) UNSIGNED', true)->defaults(0);
+        $table->addColumn('parent_item_id')->type('int(11) UNSIGNED', true)->defaults(0);
+        $table->addColumn('linked_id')->type('int(11) UNSIGNED', true)->defaults(0);
+        $table->addColumn('date_added')->type('int(11) UNSIGNED', true)->defaults(0);
+        $table->addColumn('date_updated')->type('int(11) UNSIGNED', true)->defaults(0);
+        $table->addColumn('created_by')->type('int(11) UNSIGNED', true)->defaults(null);
+        $table->addColumn('sort_order')->type('int(11) UNSIGNED', true)->defaults(0);
+
+        $table->addIndex('parent_id');
+        $table->addIndex('parent_item_id');
+        $table->addIndex('created_by');
+
+        $table->build(false);
+
+        /*db_query($sql);
 
         $sql = 'ALTER TABLE app_entity_' . (int)$entities_id . ' ADD INDEX idx_parent_id (parent_id);';
         db_query($sql);
@@ -358,9 +383,9 @@ class Entities
         db_query($sql);
 
         $sql = 'ALTER TABLE app_entity_' . (int)$entities_id . ' ADD INDEX idx_created_by (created_by);';
-        db_query($sql);
+        db_query($sql);*/
 
-        $sql = '
+        /*$sql = '
     		CREATE TABLE IF NOT EXISTS app_entity_' . (int)$entities_id . '_values (
 				  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 				  items_id int(11) UNSIGNED NOT NULL,
@@ -374,16 +399,34 @@ class Entities
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     	';
 
-        db_query($sql);
+        db_query($sql);*/
+
+        $table = $schema->createTable('app_entity_' . (int)$entities_id . '_values');
+        $table->setCharset('utf8mb4');
+        $table->addColumn('items_id')->type('int(11) UNSIGNED', true)->nullable(false);
+        $table->addColumn('fields_id')->type('int(11) UNSIGNED', true)->nullable(false);
+        $table->addColumn('value')->type('int(11) UNSIGNED', true)->nullable(false);
+
+        $table->addIndex('items_id');
+        $table->addIndex('fields_id');
+        $table->addIndex(['items_id', 'fields_id']);
+        $table->addIndex('value');
+
+        $table->build(false);
     }
 
     public static function delete_tables($entities_id)
     {
-        $sql = 'DROP TABLE IF EXISTS app_entity_' . (int)$entities_id;
+        /*$sql = 'DROP TABLE IF EXISTS app_entity_' . (int)$entities_id;
         db_query($sql);
 
         $sql = 'DROP TABLE IF EXISTS app_entity_' . (int)$entities_id . '_values';
-        db_query($sql);
+        db_query($sql);*/
+
+        $schema = \K::model()->schema();
+
+        $schema->dropTable('app_entity_' . (int)$entities_id);
+        $schema->dropTable('app_entity_' . (int)$entities_id . '_values');
     }
 
     public static function prepare_field_type($type)

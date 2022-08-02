@@ -623,13 +623,26 @@ class Related_records
 
     public static function delete_entities_related_items_table($entities_id)
     {
-        $tables_array = [];
-        $tables_query = db_query("show tables");
-        while ($tables = db_fetch_array($tables_query)) {
-            $tables_array[] = current($tables);
-        }
+        //$tables_array = [];
+        $tables_query = \K::model()->db_query_exec("show tables like 'app_related_items_%'");
 
-        foreach ($tables_array as $table) {
+        $schema = \K::model()->schema();
+
+        //while ($tables = db_fetch_array($tables_query)) {
+        foreach ($tables_query as $tables) {
+            $table = current($tables);//TODO Really?
+
+            if (preg_match('/app_related_items_(\d+)_' . $entities_id . '/', $table) or preg_match(
+                    '/app_related_items_' . $entities_id . '_(\d+)/',
+                    $table
+                )) {
+                /*$sql = 'DROP TABLE IF EXISTS ' . $table;
+                db_query($sql);*/
+
+                $schema->dropTable($table);
+            }
+        }
+        /*foreach ($tables_array as $table) {
             if (preg_match('/app_related_items_(\d+)_' . $entities_id . '/', $table) or preg_match(
                     '/app_related_items_' . $entities_id . '_(\d+)/',
                     $table
@@ -637,7 +650,7 @@ class Related_records
                 $sql = 'DROP TABLE IF EXISTS ' . $table;
                 db_query($sql);
             }
-        }
+        }*/
     }
 
     public static function autocreate_comments($current_entity_id, $item_id, $related_entities_id, $related_items_id)
