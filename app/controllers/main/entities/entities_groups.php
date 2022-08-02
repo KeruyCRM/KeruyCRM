@@ -20,9 +20,10 @@ class Entities_groups extends \Controller
 
     public function index()
     {
-        $groups_query = db_query("select * from app_entities_groups order by sort_order, name");
+        //$groups_query = db_query("select * from app_entities_groups order by sort_order, name");
 
-        \K::$fw->groups_query = '';
+        \K::$fw->groups_query = \K::model()->db_fetch('app_entities_groups', [], ['order' => 'sort_order, name']);
+        \K::$fw->groups_query_count = \K::model()->count();
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'entities_groups.php';
 
@@ -31,52 +32,59 @@ class Entities_groups extends \Controller
 
     public function save()
     {
-        $sql_data = [
-            'name' => $_POST['name'],
-            'sort_order' => $_POST['sort_order']
-        ];
+        if (\K::$fw->VERB == 'POST') {
+            $sql_data = [
+                'name' => \K::$fw->POST['name'],
+                'sort_order' => \K::$fw->POST['sort_order']
+            ];
 
-        if (isset($_GET['id'])) {
-            db_perform('app_entities_groups', $sql_data, 'update', "id='" . db_input($_GET['id']) . "'");
+            \K::model()->db_perform('app_entities_groups', $sql_data, ['id = ?', \K::$fw->GET['id']]);
+
+            \Helpers\Urls::redirect_to('main/entities/entities_groups');
         } else {
-            if (isset($_POST['parent_id'])) {
-                $sql_data['parent_id'] = $_POST['parent_id'];
-            }
-
-            db_perform('app_entities_groups', $sql_data);
-            $id = db_insert_id();
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
-
-        redirect_to('entities/entities_groups');
     }
 
     public function delete()
     {
-        if (isset($_GET['id'])) {
-            $name = entities_groups::get_name_by_id(_GET('id'));
+        if (\K::$fw->VERB == 'POST' and isset(\K::$fw->GET['id'])) {
+            $name = \Models\Main\Entities_groups::get_name_by_id(\K::$fw->GET['id']);
 
-            entities_groups::delete(_GET('id'));
+            \Models\Main\Entities_groups::delete(\K::$fw->GET['id']);
 
-            $alerts->add(sprintf(TEXT_WARN_DELETE_SUCCESS, $name), 'success');
+            \K::flash()->addMessage(sprintf(\K::$fw->TEXT_WARN_DELETE_SUCCESS, $name), 'success');
 
-            redirect_to('entities/entities_groups');
+            \Helpers\Urls::redirect_to('main/entities/entities_groups');
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 
     public function sort()
     {
-        $choices_sorted = $_POST['choices_sorted'];
+        if (\K::$fw->VERB == 'POST') {
+            $choices_sorted = \K::$fw->POST['choices_sorted'];
 
-        if (strlen($choices_sorted) > 0) {
-            $choices_sorted = json_decode(stripslashes($choices_sorted), true);
+            if (strlen($choices_sorted) > 0) {
+                $choices_sorted = json_decode(stripslashes($choices_sorted), true);
 
-            $sort_order = 0;
-            foreach ($choices_sorted as $v) {
-                db_query("update app_entities_groups set sort_order={$sort_order} where id={$v['id']}");
-                $sort_order++;
+                $sort_order = 0;
+
+                \K::model()->begin();
+                foreach ($choices_sorted as $v) {
+                    //db_query("update app_entities_groups set sort_order={$sort_order} where id={$v['id']}");
+
+                    \K::model()->db_update('app_entities_groups', ['sort_order' => $sort_order], ['id = ?', $v['id']]);
+
+                    $sort_order++;
+                }
+                \K::model()->commit();
             }
-        }
 
-        redirect_to('entities/entities_groups');
+            \Helpers\Urls::redirect_to('main/entities/entities_groups');
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 }
