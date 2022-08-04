@@ -3,56 +3,49 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-
-$parent_id = isset($_GET['parent_id']) ? _GET('parent_id') : 0;
-
-echo ajax_modal_template_header(
-    TEXT_SORT_VALUES . ($parent_id > 0 ? ' (' . entities::get_name_by_id($parent_id) . ')' : '')
+<?= \Helpers\App::ajax_modal_template_header(
+    \K::$fw->TEXT_SORT_VALUES . (\K::$fw->parent_id > 0 ? ' (' . \Models\Main\Entities::get_name_by_id(
+            \K::$fw->parent_id
+        ) . ')' : '')
 ) ?>
 
-<?php
-echo form_tag('choices_form', url_for('entities/entities'), ['class' => 'form-horizontal']) ?>
+<?= \Helpers\Html::form_tag(
+    'choices_form',
+    \Helpers\Urls::url_for('main/entities/entities'),
+    ['class' => 'form-horizontal']
+) ?>
 <div class="modal-body">
     <div class="form-body">
-
         <?php
+        $html = '<ul class="sortable" id="entities_list_0">';
+        foreach (\K::$fw->entities_query as $entities) {
+            $entities = $entities->cast();
 
-        if ($parent_id > 0) {
-            $html = '<ul class="sortable" id="entities_list_0">';
-            $entities_query = db_query(
-                "select id, name from app_entities where parent_id={$parent_id} order by sort_order, name"
-            );
-            while ($entities = db_fetch_array($entities_query)) {
-                $html .= '<li id="entity_' . $entities['id'] . '">' . $entities['name'] . '</li>';
-            }
-
-            $html .= '</ul>';
-
-            echo $html;
-        } else {
-            $html = '<ul class="sortable" id="entities_list_0">';
-            $entities_query = db_query(
-                "select id, name from app_entities where parent_id=0 and group_id=0 order by sort_order, name"
-            );
-            while ($entities = db_fetch_array($entities_query)) {
-                $html .= '<li id="entity_' . $entities['id'] . '">' . $entities['name'] . '</li>';
-            }
-            $html .= '</ul>';
-
-
+            $html .= '<li id="entity_' . $entities['id'] . '">' . $entities['name'] . '</li>';
+        }
+        $html .= '</ul>';
+        if (\K::$fw->parent_id == 0) {
             $html .= '<ol class="sortable sortable_groups" id="groups_list">';
-            $groups_query = db_query(
-                "select * from app_entities_groups " . ($entities_filter > 0 ? " where id={$entities_filter}" : "") . " order by sort_order, name"
-            );
-            while ($groups = db_fetch_array($groups_query)) {
+
+            //while ($groups = db_fetch_array($groups_query)) {
+            foreach (\K::$fw->groups_query as $groups) {
+                $groups = $groups->cast();
+
                 $html .= '<li id="group_' . $groups['id'] . '"  style="cursor:default; margin-bottom: 15px;"> <b class="sortable_group_heading" style="cursor:move">' . $groups['name'] . '</b>';
 
                 $html .= '<ul class="sortable" id="entities_list_' . $groups['id'] . '">';
-                $entities_query = db_query(
+                /*$entities_query = db_query(
                     "select id, name from app_entities where parent_id=0 and group_id={$groups['id']} order by sort_order, name"
-                );
-                while ($entities = db_fetch_array($entities_query)) {
+                );*/
+                $entities_query = \K::model()->db_fetch('app_entities', [
+                    'parent_id = 0 and group_id = ?',
+                    $groups['id']
+                ], ['order' => 'sort_order, name'], 'id,name');
+
+                //while ($entities = db_fetch_array($entities_query)) {
+                foreach ($entities_query as $entities) {
+                    $entities = $entities->cast();
+
                     $html .= '<li id="entity_' . $entities['id'] . '">' . $entities['name'] . '</li>';
                 }
                 $html .= '</ul>';
@@ -60,24 +53,19 @@ echo form_tag('choices_form', url_for('entities/entities'), ['class' => 'form-ho
                 $html .= '</li>';
             }
             $html .= '</ol>';
-
-            echo $html;
         }
+        echo $html;
 
         ?>
-
-
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
 <script>
     $(function () {
-
         //sortable fields
         $("ul.sortable").sortable({
             connectWith: "ul",
@@ -88,7 +76,7 @@ echo ajax_modal_template_footer() ?>
                 });
 
                 data = data.slice(1)
-                $.ajax({type: "POST", url: '<?php echo url_for("entities/entities", "action=sort") ?>', data: data});
+                $.ajax({type: "POST", url: '<?= \Helpers\Urls::url_for('main/entities/entities/sort') ?>', data: data});
             }
         });
 
@@ -104,11 +92,10 @@ echo ajax_modal_template_footer() ?>
                 data = data.slice(1)
                 $.ajax({
                     type: "POST",
-                    url: '<?php echo url_for("entities/entities", "action=sort_groups") ?>',
+                    url: '<?= \Helpers\Urls::url_for('main/entities/entities/sort_groups') ?>',
                     data: data
                 });
             }
         });
-
     });
 </script>
