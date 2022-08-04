@@ -373,6 +373,8 @@ class Fieldtype_barcode
     public static function update_items_fields($entities_id, $items_id, $item_info)
     {
         if (isset(\K::$fw->app_fields_cache[$entities_id])) {
+            $forceCommit = \K::model()->forceCommit();
+
             foreach (\K::$fw->app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_barcode' and !strlen($item_info['field_' . $fields['id']])) {
                     $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
@@ -409,6 +411,10 @@ class Fieldtype_barcode
                         ['id = ?' => $items_id]
                     );
                 }
+            }
+
+            if ($forceCommit) {
+                \K::model()->commit();
             }
         }
     }

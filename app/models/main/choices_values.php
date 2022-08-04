@@ -42,11 +42,7 @@ class Choices_values
 
     public function process($items_id)
     {
-        $forceCommit = false;
-        if (!\K::model()->trans() and count($this->choices_values_list)) {
-            \K::model()->begin();
-            $forceCommit = true;
-        }
+        $forceCommit = \K::model()->forceCommit();
 
         foreach ($this->choices_values_list as $values) {
             //reset choices values for current item and field

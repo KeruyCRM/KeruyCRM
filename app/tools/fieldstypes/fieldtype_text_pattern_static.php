@@ -74,6 +74,8 @@ class Fieldtype_text_pattern_static
             'fieldtype_text_pattern_static'
         ]);
         //while ($fields = db_fetch_array($fields_query)) {
+        $forceCommit = \K::model()->forceCommit();
+
         foreach ($fields_query as $fields) {
             $fields = $fields->cast();
 
@@ -124,6 +126,10 @@ class Fieldtype_text_pattern_static
                     ['id = ?', $items_id]
                 );
             }
+        }
+
+        if ($forceCommit) {
+            \K::model()->commit();
         }
     }
 }

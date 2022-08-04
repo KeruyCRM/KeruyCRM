@@ -223,6 +223,8 @@ END;";
     public static function update_items_fields($entities_id, $items_id)
     {
         if (isset(\K::$fw->app_fields_cache[$entities_id])) {
+            $forceCommit = \K::model()->forceCommit();
+
             foreach (\K::$fw->app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_months_difference') {
                     $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
@@ -252,6 +254,10 @@ END;";
                         ], ['id = ?', $items_id]);
                     }
                 }
+            }
+
+            if ($forceCommit) {
+                \K::model()->commit();
             }
         }
     }

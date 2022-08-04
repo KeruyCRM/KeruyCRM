@@ -404,11 +404,17 @@ class Fieldtype_subentity_form
             'fieldtype_subentity_form'
         ]);
         //while ($fields = db_fetch_array($fields_query)) {
+        $forceCommit = \K::model()->forceCommit();
+
         foreach ($fields_query as $fields) {
             $fields = $fields->cast();
 
             $subentity_form = new \Models\Main\Items\Subentity_form($entities_id, $items_id, $fields['id']);
             $subentity_form->save_form();
+        }
+
+        if ($forceCommit) {
+            \K::model()->commit();
         }
     }
 }

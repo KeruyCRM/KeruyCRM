@@ -244,6 +244,8 @@ class Fieldtype_dynamic_date
                 //$item_info = $item_info_query[0] ?? '';
             }
 
+            $forceCommit = \K::model()->forceCommit();
+
             foreach ($update_fields as $fields_id) {
                 /*db_query(
                     "update app_entity_{$entities_id} set field_{$fields_id}='" . $item_info['field_' . $fields_id] . "' where id='" . db_input(
@@ -254,6 +256,10 @@ class Fieldtype_dynamic_date
                 \K::model()->db_update('app_entity_' . $entities_id, [
                     'field_' . $fields_id => $item_info['field_' . $fields_id]
                 ], ['id = ?', $items_id]);
+            }
+
+            if ($forceCommit) {
+                \K::model()->commit();
             }
         }
     }

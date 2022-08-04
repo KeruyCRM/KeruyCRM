@@ -70,6 +70,8 @@ class Fieldtype_php_code
 
     public static function run($entities_id, $items_id, $item_info = false)
     {
+        $forceCommit = \K::model()->forceCommit();
+
         foreach (\K::$fw->app_fields_cache[$entities_id] as $field_id => $field) {
             $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
@@ -87,6 +89,10 @@ class Fieldtype_php_code
                     ['id = ?', $items_id]
                 );
             }
+        }
+
+        if ($forceCommit) {
+            \K::model()->commit();
         }
     }
 

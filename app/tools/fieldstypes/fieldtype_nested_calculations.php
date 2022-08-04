@@ -113,6 +113,8 @@ class Fieldtype_nested_calculations
 
     public static function update_items_fields($entities_id, $item_id, $parent_id)
     {
+        $forceCommit = \K::model()->forceCommit();
+
         foreach (\K::$fw->app_fields_cache[$entities_id] as $field) {
             if ($field['type'] == 'fieldtype_nested_calculations') {
                 if ($parent_id != 0) {
@@ -127,6 +129,10 @@ class Fieldtype_nested_calculations
 
                 //stop calculation if field not exist
                 if ($calc_function == 'SUM' and !isset(\K::$fw->app_fields_cache[$entities_id][$calc_field_id])) {
+                    if ($forceCommit) {
+                        \K::model()->commit();
+                    }
+
                     return false;
                 }
 
@@ -211,6 +217,10 @@ class Fieldtype_nested_calculations
                         break;
                 }
             }
+        }
+
+        if ($forceCommit) {
+            \K::model()->commit();
         }
     }
 

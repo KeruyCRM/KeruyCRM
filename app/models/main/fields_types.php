@@ -1108,7 +1108,8 @@ class Fields_types
             $item_id
         );
 
-        //TODO Add transaction
+        $forceCommit = \K::model()->forceCommit();
+
         //autoupdate fields in  fieldtype_mysql_query        
         \Tools\FieldsTypes\Fieldtype_mysql_query::update_items_fields($current_entity_id, $item_id, $item_info);
 
@@ -1156,6 +1157,10 @@ class Fields_types
 
         //autoset fieldtype autostatus
         \Tools\FieldsTypes\Fieldtype_autostatus::set($current_entity_id, $item_id, $item_info);
+
+        if ($forceCommit) {
+            \K::model()->commit();
+        }
     }
 
     public static function custom_error_handler($fields_id)

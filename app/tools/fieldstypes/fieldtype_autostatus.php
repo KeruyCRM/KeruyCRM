@@ -124,6 +124,8 @@ class Fieldtype_autostatus
         ]);
 
         //while ($fields = db_fetch_array($fields_query)) {
+        $forceCommit = \K::model()->forceCommit();
+
         foreach ($fields_query as $fields) {
             $fields = $fields->cast();
 
@@ -217,6 +219,11 @@ class Fieldtype_autostatus
                 }
             }
         }
+
+        if ($forceCommit) {
+            \K::model()->commit();
+        }
+
         return true;
     }
 }

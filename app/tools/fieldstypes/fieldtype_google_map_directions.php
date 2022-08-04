@@ -577,6 +577,8 @@ class Fieldtype_google_map_directions
     public static function update_items_fields($entities_id, $items_id, $item_info = false)
     {
         if (isset(\K::$fw->app_fields_cache[$entities_id])) {
+            $forceCommit = \K::model()->forceCommit();
+
             foreach (\K::$fw->app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_google_map_directions') {
                     $fields_id = $fields['id'];
@@ -585,6 +587,10 @@ class Fieldtype_google_map_directions
 
                     //skip if no pattern setup
                     if (!strlen($cfg->get('address_pattern'))) {
+                        if ($forceCommit) {
+                            \K::model()->commit();
+                        }
+
                         return false;
                     }
 
@@ -692,6 +698,10 @@ class Fieldtype_google_map_directions
                         );
                     }
                 }
+            }
+
+            if ($forceCommit) {
+                \K::model()->commit();
             }
         }
     }

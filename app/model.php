@@ -404,4 +404,13 @@ class Model extends \Prefab
             }
         }
     }
+
+    public function forceCommit()
+    {
+        if (!$this->trans()) {
+            $this->begin();
+            return true;
+        }
+        return false;
+    }
 }

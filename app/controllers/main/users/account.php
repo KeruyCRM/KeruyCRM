@@ -196,7 +196,8 @@ class Account extends \Controller
                 $choices_values->prepare($process_options);
             }
 
-            //TODO Add transaction
+            \K::model()->begin();
+
             if (count($sql_data)) {
                 \K::model()->db_perform(
                     'app_entity_' . \K::$fw->current_entity_id,
@@ -225,6 +226,8 @@ class Account extends \Controller
             }
 
             \Models\Main\Users\Email_verification::check_if_user_email_is_updated();
+
+            \K::model()->commit();
 
             \K::flash()->addMessage(\K::$fw->TEXT_ACCOUNT_UPDATED, 'success');
 

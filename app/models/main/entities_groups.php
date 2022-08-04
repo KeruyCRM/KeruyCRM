@@ -32,11 +32,7 @@ class Entities_groups
     {
         //db_query("delete from app_entities_groups where id={$id}");
         //db_query("update app_entities set group_id=0 where group_id={$id}");
-        $forceCommit = false;
-        if (!\K::model()->trans()) {
-            \K::model()->begin();
-            $forceCommit = true;
-        }
+        $forceCommit = \K::model()->forceCommit();
 
         \K::model()->db_delete('app_entities_groups', ['id = ?', $id]);
         \K::model()->db_update('app_entities', ['group_id' => 0], ['group_id = ?', $id]);

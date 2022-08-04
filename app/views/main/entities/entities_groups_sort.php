@@ -23,7 +23,6 @@ if (!defined('KERUY_CRM')) {
                 ?>
             </ol>
         </div>
-
     </div>
 </div>
 <?= \Helpers\Html::input_hidden_tag('choices_sorted') ?>
