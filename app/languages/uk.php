@@ -898,7 +898,7 @@ return [
     'MAXIMUM_NUMBER_EMAILS_INFO' => 'Максимальне число листів, яке можливо відправити при виконанні Cron за один раз',
     'SEND_EMAILS_ON_SCHEDULE_DESCRIPTION' => 'Перед включенням даної можливості провірте <a href="https://keruy.com.ua/index.php?p=8" target="_blank"><u>обмеження на відправлення пошти</u></a> з вашого сервера.',
     'MAILER_ERROR' => 'Помилка відправлення повідомлення для %s',
-    'HIDE_INSERT_BUTTON_IN_REPORTS' => 'Приховати кнопку добавлення в звітах',
+    'HIDE_INSERT_BUTTON_IN_REPORTS' => 'Приховати кнопку додавання в звітах',
     'DISABLE_NOTIFICATIONS_FIELDS_INFO' => 'Назначені користувачі не будуть отримувати відомості',
     'FROM_TO' => 'з %s по %s',
     'MOVE_LEFT' => 'Перемістити вліво',

@@ -5,6 +5,6 @@ if (!defined('KERUY_CRM')) {
 } ?>
 <?php
 
-if (!$_GET['entities_id']) {
-    redirect_to('entities/');
+if (!\K::$fw->GET['entities_id']) {
+    \Helpers\Urls::redirect_to('main/entities');
 }   

@@ -1,6 +1,8 @@
 <?php
 
-class items_redirects
+namespace Models\Main\Items;
+
+class Items_redirects
 {
     static function get_reports_choices($entities_id)
     {
