@@ -22,6 +22,6 @@ class Entities_flowchart extends \Controller
     {
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'entities_flowchart.php';
 
-        echo \K::view()->render(\K::$fw->subTemplate);
+        echo \K::view()->render($this->app_layout);
     }
 }

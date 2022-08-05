@@ -30,11 +30,19 @@ class Entities_flowchart
 
     function get_shcema($parent_id = 0, $tree = [], $level = 0, $x = 0, $y = 0)
     {
-        $entities_query = db_query(
+        /*$entities_query = db_query(
             "select * from app_entities where parent_id='" . $parent_id . "' order by sort_order, name"
-        );
+        );*/
 
-        while ($entities = db_fetch_array($entities_query)) {
+        $entities_query = \K::model()->db_fetch('app_entities', [
+            'parent_id = ?',
+            $parent_id
+        ], ['order' => 'sort_order, name']);
+
+        //while ($entities = db_fetch_array($entities_query)) {
+        foreach ($entities_query as $entities) {
+            $entities = $entities->cast();
+
             $tree['tree'][] = [
                 'id' => $entities['id'],
                 'parent_id' => $entities['parent_id'],
@@ -53,12 +61,32 @@ class Entities_flowchart
             $y = $tree['y'];
 
             $count_fields = 0;
-            $check_fields_query = db_query(
+            /*$check_fields_query = db_query(
                 "select * from app_fields where entities_id = '" . $entities['id'] . "' and type in ('fieldtype_users','fieldtype_users_ajax','fieldtype_grouped_users','fieldtype_entity','fieldtype_entity_ajax','fieldtype_entity_multilevel','fieldtype_related_records','fieldtype_formula')"
-            );
-            while ($check_fields = db_fetch_array($check_fields_query)) {
+            );*/
+
+            $fields = [
+                'fieldtype_users',
+                'fieldtype_users_ajax',
+                'fieldtype_grouped_users',
+                'fieldtype_entity',
+                'fieldtype_entity_ajax',
+                'fieldtype_entity_multilevel',
+                'fieldtype_related_records',
+                'fieldtype_formula'
+            ];
+
+            $check_fields_query = \K::model()->db_fetch('app_fields', [
+                'entities_id = ? and type in (' . \K::model()->quoteToString($fields) . ')',
+                $entities['id']
+            ]);
+
+            //while ($check_fields = db_fetch_array($check_fields_query)) {
+            foreach ($check_fields_query as $check_fields) {
+                $check_fields = $check_fields->cast();
+
                 if ($check_fields['type'] == 'fieldtype_formula') {
-                    $cfg = new fields_types_cfg($check_fields['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg($check_fields['configuration']);
 
                     if (strstr($cfg->get('formula'), '{')) {
                         $count_fields++;
@@ -99,7 +127,7 @@ class Entities_flowchart
             //extra parent node to display arrows edge
             $this->nodes[] = "{ data: { id: 'field_0_" . $entities['id'] . "',name: '',parent:'entity_" . $entities['id'] . "',faveShape:'rectangle',borderWidth:1, nodeSize: 0, faveColor:'{$faveColor}', fontSize:'7px',textValign:'top',textHalign:'center'}, position: { x: " . $entities['x'] . ", y: " . $entities['y'] . " }}";
 
-            //hold coordintates for each entity
+            //hold coordinates for each entity
             $this->entities_coords[$entities['id']] = [$entities['x'], $entities['y']];
 
             //get max height
@@ -112,10 +140,17 @@ class Entities_flowchart
 
     function build_users_fields_nodes()
     {
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select * from app_fields where type in ('fieldtype_users','fieldtype_grouped_users')"
-        );
-        while ($fields = db_fetch_array($fields_query)) {
+        );*/
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (' . \K::model()->quoteToString(['fieldtype_users', 'fieldtype_grouped_users']) . ')'
+        ]);
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             //set coordinates for field entity
             $x = $this->entities_coords[$fields['entities_id']][0];
             $y = $this->entities_coords[$fields['entities_id']][1] + ($this->entities_fields_count[$fields['entities_id']] * $this->fields_step);
@@ -130,10 +165,20 @@ class Entities_flowchart
 
     function build_entity_fields_nodes()
     {
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select * from app_fields where type in ('fieldtype_entity','fieldtype_entity_ajax','fieldtype_entity_multilevel')"
-        );
-        while ($fields = db_fetch_array($fields_query)) {
+        );*/
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (' . \K::model()->quoteToString(
+                ['fieldtype_entity', 'fieldtype_entity_ajax', 'fieldtype_entity_multilevel']
+            ) . ')'
+        ]);
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             //set coordinates for field entity
             $x = $this->entities_coords[$fields['entities_id']][0];
             $y = $this->entities_coords[$fields['entities_id']][1] + ($this->entities_fields_count[$fields['entities_id']] * $this->fields_step);
@@ -144,7 +189,7 @@ class Entities_flowchart
 
             $this->entities_fields_count[$fields['entities_id']]++;
 
-            $cfg = new fields_types_cfg($fields['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
             $this->edges[] = "{ data: { id: 'edge_field_{$fields['id']}', source: 'entity_{$cfg->get('entity_id')}', target: 'field_{$fields['id']}',lineColor: '#ffc107',arrowShape:'triangle',sourceShape:'none',width:1},classes:'relation' }";
         }
@@ -153,8 +198,16 @@ class Entities_flowchart
     function build_related_records_nodes()
     {
         $skip_related_records_fields = [];
-        $fields_query = db_query("select * from app_fields where type in ('fieldtype_related_records')");
-        while ($fields = db_fetch_array($fields_query)) {
+        //$fields_query = db_query("select * from app_fields where type in ('fieldtype_related_records')");
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (' . \K::model()->quoteToString(['fieldtype_related_records']) . ')'
+        ]);
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             //set coordinates for field entity
             $x = $this->entities_coords[$fields['entities_id']][0];
             $y = $this->entities_coords[$fields['entities_id']][1] + ($this->entities_fields_count[$fields['entities_id']] * $this->fields_step);
@@ -165,19 +218,28 @@ class Entities_flowchart
 
             $this->entities_fields_count[$fields['entities_id']]++;
 
-            $cfg = new fields_types_cfg($fields['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
             $source = 'entity_' . $cfg->get('entity_id');
             $sourceShape = 'none';
 
             //check if exist related field
-            $check_query = db_query(
+            /*$check_query = db_query(
                 "select * from app_fields where type in ('fieldtype_related_records') and entities_id='" . $cfg->get(
                     'entity_id'
                 ) . "'"
-            );
-            while ($check = db_fetch_array($check_query)) {
-                $check_cfg = new fields_types_cfg($check['configuration']);
+            );*/
+
+            $check_query = \K::model()->db_fetch('app_fields', [
+                'type in (' . \K::model()->quoteToString(['fieldtype_related_records']) . ') and entities_id = ?',
+                $cfg->get('entity_id')
+            ]);
+
+            //while ($check = db_fetch_array($check_query)) {
+            foreach ($check_query as $check) {
+                $check = $check->cast();
+
+                $check_cfg = new \Models\Main\Fields_types_cfg($check['configuration']);
                 if ($check_cfg->get('entity_id') == $fields['entities_id']) {
                     $source = 'field_' . $check['id'];
                     $sourceShape = 'triangle';
@@ -193,12 +255,18 @@ class Entities_flowchart
 
     function build_functions_nodes()
     {
-        global $app_functions_cache;
-
         $skip_functions = [];
-        $fields_query = db_query("select * from app_fields where type in ('fieldtype_formula')");
-        while ($fields = db_fetch_array($fields_query)) {
-            $cfg = new fields_types_cfg($fields['configuration']);
+        //$fields_query = db_query("select * from app_fields where type in ('fieldtype_formula')");
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (' . \K::model()->quoteToString(['fieldtype_formula']) . ')'
+        ]);
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
+            $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
             if (strstr($cfg->get('formula'), '{') and class_exists('functions')) {
                 if (!isset($entities_fields_count[$fields['entities_id']])) {
@@ -215,9 +283,9 @@ class Entities_flowchart
 
                 $this->entities_fields_count[$fields['entities_id']]++;
 
-                $skip_funcitons_edges = [];
+                $skip_functions_edges = [];
 
-                foreach ($app_functions_cache as $functions) {
+                foreach (\K::$fw->app_functions_cache as $functions) {
                     //simple formula string
                     if (strstr($cfg->get('formula'), '{' . $functions['id'] . '}')) {
                         //set coordinates for field entity
@@ -236,7 +304,7 @@ class Entities_flowchart
                             //function tip
                             $this->tips[] = [
                                 'id' => 'function_' . $functions['id'],
-                                'content' => TEXT_EXT_FUNCTION . ': ' . $functions['functions_name'] . '<br>' . TEXT_FORMULA . ': ' . $functions['functions_formula'] . '<br>' . $functions['notes'],
+                                'content' => \K::$fw->TEXT_EXT_FUNCTION . ': ' . $functions['functions_name'] . '<br>' . \K::$fw->TEXT_FORMULA . ': ' . $functions['functions_formula'] . '<br>' . $functions['notes'],
                             ];
                         }
 
@@ -246,14 +314,14 @@ class Entities_flowchart
                     //formula with related items
                     if (preg_match_all('/{(\d+):(\d+)}/', $cfg->get('formula'), $matches)) {
                         foreach ($matches[1] as $matches_key => $functions_id) {
-                            if (!isset($app_functions_cache[$functions_id])) {
+                            if (!isset(\K::$fw->app_functions_cache[$functions_id])) {
                                 continue;
                             }
 
-                            $function_info = $app_functions_cache[$functions_id];
+                            $function_info = \K::$fw->app_functions_cache[$functions_id];
 
                             //set coordinates for field entity
-                            $x = (isset($this->entities_coords[$function_info['entities_id']][0]) ? $this->entities_coords[$function_info['entities_id']][0] : 0);
+                            $x = ($this->entities_coords[$function_info['entities_id']][0] ?? 0);
                             $y = $this->entities_coords[$function_info['entities_id']][1] + ($this->entities_fields_count[$function_info['entities_id']] * $this->fields_step);
 
                             if (!in_array($function_info['id'], $skip_functions)) {
@@ -268,13 +336,13 @@ class Entities_flowchart
                                 //function tip
                                 $this->tips[] = [
                                     'id' => 'function_' . $function_info['id'],
-                                    'content' => TEXT_EXT_FUNCTION . ': ' . $function_info['functions_name'] . '<br>' . TEXT_FORMULA . ': ' . $function_info['functions_formula'] . '<br>' . $function_info['notes'],
+                                    'content' => \K::$fw->TEXT_EXT_FUNCTION . ': ' . $function_info['functions_name'] . '<br>' . \K::$fw->TEXT_FORMULA . ': ' . $function_info['functions_formula'] . '<br>' . $function_info['notes'],
                                 ];
                             }
 
-                            if (!in_array($function_info['id'], $skip_funcitons_edges)) {
+                            if (!in_array($function_info['id'], $skip_functions_edges)) {
                                 $this->edges[] = "{ data: { id: 'edge_field_{$fields['id']}', source: 'function_{$function_info['id']}', target: 'field_{$fields['id']}',lineColor: '#17a2b8',arrowShape:'triangle',sourceShape:'none',width:1},classes:'function' }";
-                                $skip_funcitons_edges[] = $function_info['id'];
+                                $skip_functions_edges[] = $function_info['id'];
                             }
                         }
                     }
@@ -287,7 +355,7 @@ class Entities_flowchart
     {
         foreach ($this->shcema as $entities) {
             //build entity node for parents entities tree
-            if (db_count('app_entities', $entities['id'], 'parent_id') > 0) {
+            if (\K::model()->db_count('app_entities', $entities['id'], 'parent_id') > 0) {
                 $y = $entities['y'];
 
                 switch (true) {
@@ -319,29 +387,35 @@ class Entities_flowchart
 
     function build_tips()
     {
-        $fields_query = db_query("select * from app_fields");
-        while ($fields = db_fetch_array($fields_query)) {
-            $cfg = new fields_types_cfg($fields['configuration']);
+        //$fields_query = db_query("select * from app_fields");
+
+        $fields_query = \K::model()->db_fetch_all('app_fields');
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
+            $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
             $content = '';
 
             switch ($fields['type']) {
                 case 'fieldtype_formula':
-                    $content .= TEXT_FORMULA . ': ' . $cfg->get('formula') . '<br>';
+                    $content .= \K::$fw->TEXT_FORMULA . ': ' . $cfg->get('formula') . '<br>';
                     break;
                 case 'fieldtype_entity':
                 case 'fieldtype_entity_ajax':
                 case 'fieldtype_entity_multilevel':
                 case 'fieldtype_related_records':
-                    $content .= TEXT_RELATIONSHIP_HEADING . ': ' . entities::get_name_by_id(
+                    $content .= \K::$fw->TEXT_RELATIONSHIP_HEADING . ': ' . \Models\Main\Entities::get_name_by_id(
                             $cfg->get('entity_id')
                         ) . '<br>';
                     break;
                 case 'fieldtype_users':
-                    $content .= TEXT_TYPE . ': ' . TEXT_FIELDTYPE_USERS_TITLE . '<br>';
+                    $content .= \K::$fw->TEXT_TYPE . ': ' . \K::$fw->TEXT_FIELDTYPE_USERS_TITLE . '<br>';
                     break;
                 case 'fieldtype_grouped_users':
-                    $content .= TEXT_TYPE . ': ' . TEXT_FIELDTYPE_GROUPEDUSERS_TITLE . '<br>';
+                    $content .= \K::$fw->TEXT_TYPE . ': ' . \K::$fw->TEXT_FIELDTYPE_GROUPEDUSERS_TITLE . '<br>';
                     break;
             }
 
@@ -351,10 +425,8 @@ class Entities_flowchart
                 $this->tips[] = [
                     'id' => 'field_' . $fields['id'],
                     'content' => $content,
-
                 ];
             }
         }
     }
-
 }

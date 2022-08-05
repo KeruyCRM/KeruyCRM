@@ -21,7 +21,7 @@ if (!defined('KERUY_CRM')) {
 </div>
 
 <?php
-$flowchart = new entities_flowchart;
+$flowchart = new \Tools\Flowchart\Entities_flowchart();
 $flowchart->prepare_data();
 ?>
 
