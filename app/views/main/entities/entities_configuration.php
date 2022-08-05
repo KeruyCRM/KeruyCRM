@@ -4,6 +4,7 @@ if (!defined('KERUY_CRM')) {
     exit;
 } ?>
 <?php
+require(component_path('entities/check_entities_id'));
 require(component_path('entities/navigation')) ?>
 
 <?php
