@@ -3,27 +3,20 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<h3 class="page-title"><?php
-    echo TEXT_ENTITIES_HEADING . ' - ' . TEXT_FLOWCHART ?></h3>
+<h3 class="page-title"><?= \K::$fw->TEXT_ENTITIES_HEADING . ' - ' . \K::$fw->TEXT_FLOWCHART ?></h3>
 
 <div class="row">
     <div class="col-md-3">
-        <?php
-        echo '<a class="btn btn-default" href="' . url_for(
-                'entities/entities'
-            ) . '">' . TEXT_BUTTON_BACK . '</a>&nbsp;&nbsp;' ?>
+        <?= '<a class="btn btn-default" href="' . \Helpers\Urls::url_for(
+                'main/entities/entities'
+            ) . '">' . \K::$fw->TEXT_BUTTON_BACK . '</a>&nbsp;&nbsp;' ?>
     </div>
     <div class="col-md-8" style="text-align: right;">
-        <?php
-        echo tooltip_icon(TEXT_ENTITIES_FLOWCHART_INFO) ?>
-        <span class="label label-info"><?php
-            echo TEXT_FIELDTYPE_USERS_TITLE ?></span>
-        <span class="label label-warning"><?php
-            echo TEXT_FIELDTYPE_ENTITY_TITLE ?></span>
-        <span class="label label-success"><?php
-            echo TEXT_FIELDTYPE_RELATED_RECORDS_TITLE ?></span>
-        <span class="label" style="background-color: #17a2b8;"><?php
-            echo TEXT_FIELDTYPE_FORMULA_TITLE ?></span>
+        <?= \Helpers\App::tooltip_icon(\K::$fw->TEXT_ENTITIES_FLOWCHART_INFO) ?>
+        <span class="label label-info"><?= \K::$fw->TEXT_FIELDTYPE_USERS_TITLE ?></span>
+        <span class="label label-warning"><?= \K::$fw->TEXT_FIELDTYPE_ENTITY_TITLE ?></span>
+        <span class="label label-success"><?= \K::$fw->TEXT_FIELDTYPE_RELATED_RECORDS_TITLE ?></span>
+        <span class="label" style="background-color: #17a2b8;"><?= \K::$fw->TEXT_FIELDTYPE_FORMULA_TITLE ?></span>
     </div>
 </div>
 
@@ -112,10 +105,10 @@ echo $flowchart->height + 500 ?>px;"></div>
 
             elements: {
                 nodes: [
-                    <?php echo str_replace('<br>', '\n', implode(",\n", $flowchart->nodes)) ?>
+                    <?= str_replace('<br>', '\n', implode(",\n", $flowchart->nodes)) ?>
                 ],
                 edges: [
-                    <?php echo implode(",\n", $flowchart->edges) ?>
+                    <?= implode(",\n", $flowchart->edges) ?>
                 ]
             },
 
@@ -138,18 +131,17 @@ echo $flowchart->height + 500 ?>px;"></div>
         cy.$('node').on('click', function (e) {
             var node = e.target;
             if (node.id().indexOf('entity_') != -1) {
-                window.open('<?php echo url_for(
-                    'entities/fields'
-                ) ?>&entities_id=' + node.id().replace('entity_', ''), '_blank');
+                window.open('<?= \Helpers\Urls::url_for(
+                    'main/entities/fields',
+                    'entities_id='
+                ) ?>' + node.id().replace('entity_', ''), '_blank');
                 return true;
             }
         });
-
     })
-
 </script>
 
-<script src="js/cytoscape.js-master/dist/cytoscape.min.js"></script>
-<script src="js/cytoscape.js-master/qtip/jquery.qtip.min.js"></script>
-<link href="js/cytoscape.js-master/qtip/jquery.qtip.min.css" rel="stylesheet" type="text/css"/>
-<script src="js/cytoscape.js-master/qtip/cytoscape-qtip.js"></script>
+<script src="<?= \K::$fw->DOMAIN ?>js/cytoscape.js-master/dist/cytoscape.min.js"></script>
+<script src="<?= \K::$fw->DOMAIN ?>js/cytoscape.js-master/qtip/jquery.qtip.min.js"></script>
+<link href="<?= \K::$fw->DOMAIN ?>js/cytoscape.js-master/qtip/jquery.qtip.min.css" rel="stylesheet" type="text/css"/>
+<script src="<?= \K::$fw->DOMAIN ?>js/cytoscape.js-master/qtip/cytoscape-qtip.js"></script>
