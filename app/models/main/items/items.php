@@ -1391,34 +1391,34 @@ class Items
         return $listing_sql_query;
     }
 
-    public static function add_listing_order_query_by_entity_id($entities_id, $order_cause = 'asc', $alias = 'e')
+    public static function add_listing_order_query_by_entity_id($entities_id, $order_clause = 'asc', $alias = 'e')
     {
         $listing_order_query = " order by ";
 
         //if entity is Users then order by firstname/lastname
         if ($entities_id == 1) {
-            $listing_order_query .= (CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? "{$alias}.field_7 {$order_cause}, {$alias}.field_8 {$order_cause}" : "{$alias}.field_8 {$order_cause}, {$alias}.field_7 {$order_cause}");
-        } //if exist haeading field then order by heading
-        elseif ($heading_id = fields::get_heading_id($entities_id)) {
-            $field_info = db_find('app_fields', $heading_id);
+            $listing_order_query .= (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? "{$alias}.field_7 {$order_clause}, {$alias}.field_8 {$order_clause}" : "{$alias}.field_8 {$order_clause}, {$alias}.field_7 {$order_clause}");
+        } //if exist heading field then order by heading
+        elseif ($heading_id = \Models\Main\Fields::get_heading_id($entities_id)) {
+            $field_info = \K::model()->db_find('app_fields', $heading_id);
 
             switch ($field_info['type']) {
                 case 'fieldtype_id':
-                    $listing_order_query .= "{$alias}.id" . ' ' . $order_cause;
+                    $listing_order_query .= "{$alias}.id" . ' ' . $order_clause;
                     break;
                 case 'fieldtype_date_added':
-                    $listing_order_query .= "{$alias}.date_added" . ' ' . $order_cause;
+                    $listing_order_query .= "{$alias}.date_added" . ' ' . $order_clause;
                     break;
                 case 'fieldtype_created_by':
-                    $listing_order_query .= "{$alias}.created_by" . ' ' . $order_cause;
+                    $listing_order_query .= "{$alias}.created_by" . ' ' . $order_clause;
                     break;
                 default:
-                    $listing_order_query .= "{$alias}.field_{$heading_id} " . $order_cause;
+                    $listing_order_query .= "{$alias}.field_{$heading_id} " . $order_clause;
                     break;
             }
         } //default order by ID
         else {
-            $listing_order_query .= "{$alias}.id" . ' ' . $order_cause;
+            $listing_order_query .= "{$alias}.id" . ' ' . $order_clause;
         }
 
         return $listing_order_query;

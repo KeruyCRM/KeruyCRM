@@ -80,6 +80,8 @@ class Reports
             ] + $where_var
         );
 
+        $forceCommit = \K::model()->forceCommit();
+
         if (!$reports_info) {
             /*$default_reports_query = db_query(
                 "select * from app_reports where entities_id='" . db_input($entity_id) . "' and reports_type='default'"
@@ -143,12 +145,16 @@ class Reports
             $reports_info = \K::model()->db_find('app_reports', $reports_info['id']);
         }
 
+        if ($forceCommit) {
+            \K::model()->commit();
+        }
+
         return $reports_info;
     }
 
     public static function get_parent_reports($reports_id, $parent_reports = [])
     {
-        $report_info = db_find('app_reports', $reports_id);
+        $report_info = \K::model()->db_find('app_reports', $reports_id);
 
         if ($report_info['parent_id'] > 0) {
             $parent_reports[] = $report_info['parent_id'];
@@ -161,8 +167,6 @@ class Reports
 
     public static function auto_create_parent_reports($reports_id)
     {
-        //global $app_logged_users_id;
-
         $report_info = \K::model()->db_find('app_reports', $reports_id);
         $entity_info = \K::model()->db_find('app_entities', $report_info['entities_id']);
 
@@ -175,6 +179,8 @@ class Reports
                 'in_dashboard' => 0,
                 'created_by' => \K::$fw->app_logged_users_id,
             ];
+
+            $forceCommit = \K::model()->forceCommit();
 
             $mapper = \K::model()->db_perform('app_reports', $sql_data);
 
@@ -191,6 +197,10 @@ class Reports
             );
 
             self::auto_create_parent_reports($insert_id);
+
+            if ($forceCommit) {
+                \K::model()->commit();
+            }
         }
     }
 

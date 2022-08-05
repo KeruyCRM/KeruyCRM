@@ -3,59 +3,46 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_CHANGE_STRUCTURE) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_CHANGE_STRUCTURE) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'entities_form',
-    url_for('entities/entities_change_structure', 'action=save' . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '')),
+    \Helpers\Urls::url_for(
+        'main/entities/entities_change_structure/save',
+        (isset(\K::$fw->GET['id']) ? '&id=' . \K::$fw->GET['id'] : '')
+    ),
     ['class' => 'form-horizontal']
 ) ?>
 <div class="modal-body">
-    <p><?php
-        echo TEXT_CHANGE_STRUCTURE_INFO; ?></p>
-
+    <p><?= \K::$fw->TEXT_CHANGE_STRUCTURE_INFO; ?></p>
     <div class="form-body">
-
         <div class="form-group">
-            <label class="col-md-3 control-label" for="name"><?php
-                echo TEXT_MOVE_ENTITY ?></label>
+            <label class="col-md-3 control-label" for="name"><?= \K::$fw->TEXT_MOVE_ENTITY ?></label>
             <div class="col-md-9">
-                <?php
-                echo select_tag(
+                <?= \Helpers\Html::select_tag(
                     'entities_id',
-                    ['' => TEXT_SELECT_ENTITY] + entities::get_choices(),
+                    ['' => \K::$fw->TEXT_SELECT_ENTITY] + \Models\Main\Entities::get_choices(),
                     '',
                     ['class' => 'form-control input-xlarge required']
                 ) ?>
             </div>
         </div>
-
-        <?php
-        if (!defined('TEXT_ENTITY_MOVE_TO')) define('TEXT_ENTITY_MOVE_TO', 'Move to') ?>
-
         <div class="form-group">
-            <label class="col-md-3 control-label" for="name"><?php
-                echo TEXT_ENTITY_MOVE_TO ?></label>
+            <label class="col-md-3 control-label" for="name"><?= \K::$fw->TEXT_ENTITY_MOVE_TO ?></label>
             <div class="col-md-9">
-                <?php
-                echo select_tag(
+                <?= \Helpers\Html::select_tag(
                     'move_to_entities_id',
-                    entities::get_choices_with_empty(TEXT_TOP_LEVEL),
+                    \Models\Main\Entities::get_choices_with_empty(\K::$fw->TEXT_TOP_LEVEL),
                     '',
                     ['class' => 'form-control input-xlarge required', 'onChange' => 'get_parent_items_list()']
                 ) ?>
             </div>
         </div>
-
         <div id="parent_items_list"></div>
-
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
@@ -73,9 +60,8 @@ echo ajax_modal_template_footer() ?>
     function get_parent_items_list() {
         $('#parent_items_list').html('<div class="ajax-loading"></div>');
 
-        $('#parent_items_list').load('<?php echo url_for(
-            "entities/entities_change_structure",
-            "action=get_parent_items"
+        $('#parent_items_list').load('<?= \Helpers\Urls::url_for(
+            'main/entities/entities_change_structure/get_parent_items'
         )?>', {entities_id: $('#move_to_entities_id').val()}, function (response, status, xhr) {
             if (status == "error") {
                 $(this).html('<div class="alert alert-error"><b>Error:</b> ' + xhr.status + ' ' + xhr.statusText + '<div>' + response + '</div></div>')
@@ -85,5 +71,4 @@ echo ajax_modal_template_footer() ?>
             }
         });
     }
-
-</script> 
+</script>
