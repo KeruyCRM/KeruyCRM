@@ -65,7 +65,7 @@ class Urls
 
         $attributes['class'] .= ' link-to-modalbox';
 
-        return '<a onClick="open_dialog(\'' . $url . '\')" ' . tag_attributes_to_html(
+        return '<a onClick="open_dialog(\'' . $url . '\')" ' . \Helpers\Html::tag_attributes_to_html(
                 $attributes
             ) . '>' . $name . '</a>';
     }

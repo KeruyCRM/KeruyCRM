@@ -1166,6 +1166,7 @@ class App
     //For PHP5.3 this public static function replace json_encode($v,JSON_UNESCAPED_UNICODE) in 5.4.0
     public static function app_json_encode($arr)
     {
+        //TODO ARCHAISM?
         //convmap since 0x80 char codes so it takes all multibyte codes (above ASCII 127). So such characters are being "hidden" from normal json_encoding
         array_walk_recursive($arr, function (&$item, $key) {
             if (is_string($item)) {
