@@ -16,9 +16,10 @@ class Model extends \Prefab
                     "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4",
                     \K::$fw->DB_username,
                     \K::$fw->DB_password
-                /*,[
-                    \PDO::ATTR_TIMEOUT => 5
-                ]*/
+                    , [
+                        //\PDO::ATTR_TIMEOUT => 5
+                        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+                    ] + (\K::$fw->DB_FORCE_SQL_MODE ? [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET sql_mode="' . \K::$fw->DB_SET_SQL_MODE . '"'] : [])
                 );
             } elseif (\K::$fw->TYPE_DATABASE == 'sqlite') {
                 $this->db = new \DB\SQL("db/{$name}.sqlite");
