@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -79,8 +83,6 @@ class Fieldtype_access_group
 
     public static function get_choices($field, $value = '')
     {
-        global $app_user;
-
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $choices = [];
@@ -89,15 +91,20 @@ class Fieldtype_access_group
             $choices[0] = \K::$fw->TEXT_ADMINISTRATOR;
         }
 
-        $where_sql = "where (select count(*) from app_entities_access ea where ea.access_groups_id=ag.id and entities_id='" . $field['entities_id'] . "' and length(access_schema))>0";
+        $where_sql = 'where (select count(*) from app_entities_access ea where ea.access_groups_id = ag.id and entities_id = ' . (int)$field['entities_id'] . ' and length(access_schema)) > 0';
 
-        $where_sql .= (is_array($cfg->get('use_groups')) ? " and ag.id in (" . implode(
-                ',',
-                $cfg->get('use_groups')
-            ) . (strlen($value) ? ',' . $value : '') . ")" : "");
+        $where_sql .= (is_array($cfg->get('use_groups')) ? ' and ag.id in (' .
+            \K::model()->quoteToString($cfg->get('use_groups'), \PDO::PARAM_INT) .
+            (strlen($value) ? ',' . (int)$value : '') . ')' : '');
 
-        $groups_query = db_query("select ag.* from app_access_groups ag {$where_sql} order by ag.sort_order, ag.name");
-        while ($groups = db_fetch_array($groups_query)) {
+        $groups_query = \K::model()->db_query_exec(
+            "select ag.id, ag.name from app_access_groups ag {$where_sql} order by ag.sort_order, ag.name",
+            null,
+            'app_access_groups,app_entities_access'
+        );
+
+        //while ($groups = db_fetch_array($groups_query)) {
+        foreach ($groups_query as $groups) {
             $choices[$groups['id']] = $groups['name'];
         }
 
@@ -106,8 +113,6 @@ class Fieldtype_access_group
 
     public function render($field, $obj, $params = [])
     {
-        global $app_users_cache, $app_user;
-
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $entities_id = $field['entities_id'];
@@ -126,18 +131,18 @@ class Fieldtype_access_group
                     ) . ' field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')
             ];
 
-            return select_tag(
+            return \Helpers\Html::select_tag(
                     'fields[' . $field['id'] . ']',
                     [
                         '' => (strlen($cfg->get('default_text')) ? $cfg->get('default_text') : \K::$fw->TEXT_NONE)
                     ] + $choices,
                     $value,
                     $attributes
-                ) . fields_types::custom_error_handler($field['id']);
+                ) . \Models\Main\Fields_types::custom_error_handler($field['id']);
         } elseif ($cfg->get('display_as') == 'checkboxes') {
             $attributes = ['class' => 'field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')];
 
-            return '<div class="checkboxes_list ' . ($field['is_required'] == 1 ? ' required' : '') . '">' . select_checkboxes_tag(
+            return '<div class="checkboxes_list ' . ($field['is_required'] == 1 ? ' required' : '') . '">' . \Helpers\Html::select_checkboxes_tag(
                     'fields[' . $field['id'] . ']',
                     $choices,
                     $value,
@@ -153,28 +158,37 @@ class Fieldtype_access_group
                     'default_text'
                 ) : \K::$fw->TEXT_SELECT_SOME_VALUES)
             ];
-            return select_tag(
+            return \Helpers\Html::select_tag(
                     'fields[' . $field['id'] . '][]',
                     $choices,
                     $value,
                     $attributes
-                ) . fields_types::custom_error_handler($field['id']);
+                ) . \Models\Main\Fields_types::custom_error_handler($field['id']);
         }
     }
 
     public function process($options)
     {
-        global $app_send_to;
-
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
-        $value = (is_array($options['value']) ? implode(',', $options['value']) : $options['value']);
+        $value = (is_array($options['value']) ? \K::model()->quoteToString(
+            $options['value'],
+            \PDO::PARAM_INT
+        ) : \K::model()->quote($options['value'], \PDO::PARAM_INT));
 
         //send notification
         if ($cfg->get('send_notification') == 1 and strlen($value)) {
-            $users_query = db_query("select id from app_entity_1 where field_6 in (" . $value . ") and field_5=1");
-            while ($users = db_fetch_array($users_query)) {
-                $app_send_to[] = $users['id'];
+            //$users_query = db_query("select id from app_entity_1 where field_6 in (" . $value . ") and field_5=1");
+
+            $users_query = \K::model()->db_fetch('app_entity_1', [
+                'field_6 in (' . $value . ') and field_5 = 1'
+            ], [], 'id');
+
+            //while ($users = db_fetch_array($users_query)) {
+            foreach ($users_query as $users) {
+                $users = $users->cast();
+
+                \K::$fw->app_send_to[] = $users['id'];
             }
         }
 
@@ -191,7 +205,7 @@ class Fieldtype_access_group
 
         $names = [];
         foreach (explode(',', $options['value']) as $id) {
-            $names[] = access_groups::get_name_by_id($id);
+            $names[] = \Models\Main\Access_groups::get_name_by_id($id);
         }
 
         return ($is_export ? implode(', ', $names) : implode('<br>', $names));
@@ -199,8 +213,6 @@ class Fieldtype_access_group
 
     public function reports_query($options)
     {
-        global $app_user;
-
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
@@ -209,13 +221,15 @@ class Fieldtype_access_group
         if (strlen($filters['filters_values']) > 0) {
             $filters['filters_values'] = str_replace(
                 'current_user_group_id',
-                $app_user['group_id'],
+                \K::$fw->app_user['group_id'],
                 $filters['filters_values']
             );
 
-            $sql_query[] = "(select count(*) from app_entity_" . $options['entities_id'] . "_values as cv where cv.items_id=" . $prefix . ".id and cv.fields_id='" . db_input(
-                    $options['filters']['fields_id']
-                ) . "' and cv.value in (" . $filters['filters_values'] . ")) " . ($filters['filters_condition'] == 'include' ? '>0' : '=0');
+            $sql_query[] = '(select count(*) from app_entity_' . (int)$options['entities_id'] . '_values as cv where cv.items_id = ' . $prefix . '.id and cv.fields_id = ' . (int)$options['filters']['fields_id']
+                . ' and cv.value in (' . \K::model()->quoteToString(
+                    $filters['filters_values'],
+                    \PDO::PARAM_INT
+                ) . ')) ' . ($filters['filters_condition'] == 'include' ? ' > 0' : ' = 0');
         }
 
         return $sql_query;
@@ -229,8 +243,17 @@ class Fieldtype_access_group
 
         $send_to = [];
 
-        $users_query = db_query("select id from app_entity_1 where field_6 in (" . $value . ") and field_5=1");
-        while ($users = db_fetch_array($users_query)) {
+        //$users_query = db_query("select id from app_entity_1 where field_6 in (" . $value . ") and field_5=1");
+        $users_query = \K::model()->db_fetch('app_entity_1', [
+            //TODO Refactoring to classic field_6 = ?
+            'field_6 in ( ? ) and field_5 = 1',
+            $value
+        ], [], 'id');
+
+        //while ($users = db_fetch_array($users_query)) {
+        foreach ($users_query as $users) {
+            $users = $users->cast();
+
             $send_to[] = $users['id'];
         }
 
