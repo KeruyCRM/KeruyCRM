@@ -63,7 +63,7 @@ if (count($form_fields_query) > 0) {
 
                 if ($field['type'] == 'fieldtype_grouped_users' and in_array(
                         $cfg->get('display_as'),
-                        ['checkboxes', 'dropdown_muliple']
+                        ['checkboxes', 'dropdown_multiple']
                     )) {
                     $is_multiple = true;
                 }

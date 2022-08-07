@@ -36,7 +36,7 @@ class Fieldtype_access_group
             'choices' => [
                 'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
                 'checkboxes' => \K::$fw->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
-                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown_multiple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ],
             'params' => ['class' => 'form-control input-xlarge']
         ];
@@ -61,7 +61,7 @@ class Fieldtype_access_group
             'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_ACCESS_GROUP_USERS_GROUP_TIP,
             'name' => 'use_groups',
             'type' => 'dropdown',
-            'choices' => access_groups::get_choices(false),
+            'choices' => \Models\Main\Access_groups::get_choices(false),
             'params' => ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
         ];
 
@@ -143,13 +143,15 @@ class Fieldtype_access_group
                     $value,
                     $attributes
                 ) . '</div>';
-        } elseif ($cfg->get('display_as') == 'dropdown_muliple') {
+        } elseif ($cfg->get('display_as') == 'dropdown_multiple') {
             $attributes = [
                 'class' => 'form-control ' . $cfg->get(
                         'width'
                     ) . ' chosen-select field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),
                 'multiple' => 'multiple',
-                'data-placeholder' => ($cfg->get('default_text') ? $cfg->get('default_text') : \K::$fw->TEXT_SELECT_SOME_VALUES)
+                'data-placeholder' => ($cfg->get('default_text') ? $cfg->get(
+                    'default_text'
+                ) : \K::$fw->TEXT_SELECT_SOME_VALUES)
             ];
             return select_tag(
                     'fields[' . $field['id'] . '][]',

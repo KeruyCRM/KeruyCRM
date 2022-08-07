@@ -21,8 +21,8 @@ class Fieldtype_color
             'type' => 'dropdown',
             'choices' => [
                 'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
-                //TODO FIX dropdown_muliple => dropdown_multiple
-                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE,
+
+                'dropdown_multiple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE,
                 'checkboxes' => \K::$fw->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
             ],
             'params' => ['class' => 'form-control input-large']
@@ -40,7 +40,7 @@ class Fieldtype_color
             ],
             'tooltip' => \K::$fw->TEXT_ENTER_WIDTH,
             'params' => ['class' => 'form-control input-medium'],
-            'form_group' => ['form_display_rules' => 'fields_configuration_display_as:dropdown,dropdown_muliple']
+            'form_group' => ['form_display_rules' => 'fields_configuration_display_as:dropdown,dropdown_multiple']
         ];
 
         $cfg[] = [
@@ -122,7 +122,7 @@ class Fieldtype_color
             case 'dropdown':
                 $html = select_tag_with_color('fields[' . $field['id'] . ']', $choices, $value, $attributes);
                 break;
-            case 'dropdown_muliple':
+            case 'dropdown_multiple':
                 $attributes['multiple'] = 'multiple';
                 $html = select_tag_with_color('fields[' . $field['id'] . '][]', $choices, $value, $attributes);
                 break;

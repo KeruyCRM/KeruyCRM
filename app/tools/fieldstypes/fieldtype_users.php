@@ -24,7 +24,7 @@ class Fieldtype_users
             'choices' => [
                 'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
                 'checkboxes' => \K::$fw->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
-                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown_multiple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ]
         ];
 
@@ -215,7 +215,7 @@ class Fieldtype_users
                     $value,
                     $attributes
                 ) . '</div>';
-        } elseif ($cfg->get('display_as') == 'dropdown_muliple') {
+        } elseif ($cfg->get('display_as') == 'dropdown_multiple') {
             $attributes = [
                 'class' => 'form-control input-xlarge chosen-select field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),
                 'multiple' => 'multiple',

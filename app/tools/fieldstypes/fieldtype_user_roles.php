@@ -23,7 +23,7 @@ class Fieldtype_user_roles
             'params' => ['class' => 'form-control input-xlarge'],
             'choices' => [
                 'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
-                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown_multiple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ]
         ];
 
@@ -193,7 +193,7 @@ class Fieldtype_user_roles
                 $value,
                 $attributes
             );
-        } elseif ($cfg->get('display_as') == 'dropdown_muliple') {
+        } elseif ($cfg->get('display_as') == 'dropdown_multiple') {
             $attributes = [
                 'class' => 'form-control input-xlarge chosen-select field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : ''),
                 'multiple' => 'multiple',

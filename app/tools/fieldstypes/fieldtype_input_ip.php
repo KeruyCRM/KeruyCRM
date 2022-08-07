@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -33,10 +37,11 @@ class Fieldtype_input_ip
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST['entities_id']),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
@@ -61,7 +66,7 @@ class Fieldtype_input_ip
                 ($cfg->get('is_unique') > 0 ? ' is-unique' : ''),
         ];
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
         $script = '
             <script>
@@ -73,7 +78,7 @@ class Fieldtype_input_ip
             </script>
             ';
 
-        return input_tag(
+        return \Helpers\Html::input_tag(
                 'fields[' . $field['id'] . ']',
                 $this->long2ip($obj['field_' . $field['id']]),
                 $attributes
@@ -82,7 +87,7 @@ class Fieldtype_input_ip
 
     public function process($options)
     {
-        return ip2long(db_prepare_input($options['value']));
+        return ip2long(\K::model()->db_prepare_input($options['value']));
     }
 
     public function output($options)

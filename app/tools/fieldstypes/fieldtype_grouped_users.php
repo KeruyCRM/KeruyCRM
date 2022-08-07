@@ -23,7 +23,7 @@ class Fieldtype_grouped_users
             'choices' => [
                 'dropdown' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN,
                 'checkboxes' => \K::$fw->TEXT_DISPLAY_USERS_AS_CHECKBOXES,
-                'dropdown_muliple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown_multiple' => \K::$fw->TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ],
             'params' => ['class' => 'form-control input-xlarge']
         ];
@@ -146,7 +146,7 @@ class Fieldtype_grouped_users
                         $attributes
                     ) . '</div>';
                 break;
-            case 'dropdown_muliple':
+            case 'dropdown_multiple':
                 $attributes = [
                     'class' => 'form-control chosen-select ' . $cfg->get(
                             'width'

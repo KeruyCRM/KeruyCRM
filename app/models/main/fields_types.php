@@ -1197,13 +1197,11 @@ class Fields_types
 
     public static function get_is_unique_choices($entity_id)
     {
-        global $app_entities_cache;
-
         $choices = [];
         $choices[0] = \K::$fw->TEXT_NO;
         $choices[1] = \K::$fw->TEXT_YES;
 
-        if ($app_entities_cache[$entity_id]['parent_id'] > 0) {
+        if (\K::$fw->app_entities_cache[$entity_id]['parent_id'] > 0) {
             $choices[2] = \K::$fw->TEXT_UNIQUE_FOR_EACH_PARENT_RECORD;
         }
 
