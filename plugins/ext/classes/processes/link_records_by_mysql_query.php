@@ -71,12 +71,12 @@ class link_records_by_mysql_query
 
             $sql_data_related = [
                 'entity_' . $this->current_entity_id . '_items_id' => $this->current_item_id,
-                'entity_' . $this->action_entity_id . $table_info['sufix'] . '_items_id' => $items['id']
+                'entity_' . $this->action_entity_id . $table_info['suffix'] . '_items_id' => $items['id']
             ];
 
             //check if related item exist
             $check_query = db_query(
-                "select id from " . $table_info['table_name'] . " where entity_" . $this->current_entity_id . "_items_id=" . $this->current_item_id . " and entity_" . $this->action_entity_id . $table_info['sufix'] . "_items_id=" . $items['id']
+                "select id from " . $table_info['table_name'] . " where entity_" . $this->current_entity_id . "_items_id=" . $this->current_item_id . " and entity_" . $this->action_entity_id . $table_info['suffix'] . "_items_id=" . $items['id']
             );
             if (!$check = db_fetch_array($check_query)) {
                 //create related item

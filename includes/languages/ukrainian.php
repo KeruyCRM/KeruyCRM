@@ -1205,7 +1205,7 @@ define(
     'Перед включенням даної можливості провірте <a href="https://keruy.com.ua/index.php?p=8" target="_blank"><u>обмеження на відправлення пошти</u></a> з вашого сервера.'
 );
 define('TEXT_MAILER_ERROR', 'Помилка відправлення повідомлення для %s');
-define('TEXT_HIDE_INSERT_BUTTON_IN_REPORTS', 'Приховати кнопку добавлення в звітах');
+define('TEXT_HIDE_INSERT_BUTTON_IN_REPORTS', 'Приховати кнопку додавання в звітах');
 define('TEXT_DISABLE_NOTIFICATIONS_FIELDS_INFO', 'Назначені користувачі не будуть отримувати відомості');
 define('TEXT_FROM_TO', 'з %s по %s');
 

@@ -1591,7 +1591,7 @@ class processes
                                 $this->entities_id,
                                 $action_entity_id
                             );
-                            $where_sql = "select entity_" . $action_entity_id . $table_info['sufix'] . "_items_id as item_id from " . $table_info['table_name'] . " where entity_" . $this->entities_id . "_items_id='" . db_input(
+                            $where_sql = "select entity_" . $action_entity_id . $table_info['suffix'] . "_items_id as item_id from " . $table_info['table_name'] . " where entity_" . $this->entities_id . "_items_id='" . db_input(
                                     $item_id
                                 ) . "'";
 
@@ -1680,7 +1680,7 @@ class processes
 
                             $sql_data_related = [
                                 'entity_' . $this->entities_id . '_items_id' => $item_id,
-                                'entity_' . $action_entity_id . $table_info['sufix'] . '_items_id' => $related_items_id
+                                'entity_' . $action_entity_id . $table_info['suffix'] . '_items_id' => $related_items_id
                             ];
 
                             db_perform($table_info['table_name'], $sql_data_related);

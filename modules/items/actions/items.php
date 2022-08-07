@@ -387,7 +387,7 @@ switch ($app_module_action) {
 
             $sql_data = [
                 'entity_' . $current_entity_id . '_items_id' => $item_id,
-                'entity_' . $related_entities_id . $table_info['sufix'] . '_items_id' => $related_items_id
+                'entity_' . $related_entities_id . $table_info['suffix'] . '_items_id' => $related_items_id
             ];
 
             db_perform($table_info['table_name'], $sql_data);

@@ -201,8 +201,8 @@ class fieldtype_related_records
             if ($filters['filters_condition'] == 'include') {
                 $where_sql = '';
 
-                if (strlen($table_info['sufix']) > 0) {
-                    $where_sql = " or ri.entity_" . $options['entities_id'] . $table_info['sufix'] . "_items_id=e.id ";
+                if (strlen($table_info['suffix']) > 0) {
+                    $where_sql = " or ri.entity_" . $options['entities_id'] . $table_info['suffix'] . "_items_id=e.id ";
                 }
 
                 $search_sql = " and ri.entity_" . $cfg->get('entity_id') . "_items_id in 
@@ -227,8 +227,8 @@ class fieldtype_related_records
 
                 $where_sql = '';
 
-                if (strlen($table_info['sufix']) > 0) {
-                    $where_sql = " or ri.entity_" . $options['entities_id'] . $table_info['sufix'] . "_items_id=e.id ";
+                if (strlen($table_info['suffix']) > 0) {
+                    $where_sql = " or ri.entity_" . $options['entities_id'] . $table_info['suffix'] . "_items_id=e.id ";
                 }
 
                 //add filtes by items
@@ -275,8 +275,8 @@ class fieldtype_related_records
 
             $where_sql = '';
 
-            if (strlen($table_info['sufix']) > 0) {
-                $where_sql = " or ri.entity_" . $entities_id . $table_info['sufix'] . "_items_id=e.id ";
+            if (strlen($table_info['suffix']) > 0) {
+                $where_sql = " or ri.entity_" . $entities_id . $table_info['suffix'] . "_items_id=e.id ";
             }
 
             $listing_sql_query_select .= ", (select count(*) as total from " . $table_info['table_name'] . " ri where ri.entity_" . $entities_id . "_items_id=e.id {$where_sql}) as field_" . $field['id'];

@@ -183,13 +183,13 @@ class functions
 
                         $related_items_sql = "select ri.entity_" . $cfg->get(
                                 'entity_id'
-                            ) . $table_info['sufix'] . "_items_id from " . $table_info['table_name'] . " ri where ri.entity_" . $entities_id . "_items_id={$e_prefix}.id";
+                            ) . $table_info['suffix'] . "_items_id from " . $table_info['table_name'] . " ri where ri.entity_" . $entities_id . "_items_id={$e_prefix}.id";
                         $sql .= " and (func{$table_prefix}.id in (" . $related_items_sql . ")";
 
-                        if (strlen($table_info['sufix']) > 0) {
+                        if (strlen($table_info['suffix']) > 0) {
                             $related_items_sql = "select ri.entity_" . $cfg->get(
                                     'entity_id'
-                                ) . "_items_id from " . $table_info['table_name'] . " ri where ri.entity_" . $entities_id . $table_info['sufix'] . "_items_id={$e_prefix}.id";
+                                ) . "_items_id from " . $table_info['table_name'] . " ri where ri.entity_" . $entities_id . $table_info['suffix'] . "_items_id={$e_prefix}.id";
                             $sql .= " or func{$table_prefix}.id in (" . $related_items_sql . ")";
                         }
 

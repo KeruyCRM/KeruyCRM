@@ -19,7 +19,7 @@ switch ($app_module_action) {
                 );
 
                 db_query(
-                    "delete from {$table_info['table_name']} where entity_{$related_entities_id}{$table_info['sufix']}_items_id={$item_id} and entity_{$current_entity_id}_items_id={$current_item_id}"
+                    "delete from {$table_info['table_name']} where entity_{$related_entities_id}{$table_info['suffix']}_items_id={$item_id} and entity_{$current_entity_id}_items_id={$current_item_id}"
                 );
             }
         }
@@ -39,7 +39,7 @@ switch ($app_module_action) {
                 $relatd_items_info = db_find($table_info['table_name'], $id);
                 related_records::autocreate_comments_delete(
                     $_POST['related_entities_id'],
-                    $relatd_items_info['entity_' . $_POST['related_entities_id'] . $table_info['sufix'] . '_items_id'],
+                    $relatd_items_info['entity_' . $_POST['related_entities_id'] . $table_info['suffix'] . '_items_id'],
                     $current_entity_id,
                     $current_item_id
                 );
@@ -69,12 +69,12 @@ switch ($app_module_action) {
 
             foreach ($_POST['items'] as $related_items_id) {
                 $check_query = db_query(
-                    "select * from " . $table_info['table_name'] . " where entity_" . $current_entity_id . "_items_id=" . (int)$current_item_id . " and entity_" . $related_entities_id . $table_info['sufix'] . "_items_id = " . (int)$related_items_id . ""
+                    "select * from " . $table_info['table_name'] . " where entity_" . $current_entity_id . "_items_id=" . (int)$current_item_id . " and entity_" . $related_entities_id . $table_info['suffix'] . "_items_id = " . (int)$related_items_id . ""
                 );
                 if (!$check = db_fetch_array($check_query)) {
                     $sql_data = [
                         'entity_' . $current_entity_id . '_items_id' => $current_item_id,
-                        'entity_' . $related_entities_id . $table_info['sufix'] . '_items_id' => $related_items_id
+                        'entity_' . $related_entities_id . $table_info['suffix'] . '_items_id' => $related_items_id
                     ];
 
                     db_perform($table_info['table_name'], $sql_data);

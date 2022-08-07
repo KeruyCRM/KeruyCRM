@@ -371,13 +371,13 @@ class related_records
             $key_name = $entities_id . '_' . $related_entities_id;
         }
 
-        $sufix = '';
+        $suffix = '';
 
         if ($entities_id == $related_entities_id) {
-            $sufix = '_related';
+            $suffix = '_related';
         }
 
-        return ['table_name' => $table_name, 'table_key' => $key_name, 'sufix' => $sufix];
+        return ['table_name' => $table_name, 'table_key' => $key_name, 'suffix' => $suffix];
     }
 
     function get_related_items()
@@ -397,12 +397,12 @@ class related_records
         while ($related_items = db_fetch_array($related_items_query)) {
             $related_items_array[$related_items['id']] = $related_items['entity_' . $this->cfg->get(
                 'entity_id'
-            ) . $table_info['sufix'] . '_items_id'];
+            ) . $table_info['suffix'] . '_items_id'];
         }
 
-        if (strlen($table_info['sufix']) > 0) {
+        if (strlen($table_info['suffix']) > 0) {
             $related_items_query = db_query(
-                "select * from " . $table_info['table_name'] . " where entity_" . $this->entities_id . $table_info['sufix'] . "_items_id='" . db_input(
+                "select * from " . $table_info['table_name'] . " where entity_" . $this->entities_id . $table_info['suffix'] . "_items_id='" . db_input(
                     $this->items_id
                 ) . "'"
             );
@@ -537,9 +537,9 @@ class related_records
                     ) . "'"
                 );
 
-                if (strlen($table_info['sufix']) > 0) {
+                if (strlen($table_info['suffix']) > 0) {
                     db_query(
-                        "delete from " . $table_info['table_name'] . " where entity_" . $entities_id . $table_info['sufix'] . "_items_id='" . db_input(
+                        "delete from " . $table_info['table_name'] . " where entity_" . $entities_id . $table_info['suffix'] . "_items_id='" . db_input(
                             $items_id
                         ) . "'"
                     );
@@ -606,10 +606,10 @@ class related_records
 		          CREATE TABLE IF NOT EXISTS `' . $table_info['table_name'] . '` (
 		            `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 		            `entity_' . $entities_id . '_items_id` int(11) UNSIGNED NOT NULL,
-		            `entity_' . $related_entities_id . $table_info['sufix'] . '_items_id` int(11) UNSIGNED NOT NULL,
+		            `entity_' . $related_entities_id . $table_info['suffix'] . '_items_id` int(11) UNSIGNED NOT NULL,
 		            PRIMARY KEY (`id`),
 		            KEY `idx_' . $entities_id . '_items_id` (`entity_' . $entities_id . '_items_id`),
-		            KEY `idx_' . $related_entities_id . $table_info['sufix'] . '_items_id` (`entity_' . $related_entities_id . $table_info['sufix'] . '_items_id`)
+		            KEY `idx_' . $related_entities_id . $table_info['suffix'] . '_items_id` (`entity_' . $related_entities_id . $table_info['suffix'] . '_items_id`)
 		          ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 		      ';
 
@@ -818,7 +818,7 @@ class related_records
 
         $sql_data = [
             'entity_' . $entities_id . '_items_id' => $items_id,
-            'entity_' . $related_entities_id . $table_info['sufix'] . '_items_id' => $related_items_id
+            'entity_' . $related_entities_id . $table_info['suffix'] . '_items_id' => $related_items_id
         ];
 
         db_perform($table_info['table_name'], $sql_data);

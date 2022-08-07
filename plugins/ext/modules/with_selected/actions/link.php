@@ -122,12 +122,12 @@ switch ($app_module_action) {
             foreach ($_POST['items'] as $items_id) {
                 foreach ($app_selected_items[$_GET['reports_id']] as $related_items_id) {
                     $check_query = db_query(
-                        "select * from " . $table_info['table_name'] . " where entity_" . $entities_id . "_items_id=" . (int)$items_id . " and entity_" . $related_entities_id . $table_info['sufix'] . "_items_id = " . (int)$related_items_id . ""
+                        "select * from " . $table_info['table_name'] . " where entity_" . $entities_id . "_items_id=" . (int)$items_id . " and entity_" . $related_entities_id . $table_info['suffix'] . "_items_id = " . (int)$related_items_id . ""
                     );
                     if (!$check = db_fetch_array($check_query)) {
                         $sql_data = [
                             'entity_' . $entities_id . '_items_id' => $items_id,
-                            'entity_' . $related_entities_id . $table_info['sufix'] . '_items_id' => $related_items_id
+                            'entity_' . $related_entities_id . $table_info['suffix'] . '_items_id' => $related_items_id
                         ];
 
                         db_perform($table_info['table_name'], $sql_data);
