@@ -12,10 +12,9 @@ if ($fields = db_fetch_array($fields_query)) {
             $item_id = _get::int('item_id');
             $parent_entity_item_id = _get::int('parent_entity_item_id');
 
-
             $obj = [];
 
-            if (in_array($cfg->get('display_as'), ['dropdown_muliple', 'dropdown_multiple']
+            if (in_array($cfg->get('display_as'), ['dropdown_multiple']
                 ) and $_GET['current_field_values'] != 'null') {
                 $obj['field_' . $fields['id']] = $_GET['current_field_values'] . ',' . _get::int('item_id');
             } else {

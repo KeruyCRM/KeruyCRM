@@ -30,7 +30,7 @@ class fieldtype_entity
             'choices' => [
                 'dropdown' => TEXT_DISPLAY_USERS_AS_DROPDOWN,
                 'checkboxes' => TEXT_DISPLAY_USERS_AS_CHECKBOXES,
-                'dropdown_muliple' => TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown_multiple' => TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ],
             'params' => ['class' => 'form-control input-medium']
         ];
@@ -312,7 +312,7 @@ class fieldtype_entity
                     $value,
                     $attributes
                 ) . '</div>';
-        } elseif ($cfg->get('display_as') == 'dropdown_muliple') {
+        } elseif ($cfg->get('display_as') == 'dropdown_multiple') {
             $attributes = [
                 'class' => 'form-control chosen-select ' . $cfg->get(
                         'width'

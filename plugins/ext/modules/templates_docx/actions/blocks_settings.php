@@ -149,7 +149,7 @@ switch ($field['type']) {
     case 'fieldtype_users_approve':
     case 'fieldtype_user_roles':
 
-        if (!in_array($cfg->get('display_as'), ['dropdown_multiple', 'checkboxes', 'dropdown_muliple']
+        if (!in_array($cfg->get('display_as'), ['dropdown_multiple', 'checkboxes']
             ) and !isset($field_entity_id) and $field['type'] != 'fieldtype_related_records') {
             break;
         }

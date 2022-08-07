@@ -12,7 +12,6 @@ if ($reports_info = db_fetch_array($reports_info_query)) {
     redirect_to('dashboard/page_not_found');
 }
 
-
 switch ($app_module_action) {
     case 'get_field_values':
         $fields_id = $_GET['fields_id'];
@@ -128,9 +127,9 @@ switch ($app_module_action) {
                     $attributes = ['class' => 'form-control chosen-select input-large'];
 
                     $html = select_tag('values[' . $fields_id . ']', $choices, '', $attributes);
-                } elseif ($field_cfg->get('display_as') == 'dropdown_muliple' or $field_cfg->get(
+                } elseif ($field_cfg->get('display_as') == 'dropdown_multiple' or $field_cfg->get(
                         'display_as'
-                    ) == 'dropdown_multiple' or $field_cfg->get('display_as') == 'checkboxes') {
+                    ) == 'checkboxes') {
                     $attributes = [
                         'class' => 'form-control chosen-select input-large',
                         'multiple' => 'multiple',
@@ -188,14 +187,13 @@ switch ($app_module_action) {
 
                 if ($field_cfg->get('display_as') == 'checkboxes' or $field_cfg->get(
                         'display_as'
-                    ) == 'dropdown_muliple') {
+                    ) == 'dropdown_multiple') {
                     $attributes['multiple'] = 'multiple';
 
                     $html = select_tag('values[' . $fields_id . '][]', $choices, '', $attributes);
                 } else {
                     $html = select_tag('values[' . $fields_id . ']', $choices, '', $attributes);
                 }
-
 
                 break;
             case 'fieldtype_progress':
@@ -265,7 +263,6 @@ switch ($app_module_action) {
             case 'fieldtype_users_ajax':
             case 'fieldtype_users':
 
-
                 $access_schema = users::get_entities_access_schema_by_groups($field_info['entities_id']);
 
                 $entity_access_schema = users::get_entities_access_schema(
@@ -305,22 +302,18 @@ switch ($app_module_action) {
                     }
                 }
 
-
                 $attributes = [
                     'class' => 'form-control  chosen-select',
                     'data-placeholder' => TEXT_SELECT_SOME_VALUES
                 ];
 
-                if ($field_cfg->get('display_as') == 'checkboxes' or $field_cfg->get(
-                        'display_as'
-                    ) == 'dropdown_muliple' or $field_cfg->get('display_as') == 'dropdown_multiple') {
+                if ($field_cfg->get('display_as') == 'checkboxes' or $field_cfg->get('display_as') == 'dropdown_multiple') {
                     $attributes['multiple'] = 'multiple';
 
                     $html = select_tag('values[' . $fields_id . '][]', $choices, '', $attributes);
                 } else {
                     $html = select_tag('values[' . $fields_id . ']', $choices, '', $attributes);
                 }
-
 
                 break;
         }
@@ -514,7 +507,6 @@ switch ($app_module_action) {
                      * */
                     $app_send_to = users::get_assigned_users_by_item($reports_info['entities_id'], $item_id);
 
-
                     if (!isset($_POST['do_not_notify'])) {
                         //sending sms            
                         $sms = new sms($reports_info['entities_id'], $item_id);
@@ -526,12 +518,10 @@ switch ($app_module_action) {
                         $email_rules->send_edit_msg($item_info);
                     }
 
-
-                    //include sender in notification              
+                    //include sender in notification
                     if (CFG_EMAIL_COPY_SENDER == 1) {
                         $app_send_to[] = $app_user['id'];
                     }
-
 
                     //Send notification if there are assigned users and there are changed fields or new assigned users
                     if (!isset($_POST['do_not_notify']) and ((count($app_send_to) > 0 and count(
@@ -565,7 +555,6 @@ switch ($app_module_action) {
                                 ) . ' ' . $item_name : TEXT_DEFAULT_EMAIL_SUBJECT_NEW_ITEM . ' ' . $item_name);
                         }
 
-
                         $path_info = items::get_path_info($reports_info['entities_id'], $item_id);
 
                         //default email heading
@@ -583,8 +572,7 @@ switch ($app_module_action) {
                             $app_send_to = $app_send_to_new_assigned;
                         }
 
-
-                        //start sending email                  
+                        //start sending email
                         foreach (array_unique($app_send_to) as $send_to) {
                             //prepare body 
                             if ($entity_cfg->get('item_page_details_columns', '2') == 1) {
@@ -694,7 +682,6 @@ switch ($app_module_action) {
                     }
                     break;
             }
-
 
             echo '
             <div class="alert alert-success">' . TEXT_EXT_ITEMS_UPDATING_COMPLETED . '</div> 

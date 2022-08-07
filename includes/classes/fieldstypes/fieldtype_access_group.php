@@ -35,7 +35,7 @@ class fieldtype_access_group
             'choices' => [
                 'dropdown' => TEXT_DISPLAY_USERS_AS_DROPDOWN,
                 'checkboxes' => TEXT_DISPLAY_USERS_AS_CHECKBOXES,
-                'dropdown_muliple' => TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
+                'dropdown_multiple' => TEXT_DISPLAY_USERS_AS_DROPDOWN_MULTIPLE
             ],
             'params' => ['class' => 'form-control input-xlarge']
         ];
@@ -143,7 +143,7 @@ class fieldtype_access_group
                     $value,
                     $attributes
                 ) . '</div>';
-        } elseif ($cfg->get('display_as') == 'dropdown_muliple') {
+        } elseif ($cfg->get('display_as') == 'dropdown_multiple') {
             $attributes = [
                 'class' => 'form-control ' . $cfg->get(
                         'width'
