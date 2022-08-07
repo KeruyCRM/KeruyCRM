@@ -3,91 +3,87 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_HEADING_FIELD_INFO) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_HEADING_FIELD_INFO) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'fields_form',
-    url_for('entities/fields', 'action=save' . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '')),
+    \Helpers\Urls::url_for('main/entities/fields/save', (isset(\K::$fw->GET['id']) ? '&id=' . \K::$fw->GET['id'] : '')),
     ['class' => 'form-horizontal', 'enctype' => 'multipart/form-data']
 ) ?>
 <div class="modal-body">
     <div class="form-body ajax-modal-width-790">
+        <?= \Helpers\Html::input_hidden_tag('entities_id', \K::$fw->GET['entities_id']) ?>
+        <?php
+        if (isset(\K::$fw->GET['redirect_to'])) echo \Helpers\Html::input_hidden_tag(
+            'redirect_to',
+            \K::$fw->GET['redirect_to']
+        ) ?>
 
         <?php
-        echo input_hidden_tag('entities_id', $_GET['entities_id']) ?>
-        <?php
-        if (isset($_GET['redirect_to'])) echo input_hidden_tag('redirect_to', $_GET['redirect_to']) ?>
-
-        <?php
-        $forms_tabs_choices = forms_tabs::get_choices($_GET['entities_id']);
-        if (count($forms_tabs_choices) == 1) echo input_hidden_tag('forms_tabs_id', key($forms_tabs_choices))
+        $forms_tabs_choices = \Models\Main\Forms_tabs::get_choices(\K::$fw->GET['entities_id']);
+        if (count($forms_tabs_choices) == 1) echo \Helpers\Html::input_hidden_tag(
+            'forms_tabs_id',
+            key($forms_tabs_choices)
+        )
         ?>
-
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#general_info" data-toggle="tab"><?php
-                    echo TEXT_GENERAL_INFO ?></a></li>
-            <li><a href="#is_required_tab" data-toggle="tab"><?php
-                    echo TEXT_IS_REQUIRED ?></a></li>
-            <li><a href="#tooltip" data-toggle="tab"><?php
-                    echo TEXT_TOOLTIP ?></a></li>
-            <li><a href="#access_tab" data-toggle="tab"><?php
-                    echo TEXT_ACCESS ?></a></li>
-            <li><a href="#note" data-toggle="tab"><?php
-                    echo TEXT_NOTE ?></a></li>
+            <li class="active"><a href="#general_info" data-toggle="tab"><?= \K::$fw->TEXT_GENERAL_INFO ?></a></li>
+            <li><a href="#is_required_tab" data-toggle="tab"><?= \K::$fw->TEXT_IS_REQUIRED ?></a></li>
+            <li><a href="#tooltip" data-toggle="tab"><?= \K::$fw->TEXT_TOOLTIP ?></a></li>
+            <li><a href="#access_tab" data-toggle="tab"><?= \K::$fw->TEXT_ACCESS ?></a></li>
+            <li><a href="#note" data-toggle="tab"><?= \K::$fw->TEXT_NOTE ?></a></li>
         </ul>
-
         <div class="tab-content">
             <div class="tab-pane fade active in" id="general_info">
-
                 <?php
                 if (count($forms_tabs_choices) > 1): ?>
                     <div class="form-group">
-                        <label class="col-md-3 control-label" for="forms_tabs_id"><?php
-                            echo tooltip_icon(TEXT_FORM_TAB_INFO) . TEXT_FORM_TAB ?></label>
+                        <label class="col-md-3 control-label" for="forms_tabs_id"><?=
+                            \Helpers\App::tooltip_icon(\K::$fw->TEXT_FORM_TAB_INFO) . \K::$fw->TEXT_FORM_TAB ?></label>
                         <div class="col-md-9">
-                            <?php
-                            echo select_tag(
+                            <?= \Helpers\Html::select_tag(
                                 'forms_tabs_id',
                                 $forms_tabs_choices,
-                                (isset($_GET['forms_tabs_id']) ? $_GET['forms_tabs_id'] : $obj['forms_tabs_id']),
+                                (\K::$fw->GET['forms_tabs_id'] ?? \K::$fw->obj['forms_tabs_id']),
                                 ['class' => 'form-control input-medium required']
                             ) ?>
                         </div>
                     </div>
                 <?php
                 endif ?>
-
-
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="name"><?php
-                        echo tooltip_icon(TEXT_FIELD_NAME_INFO) . TEXT_NAME ?></label>
+                    <label class="col-md-3 control-label" for="name"><?= \Helpers\App::tooltip_icon(
+                            \K::$fw->TEXT_FIELD_NAME_INFO
+                        ) . \K::$fw->TEXT_NAME ?></label>
                     <div class="col-md-9">
-                        <?php
-                        echo input_tag('name', $obj['name'], ['class' => 'form-control input-large required autofocus']
+                        <?= \Helpers\Html::input_tag(
+                            'name',
+                            \K::$fw->obj['name'],
+                            ['class' => 'form-control input-large required autofocus']
                         ) ?>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="short_name"><?php
-                        echo tooltip_icon(TEXT_FIELD_SHORT_NAME_INFO) . TEXT_SHORT_NAME ?></label>
+                    <label class="col-md-3 control-label" for="short_name"><?= \Helpers\App::tooltip_icon(
+                            \K::$fw->TEXT_FIELD_SHORT_NAME_INFO
+                        ) . \K::$fw->TEXT_SHORT_NAME ?></label>
                     <div class="col-md-9">
-                        <?php
-                        echo input_tag('short_name', $obj['short_name'], ['class' => 'form-control input-small']) ?>
+                        <?= \Helpers\Html::input_tag(
+                            'short_name',
+                            \K::$fw->obj['short_name'],
+                            ['class' => 'form-control input-small']
+                        ) ?>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="type"><?php
-                        echo tooltip_icon(TEXT_FIELD_TYPE_INFO) . TEXT_TYPE ?></label>
+                    <label class="col-md-3 control-label" for="type"><?= \Helpers\App::tooltip_icon(
+                            \K::$fw->TEXT_FIELD_TYPE_INFO
+                        ) . \K::$fw->TEXT_TYPE ?></label>
                     <div class="col-md-9">
-                        <?php
-                        echo select_tag(
+                        <?= \Helpers\Html::select_tag(
                             'type',
-                            fields_types::get_choices(),
-                            $obj['type'],
+                            \Models\Main\Fields_types::get_choices(),
+                            \K::$fw->obj['type'],
                             [
                                 'class' => 'form-control input-xlarge required chosen-select',
                                 'onChange' => 'fields_types_configuration(this.value)'
@@ -95,111 +91,103 @@ echo form_tag(
                         ) ?>
                     </div>
                 </div>
-
                 <div class="form-group" id="is-heading-container">
-                    <label class="col-md-3 control-label" for="is_heading"><?php
-                        echo tooltip_icon(TEXT_IS_HEADING_INFO) . TEXT_IS_HEADING ?></label>
+                    <label class="col-md-3 control-label" for="is_heading"><?= \Helpers\App::tooltip_icon(
+                            \K::$fw->TEXT_IS_HEADING_INFO
+                        ) . \K::$fw->TEXT_IS_HEADING ?></label>
                     <div class="col-md-9">
-                        <div class="checkbox-list"><label class="checkbox-inline"><?php
-                                echo input_checkbox_tag('is_heading', '1', ['checked' => $obj['is_heading']]) ?></label>
+                        <div class="checkbox-list"><label class="checkbox-inline"><?= \Helpers\Html::input_checkbox_tag(
+                                    'is_heading',
+                                    '1',
+                                    ['checked' => \K::$fw->obj['is_heading']]
+                                ) ?></label>
                         </div>
                     </div>
                 </div>
-
                 <div id="fields_types_configuration"></div>
-
             </div>
             <div class="tab-pane fade" id="is_required_tab">
-
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="is_required"><?php
-                        echo tooltip_icon(TEXT_IS_REQUIRED_INFO) . TEXT_IS_REQUIRED ?></label>
+                    <label class="col-md-3 control-label" for="is_required"><?= \Helpers\App::tooltip_icon(
+                            \K::$fw->TEXT_IS_REQUIRED_INFO
+                        ) . \K::$fw->TEXT_IS_REQUIRED ?></label>
                     <div class="col-md-9">
-                        <div class="checkbox-list"><label class="checkbox-inline"><?php
-                                echo input_checkbox_tag('is_required', '1', ['checked' => $obj['is_required']]
+                        <div class="checkbox-list"><label class="checkbox-inline"><?= \Helpers\Html::input_checkbox_tag(
+                                    'is_required',
+                                    '1',
+                                    ['checked' => \K::$fw->obj['is_required']]
                                 ) ?></label></div>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="required_message"><?php
-                        echo TEXT_REQUIRED_MESSAGE ?></label>
+                    <label class="col-md-3 control-label"
+                           for="required_message"><?= \K::$fw->TEXT_REQUIRED_MESSAGE ?></label>
                     <div class="col-md-9">
-                        <?php
-                        echo textarea_tag(
+                        <?= \Helpers\Html::textarea_tag(
                             'required_message',
-                            $obj['required_message'],
+                            \K::$fw->obj['required_message'],
                             ['rows' => 3, 'class' => 'form-control']
                         ) ?>
-                        <?php
-                        echo tooltip_text(TEXT_REQUIRED_MESSAGE_INFO); ?>
+                        <?= \Helpers\App::tooltip_text(\K::$fw->TEXT_REQUIRED_MESSAGE_INFO); ?>
                     </div>
                 </div>
-
             </div>
             <div class="tab-pane fade" id="tooltip">
-
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="tooltip"><?php
-                        echo tooltip_icon(TEXT_TOOLTIP_INFO) . TEXT_TOOLTIP ?></label>
+                    <label class="col-md-3 control-label" for="tooltip"><?= \Helpers\App::tooltip_icon(
+                            \K::$fw->TEXT_TOOLTIP_INFO
+                        ) . \K::$fw->TEXT_TOOLTIP ?></label>
                     <div class="col-md-9">
-                        <?php
-                        echo textarea_tag(
+                        <?= \Helpers\Html::textarea_tag(
                             'tooltip',
-                            $obj['tooltip'],
+                            \K::$fw->obj['tooltip'],
                             ['rows' => 3, 'class' => 'form-control textarea-small']
                         ) ?>
-                        <div style="padding-top: 5px;"><label><?php
-                                echo input_checkbox_tag(
-                                        'tooltip_display_as',
-                                        'icon',
-                                        ['checked' => $obj['tooltip_display_as']]
-                                    ) . TEXT_TOOLTIP_DISPLAY_AS_ICON . ' ' . tooltip_icon(
-                                        TEXT_TOOLTIP_DISPLAY_AS_ICON_INFO
-                                    ) ?></label></div>
-                        <div style="padding-top: 5px;"><label><?php
-                                echo input_checkbox_tag(
-                                        'tooltip_in_item_page',
-                                        '1',
-                                        ['checked' => $obj['tooltip_in_item_page']]
-                                    ) . TEXT_DISPLAY_ON_ITEM_PAGE ?></label></div>
+                        <div style="padding-top: 5px;"><label><?= \Helpers\Html::input_checkbox_tag(
+                                    'tooltip_display_as',
+                                    'icon',
+                                    ['checked' => \K::$fw->obj['tooltip_display_as']]
+                                ) . \K::$fw->TEXT_TOOLTIP_DISPLAY_AS_ICON . ' ' . \Helpers\App::tooltip_icon(
+                                    \K::$fw->TEXT_TOOLTIP_DISPLAY_AS_ICON_INFO
+                                ) ?></label></div>
+                        <div style="padding-top: 5px;"><label><?= \Helpers\Html::input_checkbox_tag(
+                                    'tooltip_in_item_page',
+                                    '1',
+                                    ['checked' => \K::$fw->obj['tooltip_in_item_page']]
+                                ) . \K::$fw->TEXT_DISPLAY_ON_ITEM_PAGE ?></label></div>
                     </div>
                 </div>
-
                 <div class="form-group tooltip_item_page">
-                    <label class="col-md-3 control-label" for="tooltip"><?php
-                        echo TEXT_TOOLTIP_ON_ITEM_PAGE ?></label>
+                    <label class="col-md-3 control-label"
+                           for="tooltip"><?= \K::$fw->TEXT_TOOLTIP_ON_ITEM_PAGE ?></label>
                     <div class="col-md-9">
-                        <?php
-                        echo textarea_tag(
+                        <?= \Helpers\Html::textarea_tag(
                             'tooltip_item_page',
-                            $obj['tooltip_item_page'],
+                            \K::$fw->obj['tooltip_item_page'],
                             ['rows' => 3, 'class' => 'form-control textarea-small']
                         ) ?>
                     </div>
                 </div>
-
             </div>
             <div class="tab-pane fade" id="access_tab">
-                <p><?php
-                    echo TEXT_FIELD_ACCESS_INFO ?></p>
-
+                <p><?= \K::$fw->TEXT_FIELD_ACCESS_INFO ?></p>
                 <?php
-                $access_choices_default = ['yes' => TEXT_YES, 'view' => TEXT_VIEW_ONLY, 'hide' => TEXT_HIDE];
-                $access_choices_internal = ['yes' => TEXT_YES, 'hide' => TEXT_HIDE];
+                $access_choices_default = [
+                    'yes' => \K::$fw->TEXT_YES,
+                    'view' => \K::$fw->TEXT_VIEW_ONLY,
+                    'hide' => \K::$fw->TEXT_HIDE
+                ];
+                $access_choices_internal = ['yes' => \K::$fw->TEXT_YES, 'hide' => \K::$fw->TEXT_HIDE];
 
                 $access_choices = (in_array(
-                    $obj['type'],
+                    \K::$fw->obj['type'],
                     ['fieldtype_id', 'fieldtype_date_added', 'fieldtype_date_updated', 'fieldtype_created_by']
                 ) ? $access_choices_internal : $access_choices_default);
                 ?>
-
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="name"><?php
-                        echo TEXT_ACCESS ?></label>
+                    <label class="col-md-3 control-label" for="name"><?= \K::$fw->TEXT_ACCESS ?></label>
                     <div class="col-md-9">
-                        <?php
-                        echo select_tag(
+                        <?= \Helpers\Html::select_tag(
                             'access_template',
                             ['' => ''] + $access_choices,
                             '',
@@ -211,72 +199,66 @@ echo form_tag(
                 <script>
                     $(function () {
                         $('#access_template').change(function () {
-                            $('.acess-group-cfg').val($(this).val());
+                            $('.access-group-cfg').val($(this).val());
                         })
                     })
                 </script>
 
                 <?php
+                $groups_query = \K::model()->db_fetch('app_access_groups', [], ['order' => 'sort_order, name']);
 
-                $groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
-                while ($groups = db_fetch_array($groups_query)) {
-                    $entities_access_schema = users::get_entities_access_schema($_GET['entities_id'], $groups['id']);
+                //while ($groups = db_fetch_array($groups_query)) {
+                foreach ($groups_query as $groups) {
+                    $entities_access_schema = \Models\Main\Users\Users::get_entities_access_schema(
+                        \K::$fw->GET['entities_id'],
+                        $groups['id']
+                    );
 
                     if (!in_array('view', $entities_access_schema) and !in_array(
                             'view_assigned',
                             $entities_access_schema
-                        ) and $_GET['entities_id'] != 1) {
+                        ) and \K::$fw->GET['entities_id'] != 1) {
                         continue;
                     }
 
-                    $access_schema = users::get_fields_access_schema($_GET['entities_id'], $groups['id']);
+                    $access_schema = \Models\Main\Users\Users::get_fields_access_schema(\K::$fw->GET['entities_id'], $groups['id']);
 
-                    $value = (isset($access_schema[$obj['id']]) ? $access_schema[$obj['id']] : 'yes');
+                    $value = ($access_schema[\K::$fw->obj['id']] ?? 'yes');
 
                     ?>
 
                     <div class="form-group">
-                        <label class="col-md-3 control-label" for="name"><?php
-                            echo $groups['name'] ?></label>
+                        <label class="col-md-3 control-label" for="name"><?= $groups['name'] ?></label>
                         <div class="col-md-9">
-                            <?php
-                            echo select_tag(
+                            <?= \Helpers\Html::select_tag(
                                 'access[' . $groups['id'] . ']',
                                 $access_choices,
                                 $value,
-                                ['class' => 'form-control input-medium acess-group-cfg access_group_' . $groups['id']]
+                                ['class' => 'form-control input-medium access-group-cfg access_group_' . $groups['id']]
                             ) ?>
                         </div>
                     </div>
                     <?php
                 }
                 ?>
-
             </div>
-
             <div class="tab-pane fade" id="note">
                 <div class="form-group">
-                    <label class="col-md-3 control-label" for="name"><?php
-                        echo TEXT_ADMINISTRATOR_NOTE ?></label>
+                    <label class="col-md-3 control-label" for="name"><?= \K::$fw->TEXT_ADMINISTRATOR_NOTE ?></label>
                     <div class="col-md-9">
-                        <?php
-                        echo textarea_tag('notes', $obj['notes'], ['class' => 'form-control']) ?>
+                        <?= \Helpers\Html::textarea_tag('notes', \K::$fw->obj['notes'], ['class' => 'form-control']) ?>
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
 <script>
-
     $(function () {
         $('#fields_form').validate({
             ignore: '',
@@ -291,7 +273,7 @@ echo ajax_modal_template_footer() ?>
                 var errors = validator.numberOfInvalids();
 
                 if (errors) {
-                    var message = '<?php echo TEXT_ERROR_GENERAL ?>';
+                    var message = '<?= \K::$fw->TEXT_ERROR_GENERAL ?>';
                     $("div#form-error-container").html('<div class="alert alert-danger">' + message + '</div>');
                     $("div#form-error-container").show();
                     $("div#form-error-container").delay(5000).fadeOut();
@@ -309,7 +291,6 @@ echo ajax_modal_template_footer() ?>
         $('#tooltip_in_item_page').change(function () {
             check_tooltip_item_page();
         })
-
     });
 
     function check_tooltip_item_page() {
@@ -325,12 +306,12 @@ echo ajax_modal_template_footer() ?>
 
         $('#fields_types_configuration').html('<div class="ajax-loading"></div>');
 
-        $('#fields_types_configuration').load('<?php echo url_for(
-            "entities/fields_configuration"
+        $('#fields_types_configuration').load('<?= \Helpers\Urls::url_for(
+            'main/entities/fields_configuration'
         )?>', {
             field_type: field_type,
-            id: '<?php echo $obj["id"] ?>',
-            entities_id: '<?php echo $_GET["entities_id"]?>'
+            id: '<?= \K::$fw->obj["id"] ?>',
+            entities_id: '<?= \K::$fw->GET["entities_id"]?>'
         }, function (response, status, xhr) {
             if (status == "error") {
                 $(this).html('<div class="alert alert-error"><b>Error:</b> ' + xhr.status + ' ' + xhr.statusText + '<div>' + response + '</div></div>')
@@ -340,7 +321,6 @@ echo ajax_modal_template_footer() ?>
                 jQuery(window).resize();
             }
         });
-
     }
 
     //ajax configuration
@@ -349,14 +329,14 @@ echo ajax_modal_template_footer() ?>
 
         $('#fields_types_ajax_configuration_' + name).html('<div class="ajax-loading"></div>');
 
-        $('#fields_types_ajax_configuration_' + name).load('<?php echo url_for(
-            "entities/fields_ajax_configuration"
+        $('#fields_types_ajax_configuration_' + name).load('<?= \Helpers\Urls::url_for(
+            'main/entities/fields_ajax_configuration'
         )?>', {
             name: name,
             value: value,
             field_type: field_type,
-            id: '<?php echo $obj["id"] ?>',
-            entities_id: '<?php echo $_GET["entities_id"]?>'
+            id: '<?= \K::$fw->obj["id"] ?>',
+            entities_id: '<?= \K::$fw->GET["entities_id"]?>'
         }, function (response, status, xhr) {
             if (status == "error") {
                 $(this).html('<div class="alert alert-error"><b>Error:</b> ' + xhr.status + ' ' + xhr.statusText + '<div>' + response + '</div></div>')
@@ -366,7 +346,6 @@ echo ajax_modal_template_footer() ?>
                 jQuery(window).resize();
             }
         });
-
     }
 
     function check_is_heading_option() {
@@ -379,6 +358,4 @@ echo ajax_modal_template_footer() ?>
             $('#is_heading').prop('checked', false)
         }
     }
-
-
-</script>   
+</script>

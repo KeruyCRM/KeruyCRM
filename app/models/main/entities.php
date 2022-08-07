@@ -455,11 +455,21 @@ class Entities
         $sql = 'DROP TABLE IF EXISTS app_entity_' . (int)$entities_id . '_values';
         db_query($sql);*/
 
+        $forceCommit = \K::model()->forceCommit();
+
         $schema = \K::model()->schema();
 
         $schema->dropTable('app_entity_' . (int)$entities_id);
         $schema->dropTable('app_entity_' . (int)$entities_id . '_values');
-        //TODO Flush cache
+
+        if ($forceCommit) {
+            \K::model()->commit();
+        }
+
+        //TODO Flush cache for query_exec!!!
+        \K::cache()->reset('schema');
+        \K::cache()->reset('app_entity_' . (int)$entities_id . '.sql');
+        \K::cache()->reset('app_entity_' . (int)$entities_id . '_values.sql');
     }
 
     public static function prepare_field_type($type)

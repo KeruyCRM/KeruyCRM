@@ -644,7 +644,8 @@ class Fields_types
         $choices = [];
         foreach ($fieldtypes as $group => $fields) {
             foreach ($fields as $class) {
-                $fieldtype = new $class;
+                $class = '\\Tools\\Fieldstypes\\' . ucfirst($class);
+                $fieldtype = new $class();
 
                 $choices[$group][$class] = $fieldtype->options['title'];
             }
@@ -708,7 +709,7 @@ class Fields_types
         $html = '';
         $configuration = [];
 
-        $obj = db_find('app_fields', $id);
+        $obj = \K::model()->db_find('app_fields', $id);
 
         if (strlen($obj['configuration']) > 0) {
             $configuration = self::parse_configuration($obj['configuration']);
@@ -783,26 +784,26 @@ class Fields_types
                             ) : $configuration[$v['name']]);
                         }
 
-                        $field = select_tag(
+                        $field = \Helpers\Html::select_tag(
                             'fields_configuration[' . $v['name'] . ']' . (isset($v['params']['multiple']) ? '[]' : ''),
                             $v['choices'],
-                            (isset($configuration[$v['name']]) ? $configuration[$v['name']] : ''),
-                            (isset($v['params']) ? $v['params'] : [])
+                            ($configuration[$v['name']] ?? ''),
+                            ($v['params'] ?? [])
                         );
                         break;
                     case 'checkbox':
-                        $field = '<div class="checkbox-list"><label class="checkbox-inline">' . input_checkbox_tag(
+                        $field = '<div class="checkbox-list"><label class="checkbox-inline">' . \Helpers\Html::input_checkbox_tag(
                                 'fields_configuration[' . $v['name'] . ']',
                                 1,
-                                ['checked' => (isset($configuration[$v['name']]) ? $configuration[$v['name']] : false)]
+                                ['checked' => ($configuration[$v['name']] ?? false)]
                             ) . '</label></div>';
                         break;
                     case 'colorpicker':
                         $field = '
-	              <div class="input-group input-small color colorpicker-default" data-color="' . (isset($configuration[$v['name']]) ? $configuration[$v['name']] : '#ff0000') . '" >
-	          	   ' . input_tag(
+	              <div class="input-group input-small color colorpicker-default" data-color="' . ($configuration[$v['name']] ?? '#ff0000') . '" >
+	          	   ' . \Helpers\Html::input_tag(
                                 'fields_configuration[' . $v['name'] . ']',
-                                (isset($configuration[$v['name']]) ? $configuration[$v['name']] : ''),
+                                ($configuration[$v['name']] ?? ''),
                                 ['class' => 'form-control input-small']
                             ) . '
 	                <span class="input-group-btn">
@@ -814,16 +815,16 @@ class Fields_types
                     case 'input-with-colorpicker':
                         $field = '              
 	              <div class="input-group input-with-colorpicker">
-	                ' . input_tag(
+	                ' . \Helpers\Html::input_tag(
                                 'fields_configuration[' . $v['name'] . ']',
-                                (isset($configuration[$v['name']]) ? $configuration[$v['name']] : ''),
+                                ($configuration[$v['name']] ?? ''),
                                 ['class' => 'form-control input-xsmall']
                             ) . '
 	                <div class="input-group-btn">             
-	                  <div class="input-group input-small color colorpicker-default" data-color="' . (isset($configuration[$v['name'] . '_color']) ? $configuration[$v['name'] . '_color'] : '#ff0000') . '" >                                
-	              	   ' . input_tag(
+	                  <div class="input-group input-small color colorpicker-default" data-color="' . ($configuration[$v['name'] . '_color'] ?? '#ff0000') . '" >                                
+	              	   ' . \Helpers\Html::input_tag(
                                 'fields_configuration[' . $v['name'] . '_color]',
-                                (isset($configuration[$v['name'] . '_color']) ? $configuration[$v['name'] . '_color'] : ''),
+                                ($configuration[$v['name'] . '_color'] ?? ''),
                                 ['class' => 'form-control input-small']
                             ) . '
 	                    <span class="input-group-btn">
@@ -835,36 +836,38 @@ class Fields_types
 	            ';
                         break;
                     case 'input':
-                        $field = input_tag(
+                        $field = \Helpers\Html::input_tag(
                             'fields_configuration[' . $v['name'] . ']',
-                            (isset($configuration[$v['name']]) ? $configuration[$v['name']] : ''),
-                            (isset($v['params']) ? $v['params'] : [])
+                            ($configuration[$v['name']] ?? ''),
+                            ($v['params'] ?? [])
                         );
                         break;
                     case 'file':
-                        $value = (isset($configuration[$v['name']]) ? $configuration[$v['name']] : '');
+                        $value = ($configuration[$v['name']] ?? '');
                         $field = 'delete_file[' . $v['name'];
-                        $field .= input_hidden_tag('fields_configuration[' . $v['name'] . ']', $value);
+                        $field .= \Helpers\Html::input_hidden_tag('fields_configuration[' . $v['name'] . ']', $value);
                         break;
                     case 'textarea':
-                        $field = textarea_tag(
+                        $field = \Helpers\Html::textarea_tag(
                             'fields_configuration[' . $v['name'] . ']',
-                            (isset($configuration[$v['name']]) ? $configuration[$v['name']] : ''),
-                            (isset($v['params']) ? $v['params'] : [])
+                            ($configuration[$v['name']] ?? ''),
+                            ($v['params'] ?? [])
                         );
                         break;
                     case 'code':
                     case 'code_small':
                         $v['params']['style'] = "height:310px;";
                         $v['params']['class'] = $v['params']['class'] . ' is_codemirror';
-                        $field = textarea_tag(
+                        $field = \Helpers\Html::textarea_tag(
                             'fields_configuration[' . $v['name'] . ']',
-                            (isset($configuration[$v['name']]) ? $configuration[$v['name']] : ''),
-                            (isset($v['params']) ? $v['params'] : [])
+                            ($configuration[$v['name']] ?? ''),
+                            ($v['params'] ?? [])
                         );
-                        $field .= app_include_codemirror(['javascript', 'sql', 'php', 'clike', 'css', 'xml']);
+                        $field .= \Helpers\App::app_include_codemirror(
+                            ['javascript', 'sql', 'php', 'clike', 'css', 'xml']
+                        );
 
-                        $mode = isset($v['params']['mode']) ? $v['params']['mode'] : 'javascript';
+                        $mode = $v['params']['mode'] ?? 'javascript';
 
                         if ($mode == 'php') {
                             $mode = '{name: "php",startOpen: true}';
@@ -907,7 +910,6 @@ class Fields_types
                                     $(this).addClass("acitve-codemirror")
                                 }		
                             })
-
                         }
 	                </script>     
 	                ';
@@ -915,12 +917,12 @@ class Fields_types
                 }
 
                 if ($v['type'] == 'hidden') {
-                    $html .= input_hidden_tag(
+                    $html .= \Helpers\Html::input_hidden_tag(
                         'fields_configuration[' . $v['name'] . ']',
-                        (isset($configuration[$v['name']]) ? $configuration[$v['name']] : '')
+                        ($configuration[$v['name']] ?? '')
                     );
                 } elseif ($v['type'] == 'section') {
-                    $html .= '<h3 class="form-section">' . $v['title'] . '</h3>' . (isset($v['html']) ? $v['html'] : '');
+                    $html .= '<h3 class="form-section">' . $v['title'] . '</h3>' . ($v['html'] ?? '');
                 } elseif ($v['type'] == 'ajax') {
                     $html .= '<div id="fields_types_ajax_configuration_' . $v['name'] . '"></div>' . $v['html'];
                 } elseif ($v['type'] == 'html') {
@@ -930,8 +932,8 @@ class Fields_types
 	        
 	        <div class="form-group from_group_' . $v['name'] . '" ' . ((isset($v['form_group']) and is_array(
                                 $v['form_group']
-                            )) ? tag_attributes_to_html($v['form_group']) : '') . '>
-	        	<label class="col-md-3 control-label" for="' . generate_id_from_name(
+                            )) ? \Helpers\Html::tag_attributes_to_html($v['form_group']) : '') . '>
+	        	<label class="col-md-3 control-label" for="' . \Helpers\Html::generate_id_from_name(
                             'fields_configuration[' . $v['name'] . ']'
                         ) . '">' .
                         (isset($v['tooltip_icon']) ? \Helpers\App::tooltip_icon(
@@ -940,7 +942,7 @@ class Fields_types
                         '</label>
 	          <div class="col-md-' . (in_array($v['type'], ['code']) ? '12' : '9') . '">' .
                         $field .
-                        (isset($v['tooltip']) ? tooltip_text($v['tooltip']) : '') . '
+                        (isset($v['tooltip']) ? \Helpers\App::tooltip_text($v['tooltip']) : '') . '
 	          </div>			
 	        </div>
 	        ';
@@ -960,7 +962,6 @@ class Fields_types
           $.mask.definitions["~"]="[,. *]";
           $(this).mask($(this).attr("data-mask"));
         })
-        
       </script>
     ';
 

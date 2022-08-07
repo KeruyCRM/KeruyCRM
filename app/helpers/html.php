@@ -31,9 +31,7 @@ class Html
         }
 
         // remove illegal characters
-        $name = preg_replace(['/^[^A-Za-z]+/', '/[^A-Za-z0-9\:_\.\-]/'], ['', '_'], $name);
-
-        return $name;
+        return preg_replace(['/^[^A-Za-z]+/', '/[^A-Za-z\d\:_\.\-]/'], ['', '_'], $name);
     }
 
     public static function form_tag($name, $action, $attributes = [])

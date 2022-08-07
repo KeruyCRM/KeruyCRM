@@ -25,12 +25,15 @@ class Forms_tabs
     public static function get_choices($entities_id)
     {
         $choices = [];
-        $query = db_fetch_all(
-            'app_forms_tabs',
-            "entities_id='" . (int)$entities_id . "' and is_folder=0",
-            'sort_order, name'
-        );
-        while ($v = db_fetch_array($query)) {
+        $query = \K::model()->db_fetch('app_forms_tabs', [
+            'entities_id = ? and is_folder = 0',
+            $entities_id
+        ], ['order' => 'sort_order,name'], 'id,name');
+
+        //while ($v = db_fetch_array($query)) {
+        foreach ($query as $v) {
+            $v = $v->cast();
+
             $choices[$v['id']] = $v['name'];
         }
 
