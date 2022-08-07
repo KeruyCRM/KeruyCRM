@@ -82,7 +82,7 @@ echo app_include_codemirror(['javascript']) ?>
     });
 
     $('#onSubmitTab').click(function () {
-        if (!$(this).hasClass('acitve-codemirror')) {
+        if (!$(this).hasClass('active-codemirror')) {
             setTimeout(function () {
                 var myCodeMirror2 = CodeMirror.fromTextArea(document.getElementById('javascript_onsubmit'), {
                     lineNumbers: true,
@@ -91,7 +91,7 @@ echo app_include_codemirror(['javascript']) ?>
                 });
             }, 300);
 
-            $(this).addClass('acitve-codemirror')
+            $(this).addClass('active-codemirror')
         }
     })
 

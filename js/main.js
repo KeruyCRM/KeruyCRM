@@ -2048,8 +2048,8 @@ function appHandleCodeMirror()
     var code_mirror  = function () {
         $('.code_mirror').each(function(){ 
             
-            if($(this).hasClass("acitve-codemirror")) return false;
-            $(this).addClass("acitve-codemirror")
+            if($(this).hasClass("active-codemirror")) return false;
+            $(this).addClass("active-codemirror")
                 
             mode = $(this).attr('mode')
             
