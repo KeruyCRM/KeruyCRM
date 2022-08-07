@@ -1,6 +1,6 @@
 <?php
 
-namespace Tools;
+namespace Tools\Maps;
 
 class Mind_map
 {
@@ -252,14 +252,26 @@ class Mind_map
 
     static function delete($entities_id, $items_id)
     {
-        db_query("delete from app_mind_map where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'");
+        //db_query("delete from app_mind_map where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'");
+
+        \K::model()->db_delete('app_mind_map', [
+            'entities_id = ? and items_id = ?',
+            $entities_id,
+            $items_id
+        ]);
     }
 
     static function delete_by_fields_id($entities_id, $fields_id)
     {
-        db_query(
+        /*db_query(
             "delete from app_mind_map where entities_id='" . $entities_id . "' and fields_id='" . $fields_id . "'"
-        );
+        );*/
+
+        \K::model()->db_delete('app_mind_map', [
+            'entities_id = ? and fields_id = ?',
+            $entities_id,
+            $fields_id
+        ]);
     }
 
 }

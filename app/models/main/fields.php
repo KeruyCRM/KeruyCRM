@@ -291,7 +291,6 @@ class Fields
         );*/
         //$v = db_fetch_array();
 
-        //TODO refactoring use mapper
         $mapper = \K::model()->mapper('app_fields');
         $mapper->max_sort_order = 'max(sort_order)';
         $value = $mapper->findone([
@@ -575,29 +574,52 @@ class Fields
             //check if field type changed
             if ($field_info['type'] != $new_type) {
                 //delete index
-                $check_query = \K::model()->db_query_exec(
-                    "SHOW INDEX FROM app_entity_" . $field_info['entities_id'] . " WHERE KEY_NAME = 'idx_field_" . $field_info['id'] . "'"
-                );
 
-                if (\K::model()->count()) {
+                $forceCommit = \K::model()->forceCommit();
+
+                $schema = \K::model()->schema();
+                $table = $schema->alterTable('app_entity_' . (int)$field_info['entities_id']);
+                $listIndex = $table->listIndex();
+
+                /*$check_query = \K::model()->db_query_exec(
+                    "SHOW INDEX FROM app_entity_" . $field_info['entities_id'] . " WHERE KEY_NAME = 'idx_field_" . $field_info['id'] . "'"
+                );*/
+
+                /*if (\K::model()->count()) {
                     //$check = db_fetch_array($check_query)
                     \K::model()->db_query_exec(
                         "ALTER TABLE app_entity_" . $field_info['entities_id'] . " DROP INDEX idx_field_" . $field_info['id']
                     );
+                }*/
+
+                if (isset($listIndex[$table->getIndexName('field_' . (int)$field_info['id'])])) {
+                    $table->dropIndex('field_' . (int)$field_info['id']);
                 }
 
                 //prepare db field type
-                \K::model()->db_query_exec(
+                /*\K::model()->db_query_exec(
                     "ALTER TABLE app_entity_" . $field_info['entities_id'] . " CHANGE field_" . $field_info['id'] . " field_" . $field_info['id'] . " " . \Models\Main\Entities::prepare_field_type(
                         $new_type
                     ) . " NOT NULL;"
+                );*/
+
+                $table->updateColumn(
+                    'field_' . (int)$field_info['id'],
+                    \Models\Main\Entities::prepare_field_type($new_type) . ' NOT NULL',
+                    true
                 );
+
+                $table->build();
 
                 //delete all filters for this field type since they are will not work correctly
                 \K::model()->db_delete_row('app_reports_filters', $field_id, 'fields_id');
 
                 //add index
                 \Models\Main\Entities::prepare_field_index($field_info['entities_id'], $field_info['id'], $new_type);
+
+                if ($forceCommit) {
+                    \K::model()->commit();
+                }
             }
         }
     }

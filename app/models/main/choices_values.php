@@ -52,7 +52,7 @@ class Choices_values
                 ) . "' and fields_id='" . $values['fields_id'] . "'"
             );*/
 
-            \K::model()->db_delete('app_entity_' . $this->entities_id . '_values', [
+            \K::model()->db_delete('app_entity_' . (int)$this->entities_id . '_values', [
                 'items_id = ? and fields_id = ?',
                 $items_id,
                 $values['fields_id']
@@ -71,7 +71,7 @@ class Choices_values
                     'fields_id' => $values['fields_id'],
                     'value' => $v
                 ];
-                \K::model()->db_perform("app_entity_" . $this->entities_id . "_values", $sql_data);
+                \K::model()->db_perform('app_entity_' . (int)$this->entities_id . '_values', $sql_data);
             }
         }
 
@@ -115,11 +115,15 @@ class Choices_values
 
     public static function delete_by_item_id($entities_id, $items_id)
     {
-        db_query("delete from app_entity_" . $entities_id . "_values where items_id='" . db_input($items_id) . "'");
+        //db_query("delete from app_entity_" . $entities_id . "_values where items_id='" . db_input($items_id) . "'");
+
+        \K::model()->db_delete_row('app_entity_' . (int)$entities_id . '_values', $items_id, 'items_id');
     }
 
     public static function delete_by_field_id($entities_id, $fields_id)
     {
-        db_query("delete from app_entity_" . $entities_id . "_values where fields_id='" . db_input($fields_id) . "'");
+        //db_query("delete from app_entity_" . $entities_id . "_values where fields_id='" . db_input($fields_id) . "'");
+
+        \K::model()->db_delete_row('app_entity_' . (int)$entities_id . '_values', $fields_id, 'fields_id');
     }
 }

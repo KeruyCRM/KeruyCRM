@@ -373,13 +373,13 @@ class Related_records
             $key_name = $entities_id . '_' . $related_entities_id;
         }
 
-        $sufix = '';
+        $suffix = '';
 
         if ($entities_id == $related_entities_id) {
-            $sufix = '_related';
+            $suffix = '_related';
         }
 
-        return ['table_name' => $table_name, 'table_key' => $key_name, 'sufix' => $sufix];
+        return ['table_name' => $table_name, 'table_key' => $key_name, 'suffix' => $suffix];
     }
 
     public function get_related_items()
@@ -399,12 +399,12 @@ class Related_records
         while ($related_items = db_fetch_array($related_items_query)) {
             $related_items_array[$related_items['id']] = $related_items['entity_' . $this->cfg->get(
                 'entity_id'
-            ) . $table_info['sufix'] . '_items_id'];
+            ) . $table_info['suffix'] . '_items_id'];
         }
 
-        if (strlen($table_info['sufix']) > 0) {
+        if (strlen($table_info['suffix']) > 0) {
             $related_items_query = db_query(
-                "select * from " . $table_info['table_name'] . " where entity_" . $this->entities_id . $table_info['sufix'] . "_items_id='" . db_input(
+                "select * from " . $table_info['table_name'] . " where entity_" . $this->entities_id . $table_info['suffix'] . "_items_id='" . db_input(
                     $this->items_id
                 ) . "'"
             );
@@ -539,9 +539,9 @@ class Related_records
                     ) . "'"
                 );
 
-                if (strlen($table_info['sufix']) > 0) {
+                if (strlen($table_info['suffix']) > 0) {
                     db_query(
-                        "delete from " . $table_info['table_name'] . " where entity_" . $entities_id . $table_info['sufix'] . "_items_id='" . db_input(
+                        "delete from " . $table_info['table_name'] . " where entity_" . $entities_id . $table_info['suffix'] . "_items_id='" . db_input(
                             $items_id
                         ) . "'"
                     );
@@ -588,34 +588,58 @@ class Related_records
 
     public static function prepare_entities_related_items_table($entities_id, $fields_id)
     {
-        $field = db_find('app_fields', $fields_id);
+        $field = \K::model()->db_find('app_fields', $fields_id);
 
         if ($field['type'] == 'fieldtype_related_records') {
-            $cfg = new fields_types_cfg($field['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
             $related_entities_id = $cfg->get('entity_id');
 
             if ($related_entities_id > 0) {
-                $tables_array = [];
-                $tables_query = db_query("show tables");
+                $schema = \K::model()->schema();
+
+                $tables_array = $schema->getTables();
+                /*$tables_query = db_query("show tables");
                 while ($tables = db_fetch_array($tables_query)) {
                     $tables_array[] = current($tables);
-                }
+                }*/
 
                 $table_info = self::get_related_items_table_name($entities_id, $related_entities_id);
 
                 if (!in_array($table_info['table_name'], $tables_array)) {
-                    $sql = '
+                    /*$sql = '
 		          CREATE TABLE IF NOT EXISTS `' . $table_info['table_name'] . '` (
 		            `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 		            `entity_' . $entities_id . '_items_id` int(11) UNSIGNED NOT NULL,
-		            `entity_' . $related_entities_id . $table_info['sufix'] . '_items_id` int(11) UNSIGNED NOT NULL,
+		            `entity_' . $related_entities_id . $table_info['suffix'] . '_items_id` int(11) UNSIGNED NOT NULL,
 		            PRIMARY KEY (`id`),
 		            KEY `idx_' . $entities_id . '_items_id` (`entity_' . $entities_id . '_items_id`),
-		            KEY `idx_' . $related_entities_id . $table_info['sufix'] . '_items_id` (`entity_' . $related_entities_id . $table_info['sufix'] . '_items_id`)
+		            KEY `idx_' . $related_entities_id . $table_info['suffix'] . '_items_id` (`entity_' . $related_entities_id . $table_info['suffix'] . '_items_id`)
 		          ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 		      ';
 
-                    db_query($sql);
+                    db_query($sql);*/
+
+                    $forceCommit = \K::model()->forceCommit();
+
+                    $table = $schema->createTable($table_info['table_name']);
+
+                    $table->addColumn('entity_' . $entities_id . '_items_id')->type('INT(11) UNSIGNED', true)->nullable(
+                        false
+                    )->index();
+                    $table->addColumn('entity_' . $related_entities_id . $table_info['suffix'] . '_items_id')->type(
+                        'INT(11) UNSIGNED',
+                        true
+                    )->nullable(false)->index();
+
+                    $table->build();
+
+                    $table = $schema->alterTable($table_info['table_name']);
+                    $table->updateColumn('id', 'INT(11) UNSIGNED', true);
+                    $table->build();
+
+                    if ($forceCommit) {
+                        \K::model()->commit();
+                    }
                 }
             }
         }
@@ -833,7 +857,7 @@ class Related_records
 
         $sql_data = [
             'entity_' . $entities_id . '_items_id' => $items_id,
-            'entity_' . $related_entities_id . $table_info['sufix'] . '_items_id' => $related_items_id
+            'entity_' . $related_entities_id . $table_info['suffix'] . '_items_id' => $related_items_id
         ];
 
         db_perform($table_info['table_name'], $sql_data);

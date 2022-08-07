@@ -4,179 +4,137 @@ if (!defined('KERUY_CRM')) {
     exit;
 } ?>
 <?php
-require(component_path('entities/navigation')) ?>
+\K::view()->render(\Helpers\Urls::components_path('main/entities/navigation')); ?>
 
-<?php
-echo button_tag(
-    TEXT_BUTTON_ADD_NEW_FIELD,
-    url_for('entities/fields_form', 'entities_id=' . $_GET['entities_id']),
+<?= \Helpers\Html::button_tag(
+    \K::$fw->TEXT_BUTTON_ADD_NEW_FIELD,
+    \Helpers\Urls::url_for('main/entities/fields_form', 'entities_id=' . \K::$fw->GET['entities_id']),
     true
 ) ?>
 
 <div class="btn-group">
     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" data-hover="dropdown">
-        <?php
-        echo TEXT_WITH_SELECTED ?> <i class="fa fa-angle-down"></i>
+        <?= \K::$fw->TEXT_WITH_SELECTED ?> <i class="fa fa-angle-down"></i>
     </button>
     <ul class="dropdown-menu" role="menu">
         <li>
-            <?php
-            echo link_to_modalbox(
-                TEXT_FIELDS_EXPORT,
-                url_for('entities/fields_export_form', 'entities_id=' . $_GET['entities_id'])
+            <?= \Helpers\Urls::link_to_modalbox(
+                \K::$fw->TEXT_FIELDS_EXPORT,
+                \Helpers\Urls::url_for('main/entities/fields_export_form', 'entities_id=' . \K::$fw->GET['entities_id'])
             ) ?>
         </li>
         <li>
-            <?php
-            echo link_to_modalbox(
-                TEXT_COPY_FIELDS,
-                url_for('entities/fields_copy_form', 'entities_id=' . $_GET['entities_id'])
+            <?= \Helpers\Urls::link_to_modalbox(
+                \K::$fw->TEXT_COPY_FIELDS,
+                \Helpers\Urls::url_for('main/entities/fields_copy_form', 'entities_id=' . \K::$fw->GET['entities_id'])
             ) ?>
         </li>
         <li>
-            <?php
-            echo link_to_modalbox(
-                TEXT_EDIT_FIELDS,
-                url_for('entities/fields_mulitple_edit', 'entities_id=' . $_GET['entities_id'])
+            <?= \Helpers\Urls::link_to_modalbox(
+                \K::$fw->TEXT_EDIT_FIELDS,
+                \Helpers\Urls::url_for(
+                    'main/entities/fields_multiple_edit',
+                    'entities_id=' . \K::$fw->GET['entities_id']
+                )
             ) ?>
         </li>
     </ul>
 </div>
 
-<?php
-echo button_tag(
+<?= \Helpers\Html::button_tag(
     '<i class="fa fa-upload"></i>',
-    url_for('entities/fields_import_form', 'entities_id=' . $_GET['entities_id']),
+    \Helpers\Urls::url_for('main/entities/fields_import_form', 'entities_id=' . \K::$fw->GET['entities_id']),
     true,
-    ['class' => 'btn btn-default', 'title' => TEXT_IMPORT_FIELDS]
+    ['class' => 'btn btn-default', 'title' => \K::$fw->TEXT_IMPORT_FIELDS]
 ) ?>
 
 <div class="table-scrollable">
     <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr>
-            <th><?php
-                echo input_checkbox_tag('select_all_fields', '', ['class' => 'select_all_fields']) ?></th>
-            <th><?php
-                echo TEXT_ACTION ?></th>
+            <th><?= \Helpers\Html::input_checkbox_tag('select_all_fields', '', ['class' => 'select_all_fields']) ?></th>
+            <th><?= \K::$fw->TEXT_ACTION ?></th>
             <th>#</th>
-            <th><?php
-                echo TEXT_FORM_TAB ?></th>
-            <th width="100%"><?php
-                echo TEXT_NAME ?></th>
-            <th><?php
-                echo TEXT_SHORT_NAME ?></th>
-            <th><?php
-                echo TEXT_NOTE ?></th>
-            <th><?php
-                echo TEXT_IS_REQUIRED ?></th>
-            <th><?php
-                echo TEXT_IS_UNIQUE ?></th>
-            <th><?php
-                echo TEXT_TYPE ?></th>
+            <th><?= \K::$fw->TEXT_FORM_TAB ?></th>
+            <th width="100%"><?= \K::$fw->TEXT_NAME ?></th>
+            <th><?= \K::$fw->TEXT_SHORT_NAME ?></th>
+            <th><?= \K::$fw->TEXT_NOTE ?></th>
+            <th><?= \K::$fw->TEXT_IS_REQUIRED ?></th>
+            <th><?= \K::$fw->TEXT_IS_UNIQUE ?></th>
+            <th><?= \K::$fw->TEXT_TYPE ?></th>
         </tr>
         </thead>
         <tbody>
         <?php
-
-        $fields_sql_query = '';
-
-        $entity_info = db_find('app_entities', $_GET['entities_id']);
-
-        //include fieldtype_parent_item_id only for sub entities
-        if ($entity_info['parent_id'] == 0) {
-            $fields_sql_query .= " and f.type not in ('fieldtype_parent_item_id')";
+        if (count(\K::$fw->fields_query) == 0) {
+            echo '<tr><td colspan="9">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</td></tr>';
         }
 
-        $reserverd_fields_types = array_merge(fields_types::get_reserved_data_types(), fields_types::get_users_types());
-        $reserverd_fields_types_list = "'" . implode("','", $reserverd_fields_types) . "'";
+        //while ($v = db_fetch_array($fields_query)):
+        foreach (\K::$fw->fields_query as $v):
+            $cfg = new \Tools\Settings($v['configuration']);
 
-        $fields_query = db_query(
-            "select f.*,fr.sort_order as form_rows_sort_order,right(f.forms_rows_position,1) as forms_rows_pos, t.name as tab_name, if(f.type in (" . $reserverd_fields_types_list . "),-1,t.sort_order) as tab_sort_order from app_fields f left join app_forms_rows fr on fr.id=LEFT(f.forms_rows_position,length(f.forms_rows_position)-2), app_forms_tabs t where f.type not in ('fieldtype_action') and f.entities_id='" . $_GET['entities_id'] . "' and f.forms_tabs_id=t.id {$fields_sql_query} order by tab_sort_order, t.name, form_rows_sort_order, forms_rows_pos, f.sort_order, f.name"
-        );
-
-        if (db_num_rows($fields_query) == 0) {
-            echo '<tr><td colspan="9">' . TEXT_NO_RECORDS_FOUND . '</td></tr>';
-        }
-
-        while ($v = db_fetch_array($fields_query)):
-            $cfg = new settings($v['configuration']);
-
-            $heading_note = ($v['is_heading'] ? ' <span class="label label-info">' . TEXT_HEADING . '</span>' : '');
+            $heading_note = ($v['is_heading'] ? ' <span class="label label-info">' . \K::$fw->TEXT_HEADING . '</span>' : '');
             ?>
             <tr>
-
                 <?php
-                if (in_array($v['type'], $reserverd_fields_types)) { ?>
-
+                if (in_array($v['type'], \K::$fw->reserved_fields_types)) { ?>
                     <td></td>
-                    <td style="white-space: nowrap;" align="center"><?php
-                        echo button_icon_edit(
-                            url_for(
-                                'entities/fields_form_internal',
-                                'id=' . $v['id'] . '&entities_id=' . $_GET['entities_id']
+                    <td style="white-space: nowrap;" align="center"><?= \Helpers\Html::button_icon_edit(
+                            \Helpers\Urls::url_for(
+                                'main/entities/fields_form_internal',
+                                'id=' . $v['id'] . '&entities_id=' . \K::$fw->GET['entities_id']
                             )
                         ) ?></td>
-                    <td><?php
-                        echo(in_array($v['type'], fields_types::get_reserved_types()) ? tooltip_icon(
+                    <td><?= (in_array(
+                            $v['type'],
+                            \Models\Main\Fields_types::get_reserved_types()
+                        ) ? \Helpers\App::tooltip_icon(
                             '[' . str_replace('fieldtype_', '', $v['type']) . ']'
                         ) : $v['id']) ?></td>
                     <td></td>
-                    <td><?php
-                        echo (strlen($v['name']) ? $v['name'] : fields_types::get_title(
-                                $v['type']
-                            )) . $heading_note ?></td>
-                    <td><?php
-                        echo $v['short_name'] ?></td>
+                    <td><?= (strlen($v['name']) ? $v['name'] : \Models\Main\Fields_types::get_title(
+                            $v['type']
+                        )) . $heading_note ?></td>
+                    <td><?= $v['short_name'] ?></td>
                     <td></td>
-                    <td><?php
-                        echo render_bool_value(1, true) ?></td>
+                    <td><?= \Helpers\App::render_bool_value(1, true) ?></td>
                     <td></td>
-                    <td class="nowrap"><?php
-                        echo fields_types::get_title($v['type']) ?></td>
-
-                <?php
+                    <td class="nowrap"><?= \Models\Main\Fields_types::get_title($v['type']) ?></td>
+                    <?php
                 } else { ?>
-
-                    <td><?php
-                        echo input_checkbox_tag('fields[]', $v['id'], ['class' => 'fields_checkbox']) ?></td>
+                    <td><?= \Helpers\Html::input_checkbox_tag('fields[]', $v['id'], ['class' => 'fields_checkbox']
+                        ) ?></td>
                     <td style="white-space: nowrap;">
-                        <?php
-                        echo button_icon_delete(
-                                url_for(
-                                    'entities/fields_delete',
-                                    'id=' . $v['id'] . '&entities_id=' . $_GET['entities_id']
-                                )
-                            ) . ' ' . button_icon_edit(
-                                url_for(
-                                    'entities/fields_form',
-                                    'id=' . $v['id'] . '&entities_id=' . $_GET['entities_id']
-                                )
-                            ) ?>
+                        <?= \Helpers\Html::button_icon_delete(
+                            \Helpers\Urls::url_for(
+                                'main/entities/fields_delete',
+                                'id=' . $v['id'] . '&entities_id=' . \K::$fw->GET['entities_id']
+                            )
+                        ) . ' ' . \Helpers\Html::button_icon_edit(
+                            \Helpers\Urls::url_for(
+                                'main/entities/fields_form',
+                                'id=' . $v['id'] . '&entities_id=' . \K::$fw->GET['entities_id']
+                            )
+                        ) ?>
                     </td>
-                    <td><?php
-                        echo $v['id'] ?></td>
-                    <td><?php
-                        echo $v['tab_name'] ?></td>
-                    <td><?php
-                        echo fields_types::render_field_name($v['name'], $v['type'], $v['id']) . $heading_note ?></td>
-                    <td><?php
-                        echo $v['short_name'] ?></td>
-                    <td><?php
-                        echo tooltip_icon($v['notes'], 'left') ?></td>
-                    <td><?php
-                        echo render_bool_value($v['is_required'], true) ?></td>
-                    <td><?php
-                        echo render_bool_value(($cfg->get('is_unique') > 0 ? true : false), true) ?></td>
-                    <td class="nowrap"><?php
-                        echo fields_types::get_title($v['type']) ?></td>
-
-                <?php
+                    <td><?= $v['id'] ?></td>
+                    <td><?= $v['tab_name'] ?></td>
+                    <td><?= \Models\Main\Fields_types::render_field_name(
+                            $v['name'],
+                            $v['type'],
+                            $v['id']
+                        ) . $heading_note ?></td>
+                    <td><?= $v['short_name'] ?></td>
+                    <td><?= \Helpers\App::tooltip_icon($v['notes'], 'left') ?></td>
+                    <td><?= \Helpers\App::render_bool_value($v['is_required'], true) ?></td>
+                    <td><?= \Helpers\App::render_bool_value(($cfg->get('is_unique') > 0 ? true : false), true) ?></td>
+                    <td class="nowrap"><?= \Models\Main\Fields_types::get_title($v['type']) ?></td>
+                    <?php
                 } ?>
-
             </tr>
         <?php
-        endwhile ?>
+        endforeach; ?>
         </tbody>
     </table>
 </div>

@@ -655,48 +655,48 @@ class Fields_types
 
     public static function get_title($class)
     {
-        $fieldtype = new $class;
+        $class = '\\Tools\\Fieldstypes\\' . ucfirst($class);
+        $fieldtype = new $class();
 
         return $fieldtype->options['title'];
     }
 
     public static function render_field_name($name, $class, $fields_id)
     {
-        global $_GET;
-
-        $fieldtype = new $class;
+        $class = '\\Tools\\Fieldstypes\\' . ucfirst($class);
+        $fieldtype = new $class();
 
         if (!isset($fieldtype->options['has_choices'])) {
             $fieldtype->options['has_choices'] = false;
         }
 
         if ($fieldtype->options['has_choices']) {
-            return '<a href="' . url_for(
-                    'entities/fields_choices',
-                    'entities_id=' . $_GET['entities_id'] . '&fields_id=' . $fields_id
+            return '<a href="' . \Helpers\Urls::url_for(
+                    'main/entities/fields_choices',
+                    'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . $fields_id
                 ) . '"><i class="fa fa-list"></i>&nbsp;' . $name . '</a>';
         } elseif (in_array($class, ['fieldtype_related_records', 'fieldtype_entity'])) {
-            return '<a href="' . url_for(
-                    'entities/fields_settings',
-                    'entities_id=' . $_GET['entities_id'] . '&fields_id=' . $fields_id
+            return '<a href="' . \Helpers\Urls::url_for(
+                    'main/entities/fields_settings',
+                    'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . $fields_id
                 ) . '"><i class="fa fa-gear"></i>&nbsp;' . $name . '</a>';
         } elseif (in_array(
             $class,
             ['fieldtype_image_map_nested', 'fieldtype_entity_ajax', 'fieldtype_entity_multilevel']
         )) {
-            return '<a href="' . url_for(
-                    'entities/entityfield_filters',
-                    'entities_id=' . $_GET['entities_id'] . '&fields_id=' . $fields_id
+            return '<a href="' . \Helpers\Urls::url_for(
+                    'main/entities/entityfield_filters',
+                    'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . $fields_id
                 ) . '"><i class="fa fa-gear"></i>&nbsp;' . $name . '</a>';
         } elseif (in_array($class, ['fieldtype_user_roles'])) {
-            return '<a href="' . url_for(
-                    'entities/user_roles',
-                    'entities_id=' . $_GET['entities_id'] . '&fields_id=' . $fields_id
+            return '<a href="' . \Helpers\Urls::url_for(
+                    'main/entities/user_roles',
+                    'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . $fields_id
                 ) . '"><i class="fa fa-gear"></i>&nbsp;' . $name . '</a>';
         } elseif (in_array($class, ['fieldtype_users_approve', 'fieldtype_signature', 'fieldtype_digital_signature'])) {
-            return '<a href="' . url_for(
-                    'entities/fields_filters',
-                    'entities_id=' . $_GET['entities_id'] . '&fields_id=' . $fields_id
+            return '<a href="' . \Helpers\Urls::url_for(
+                    'main/entities/fields_filters',
+                    'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . $fields_id
                 ) . '"><i class="fa fa-gear"></i>&nbsp;' . $name . '</a>';
         } else {
             return $name;
@@ -969,7 +969,7 @@ class Fields_types
 
     public static function prepare_configuration($v)
     {
-        return app_json_encode($v);
+        return \Helpers\App::app_json_encode($v);
     }
 
     public static function parse_configuration($v)

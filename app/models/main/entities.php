@@ -98,7 +98,10 @@ class Entities
 
     public static function insert_reserved_fields($id, $forms_tabs_id)
     {
+        $forceCommit = \K::model()->forceCommit();
+
         $sort_order = 0;
+
         foreach (\Models\Main\Fields_types::get_reserved_types() as $type) {
             $sql_data = [
                 'forms_tabs_id' => $forms_tabs_id,
@@ -113,6 +116,10 @@ class Entities
 
             $sort_order++;
         }
+
+        if ($forceCommit) {
+            \K::model()->commit();
+        }
     }
 
     public static function get_listing_heading($entities_id)
@@ -120,26 +127,36 @@ class Entities
         //ARCHAISM?
     }
 
-    public static function set_cfg($k, $v, $entities_id)
+    public static function set_cfg($name, $value, $entities_id)
     {
-        $cfq_query = db_query(
+        /*$cfq_query = db_query(
             "select * from app_entities_configuration where configuration_name='" . db_input(
-                $k
+                $name
             ) . "' and entities_id='" . db_input($entities_id) . "'"
         );
         if (!$cfq = db_fetch_array($cfq_query)) {
             db_perform(
                 'app_entities_configuration',
-                ['configuration_value' => $v, 'configuration_name' => $k, 'entities_id' => $entities_id]
+                ['configuration_value' => $value, 'configuration_name' => $name, 'entities_id' => $entities_id]
             );
         } else {
             db_perform(
                 'app_entities_configuration',
-                ['configuration_value' => $v],
+                ['configuration_value' => $value],
                 'update',
-                "configuration_name='" . db_input($k) . "' and entities_id='" . db_input($entities_id) . "'"
+                "configuration_name='" . db_input($name) . "' and entities_id='" . db_input($entities_id) . "'"
             );
-        }
+        }*/
+
+        \K::model()->db_perform(
+            'app_entities_configuration',
+            ['configuration_value' => $value, 'configuration_name' => $name, 'entities_id' => $entities_id],
+            [
+                'configuration_name = ? and entities_id = ?',
+                $name,
+                $entities_id
+            ]
+        );
     }
 
     public static function get_cfg($id)
@@ -342,6 +359,8 @@ class Entities
 
     public static function prepare_tables($entities_id)
     {
+        $forceCommit = \K::model()->forceCommit();
+
         $schema = \K::model()->schema();
 
         /* $sql = '
@@ -360,19 +379,23 @@ class Entities
         $table = $schema->createTable('app_entity_' . (int)$entities_id);
         $table->setCharset('utf8mb4');
 
-        $table->addColumn('parent_id')->type('int(11) UNSIGNED', true)->defaults(0);
-        $table->addColumn('parent_item_id')->type('int(11) UNSIGNED', true)->defaults(0);
-        $table->addColumn('linked_id')->type('int(11) UNSIGNED', true)->defaults(0);
-        $table->addColumn('date_added')->type('int(11) UNSIGNED', true)->defaults(0);
-        $table->addColumn('date_updated')->type('int(11) UNSIGNED', true)->defaults(0);
-        $table->addColumn('created_by')->type('int(11) UNSIGNED', true)->defaults(null);
-        $table->addColumn('sort_order')->type('int(11) UNSIGNED', true)->defaults(0);
+        $table->addColumn('parent_id')->type('INT(11) UNSIGNED', true)->defaults(0);
+        $table->addColumn('parent_item_id')->type('INT(11) UNSIGNED', true)->defaults(0);
+        $table->addColumn('linked_id')->type('INT(11) UNSIGNED', true)->defaults(0);
+        $table->addColumn('date_added')->type('BIGINT(11)', true)->defaults(0);
+        $table->addColumn('date_updated')->type('BIGINT(11)', true)->defaults(0);
+        $table->addColumn('created_by')->type('INT(11) UNSIGNED', true)->defaults(null);
+        $table->addColumn('sort_order')->type('INT(11)', true)->defaults(0);
 
         $table->addIndex('parent_id');
         $table->addIndex('parent_item_id');
         $table->addIndex('created_by');
 
-        $table->build(false);
+        $table->build();
+
+        $table = $schema->alterTable('app_entity_' . (int)$entities_id);
+        $table->updateColumn('id', 'INT(11) UNSIGNED', true);
+        $table->build();
 
         /*db_query($sql);
 
@@ -403,16 +426,25 @@ class Entities
 
         $table = $schema->createTable('app_entity_' . (int)$entities_id . '_values');
         $table->setCharset('utf8mb4');
-        $table->addColumn('items_id')->type('int(11) UNSIGNED', true)->nullable(false);
-        $table->addColumn('fields_id')->type('int(11) UNSIGNED', true)->nullable(false);
-        $table->addColumn('value')->type('int(11) UNSIGNED', true)->nullable(false);
+
+        $table->addColumn('items_id')->type('INT(11) UNSIGNED', true)->nullable(false);
+        $table->addColumn('fields_id')->type('INT(11) UNSIGNED', true)->nullable(false);
+        $table->addColumn('value')->type('INT(11) UNSIGNED', true)->nullable(false);
 
         $table->addIndex('items_id');
         $table->addIndex('fields_id');
         $table->addIndex(['items_id', 'fields_id']);
         $table->addIndex('value');
 
-        $table->build(false);
+        $table->build();
+
+        $table = $schema->alterTable('app_entity_' . (int)$entities_id . '_values');
+        $table->updateColumn('id', 'INT(11) UNSIGNED', true);
+        $table->build();
+
+        if ($forceCommit) {
+            \K::model()->commit();
+        }
     }
 
     public static function delete_tables($entities_id)
@@ -427,6 +459,7 @@ class Entities
 
         $schema->dropTable('app_entity_' . (int)$entities_id);
         $schema->dropTable('app_entity_' . (int)$entities_id . '_values');
+        //TODO Flush cache
     }
 
     public static function prepare_field_type($type)
@@ -521,12 +554,23 @@ class Entities
 
     public static function prepare_field($entities_id, $fields_id, $type)
     {
-        $db_type = self::prepare_field_type($type);
+        $forceCommit = \K::model()->forceCommit();
+
+        /*$db_type = self::prepare_field_type($type);
         $sql = 'ALTER TABLE  app_entity_' . (int)$entities_id . ' ADD  field_' . (int)$fields_id . ' ' . $db_type . ' NOT NULL';
-        \K::model()->db_query_exec($sql);
+        \K::model()->db_query_exec($sql);*/
+
+        $schema = \K::model()->schema();
+        $table = $schema->alterTable('app_entity_' . (int)$entities_id);
+        $table->addColumn('field_' . (int)$fields_id)->type(self::prepare_field_type($type), true)->nullable(false);
+        $table->build();
 
         //add index
         self::prepare_field_index($entities_id, $fields_id, $type);
+
+        if ($forceCommit) {
+            \K::model()->commit();
+        }
     }
 
     public static function prepare_field_index($entities_id, $fields_id, $type)
@@ -551,22 +595,37 @@ class Entities
             'fieldtype_autostatus',
             'fieldtype_random_value',
         ])) {
+            $schema = \K::model()->schema();
+            $table = $schema->alterTable('app_entity_' . (int)$entities_id);
+
             if (self::prepare_field_type($type) == 'TEXT') {
-                \K::model()->db_query_exec(
+                /*\K::model()->db_query_exec(
                     "ALTER TABLE app_entity_" . (int)$entities_id . " ADD INDEX idx_field_" . (int)$fields_id . " (field_" . (int)$fields_id . "(128));"
-                );
+                );*/
+
+                $table->addIndex('field_' . (int)$fields_id, false, 128);
             } else {
-                \K::model()->db_query_exec(
+                /*\K::model()->db_query_exec(
                     "ALTER TABLE app_entity_" . (int)$entities_id . " ADD INDEX idx_field_" . (int)$fields_id . " (field_" . (int)$fields_id . ");"
-                );
+                );*/
+
+                $table->addIndex('field_' . (int)$fields_id);
             }
+
+            $table->build();
         }
     }
 
     public static function delete_field($entities_id, $fields_id)
     {
-        $sql = 'ALTER TABLE app_entity_' . (int)$entities_id . ' DROP field_' . (int)$fields_id;
-        db_query($sql);
+        /*$sql = 'ALTER TABLE app_entity_' . (int)$entities_id . ' DROP field_' . (int)$fields_id;
+        db_query($sql);*/
+
+        $schema = \K::model()->schema();
+
+        $table = $schema->alterTable('app_entity_' . (int)$entities_id);
+        $table->dropColumn('field_' . (int)$fields_id);
+        $table->build();
     }
 
     public static function is_hidden_by_condition($entities_id, $parent_item_id)

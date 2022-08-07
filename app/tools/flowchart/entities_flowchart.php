@@ -13,7 +13,7 @@ class Entities_flowchart
     public $entities_coords;
     public $shcema;
 
-    function __construct()
+    public function __construct()
     {
         $this->fields_step = 8;
         $this->height = 0;
@@ -28,7 +28,7 @@ class Entities_flowchart
         $this->shcema = $data['tree'];
     }
 
-    function get_shcema($parent_id = 0, $tree = [], $level = 0, $x = 0, $y = 0)
+    public function get_shcema($parent_id = 0, $tree = [], $level = 0, $x = 0, $y = 0)
     {
         /*$entities_query = db_query(
             "select * from app_entities where parent_id='" . $parent_id . "' order by sort_order, name"
@@ -102,7 +102,7 @@ class Entities_flowchart
         return $tree;
     }
 
-    function prepare_data()
+    public function prepare_data()
     {
         $this->build_entities_nodes();
         $this->build_users_fields_nodes();
@@ -113,7 +113,7 @@ class Entities_flowchart
         $this->build_tips();
     }
 
-    function build_entities_nodes()
+    public function build_entities_nodes()
     {
         foreach ($this->shcema as $entities) {
             //users entity have own color
@@ -138,7 +138,7 @@ class Entities_flowchart
         }
     }
 
-    function build_users_fields_nodes()
+    public function build_users_fields_nodes()
     {
         /*$fields_query = db_query(
             "select * from app_fields where type in ('fieldtype_users','fieldtype_grouped_users')"
@@ -163,7 +163,7 @@ class Entities_flowchart
         }
     }
 
-    function build_entity_fields_nodes()
+    public function build_entity_fields_nodes()
     {
         /*$fields_query = db_query(
             "select * from app_fields where type in ('fieldtype_entity','fieldtype_entity_ajax','fieldtype_entity_multilevel')"
@@ -195,7 +195,7 @@ class Entities_flowchart
         }
     }
 
-    function build_related_records_nodes()
+    public function build_related_records_nodes()
     {
         $skip_related_records_fields = [];
         //$fields_query = db_query("select * from app_fields where type in ('fieldtype_related_records')");
@@ -253,7 +253,7 @@ class Entities_flowchart
         }
     }
 
-    function build_functions_nodes()
+    public function build_functions_nodes()
     {
         $skip_functions = [];
         //$fields_query = db_query("select * from app_fields where type in ('fieldtype_formula')");
@@ -351,7 +351,7 @@ class Entities_flowchart
         }
     }
 
-    function build_entities_edges()
+    public function build_entities_edges()
     {
         foreach ($this->shcema as $entities) {
             //build entity node for parents entities tree
@@ -385,7 +385,7 @@ class Entities_flowchart
         }
     }
 
-    function build_tips()
+    public function build_tips()
     {
         //$fields_query = db_query("select * from app_fields");
 

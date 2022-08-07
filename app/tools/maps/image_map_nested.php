@@ -1,6 +1,8 @@
 <?php
 
-class image_map_nested
+namespace Tools\Maps;
+
+class Image_map_nested
 {
     public $map_filename;
     public $field_id;
@@ -52,7 +54,6 @@ class image_map_nested
         //use report scale        
         $this->scale = $cfg->get('scale');
 
-
         //set fields in popup
         if (is_array($cfg->get('fields_in_popup'))) {
             $this->fields_in_popup = $cfg->get('fields_in_popup');
@@ -98,7 +99,6 @@ class image_map_nested
 
         $markers = [];
 
-
         $entity_id = $this->field_cfg->get('entity_id');
 
         $sql_query_select = '';
@@ -106,7 +106,6 @@ class image_map_nested
         $select_sql_query = '';
         $listing_sql_query_having = '';
         $sql_query_having = [];
-
 
         //prepare fields sum for formulas
         $sql_query_select = fieldtype_formula::prepare_query_select($entity_id, '');
@@ -126,11 +125,9 @@ class image_map_nested
         //add access query
         $listing_sql_query = items::add_access_query($entity_id, $listing_sql_query);
 
-
         $listing_sql = "select e.* " . $sql_query_select . " from app_entity_" . $entity_id . " e  where e.parent_item_id='{$this->item_id}' " . $listing_sql_query;
 
         $items_query = db_query($listing_sql);
-
 
         while ($items = db_fetch_array($items_query)) {
             $x = $y = 0;
@@ -185,7 +182,6 @@ class image_map_nested
                 'html' => $html,
             ];
 
-
             if ($this->background and isset($items['field_' . $this->background])) {
                 $this->choices_in_legend[$items['field_' . $this->background]] = $items['field_' . $this->background];
             }
@@ -208,7 +204,6 @@ class image_map_nested
             $html .= '
                 <table class="cfm-params">
                         <tbody>';
-
 
             foreach ($fields_in_popup as $fields_id) {
                 $field_query = db_query("select * from app_fields where id='" . $fields_id . "'");
@@ -328,14 +323,22 @@ class image_map_nested
 
     static function delete_markers($entities_id, $items_id)
     {
-        db_query(
+        /*db_query(
             "delete from app_image_map_markers_nested where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'"
-        );
+        );*/
+
+        \K::model()->db_delete('app_image_map_markers_nested', [
+            'entities_id = ? and items_id = ?',
+            $entities_id,
+            $items_id
+        ]);
     }
 
     static function delete_by_fields_id($fields_id)
     {
-        db_query("delete from app_image_map_markers_nested where fields_id={$fields_id}");
+        //db_query("delete from app_image_map_markers_nested where fields_id={$fields_id}");
+
+        \K::model()->db_delete_row('app_image_map_markers_nested', $fields_id, 'fields_id');
     }
 
 }
