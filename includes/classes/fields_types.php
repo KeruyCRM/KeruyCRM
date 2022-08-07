@@ -897,10 +897,10 @@ class fields_types
                         else
                         {                                                 
                             $("#' . $tab_id . '_link").click(function(){
-                                if(!$(this).hasClass("acitve-codemirror"))
+                                if(!$(this).hasClass("active-codemirror"))
                                 {
                                     setTimeout(' . $v['name'] . '_code, 300);
-                                    $(this).addClass("acitve-codemirror")
+                                    $(this).addClass("active-codemirror")
                                 }		
                             })
 

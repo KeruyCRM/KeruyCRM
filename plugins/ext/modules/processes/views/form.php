@@ -506,7 +506,7 @@ echo app_include_codemirror(['javascript']) ?>
 
 
         $('#js_in_form_tab').click(function () {
-            if (!$(this).hasClass('acitve-codemirror')) {
+            if (!$(this).hasClass('active-codemirror')) {
                 setTimeout(function () {
                     var myCodeMirror1 = CodeMirror.fromTextArea(document.getElementById('javascript_in_from'), {
                         lineNumbers: true,
@@ -521,7 +521,7 @@ echo app_include_codemirror(['javascript']) ?>
                     });
                 }, 300);
 
-                $(this).addClass('acitve-codemirror')
+                $(this).addClass('active-codemirror')
             }
         })
 

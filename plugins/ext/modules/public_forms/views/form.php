@@ -453,7 +453,7 @@ echo app_include_codemirror(['javascript', 'css']) ?>
 
 //add codemirror
         $('#form_design_tab').click(function () {
-            if (!$(this).hasClass('acitve-codemirror')) {
+            if (!$(this).hasClass('active-codemirror')) {
                 setTimeout(function () {
                     var myCodeMirror1 = CodeMirror.fromTextArea(document.getElementById('form_css'), {
                         lineNumbers: true,
@@ -463,12 +463,12 @@ echo app_include_codemirror(['javascript', 'css']) ?>
                     });
                 }, 300);
 
-                $(this).addClass('acitve-codemirror')
+                $(this).addClass('active-codemirror')
             }
         })
 
         $('#form_js_tab').click(function () {
-            if (!$(this).hasClass('acitve-codemirror')) {
+            if (!$(this).hasClass('active-codemirror')) {
                 setTimeout(function () {
                     var myCodeMirror2 = CodeMirror.fromTextArea(document.getElementById('form_js'), {
                         lineNumbers: true,
@@ -478,7 +478,7 @@ echo app_include_codemirror(['javascript', 'css']) ?>
                     });
                 }, 300);
 
-                $(this).addClass('acitve-codemirror')
+                $(this).addClass('active-codemirror')
             }
         })
 

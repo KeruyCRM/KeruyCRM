@@ -423,7 +423,7 @@ echo app_include_codemirror(['css']) ?>
 
         //add codemirror
         $('#template_css_tab').click(function () {
-            if (!$(this).hasClass('acitve-codemirror')) {
+            if (!$(this).hasClass('active-codemirror')) {
                 setTimeout(function () {
                     var myCodeMirror1 = CodeMirror.fromTextArea(document.getElementById('template_css'), {
                         lineNumbers: true,
@@ -433,7 +433,7 @@ echo app_include_codemirror(['css']) ?>
                     });
                 }, 300);
 
-                $(this).addClass('acitve-codemirror')
+                $(this).addClass('active-codemirror')
             }
         })
 
