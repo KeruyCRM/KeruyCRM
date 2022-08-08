@@ -74,7 +74,7 @@ class Fieldtype_attachments
 
         $cfg[\K::$fw->TEXT_DELETION][] = [
             'title' => \K::$fw->TEXT_CONFIRM_DELETION,
-            'name' => 'confirm_delation',
+            'name' => 'confirm_deletion',
             'type' => 'checkbox'
         ];
         $cfg[\K::$fw->TEXT_DELETION][] = [
@@ -88,87 +88,89 @@ class Fieldtype_attachments
 
     public function render($field, $obj, $params = [])
     {
-        global $uploadify_attachments, $uploadify_attachments_queue, $current_path, $app_user, $app_items_form_name, $public_form, $app_session_token;
-
         if (!isset($field['configuration'])) {
             $field['configuration'] = '';
         }
 
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
-        $field_id = $field['id'];
+        $field_id = (int)$field['id'];
 
-        $uploadify_attachments[$field_id] = [];
-        $uploadify_attachments_queue[$field_id] = [];
+        \K::$fw->uploadify_attachments[$field_id] = [];
+        \K::$fw->uploadify_attachments_queue[$field_id] = [];
 
-        if (strlen($obj['field_' . $field['id']]) > 0) {
-            $uploadify_attachments[$field_id] = explode(',', $obj['field_' . $field['id']]);
+        if (strlen($obj['field_' . $field_id]) > 0) {
+            \K::$fw->uploadify_attachments[$field_id] = explode(',', $obj['field_' . $field_id]);
         }
 
         $timestamp = time();
 
         $delete_file_url = '';
 
-        if ($app_items_form_name == 'registration_form') {
-            $form_token = md5($app_session_token . $timestamp);
-            $uploadScript = url_for('users/registration', 'action=attachments_upload&field_id=' . $field_id, true);
-            $previewScript = url_for(
-                'users/registration',
-                'action=attachments_preview&field_id=' . $field_id . '&token=' . $form_token
-            );
-        } elseif ($app_items_form_name == 'public_form' or (isset($_GET['form_name'])) and $_GET['form_name'] == 'public_form') {
-            $public_form['id'] = isset($_GET['public_form_id']) ? _GET('public_form_id') : $public_form['id'];
-            $form_token = md5($app_session_token . $timestamp);
-            $uploadScript = url_for(
-                'ext/public/form',
-                'action=attachments_upload&id=' . $public_form['id'] . '&field_id=' . $field_id,
+        if (\K::$fw->app_items_form_name == 'registration_form') {
+            $form_token = md5(\K::$fw->app_session_token . $timestamp);
+            $uploadScript = \Helpers\Urls::url_for(
+                'main/users/registration/attachments_upload',
+                'field_id=' . $field_id,
                 true
             );
-            $previewScript = url_for(
-                'ext/public/form',
-                'action=attachments_preview&field_id=' . $field_id . '&id=' . $public_form['id'] . '&token=' . $form_token,
+            $previewScript = \Helpers\Urls::url_for(
+                'main/users/registration/attachments_preview',
+                'field_id=' . $field_id . '&token=' . $form_token
+            );
+        } elseif (\K::$fw->app_items_form_name == 'public_form' or (isset(\K::$fw->GET['form_name'])) and \K::$fw->GET['form_name'] == 'public_form') {
+            \K::$fw->public_form['id'] = \K::$fw->GET['public_form_id'] ?? \K::$fw->public_form['id'];
+            $form_token = md5(\K::$fw->app_session_token . $timestamp);
+            $uploadScript = \Helpers\Urls::url_for(
+                'ext/public/form/attachments_upload',
+                'id=' . \K::$fw->public_form['id'] . '&field_id=' . $field_id,
                 true
             );
-        } elseif ($app_items_form_name == 'account_form') {
-            $form_token = md5($app_user['id'] . $timestamp);
-            $uploadScript = url_for(
-                'users/account',
-                'action=attachments_upload&path=' . $current_path . '&field_id=' . $field_id,
+            $previewScript = \Helpers\Urls::url_for(
+                'ext/public/form/attachments_preview',
+                'field_id=' . $field_id . '&id=' . \K::$fw->public_form['id'] . '&token=' . $form_token,
                 true
             );
-            $previewScript = url_for(
-                'users/account',
-                'action=attachments_preview&field_id=' . $field_id . '&path=' . $current_path . '&token=' . $form_token
-            );
-            $delete_file_url = url_for('users/account', 'action=attachments_delete_in_queue');
-        } elseif ($app_items_form_name == 'ipage_form') {
-            $form_token = md5($app_user['id'] . $timestamp);
-            $uploadScript = url_for(
-                'ext/ipages/configuration',
-                'action=attachments_upload&field_id=' . $field_id,
+        } elseif (\K::$fw->app_items_form_name == 'account_form') {
+            $form_token = md5(\K::$fw->app_user['id'] . $timestamp);
+            $uploadScript = \Helpers\Urls::url_for(
+                'main/users/account/attachments_upload',
+                'path=' . \K::$fw->current_path . '&field_id=' . $field_id,
                 true
             );
-            $previewScript = url_for(
-                'ext/ipages/configuration',
-                'action=attachments_preview&field_id=' . $field_id . '&token=' . $form_token
+            $previewScript = \Helpers\Urls::url_for(
+                'main/users/account/attachments_preview',
+                'field_id=' . $field_id . '&path=' . \K::$fw->current_path . '&token=' . $form_token
             );
-            $delete_file_url = url_for('ext/ipages/configuration', 'action=attachments_delete_in_queue');
+            $delete_file_url = \Helpers\Urls::url_for('main/users/account/attachments_delete_in_queue');
+        } elseif (\K::$fw->app_items_form_name == 'ipage_form') {
+            $form_token = md5(\K::$fw->app_user['id'] . $timestamp);
+            $uploadScript = \Helpers\Urls::url_for(
+                'ext/ipages/configuration/attachments_upload',
+                'field_id=' . $field_id,
+                true
+            );
+            $previewScript =\Helpers\Urls::url_for(
+                'ext/ipages/configuration/attachments_preview',
+                'field_id=' . $field_id . '&token=' . $form_token
+            );
+            $delete_file_url = \Helpers\Urls::url_for('ext/ipages/configuration/attachments_delete_in_queue');
         } else {
-            $form_token = md5($app_user['id'] . $timestamp);
-            $uploadScript = url_for(
-                'items/items',
-                'action=attachments_upload&path=' . $current_path . '&field_id=' . $field_id,
+            $form_token = md5(\K::$fw->app_user['id'] . $timestamp);
+            $uploadScript = \Helpers\Urls::url_for(
+                'main/items/items/attachments_upload',
+                'path=' . \K::$fw->current_path . '&field_id=' . $field_id,
                 true
             );
-            $previewScript = url_for(
-                'items/items',
-                'action=attachments_preview&field_id=' . $field_id . '&path=' . $current_path . '&token=' . $form_token
+            $previewScript = \Helpers\Urls::url_for(
+                'main/items/items/attachments_preview',
+                'field_id=' . $field_id . '&path=' . \K::$fw->current_path . '&token=' . $form_token
             );
-            $delete_file_url = url_for('items/items', 'action=attachments_delete_in_queue&path=' . $_GET['path']);
+            $delete_file_url = \Helpers\Urls::url_for('main/items/items/attachments_delete_in_queue', 'path=' . \K::$fw->GET['path']);
         }
 
         $uploadLimit = (strlen($cfg->get('upload_limit')) ? (int)$cfg->get('upload_limit') : 0);
-        $onComplateAction = ($uploadLimit > 0 ? 'onUploadComplete' : 'onQueueComplete');
+        $onCompleteAction = ($uploadLimit > 0 ? 'onUploadComplete' : 'onQueueComplete');
 
         $fileType = "''";
         if (strlen($cfg->get('allowed_extensions'))) {
@@ -192,9 +194,9 @@ class Fieldtype_attachments
             //print_r($mime_types);
         }
 
-        $attachments_preview_html = attachments::render_preview(
+        $attachments_preview_html = \Tools\Attachments::render_preview(
             $field_id,
-            $uploadify_attachments[$field_id],
+            \K::$fw->uploadify_attachments[$field_id],
             $delete_file_url
         );
 
@@ -234,26 +236,26 @@ class Fieldtype_attachments
                 "formData"         : {
                                         "timestamp" : ' . $timestamp . ',
                                         "token"     : "' . $form_token . '",
-                                        "form_session_token" : "' . $app_session_token . '"		
+                                        "form_session_token" : "' . \K::$fw->app_session_token . '"
                                      },
                 "queueID"          : "uploadifive_queue_list_' . $field_id . '",
                 "fileSizeLimit" : "' . (strlen($cfg->get('upload_size_limit')) ? (int)$cfg->get(
                 'upload_size_limit'
-            ) : CFG_SERVER_UPLOAD_MAX_FILESIZE) . 'MB",
+            ) : \K::$fw->CFG_SERVER_UPLOAD_MAX_FILESIZE) . 'MB",
                 "queueSizeLimit" : ' . $uploadLimit . ',
                 "uploadScript"     : "' . $uploadScript . '",
                 "onUpload"         :  function(filesToUpload){
                   is_file_uploading = true;  					
                 },
-                "' . $onComplateAction . '" : function(file, data) {
+                "' . $onCompleteAction . '" : function(file, data) {
                     uploadifive_oncomplate_filed_' . $field_id . '()
                 },
-                "onError":function(errorType) {
-                     is_file_uploading = null;             
+                "onError" : function(errorType) {
+                     is_file_uploading = null;
                 },
-                "onCancel"     : function() { 	
+                "onCancel" : function() { 	
                      is_file_uploading = null;  				
-                } 		
+                }
             });
                         
         $("button[type=submit]").bind("click",function(){                                                 
@@ -262,7 +264,6 @@ class Fieldtype_attachments
               alert("' . \K::$fw->TEXT_PLEASE_WAIT_FILES_LOADING . '"); return false;
             }                           
           });
-        
   		});
 	</script>
     ';
@@ -759,7 +760,7 @@ class Fieldtype_attachments
     public static function add_file_date_added($file, $cfg)
     {
         if ($cfg->get('display_date_added') == 1) {
-            return ' - ' . format_date_time($file['date_added']);
+            return ' - ' . \Helpers\App::format_date_time($file['date_added']);
         } else {
             return '';
         }

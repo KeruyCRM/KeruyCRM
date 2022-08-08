@@ -40,15 +40,13 @@ class Fieldtype_ajax_request
 
     public function render($field, $obj, $params = [])
     {
-        global $app_fields_cache, $app_session_token, $app_items_form_name;
-
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $html = '<div id="ajax_request_field_' . $field['id'] . '" class="form-control-static"></div>';
 
-        if ($app_items_form_name == 'sub_items_form') {
+        if (\K::$fw->app_items_form_name == 'sub_items_form') {
             $ajax_form_params = '
-               var form_params = $("#' . $app_items_form_name . '").serializeArray();
+               var form_params = $("#' . \K::$fw->app_items_form_name . '").serializeArray();
                
                parent_items_form = $("#items_form").length ? $("#items_form") : ($("#public_form").length ? $("#public_form") : false)
                
@@ -59,15 +57,15 @@ class Fieldtype_ajax_request
                ';
         } else {
             $ajax_form_params = '
-                var form_params = $("#' . $app_items_form_name . '").serializeArray();
+                var form_params = $("#' . \K::$fw->app_items_form_name . '").serializeArray();
                ';
         }
 
         $ajax_request = $ajax_form_params . '
             $("#ajax_request_field_' . $field['id'] . '").html("<div class=\"ajax-loading-small\"></div>");
-            $("#ajax_request_field_' . $field['id'] . '").load("' . url_for(
-                "dashboard/ajax_request",
-                "field_id=" . $field['id'] . "&item_id=" . (int)$obj['id']
+            $("#ajax_request_field_' . $field['id'] . '").load("' . \Helpers\Urls::url_for(
+                'main/dashboard/ajax_request',
+                'field_id=' . (int)$field['id'] . "&item_id=" . (int)$obj['id']
             ) . '",form_params,function(response, status, xhr) {
               if(response.length==0) $(this).html("' . addslashes($cfg->get('default_text')) . '")    
             });
@@ -95,7 +93,7 @@ class Fieldtype_ajax_request
         ];
 
         $html .= '<script> ' . $ajax_request;
-        foreach ($app_fields_cache[$field['entities_id']] as $fields) {
+        foreach (\K::$fw->app_fields_cache[$field['entities_id']] as $fields) {
             if (in_array($fields['type'], $check_fields_types) and strstr(
                     $cfg->get('php_code'),
                     '[' . $fields['id'] . ']'
@@ -149,7 +147,7 @@ class Fieldtype_ajax_request
 
     public function process($options)
     {
-        return db_prepare_html_input($options['value']);
+        return \K::model()->db_prepare_html_input($options['value']);
     }
 
     public function output($options)

@@ -115,8 +115,6 @@ class Fieldtype_access_group
     {
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
-        $entities_id = $field['entities_id'];
-
         $value = (strlen($obj['field_' . $field['id']]) ? $obj['field_' . $field['id']] : '');
 
         $choices = self::get_choices($field, $value);

@@ -603,3 +603,5 @@ alter table app_users_alerts_viewed
 
 alter table app_users_alerts_viewed
     modify id int auto_increment;*/
+
+//dropdown_muliple

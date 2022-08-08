@@ -733,7 +733,8 @@ function appHandleNumberInput()
     })	
 }
 
-function appHandleAttachmentsDelete(field_id,delete_file_url,session_token)
+//function appHandleAttachmentsDelete(field_id,delete_file_url,session_token)
+function appHandleAttachmentsDelete(field_id,delete_file_url)
 {
 	$('.delete_attachments_checkbox').click(function(){
 			
@@ -752,13 +753,14 @@ function appHandleAttachmentsDelete(field_id,delete_file_url,session_token)
 												
 			filename = $(this).attr('data-filename');
 														
-			//dalete attached file
+			//delete attached file
 			$.ajax({
 				method: 'POST',
 				url: delete_file_url,
-				data: {field_id:field_id, form_session_token:session_token, filename:filename}
+				//data: {field_id:field_id, form_session_token:session_token, filename:filename}
+                data: {field_id:field_id, filename:filename}
 			}).done(function(){
-				//reload atttachment list. Need to do this action if there are some required fields
+				//reload attachment list. Need to do this action if there are some required fields
 				eval('uploadifive_oncomplate_filed_'+field_id+'()')
 			})		
 	})	

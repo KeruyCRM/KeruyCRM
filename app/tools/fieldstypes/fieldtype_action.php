@@ -13,15 +13,13 @@ class Fieldtype_action
 
     public function output($options)
     {
-        global $app_user, $is_select_all_checkbox_hidden;
-
         $list = [];
 
-        $access_rules = new access_rules($options['field']['entities_id'], $options['item']);
+        $access_rules = new \Models\Main\Access_rules($options['field']['entities_id'], $options['item']);
 
         $redirect_to = '';
-        if (isset($_POST['page'])) {
-            $redirect_to = '&gotopage[' . $options['reports_id'] . ']=' . $_POST['page'];
+        if (isset(\K::$fw->POST['page'])) {
+            $redirect_to = '&gotopage[' . $options['reports_id'] . ']=' . \K::$fw->POST['page'];
         }
 
         if (isset($options['redirect_to'])) {
@@ -36,7 +34,7 @@ class Fieldtype_action
             if (users::has_access(
                     'delete_creator',
                     $access_rules->get_access_schema()
-                ) and $options['item']['created_by'] != $app_user['id']) {
+                ) and $options['item']['created_by'] != \K::$fw->app_user['id']) {
                 $check = false;
             }
 
@@ -73,7 +71,7 @@ class Fieldtype_action
         }
 
         //login as user
-        if ($app_user['group_id'] == 0 and $options['field']['entities_id'] == 1) {
+        if (\K::$fw->app_user['group_id'] == 0 and $options['field']['entities_id'] == 1) {
             if ($options['item']['field_5'] == 1) {
                 $list[] = button_icon(
                     \K::$fw->TEXT_BUTTON_LOGIN,
@@ -115,7 +113,7 @@ class Fieldtype_action
                     'items/info',
                     'path=' . (count(
                         $options['path_info']
-                    ) ? $options['path'] : $options['path'] . '-' . $options['value']) . '&gotopage[' . $_POST['reports_id'] . ']=' . $_POST['page']
+                    ) ? $options['path'] : $options['path'] . '-' . $options['value']) . '&gotopage[' . \K::$fw->POST['reports_id'] . ']=' . \K::$fw->POST['page']
                 ),
                 false
             );
@@ -128,9 +126,9 @@ class Fieldtype_action
             )) {
             $list[] = '<style>#uniform-items_' . $options['item']['id'] . '{display:none}</style>';
 
-            if ($is_select_all_checkbox_hidden != true) {
-                $is_select_all_checkbox_hidden = true;
-                //print_rr($options);
+            if (\K::$fw->is_select_all_checkbox_hidden != true) {
+                \K::$fw->is_select_all_checkbox_hidden = true;
+
                 $list[] = '<style>#entity_items_listing' . $options['reports_id'] . '_' . $options['field']['entities_id'] . ' #uniform-select_all_items{display:none}</style>';
             }
         }

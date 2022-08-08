@@ -44,12 +44,16 @@ class Attachments
 
     public static function render_preview($field_id, $attachments_list, $delete_file_url)
     {
-        global $app_session_token, $app_module_path;
-
         $html = '';
 
-        $field_query = db_query("select id, name, configuration,type from app_fields where id='" . $field_id . "'");
-        if ($field = db_fetch_array($field_query)) {
+        //$field_query = db_query("select id, name, configuration,type from app_fields where id='" . $field_id . "'");
+
+        $field = \K::model()->db_fetch_one('app_fields',[
+            'id = ?',
+            $field_id
+        ],[],'id,name,configuration,type');
+
+        if ($field) {
             $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
         } else {
             $cfg = new \Tools\Settings('');
@@ -58,9 +62,9 @@ class Attachments
         if (is_array($attachments_list) and count($attachments_list) > 0) {
             $has_delete_access = true;
 
-            if (in_array($app_module_path, ['items/form', 'items/items'])) {
+            if (in_array(\K::$fw->app_module_path, ['items/form', 'items/items'])) {
                 if ($cfg->get('check_delete_access')) {
-                    $has_delete_access = users::has_access('delete');
+                    $has_delete_access = \Models\Main\Users\Users::has_access('delete');
                 }
             }
 
@@ -73,7 +77,7 @@ class Attachments
             }
 
             if ($cfg->get('allow_change_file_name') and in_array(
-                    $app_module_path,
+                    \K::$fw->app_module_path,
                     ['items/form', 'items/items', 'items/processes']
                 )) {
                 foreach ($attachments_list as $k => $v) {
@@ -101,9 +105,8 @@ class Attachments
                         $html .= '
                             <span class="input-group-addon">
                                 <i class="fa fa-trash-o pointer delete_attachments_checkbox" data-confirm-delation="' . $cfg->get(
-                                'confirm_delation'
-                            ) . '" data-filename="' . $file['file'] . '" data-row-id="' . $row_id . '" title="' . \K::f3(
-                            )->TEXT_DELETE . '"></i>
+                                'confirm_deletion'
+                            ) . '" data-filename="' . $file['file'] . '" data-row-id="' . $row_id . '" title="' . \K::$fw->TEXT_DELETE . '"></i>
                             </span>        
                             ';
                     }
@@ -127,19 +130,18 @@ class Attachments
                             <tr class="' . $row_id . '">
                               <td width="100%">' . \Helpers\App::app_crop_str(
                                 $file['name']
-                            ) . '<small>' . fieldtype_self::add_file_date_added($file, $cfg) . '</small></td>
+                            ) . '<small>' . \Tools\FieldsTypes\Fieldtype_attachments::add_file_date_added($file, $cfg) . '</small></td>
                               <td align="right"><label class="checkbox delete_attachments">
                                           <i class="fa fa-trash-o pointer delete_attachments_checkbox" data-confirm-delation="' . $cfg->get(
-                                'confirm_delation'
-                            ) . '" data-filename="' . $file['file'] . '" data-row-id="' . $row_id . '" title="' . \K::f3(
-                            )->TEXT_DELETE . '"></i></label>
+                                'confirm_deletion'
+                            ) . '" data-filename="' . $file['file'] . '" data-row-id="' . $row_id . '" title="' . \K::$fw->TEXT_DELETE . '"></i></label>
                               </td>
                             </tr>
                           ';
                     } else {
                         $html .= '
                             <tr class="' . $row_id . '">
-                              <td width="100%" style="padding-bottom: 5px;">' . $file['name'] . '<small>' . fieldtype_self::add_file_date_added(
+                              <td width="100%" style="padding-bottom: 5px;">' . $file['name'] . '<small>' . \Tools\FieldsTypes\Fieldtype_attachments::add_file_date_added(
                                 $file,
                                 $cfg
                             ) . '</small></td>	           
@@ -158,12 +160,12 @@ class Attachments
 
             $html .= '              
                 <script>
-                          appHandleAttachmentsDelete(\'' . $field_id . '\',\'' . $delete_file_url . '\',\'' . $app_session_token . '\');
+                          appHandleAttachmentsDelete(\'' . $field_id . '\',\'' . $delete_file_url . '\');
                           appHandleUniformCheckbox();
                 </script>
                 ';
         } else {
-            $field = db_find('app_fields', $field_id);
+            $field = \K::model()->db_find('app_fields', $field_id);
 
             if ($field['is_required']) {
                 $html .= \Helpers\Html::input_hidden_tag(

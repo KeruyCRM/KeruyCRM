@@ -10,21 +10,17 @@ class Access_rules
 
     public function __construct($entities_id, $item_info)
     {
-        //global $app_user, $app_access_rules_fields_cache;
-        $app_user = \K::$fw->app_user;
-        $app_access_rules_fields_cache = \K::$fw->app_access_rules_fields_cache;
-
         $this->access_schema = null;
         $this->fields_view_only_access = '';
         $this->comments_access_schema = null;
 
         //don't check rules for admin
-        if ($app_user['group_id'] == 0) {
+        if (\K::$fw->app_user['group_id'] == 0) {
             return true;
         }
 
-        if (isset($app_access_rules_fields_cache[$entities_id])) {
-            $access_rules_fields = $app_access_rules_fields_cache[$entities_id];
+        if (isset(\K::$fw->app_access_rules_fields_cache[$entities_id])) {
+            $access_rules_fields = \K::$fw->app_access_rules_fields_cache[$entities_id];
 
             if (is_numeric($item_info)) {
                 $item_info = \K::model()->db_find('app_entity_' . (int)$entities_id, $item_info);
@@ -32,12 +28,21 @@ class Access_rules
 
             if (isset($item_info['field_' . $access_rules_fields['fields_id']])) {
                 if (strlen($value = $item_info['field_' . $access_rules_fields['fields_id']])) {
-                    $access_rules_query = db_query(
-                        "select * from app_access_rules where find_in_set(" . $app_user['group_id'] . ", users_groups) and find_in_set(" . $value . ",choices) and  entities_id='" . db_input(
+                    /*$access_rules_query = db_query(
+                        "select * from app_access_rules where find_in_set(" . \K::$fw->app_user['group_id'] . ", users_groups) and find_in_set(" . $value . ",choices) and  entities_id='" . db_input(
                             $entities_id
                         ) . "' and fields_id='" . db_input($access_rules_fields['fields_id']) . "'"
-                    );
-                    if ($access_rules = db_fetch_array($access_rules_query)) {
+                    );*/
+
+                    $access_rules = \K::model()->db_fetch_one('app_access_rules', [
+                        'find_in_set( ? , users_groups) and find_in_set( ? , choices) and entities_id = ? and fields_id = ',
+                        \K::$fw->app_user['group_id'],
+                        $value,
+                        $entities_id,
+                        $access_rules_fields['fields_id']
+                    ]);
+
+                    if ($access_rules) {
                         $this->access_schema = $access_rules['access_schema'];
                         $this->fields_view_only_access = $access_rules['fields_view_only_access'];
                         $this->comments_access_schema = $access_rules['comments_access_schema'];
@@ -72,38 +77,36 @@ class Access_rules
     //get rules access schema
     public function get_access_schema()
     {
-        //global $current_access_schema;
-        $current_access_schema = \K::$fw->current_access_schema;
-
         if (!isset($this->access_schema)) {
             return null;
         }
 
         $access_schema = [];
-        foreach ($current_access_schema as $val) {
+        foreach (\K::$fw->current_access_schema as $val) {
             if (!in_array($val, ['update', 'delete', 'export', 'copy', 'move'])) {
                 $access_schema[] = $val;
             }
         }
 
         if (strlen($this->access_schema)) {
-            foreach (explode(',', $this->access_schema) as $val) {
+            $exp = explode(',', $this->access_schema);
+
+            foreach ($exp as $val) {
                 $access_schema[] = $val;
             }
-
-            return $access_schema;
-        } else {
-            return $access_schema;
         }
+        return $access_schema;
     }
 
-    //get fields veiw only access
+    //get fields view only access
     public function get_fields_view_only_access()
     {
         if (strlen($this->fields_view_only_access)) {
             $fields_access_schema = [];
 
-            foreach (explode(',', $this->fields_view_only_access) as $field_id) {
+            $exp = explode(',', $this->fields_view_only_access);
+
+            foreach ($exp as $field_id) {
                 $fields_access_schema[$field_id] = 'view';
             }
 
@@ -127,40 +130,47 @@ class Access_rules
 
     public static function has_add_buttons_access($entities_id, $parent_item_id)
     {
-        //global $app_entities_cache, $sql_query_having;
-        $app_entities_cache = \K::$fw->app_entities_cache;
-        $sql_query_having = \K::$fw->sql_query_having;
-
-        if ($app_entities_cache[$entities_id]['parent_id'] == 0) {
+        if (\K::$fw->app_entities_cache[$entities_id]['parent_id'] == 0) {
             return true;
         } else {
-            $reports_info_query = db_query(
+            /*$reports_info_query = db_query(
                 "select * from app_reports where entities_id='" . db_input(
-                    $app_entities_cache[$entities_id]['parent_id']
+                    \K::$fw->app_entities_cache[$entities_id]['parent_id']
                 ) . "' and reports_type='hide_add_button_rules" . $entities_id . "'"
-            );
-            if ($reports_info = db_fetch_array($reports_info_query)) {
-                //prepare forumulas query
-                $listing_sql_query_select = fieldtype_formula::prepare_query_select($reports_info['entities_id'], '');
+            );*/
 
-                $listing_sql_query = reports::add_filters_query($reports_info['id'], '');
+            $reports_info = \K::model()->db_fetch_one('app_reports', [
+                'entities_id = ? and reports_type = ?',
+                \K::$fw->app_entities_cache[$entities_id]['parent_id'],
+                'hide_add_button_rules' . $entities_id
+            ], [], 'id,entities_id');
+
+            if ($reports_info) {
+                //prepare formulas query
+                $listing_sql_query_select = \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
+                    $reports_info['entities_id'],
+                    ''
+                );
+
+                $listing_sql_query = \Models\Main\Reports\Reports::add_filters_query($reports_info['id'], '');
 
                 //prepare having query for formula fields
-                if (isset($sql_query_having[$reports_info['entities_id']])) {
-                    $listing_sql_query .= reports::prepare_filters_having_query(
-                        $sql_query_having[$reports_info['entities_id']]
+                if (isset(\K::$fw->sql_query_having[$reports_info['entities_id']])) {
+                    $listing_sql_query .= \Models\Main\Reports\Reports::prepare_filters_having_query(
+                        \K::$fw->sql_query_having[$reports_info['entities_id']]
                     );
                 }
 
-                //has access if not fitlers setup
+                //has access if not filters setup
                 if (!strlen($listing_sql_query)) {
                     return true;
                 }
 
-                $listing_sql = "select e.* " . $listing_sql_query_select . " from app_entity_" . $reports_info['entities_id'] . " e where e.id='" . $parent_item_id . "' " . $listing_sql_query;
+                $item_info = \K::model()->db_query_exec_one(
+                    "select e.* " . $listing_sql_query_select . " from app_entity_" . (int)$reports_info['entities_id'] . " e where e.id = " . (int)$parent_item_id . " " . $listing_sql_query
+                );
 
-                $item_info_query = db_query($listing_sql);
-                if ($item_info = db_fetch_array($item_info_query)) {
+                if ($item_info) {
                     return false;
                 } else {
                     return true;

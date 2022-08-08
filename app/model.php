@@ -406,6 +406,22 @@ class Model extends \Prefab
         }
     }
 
+    public function db_prepare_html_input($html)
+    {
+        if (!strlen($html)) {
+            return '';
+        }
+
+        $html = preg_replace(['#<script(.*?)>(.*?)</script>#is', '#<script(.*?)>#is'], '', $html);
+
+        $config = \HTMLPurifier_Config::createDefault();
+        $config->set('Attr.AllowedFrameTargets', ['_blank']);
+        $config->set('HTML.Trusted', true);
+        $purifier = new \HTMLPurifier($config);
+
+        return $purifier->purify($html);
+    }
+
     public function forceCommit()
     {
         if (!$this->trans()) {
