@@ -70,15 +70,15 @@ class Security extends \Prefab
         }
     }
 
-    public function getAppToken()
+    public function getAppToken($length = 32)
     {
         $app_token = '';
         try {
-            $bytesWithMargin = random_bytes(\K::$fw->CFG_TOKEN_LENGTH * 3);
+            $bytesWithMargin = random_bytes($length * 3);
 
             $base64 = base64_encode($bytesWithMargin);
             $purified = $this->purified($base64);
-            $app_token = substr($purified, 0, \K::$fw->CFG_TOKEN_LENGTH);
+            $app_token = substr($purified, 0, $length);
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
@@ -92,7 +92,7 @@ class Security extends \Prefab
         $salt = '';
         $time = '';
         try {
-            $salt = $this->getAppToken();
+            $salt = $this->getAppToken(\K::$fw->CFG_TOKEN_LENGTH);
 
             $time = $this->encrypt36(time(), $salt . $this->_DELIMITER . \K::$fw->app_token);
 

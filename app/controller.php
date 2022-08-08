@@ -370,7 +370,7 @@ class Controller
         }
 
         if (!\K::app_session_is_registered('app_token')) {
-            \K::$fw->app_token = \K::security()->getAppToken();
+            \K::$fw->app_token = \K::security()->getAppToken(\K::$fw->CFG_TOKEN_LENGTH);
             \K::app_session_register('app_token');
         }
 

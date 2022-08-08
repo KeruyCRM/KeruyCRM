@@ -240,9 +240,9 @@ class Account extends \Controller
     public function attachments_upload()
     {
         if (\K::$fw->VERB == 'POST') {
-            $verifyToken = md5(\K::$fw->app_user['id'] . \K::$fw->POST['timestamp']);
+            //$verifyToken = md5(\K::$fw->app_user['id'] . \K::$fw->POST['timestamp']);
 
-            if (strlen(\K::$fw->FILES['Filedata']['tmp_name']) and \K::$fw->POST['token'] == $verifyToken) {
+            if (strlen(\K::$fw->FILES['Filedata']['tmp_name'])/* and \K::$fw->POST['token'] == $verifyToken*/) {
                 $file = \Tools\Attachments::prepare_filename(\K::$fw->FILES['Filedata']['name']);
 
                 if (move_uploaded_file(
@@ -254,7 +254,7 @@ class Account extends \Controller
 
                     //add attachments to tmp table
                     $sql_data = [
-                        'form_token' => $verifyToken,
+                        'form_token' => \K::$fw->POST['token'],
                         'filename' => $file['name'],
                         'date_added' => date('Y-m-d'),
                         'container' => \K::$fw->GET['field_id']
