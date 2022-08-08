@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -103,16 +107,14 @@ class Fieldtype_attachments
             \K::$fw->uploadify_attachments[$field_id] = explode(',', $obj['field_' . $field_id]);
         }
 
-        $timestamp = time();
-
         $delete_file_url = '';
+        $form_token = \K::security()->getAppToken(64);
 
         if (\K::$fw->app_items_form_name == 'registration_form') {
-            $form_token = md5(\K::$fw->app_session_token . $timestamp);
+            //$form_token = md5(\K::$fw->app_session_token . $timestamp);
             $uploadScript = \Helpers\Urls::url_for(
                 'main/users/registration/attachments_upload',
-                'field_id=' . $field_id,
-                true
+                'field_id=' . $field_id
             );
             $previewScript = \Helpers\Urls::url_for(
                 'main/users/registration/attachments_preview',
@@ -120,23 +122,20 @@ class Fieldtype_attachments
             );
         } elseif (\K::$fw->app_items_form_name == 'public_form' or (isset(\K::$fw->GET['form_name'])) and \K::$fw->GET['form_name'] == 'public_form') {
             \K::$fw->public_form['id'] = \K::$fw->GET['public_form_id'] ?? \K::$fw->public_form['id'];
-            $form_token = md5(\K::$fw->app_session_token . $timestamp);
+            //$form_token = md5(\K::$fw->app_session_token . $timestamp);
             $uploadScript = \Helpers\Urls::url_for(
                 'ext/public/form/attachments_upload',
-                'id=' . \K::$fw->public_form['id'] . '&field_id=' . $field_id,
-                true
+                'id=' . \K::$fw->public_form['id'] . '&field_id=' . $field_id
             );
             $previewScript = \Helpers\Urls::url_for(
                 'ext/public/form/attachments_preview',
-                'field_id=' . $field_id . '&id=' . \K::$fw->public_form['id'] . '&token=' . $form_token,
-                true
+                'field_id=' . $field_id . '&id=' . \K::$fw->public_form['id'] . '&token=' . $form_token
             );
         } elseif (\K::$fw->app_items_form_name == 'account_form') {
-            $form_token = md5(\K::$fw->app_user['id'] . $timestamp);
+            //$form_token = md5(\K::$fw->app_user['id'] . $timestamp);
             $uploadScript = \Helpers\Urls::url_for(
                 'main/users/account/attachments_upload',
-                'path=' . \K::$fw->current_path . '&field_id=' . $field_id,
-                true
+                'path=' . \K::$fw->current_path . '&field_id=' . $field_id
             );
             $previewScript = \Helpers\Urls::url_for(
                 'main/users/account/attachments_preview',
@@ -144,11 +143,10 @@ class Fieldtype_attachments
             );
             $delete_file_url = \Helpers\Urls::url_for('main/users/account/attachments_delete_in_queue');
         } elseif (\K::$fw->app_items_form_name == 'ipage_form') {
-            $form_token = md5(\K::$fw->app_user['id'] . $timestamp);
+            //$form_token = md5(\K::$fw->app_user['id'] . $timestamp);
             $uploadScript = \Helpers\Urls::url_for(
                 'ext/ipages/configuration/attachments_upload',
-                'field_id=' . $field_id,
-                true
+                'field_id=' . $field_id
             );
             $previewScript = \Helpers\Urls::url_for(
                 'ext/ipages/configuration/attachments_preview',
@@ -156,11 +154,10 @@ class Fieldtype_attachments
             );
             $delete_file_url = \Helpers\Urls::url_for('ext/ipages/configuration/attachments_delete_in_queue');
         } else {
-            $form_token = md5(\K::$fw->app_user['id'] . $timestamp);
+            //$form_token = md5(\K::$fw->app_user['id'] . $timestamp);
             $uploadScript = \Helpers\Urls::url_for(
                 'main/items/items/attachments_upload',
-                'path=' . \K::$fw->current_path . '&field_id=' . $field_id,
-                true
+                'path=' . \K::$fw->current_path . '&field_id=' . $field_id
             );
             $previewScript = \Helpers\Urls::url_for(
                 'main/items/items/attachments_preview',
@@ -237,7 +234,6 @@ class Fieldtype_attachments
                 "buttonClass"      : "btn btn-default btn-upload",
                 "buttonText"       : "<i class=\"fa fa-upload\"></i> ' . \K::$fw->TEXT_ADD_ATTACHMENTS . '",				
                 "formData"         : {
-                                        "timestamp" : ' . $timestamp . ',
                                         "token"     : "' . $form_token . '",
                                         "form_session_token" : "' . \K::$fw->app_session_token . '"
                                      },
@@ -782,7 +778,8 @@ class Fieldtype_attachments
 
         if (strlen($allowed_extensions)) {
             $extensions = [];
-            foreach (explode(',', $allowed_extensions) as $v) {
+            $exp = explode(',', $allowed_extensions);
+            foreach ($exp as $v) {
                 $extensions[] = trim(\K::fw()->clean(str_replace(['"', "'"], '', $v)));
             }
 
@@ -810,7 +807,8 @@ class Fieldtype_attachments
     {
         if (strlen($allowed_extensions)) {
             $extensions = [];
-            foreach (explode(',', $allowed_extensions) as $v) {
+            $exp = explode(',', $allowed_extensions);
+            foreach ($exp as $v) {
                 $extensions[] = trim(\K::fw()->clean(str_replace(['"', "'"], '', $v)));
             }
 

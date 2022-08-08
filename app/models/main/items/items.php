@@ -1487,13 +1487,16 @@ class Items
                 $entity_id
             ) . "' "
         );*/
-        $fields_query = \K::model()->db_fetch('app_fields', [
-            'type in (?,?,?,?,?) and entities_id = ?',
+        $typeIn = \K::model()->quoteToString([
             'fieldtype_users_approve',
             'fieldtype_user_roles',
             'fieldtype_grouped_users',
             'fieldtype_users',
             'fieldtype_users_ajax',
+        ]);
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (' . $typeIn . ') and entities_id = ?',
             $entity_id
         ]);
 
@@ -1510,9 +1513,7 @@ class Items
 
             switch ($field['type']) {
                 case 'fieldtype_grouped_users':
-
-                    $send_to = $send_to + fieldtype_grouped_users::get_send_to($field_value, $cfg);
-
+                    $send_to = $send_to + \Tools\FieldsTypes\Fieldtype_grouped_users::get_send_to($field_value, $cfg);
                     break;
                 case 'fieldtype_users_approve':
                 case 'fieldtype_user_roles':
@@ -1525,9 +1526,7 @@ class Items
             }
         }
 
-        $send_to = array_filter($send_to);
-
-        return $send_to;
+        return array_filter($send_to);
     }
 
     public static function send_new_item_nofitication($current_entity_id, $item_id, $app_send_to = false)
