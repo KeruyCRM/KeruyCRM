@@ -48,8 +48,7 @@ class Records_visibility
                     or ($cfg->get('use_global_list') == $users_cfg->get('use_global_list') and $cfg->get(
                             'use_global_list'
                         ) > 0 and $users_cfg->get('use_global_list') > 0)) {
-                    $choices[$users_fields['id'] . '-' . $fields['id']] = \K::f3(
-                        )->TEXT_USERS . ': ' . $users_fields['name'] . ' => ' . $app_entities_cache[$entities_id]['name'] . ': ' . $fields['name'];
+                    $choices[$users_fields['id'] . '-' . $fields['id']] = \K::$fw->TEXT_USERS . ': ' . $users_fields['name'] . ' => ' . $app_entities_cache[$entities_id]['name'] . ': ' . $fields['name'];
                 }
             }
         }

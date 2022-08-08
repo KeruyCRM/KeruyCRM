@@ -27,8 +27,7 @@ class Subentity_form
 
         $html = '';
 
-        $button_title = (strlen($this->cfg->get('button_title')) ? $this->cfg->get('button_title') : \K::f3(
-        )->TEXT_ADD);
+        $button_title = (strlen($this->cfg->get('button_title')) ? $this->cfg->get('button_title') : \K::$fw->TEXT_ADD);
         $btn_css = 'btn-color-' . $this->field_id;
 
         if (strlen($this->cfg->get('button_icon'))) {

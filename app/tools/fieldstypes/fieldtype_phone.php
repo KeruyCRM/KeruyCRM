@@ -215,8 +215,7 @@ END";
                 ) . "' and type='sms'  and is_active=1"
             );
             if ($module_info = db_fetch_array($module_info_query)) {
-                $phone_number .= '&nbsp;&nbsp;<a title="' . \K::f3(
-                    )->TEXT_EXT_SMS . '" href="javascript: open_dialog(\'' . url_for(
+                $phone_number .= '&nbsp;&nbsp;<a title="' . \K::$fw->TEXT_EXT_SMS . '" href="javascript: open_dialog(\'' . url_for(
                         'items/send_sms',
                         'path=' . $options['path'] . '&module_id=' . $module_info['id'] . '&field_id=' . $options['field']['id'] . '&item_id=' . $options['item']['id']
                     ) . '\')"><i class="fa fa-commenting-o" aria-hidden="true"></i></a>';

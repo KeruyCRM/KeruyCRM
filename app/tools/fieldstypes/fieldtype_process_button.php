@@ -209,8 +209,7 @@ class Fieldtype_process_button
                         $html = '
                             <div class="btn-group btn-group-sm ">
                                     <button class="btn btn-primary btn-process-0 dropdown-toggle btn-process-button-dropdown" type="button" data-toggle="dropdown" data-boundary="window" aria-expanded="false">
-                                    ' . (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : \K::f3(
-                            )->TEXT_ACTION) . ' <i class="fa fa-angle-down"></i>
+                                    ' . (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : \K::$fw->TEXT_ACTION) . ' <i class="fa fa-angle-down"></i>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
                                         <li>

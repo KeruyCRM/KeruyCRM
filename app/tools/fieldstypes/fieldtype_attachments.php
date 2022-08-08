@@ -289,8 +289,7 @@ class Fieldtype_attachments
                     $new_name = $file['date_added'] . '_' . db_input_protect($v['name']) . (strlen(
                             $file['extension']
                         ) ? '.' . $file['extension'] : '');
-                    $filepath = \K::f3(
-                        )->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . (CFG_ENCRYPT_FILE_NAME == 1 ? sha1(
+                    $filepath = \K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . (CFG_ENCRYPT_FILE_NAME == 1 ? sha1(
                             $new_name
                         ) : $new_name);
 

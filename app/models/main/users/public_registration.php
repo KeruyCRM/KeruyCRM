@@ -22,8 +22,7 @@ class Public_registration
                     'subject' => (strlen(
                         \K::$fw->CFG_USER_ACTIVATION_EMAIL_SUBJECT
                     ) > 0 ? \K::$fw->CFG_USER_ACTIVATION_EMAIL_SUBJECT : \K::$fw->TEXT_USER_ACTIVATION_EMAIL_SUBJECT),
-                    'body' => (strlen(\K::$fw->CFG_USER_ACTIVATION_EMAIL_BODY) > 0 ? \K::f3(
-                    )->CFG_USER_ACTIVATION_EMAIL_BODY : sprintf(
+                    'body' => (strlen(\K::$fw->CFG_USER_ACTIVATION_EMAIL_BODY) > 0 ? \K::$fw->CFG_USER_ACTIVATION_EMAIL_BODY : sprintf(
                         \K::$fw->TEXT_USER_ACTIVATION_EMAIL_BODY,
                         url_for('users/login', '', true)
                     )),

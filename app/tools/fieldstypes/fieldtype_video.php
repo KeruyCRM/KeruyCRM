@@ -149,16 +149,13 @@ class Fieldtype_video
                 }
                 break;
             case (substr($url, -4) == '.mp4' or substr($url, -4) == '.MP4'):
-                $html = '<video ' . $video_css . ' controls><source src="' . $url . '" type="video/mp4">' . \K::f3(
-                    )->TEXT_VIDEO_TAG_NOT_SUPPORTED . '</video>';
+                $html = '<video ' . $video_css . ' controls><source src="' . $url . '" type="video/mp4">' . \K::$fw->TEXT_VIDEO_TAG_NOT_SUPPORTED . '</video>';
                 break;
             case (substr($url, -4) == '.ogg' or substr($url, -4) == '.OGG'):
-                $html = '<video ' . $video_css . ' controls><source src="' . $url . '" type="video/ogg">' . \K::f3(
-                    )->TEXT_VIDEO_TAG_NOT_SUPPORTED . '</video>';
+                $html = '<video ' . $video_css . ' controls><source src="' . $url . '" type="video/ogg">' . \K::$fw->TEXT_VIDEO_TAG_NOT_SUPPORTED . '</video>';
                 break;
             case (substr($url, -5) == '.webm' or substr($url, -5) == '.WEBM'):
-                $html = '<video ' . $video_css . ' controls><source src="' . $url . '" type="video/webm">' . \K::f3(
-                    )->TEXT_VIDEO_TAG_NOT_SUPPORTED . '</video>';
+                $html = '<video ' . $video_css . ' controls><source src="' . $url . '" type="video/webm">' . \K::$fw->TEXT_VIDEO_TAG_NOT_SUPPORTED . '</video>';
                 break;
             default:
                 $html = '<a href="' . $url . '" target="_blank">' . app_crop_str($url) . '</a>';

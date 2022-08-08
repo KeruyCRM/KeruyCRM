@@ -166,8 +166,7 @@ class Fieldtype_image_map_nested
                     $cfg[] = [
                         'title' => \K::$fw->TEXT_ICONS,
                         'type' => 'section',
-                        'html' => '<p class="form-section-description">' . \K::f3(
-                            )->TEXT_FIELDTYPE_IMAGE_MAP_ICONS_TIP . '</p>'
+                        'html' => '<p class="form-section-description">' . \K::$fw->TEXT_FIELDTYPE_IMAGE_MAP_ICONS_TIP . '</p>'
                     ];
 
                     foreach ($choices as $k => $v) {

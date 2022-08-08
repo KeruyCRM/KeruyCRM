@@ -156,8 +156,7 @@ class Fieldtype_signature
             if (!strlen($options['value']) and $this->check_button_filter($options)) {
                 $button_title = (strlen($cfg->get('button_icon')) ? app_render_icon(
                             $cfg->get('button_icon')
-                        ) . ' ' : '') . (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : \K::f3(
-                    )->TEXT_APPROVE);
+                        ) . ' ' : '') . (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : \K::$fw->TEXT_APPROVE);
 
                 $btn_css = 'btn-color-' . $options['field']['id'];
 
@@ -214,8 +213,7 @@ class Fieldtype_signature
                 }
 
                 if (!isset($options['is_listing'])) {
-                    $html .= '<div> ' . $options['value'] . ' <a href="javascript: remove_signature_' . $options['field']['id'] . '_' . $options['item']['id'] . '()" title="' . \K::f3(
-                        )->TEXT_DELETE . '"><i class="fa fa-trash-o"></i></a></div>';
+                    $html .= '<div> ' . $options['value'] . ' <a href="javascript: remove_signature_' . $options['field']['id'] . '_' . $options['item']['id'] . '()" title="' . \K::$fw->TEXT_DELETE . '"><i class="fa fa-trash-o"></i></a></div>';
                 }
 
                 $html .= '

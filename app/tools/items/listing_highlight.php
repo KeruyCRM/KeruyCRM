@@ -151,8 +151,7 @@ class Listing_highlight
                     eval($eval_str);
                 } catch (ParseError $e) {
                     echo alert_error(
-                        \K::f3(
-                        )->TEXT_ERROR . ' listing highlight #' . $rule['id'] . ' <br>' . $eval_str . '<br>' . $e->getMessage(
+                        \K::$fw->TEXT_ERROR . ' listing highlight #' . $rule['id'] . ' <br>' . $eval_str . '<br>' . $e->getMessage(
                         )
                     );
                 }
@@ -215,8 +214,7 @@ class Listing_highlight
                                 eval($eval_str);
                             } catch (ParseError $e) {
                                 echo alert_error(
-                                    \K::f3(
-                                    )->TEXT_ERROR . ' listing highlight #' . $rule['id'] . ' <br>' . $eval_str . '<br>' . $e->getMessage(
+                                    \K::$fw->TEXT_ERROR . ' listing highlight #' . $rule['id'] . ' <br>' . $eval_str . '<br>' . $e->getMessage(
                                     )
                                 );
                             }
@@ -232,8 +230,7 @@ class Listing_highlight
                                 eval($eval_str);
                             } catch (ParseError $e) {
                                 echo alert_error(
-                                    \K::f3(
-                                    )->TEXT_ERROR . ' listing highlight #' . $rule['id'] . '<br>' . $eval_str . '<br>' . $e->getMessage(
+                                    \K::$fw->TEXT_ERROR . ' listing highlight #' . $rule['id'] . '<br>' . $eval_str . '<br>' . $e->getMessage(
                                     )
                                 );
                             }

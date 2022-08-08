@@ -831,8 +831,7 @@ class Items
                         $field_name_html = '<br><span class="download-all-attachments"><a style="margin-left: 0; font-weight: normal" href="' . url_for(
                                 'items/info',
                                 'action=download_all_attachments&id=' . $field['id'] . '&path=' . $current_path
-                            ) . '"><i class="fa fa-download"></i> ' . \K::f3(
-                            )->TEXT_DOWNLOAD_ALL_ATTACHMENTS . '</a></span>';
+                            ) . '"><i class="fa fa-download"></i> ' . \K::$fw->TEXT_DOWNLOAD_ALL_ATTACHMENTS . '</a></span>';
                     }
 
                     $html_fields .= '
@@ -952,8 +951,7 @@ class Items
                     $field_name_html .= '<span class="download-all-attachments"><a href="' . url_for(
                             'items/info',
                             'action=download_all_attachments&id=' . $field['id'] . '&path=' . $current_path
-                        ) . '"><i class="fa fa-download"></i> ' . \K::f3(
-                        )->TEXT_DOWNLOAD_ALL_ATTACHMENTS . '</a></span>';
+                        ) . '"><i class="fa fa-download"></i> ' . \K::$fw->TEXT_DOWNLOAD_ALL_ATTACHMENTS . '</a></span>';
                 }
 
                 $html .= '
