@@ -6,13 +6,8 @@ class Attachments
 {
     public static function delete_in_queue($field_id, $filename)
     {
-        global $uploadify_attachments, $uploadify_attachments_queue;
-
-        $key = array_search($filename, $uploadify_attachments[$field_id]);
-        $queue_key = array_search($filename, $uploadify_attachments_queue[$field_id]);
-
-        //echo $filename . ' - ' . $field_id;
-        //print_r($uploadify_attachments);
+        $key = array_search($filename, \K::$fw->uploadify_attachments[$field_id]);
+        $queue_key = array_search($filename, \K::$fw->uploadify_attachments_queue[$field_id]);
 
         if ($key !== false or $queue_key !== false) {
             $file = self::parse_filename($filename);
@@ -24,15 +19,20 @@ class Attachments
 
             //delete from sessions
             if ($key !== false) {
-                unset($uploadify_attachments[$field_id][$key]);
+                unset(\K::$fw->uploadify_attachments[$field_id][$key]);
             }
 
             if ($queue_key !== false) {
-                unset($uploadify_attachments_queue[$field_id][$queue_key]);
+                unset(\K::$fw->uploadify_attachments_queue[$field_id][$queue_key]);
             }
 
             //delete from queue 
-            db_query("delete from app_attachments where filename='" . db_input($filename) . "'");
+            //db_query("delete from app_attachments where filename='" . db_input($filename) . "'");
+
+            \K::model()->db_delete('app_attachments', [
+                'filename = ?',
+                $filename
+            ]);
 
             //delete files from file storage
             if (class_exists('file_storage')) {
@@ -48,10 +48,10 @@ class Attachments
 
         //$field_query = db_query("select id, name, configuration,type from app_fields where id='" . $field_id . "'");
 
-        $field = \K::model()->db_fetch_one('app_fields',[
+        $field = \K::model()->db_fetch_one('app_fields', [
             'id = ?',
             $field_id
-        ],[],'id,name,configuration,type');
+        ], [], 'id,name,configuration,type');
 
         if ($field) {
             $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
@@ -181,18 +181,43 @@ class Attachments
 
     public static function delete_attachments($entities_id, $items_id)
     {
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select * from app_fields where entities_id='" . db_input(
                 $entities_id
             ) . "' and type in ('fieldtype_attachments','fieldtype_input_file','fieldtype_image','fieldtype_image_ajax')"
+        );*/
+
+        $typeIn = \K::model()->quoteToString(
+            [
+                'fieldtype_attachments',
+                'fieldtype_input_file',
+                'fieldtype_image',
+                'fieldtype_image_ajax'
+            ]
         );
-        while ($fields = db_fetch_array($fields_query)) {
-            $items_query = db_query(
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'entities_id = ? and type in (' . $typeIn . ')',
+            $entities_id
+        ], [], 'id');
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
+            /*$items_query = db_query(
                 "select * from app_entity_" . $entities_id . " where id='" . db_input($items_id) . "'"
-            );
-            if ($items = db_fetch_array($items_query)) {
+            );*/
+
+            $items = \K::model()->db_fetch_one('app_entity_' . (int)$entities_id, [
+                'id = ?',
+                $items_id
+            ]);
+
+            if ($items) {
                 if (strlen($files = $items['field_' . $fields['id']]) > 0) {
-                    foreach (explode(',', $files) as $file) {
+                    $exp = explode(',', $files);
+                    foreach ($exp as $file) {
                         $file = self::parse_filename($file);
                         if (is_file(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
                             unlink(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
@@ -214,11 +239,18 @@ class Attachments
 
     public static function delete_comments_attachments($comments_id)
     {
-        $comments_query = db_query(
+        /*$comments_query = db_query(
             "select * from app_comments where id='" . db_input($comments_id) . "' and length(attachments)>0"
-        );
-        if ($comments = db_fetch_array($comments_query)) {
-            foreach (explode(',', $comments['attachments']) as $file) {
+        );*/
+
+        $comments = \K::model()->db_fetch_one('app_comments', [
+            'id = ? and length(attachments) > 0',
+            $comments_id
+        ]);
+
+        if ($comments) {
+            $exp = explode(',', $comments['attachments']);
+            foreach ($exp as $file) {
                 $file = self::parse_filename($file);
                 if (is_file(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
                     unlink(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
@@ -234,21 +266,25 @@ class Attachments
     {
         $filename = str_replace([" ", ","], "_", trim($filename));
 
-        if (!is_dir(\K::$fw->DIR_WS_IMAGES . date('Y'))) {
-            mkdir(\K::$fw->DIR_WS_IMAGES . date('Y'));
+        $year = date('Y');
+        $month = date('m');
+        $day = date('d');
+
+        if (!is_dir(\K::$fw->DIR_WS_IMAGES . $year)) {
+            mkdir(\K::$fw->DIR_WS_IMAGES . $year);
         }
 
-        if (!is_dir(\K::$fw->DIR_WS_IMAGES . date('Y') . '/' . date('m'))) {
-            mkdir(\K::$fw->DIR_WS_IMAGES . date('Y') . '/' . date('m'));
+        if (!is_dir(\K::$fw->DIR_WS_IMAGES . $year . '/' . $month)) {
+            mkdir(\K::$fw->DIR_WS_IMAGES . $year . '/' . $month);
         }
 
-        if (!is_dir(\K::$fw->DIR_WS_IMAGES . date('Y') . '/' . date('m') . '/' . date('d'))) {
-            mkdir(\K::$fw->DIR_WS_IMAGES . date('Y') . '/' . date('m') . '/' . date('d'));
+        if (!is_dir(\K::$fw->DIR_WS_IMAGES . $year . '/' . $month . '/' . $day)) {
+            mkdir(\K::$fw->DIR_WS_IMAGES . $year . '/' . $month . '/' . $day);
         }
 
         return [
             'file' => $filename,
-            'folder' => date('Y') . '/' . date('m') . '/' . date('d')
+            'folder' => $year . '/' . $month . '/' . $day
         ];
     }
 
@@ -256,22 +292,26 @@ class Attachments
     {
         $filename = str_replace([" ", ","], "_", trim($filename));
 
-        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y'))) {
-            mkdir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y'));
+        $year = date('Y');
+        $month = date('m');
+        $day = date('d');
+
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS . $year)) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS . $year);
         }
 
-        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m'))) {
-            mkdir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m'));
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS . $year . '/' . $month)) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS . $year . '/' . $month);
         }
 
-        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m') . '/' . date('d'))) {
-            mkdir(\K::$fw->DIR_WS_ATTACHMENTS . date('Y') . '/' . date('m') . '/' . date('d'));
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS . $year . '/' . $month . '/' . $day)) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS . $year . '/' . $month . '/' . $day);
         }
 
         return [
             'name' => time() . '_' . $filename,
             'file' => (\K::$fw->CFG_ENCRYPT_FILE_NAME == 1 ? sha1(time() . '_' . $filename) : time() . '_' . $filename),
-            'folder' => date('Y') . '/' . date('m') . '/' . date('d')
+            'folder' => $year . '/' . $month . '/' . $day
         ];
     }
 
@@ -455,6 +495,8 @@ class Attachments
     {
         $mime_type = mime_content_type($filepath);
 
+        $degrees = 0;
+
         switch ($rotate_type) {
             case 'left':
                 $degrees = 90;
@@ -496,8 +538,11 @@ class Attachments
                 break;
         }
 
-        if ($source) {
+        if (isset($source)) {
             imagedestroy($source);
+        }
+
+        if (isset($rotate)) {
             imagedestroy($rotate);
         }
     }
@@ -527,30 +572,24 @@ class Attachments
         $filepath = $info['filepath'];
         $filetime = $info['filetime'];
 
-        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime))) {
-            mkdir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime));
+        $year = date('Y', $filetime);
+        $month = date('m', $filetime);
+        $day = date('d', $filetime);
+
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . $year)) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . $year);
         }
 
-        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime))) {
-            mkdir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime));
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . $year . '/' . $month)) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . $year . '/' . $month);
         }
 
-        if (!is_dir(
-            \K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime) . '/' . date(
-                'd',
-                $filetime
-            )
-        )) {
-            mkdir(
-                \K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . date('Y', $filetime) . '/' . date('m', $filetime) . '/' . date(
-                    'd',
-                    $filetime
-                )
-            );
+        if (!is_dir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . $year . '/' . $month . '/' . $day)) {
+            mkdir(\K::$fw->DIR_WS_ATTACHMENTS_PREVIEW . $year . '/' . $month . '/' . $day);
         }
 
         if (!is_file($filepath)) {
-            if (!image_resize($file['file_path'], $filepath, 300)) {
+            if (!\Helpers\App::image_resize($file['file_path'], $filepath, 300)) {
                 $filepath = $file['file_path'];
             }
         }
@@ -562,7 +601,7 @@ class Attachments
     {
         $info = self::get_image_preview_filepath($file);
 
-        return (is_file($info['filepath']) ? true : false);
+        return is_file($info['filepath']);
     }
 
     public static function delete_image_preview($file)

@@ -511,12 +511,12 @@ class App
     public static function image_resize(
         $filename,
         $filename_small,
-        $resize_image_widht = 150,
+        $resize_image_width = 150,
         $resize_image_height = ''
     ) {
         if (file_exists($filename)) {
             $image = getimagesize($filename);
-
+            $src_img = imagecreatefromjpeg($filename);
             switch ($image[2]) {
                 case 1:
                     $src_img = imagecreatefromgif($filename);
@@ -532,11 +532,11 @@ class App
             $width = $image[0];
             $height = $image[1];
 
-            if ($resize_image_widht > 0 && $resize_image_height == '' and $width > $resize_image_widht) {
-                $cof = $width / $resize_image_widht;
-                $width_small = $resize_image_widht;
+            if ($resize_image_width > 0 && $resize_image_height == '' and $width > $resize_image_width) {
+                $cof = $width / $resize_image_width;
+                $width_small = $resize_image_width;
                 $height_small = $height / $cof;
-            } elseif ($resize_image_height > 0 && $resize_image_widht == '' and $height > $resize_image_height) {
+            } elseif ($resize_image_height > 0 && $resize_image_width == '' and $height > $resize_image_height) {
                 $cof = $height / $resize_image_height;
                 $height_small = $resize_image_height;
                 $width_small = $width / $cof;
@@ -575,7 +575,7 @@ class App
 
     public static function ajax_modal_template($title, $content)
     {
-        $html = '  		
+        return '  		
 			<div class="modal-header">  				
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
   			<button type="button" class="close modal-collapse" aria-hidden="true"></button>
@@ -585,21 +585,17 @@ class App
 				 ' . $content . '
 			</div>				
   ';
-
-        return $html;
     }
 
     public static function ajax_modal_template_header($title)
     {
-        $html = '  		
+        return '  		
 			<div class="modal-header">  			
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
   			<button type="button" class="close modal-collapse" aria-hidden="true"></button>
 				<h4 class="modal-title">' . $title . '</h4>
 			</div>							
   ';
-
-        return $html;
     }
 
     public static function ajax_modal_template_footer(
