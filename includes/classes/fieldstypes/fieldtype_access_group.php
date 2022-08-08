@@ -2,7 +2,6 @@
 
 class fieldtype_access_group
 {
-
     public $options;
 
     function __construct()
@@ -73,7 +72,6 @@ class fieldtype_access_group
             'type' => 'checkbox'
         ];
 
-
         return $cfg;
     }
 
@@ -88,7 +86,6 @@ class fieldtype_access_group
         if ($cfg->get('hide_admin') != 1) {
             $choices[0] = TEXT_ADMINISTRATOR;
         }
-
 
         $where_sql = "where (select count(*) from app_entities_access ea where ea.access_groups_id=ag.id and entities_id='" . $field['entities_id'] . "' and length(access_schema))>0";
 
@@ -107,14 +104,9 @@ class fieldtype_access_group
 
     function render($field, $obj, $params = [])
     {
-        global $app_users_cache, $app_user;
-
         $cfg = new fields_types_cfg($field['configuration']);
 
-        $entities_id = $field['entities_id'];
-
         $value = (strlen($obj['field_' . $field['id']]) ? $obj['field_' . $field['id']] : '');
-
 
         $choices = self::get_choices($field, $value);
 
