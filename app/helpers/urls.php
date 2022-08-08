@@ -42,14 +42,11 @@ class Urls
 
     public static function url_for_file($file)
     {
-        $scheme = (is_ssl() ? 'https://' : 'http://');
-        $host = $_SERVER['HTTP_HOST'];
-
         $self = pathinfo($_SERVER['PHP_SELF']);
         $self['dirname'] = str_replace("\\", "/", $self['dirname']);
         $path = $self['dirname'] . (substr($self['dirname'], -1) != '/' ? '/' : '');
 
-        return $scheme . $host . $path . $file;
+        return \K::$fw->SCHEME . '://' . \K::$fw->HOST . $path . $file;
     }
 
     public static function link_to($name, $url, $attributes = [])

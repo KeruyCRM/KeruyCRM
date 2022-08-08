@@ -422,6 +422,11 @@ class Model extends \Prefab
         return $purifier->purify($html);
     }
 
+    function db_input_protect($string)
+    {
+        return preg_replace('/[\W|_]+/u', '_', \K::fw()->clean($string));
+    }
+
     public function forceCommit()
     {
         if (!$this->trans()) {

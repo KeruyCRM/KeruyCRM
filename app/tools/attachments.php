@@ -321,7 +321,6 @@ class Attachments
             'file' => $filename,
             'file_sha1' => (\K::$fw->CFG_ENCRYPT_FILE_NAME == 1 ? sha1($filename) : $filename),
             'file_path' => $file_path,
-            //'folder' => \K::$keruy->DIR_WS_ATTACHMENTS . $folder . '/',
             'mime_type' => ($size ? mime_content_type($file_path) : ''),
             'is_image' => \Helpers\App::is_image($file_path),
             'is_pdf' => \Helpers\App::is_pdf($filename),

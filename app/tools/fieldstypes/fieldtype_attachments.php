@@ -150,7 +150,7 @@ class Fieldtype_attachments
                 'field_id=' . $field_id,
                 true
             );
-            $previewScript =\Helpers\Urls::url_for(
+            $previewScript = \Helpers\Urls::url_for(
                 'ext/ipages/configuration/attachments_preview',
                 'field_id=' . $field_id . '&token=' . $form_token
             );
@@ -166,7 +166,10 @@ class Fieldtype_attachments
                 'main/items/items/attachments_preview',
                 'field_id=' . $field_id . '&path=' . \K::$fw->current_path . '&token=' . $form_token
             );
-            $delete_file_url = \Helpers\Urls::url_for('main/items/items/attachments_delete_in_queue', 'path=' . \K::$fw->GET['path']);
+            $delete_file_url = \Helpers\Urls::url_for(
+                'main/items/items/attachments_delete_in_queue',
+                'path=' . \K::$fw->GET['path']
+            );
         }
 
         $uploadLimit = (strlen($cfg->get('upload_limit')) ? (int)$cfg->get('upload_limit') : 0);
@@ -273,23 +276,21 @@ class Fieldtype_attachments
 
     public function process($options)
     {
-        global $app_changed_fields;
-
         if (is_array($options['value'])) {
             $attachments = [];
 
             //print_rr($options['value']);
 
             foreach ($options['value'] as $v) {
-                $file = attachments::parse_filename($v['file']);
+                $file = \Tools\Attachments::parse_filename($v['file']);
 
                 if ($file['filename'] == $v['name']) {
                     $attachments[] = $v['file'];
                 } else {
-                    $new_name = $file['date_added'] . '_' . db_input_protect($v['name']) . (strlen(
+                    $new_name = $file['date_added'] . '_' . \K::model()->db_input_protect($v['name']) . (strlen(
                             $file['extension']
                         ) ? '.' . $file['extension'] : '');
-                    $filepath = \K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . (CFG_ENCRYPT_FILE_NAME == 1 ? sha1(
+                    $filepath = \K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . (\K::$fw->CFG_ENCRYPT_FILE_NAME == 1 ? sha1(
                             $new_name
                         ) : $new_name);
 
@@ -300,9 +301,6 @@ class Fieldtype_attachments
                     $attachments[] = $new_name;
                 }
             }
-
-            //print_rr($attachments);
-            //exit();
         } else {
             $attachments = explode(',', $options['value']);
         }
@@ -313,7 +311,7 @@ class Fieldtype_attachments
                     unset($attachments[$key]);
                 }
 
-                $file = attachments::parse_filename($filename);
+                $file = \Tools\Attachments::parse_filename($filename);
                 if (is_file(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
                     unlink(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1']);
                 }
@@ -321,7 +319,12 @@ class Fieldtype_attachments
         }
 
         //remove out of data tmp attachments
-        db_query("delete from app_attachments where date_added!='" . date('Y-m-d') . "'");
+        //db_query("delete from app_attachments where date_added!='" . date('Y-m-d') . "'");
+
+        \K::model()->db_delete('app_attachments', [
+            'date_added != ?',
+            date('Y-m-d')
+        ]);
 
         $options['value'] = implode(',', $attachments);
 
@@ -331,7 +334,7 @@ class Fieldtype_attachments
                 $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
                 if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
-                    $app_changed_fields[] = [
+                    \K::$fw->app_changed_fields[] = [
                         'name' => $options['field']['name'],
                         'value' => (strlen($options['value']) ? count(explode(',', $options['value'])) : 0),
                         'fields_id' => $options['field']['id'],
@@ -361,12 +364,12 @@ class Fieldtype_attachments
             if (isset($options['is_public_form'])) {
                 $html = [];
                 foreach (explode(',', $options['value']) as $filename) {
-                    $file = attachments::parse_filename($filename);
-                    $html[] = link_to(
+                    $file = \Tools\Attachments::parse_filename($filename);
+                    $html[] = \Helpers\Urls::link_to(
                             $file['name'],
-                            url_for(
-                                'ext/public/check',
-                                'action=download_attachment&id=' . $options['is_public_form'] . '&item=' . $options['item']['id'] . '&field=' . $options['field']['id'] . '&file=' . urlencode(
+                            \Helpers\Urls::url_for(
+                                'ext/public/check/download_attachment',
+                                'id=' . $options['is_public_form'] . '&item=' . $options['item']['id'] . '&field=' . $options['field']['id'] . '&file=' . urlencode(
                                     base64_encode($filename)
                                 )
                             ),
@@ -377,7 +380,7 @@ class Fieldtype_attachments
                 return implode('<br>', $html);
             } elseif (isset($options['is_ipages'])) {
                 $cfg = new \Models\Main\Fields_types_cfg(
-                    (isset($options['field']['configuration']) ? $options['field']['configuration'] : '')
+                    ($options['field']['configuration'] ?? '')
                 );
 
                 $fancybox_css_class = '';
@@ -385,20 +388,20 @@ class Fieldtype_attachments
                 $html = '
 		                  <ul style="padding: 0px; margin: 0px;">';
                 foreach (explode(',', $options['value']) as $filename) {
-                    $file = attachments::parse_filename($filename);
+                    $file = \Tools\Attachments::parse_filename($filename);
 
-                    $file['name'] = app_crop_str($file['name']);
+                    $file['name'] = \Helpers\App::app_crop_str($file['name']);
 
                     if ($file['is_image']) {
                         if (strlen($fancybox_css_class) == 0) {
                             $fancybox_css_class = 'fancybox' . time();
                         }
 
-                        $link = link_to(
+                        $link = \Helpers\Urls::link_to(
                             $file['name'],
-                            url_for(
-                                'ext/ipages/view',
-                                'id=' . $options['is_ipages'] . '&action=preview_attachment_image&file=' . urlencode(
+                            \Helpers\Urls::url_for(
+                                'ext/ipages/view/preview_attachment_image',
+                                'id=' . $options['is_ipages'] . '&file=' . urlencode(
                                     base64_encode($filename)
                                 )
                             ),
@@ -409,40 +412,40 @@ class Fieldtype_attachments
                             ]
                         );
                     } elseif ($file['is_pdf']) {
-                        $link = link_to(
+                        $link = \Helpers\Urls::link_to(
                             $file['name'],
-                            url_for(
-                                'ext/ipages/view',
-                                'id=' . $options['is_ipages'] . '&action=download_attachment&preview=1&file=' . urlencode(
+                            \Helpers\Urls::url_for(
+                                'ext/ipages/view/download_attachment',
+                                'id=' . $options['is_ipages'] . '&preview=1&file=' . urlencode(
                                     base64_encode($filename)
                                 )
                             ),
                             ['target' => '_blank']
                         );
                     } else {
-                        $link = link_to(
+                        $link = \Helpers\Urls::link_to(
                             $file['name'],
-                            url_for(
-                                'ext/ipages/view',
-                                'id=' . $options['is_ipages'] . '&action=download_attachment&file=' . urlencode(
+                            \Helpers\Urls::url_for(
+                                'ext/ipages/view/download_attachment',
+                                'id=' . $options['is_ipages'] . '&file=' . urlencode(
                                     base64_encode($filename)
                                 )
                             )
                         );
                     }
 
-                    $link .= ' ' . link_to(
+                    $link .= ' ' . \Helpers\Urls::link_to(
                             '<i class="fa fa-download"></i>',
-                            url_for(
-                                'ext/ipages/view',
-                                'id=' . $options['is_ipages'] . '&action=download_attachment&file=' . urlencode(
+                            \Helpers\Urls::url_for(
+                                'ext/ipages/view/download_attachment',
+                                'id=' . $options['is_ipages'] . '&file=' . urlencode(
                                     base64_encode($filename)
                                 )
                             )
                         );
 
                     $html .= '
-		              <li style="list-style-image: url(' . url_for_file(
+		              <li style="list-style-image: url(' . \Helpers\Urls::url_for_file(
                             $file['icon']
                         ) . '); margin-left: 20px;">' . $link . ' <small>(' . $file['size'] . ')' . self::add_file_date_added(
                             $file,
@@ -467,7 +470,7 @@ class Fieldtype_attachments
             } elseif (isset($options['is_export'])) {
                 $html = [];
                 foreach (explode(',', $options['value']) as $filename) {
-                    $file = attachments::parse_filename($filename);
+                    $file = \Tools\Attachments::parse_filename($filename);
                     $html[] = $file['name'];
                 }
 
@@ -475,16 +478,16 @@ class Fieldtype_attachments
             } elseif (isset($options['is_email'])) {
                 $html = [];
                 foreach (explode(',', $options['value']) as $filename) {
-                    $file = attachments::parse_filename($filename);
+                    $file = \Tools\Attachments::parse_filename($filename);
 
                     if ($options_cfg->get('hide_attachments_url') == 1) {
                         $html[] = $file['name'];
                     } else {
-                        $html[] = link_to(
+                        $html[] = \Helpers\Urls::link_to(
                                 $file['name'],
-                                url_for(
-                                    'items/info',
-                                    'path=' . $options['path'] . '&action=download_attachment&file=' . urlencode(
+                                \Helpers\Urls::url_for(
+                                    'main/items/info/download_attachment',
+                                    'path=' . $options['path'] . '&file=' . urlencode(
                                         base64_encode($filename)
                                     ) . '&field=' . $options['field']['id']
                                 ),
@@ -495,10 +498,10 @@ class Fieldtype_attachments
 
                 return implode('<br>', $html);
             } else {
-                $is_listing = (isset($options['is_listing']) ? true : false);
+                $is_listing = isset($options['is_listing']);
 
                 $cfg = new \Models\Main\Fields_types_cfg(
-                    (isset($options['field']['configuration']) ? $options['field']['configuration'] : '')
+                    ($options['field']['configuration'] ?? '')
                 );
 
                 $image_gallery = [];
@@ -507,48 +510,36 @@ class Fieldtype_attachments
 
                 $html = '';
 
-                /*
-                if(!$is_listing)
-                {
-                    $html .= '
-                    <div class="table-scrollable">
-                      <table class="table">
-                        <tbody>
-                          <tr>
-                            <td>';
-                }
-                */
-
                 if ($use_file_storage) {
                     $html .= '
 		                  <ul style="padding: 0px; margin: 0px;">';
                     foreach (explode(',', $options['value']) as $filename) {
-                        $file = attachments::parse_filename($filename);
+                        $file = \Tools\Attachments::parse_filename($filename);
 
-                        $file['name'] = app_crop_str($file['name']);
+                        $file['name'] = \Helpers\App::app_crop_str($file['name']);
 
-                        $link = link_to(
+                        $link = \Helpers\Urls::link_to(
                             $file['name'],
-                            url_for(
-                                'items/info',
-                                'path=' . $options['path'] . '&action=download_attachment&file=' . urlencode(
+                            \Helpers\Urls::url_for(
+                                'main/items/info/download_attachment',
+                                'path=' . $options['path'] . '&file=' . urlencode(
                                     base64_encode($filename)
                                 )
                             ) . '&field=' . $options['field']['id']
                         );
 
-                        $link .= ' ' . link_to(
+                        $link .= ' ' . \Helpers\Urls::link_to(
                                 '<i class="fa fa-download"></i>',
-                                url_for(
-                                    'items/info',
-                                    'path=' . $options['path'] . '&action=download_attachment&file=' . urlencode(
+                                \Helpers\Urls::url_for(
+                                    'main/items/info/download_attachment',
+                                    'path=' . $options['path'] . '&file=' . urlencode(
                                         base64_encode($filename)
                                     )
                                 ) . '&field=' . $options['field']['id']
                             );
 
                         $html .= '
-		              <li style="list-style-image: url(' . url_for_file(
+		              <li style="list-style-image: url(' . \Helpers\Urls::url_for_file(
                                 $file['icon']
                             ) . '); margin-left: 20px;">' . $link . '</li>
 		            ';
@@ -560,20 +551,20 @@ class Fieldtype_attachments
                     $html .= ' 		
 		                  <ul style="padding: 0px; margin: 0px;">';
                     foreach (explode(',', $options['value']) as $filename) {
-                        $file = attachments::parse_filename($filename);
+                        $file = \Tools\Attachments::parse_filename($filename);
 
-                        $file['name'] = app_crop_str($file['name']);
+                        $file['name'] = \Helpers\App::app_crop_str($file['name']);
 
                         if ($file['is_image']) {
                             if (strlen($fancybox_css_class) == 0) {
                                 $fancybox_css_class = 'fancybox' . time();
                             }
 
-                            $link = link_to(
+                            $link = \Helpers\Urls::link_to(
                                 $file['name'],
-                                url_for(
-                                    'items/info',
-                                    'path=' . $options['path'] . '&action=preview_attachment_image&file=' . urlencode(
+                                \Helpers\Urls::url_for(
+                                    'main/items/info/preview_attachment_image',
+                                    'path=' . $options['path'] . '&file=' . urlencode(
                                         base64_encode($filename)
                                     )
                                 ),
@@ -586,18 +577,18 @@ class Fieldtype_attachments
 
                             //generate image preview
                             if ($cfg->get('use_image_preview') == 1 and !$is_listing) {
-                                $img = '<img src="' . url_for(
-                                        'items/info',
-                                        'path=' . $options['path'] . '&action=download_attachment&preview=small&file=' . urlencode(
+                                $img = '<img src="' . \Helpers\Urls::url_for(
+                                        'main/items/info/download_attachment',
+                                        'path=' . $options['path'] . '&preview=small&file=' . urlencode(
                                             base64_encode($filename)
                                         )
                                     ) . '">';
                                 $image_gallery[] = [
-                                    'image' => link_to(
+                                    'image' => \Helpers\Urls::link_to(
                                         $img,
-                                        url_for(
-                                            'items/info',
-                                            'path=' . $options['path'] . '&action=preview_attachment_image&file=' . urlencode(
+                                        \Helpers\Urls::url_for(
+                                            'main/items/info/preview_attachment_image',
+                                            'path=' . $options['path'] . '&file=' . urlencode(
                                                 base64_encode($filename)
                                             )
                                         ),
@@ -607,11 +598,11 @@ class Fieldtype_attachments
                                             'data-fancybox-group' => 'gallery'
                                         ]
                                     ),
-                                    'download_link' => link_to(
+                                    'download_link' => \Helpers\Urls::link_to(
                                         '<i class="fa fa-download"></i> ' . \K::$fw->TEXT_DOWNLOAD,
-                                        url_for(
-                                            'items/info',
-                                            'path=' . $options['path'] . '&action=download_attachment&file=' . urlencode(
+                                        \Helpers\Urls::url_for(
+                                            'main/items/info/download_attachment',
+                                            'path=' . $options['path'] . '&file=' . urlencode(
                                                 base64_encode($filename)
                                             )
                                         )
@@ -621,33 +612,33 @@ class Fieldtype_attachments
                                 continue;
                             }
                         } elseif ($file['is_pdf']) {
-                            $link = link_to(
+                            $link = \Helpers\Urls::link_to(
                                 $file['name'],
-                                url_for(
-                                    'items/info',
-                                    'path=' . $options['path'] . '&action=download_attachment&preview=1&file=' . urlencode(
+                                \Helpers\Urls::url_for(
+                                    'main/items/info/download_attachment',
+                                    'path=' . $options['path'] . '&preview=1&file=' . urlencode(
                                         base64_encode($filename)
                                     )
                                 ),
                                 ['target' => '_blank']
                             );
                         } else {
-                            $link = link_to(
+                            $link = \Helpers\Urls::link_to(
                                 $file['name'],
-                                url_for(
-                                    'items/info',
-                                    'path=' . $options['path'] . '&action=download_attachment&file=' . urlencode(
+                                \Helpers\Urls::url_for(
+                                    'main/items/info/download_attachment',
+                                    'path=' . $options['path'] . '&file=' . urlencode(
                                         base64_encode($filename)
                                     )
                                 )
                             );
                         }
 
-                        $link .= ' ' . link_to(
+                        $link .= ' ' . \Helpers\Urls::link_to(
                                 '<i class="fa fa-download"></i>',
-                                url_for(
-                                    'items/info',
-                                    'path=' . $options['path'] . '&action=download_attachment&file=' . urlencode(
+                                \Helpers\Urls::url_for(
+                                    'main/items/info/download_attachment',
+                                    'path=' . $options['path'] . '&file=' . urlencode(
                                         base64_encode($filename)
                                     )
                                 )
@@ -656,12 +647,12 @@ class Fieldtype_attachments
                         //add public link
                         if (isset($options['field']['id']) and in_array(
                                 $options['field']['id'],
-                                explode(',', CFG_PUBLIC_ATTACHMENTS)
+                                explode(',', \K::$fw->CFG_PUBLIC_ATTACHMENTS)
                             )) {
-                            $link .= ' ' . link_to(
+                            $link .= ' ' . \Helpers\Urls::link_to(
                                     '<i class="fa fa-link"></i>',
-                                    url_for(
-                                        'export/file',
+                                    \Helpers\Urls::url_for(
+                                        'main/export/file',
                                         'id=' . $options['field']['id'] . '&path=' . $options['field']['entities_id'] . '-' . $options['item']['id'] . '&file=' . urlencode(
                                             $filename
                                         )
@@ -678,9 +669,9 @@ class Fieldtype_attachments
                         if ($file['is_audio'] and $cfg->get('play_audio_file') == 1) {
                             $link .= '
 	                        <audio controls class="audio-controls" controlsList="nodownload">
-                              <source src="' . url_for(
-                                    'items/info',
-                                    'path=' . $options['path'] . '&action=download_attachment&preview=1&file=' . urlencode(
+                              <source src="' . \Helpers\Urls::url_for(
+                                    'main/items/info/download_attachment',
+                                    'path=' . $options['path'] . '&preview=1&file=' . urlencode(
                                         base64_encode($filename)
                                     )
                                 ) . '" type="audio/mpeg">
@@ -690,7 +681,7 @@ class Fieldtype_attachments
                         }
 
                         $html .= '
-		              <li style="list-style-image: url(' . url_for_file(
+		              <li style="list-style-image: url(' . \Helpers\Urls::url_for_file(
                                 $file['icon']
                             ) . '); margin-left: 20px;">' . $link . '</li>
 		            ';
@@ -698,18 +689,6 @@ class Fieldtype_attachments
                     $html .= '  
 		                  </ul>';
                 }
-
-                /*
-                if(!$is_listing)
-                {
-                    $html .='
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>';
-                }
-                */
 
                 //display preview if available
                 if (count($image_gallery) > 0 and !$is_listing) {
@@ -771,8 +750,10 @@ class Fieldtype_attachments
 
         if (strlen($cfg->get('allowed_extensions'))) {
             $extensions = [];
-            foreach (explode(',', $cfg->get('allowed_extensions')) as $v) {
-                $extensions[] = trim(strip_tags(str_replace(['"', "'"], '', $v)));
+
+            $exp = explode(',', $cfg->get('allowed_extensions'));
+            foreach ($exp as $v) {
+                $extensions[] = trim(\K::fw()->clean(str_replace(['"', "'"], '', $v)));
             }
 
             $fileTypeList = [];
@@ -802,7 +783,7 @@ class Fieldtype_attachments
         if (strlen($allowed_extensions)) {
             $extensions = [];
             foreach (explode(',', $allowed_extensions) as $v) {
-                $extensions[] = trim(strip_tags(str_replace(['"', "'"], '', $v)));
+                $extensions[] = trim(\K::fw()->clean(str_replace(['"', "'"], '', $v)));
             }
 
             $fileTypeList = [];
@@ -830,7 +811,7 @@ class Fieldtype_attachments
         if (strlen($allowed_extensions)) {
             $extensions = [];
             foreach (explode(',', $allowed_extensions) as $v) {
-                $extensions[] = trim(strip_tags(str_replace(['"', "'"], '', $v)));
+                $extensions[] = trim(\K::fw()->clean(str_replace(['"', "'"], '', $v)));
             }
 
             $fileTypeList = [];
