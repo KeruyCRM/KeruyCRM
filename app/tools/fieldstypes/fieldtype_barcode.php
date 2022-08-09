@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -89,7 +93,7 @@ class Fieldtype_barcode
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST["entities_id"]),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
@@ -148,7 +152,7 @@ class Fieldtype_barcode
         ];
 
         $cfg[\K::$fw->TEXT_BARCODE][] = [
-            'title' => \K::$fw->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING . fields::get_available_fields_helper(
+            'title' => \K::$fw->TEXT_FIELDTYPE_BARCODE_METHOD_GENERATING . \Models\Main\Fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_template'
                 ),
@@ -187,10 +191,10 @@ class Fieldtype_barcode
                 ($field['is_heading'] == 1 ? ' autofocus' : '') .
                 ($field['is_required'] == 1 ? ' required' : '') .
                 ($cfg->get('is_unique') > 0 ? ' is-unique' : '') .
-                (strlen($cfg->get('template')) ? ' atuogenerate-value-by-template' : '')
+                (strlen($cfg->get('template')) ? ' autogenerate-value-by-template' : '')
         ];
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
         //if entered temlate then barcode will be autogenerate
         if (strlen($cfg->get('template'))) {
@@ -214,12 +218,19 @@ class Fieldtype_barcode
                 ';
         }
 
-        $submodal_url = url_for('dashboard/barcodescan', 'field_id=' . $field['id'] . '&is_submodal=1');
+        $submodal_url = \Helpers\Urls::url_for(
+            'main/dashboard/barcodescan',
+            'field_id=' . $field['id'] . '&is_submodal=1'
+        );
 
         $html = '
             <div class="input-group ' . $cfg->get('width') . '">
-                ' . input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes) . '
-                ' . (is_mobile(
+                ' . \Helpers\Html::input_tag(
+                'fields[' . $field['id'] . ']',
+                $obj['field_' . $field['id']],
+                $attributes
+            ) . '
+                ' . (\Helpers\App::is_mobile(
             ) ? '<span class="input-group-btn"><button class="btn btn-default btn-submodal-open" data-submodal-url="' . $submodal_url . '" type="button"><i class="fa fa-barcode" aria-hidden="true"></i></button></span>' : '') . '
             </div>
             ' . $script;
@@ -229,7 +240,7 @@ class Fieldtype_barcode
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
@@ -242,13 +253,11 @@ class Fieldtype_barcode
             $type = (strlen($cfg->get('barcode_type')) ? $cfg->get('barcode_type') : 'TYPE_CODE_128');
 
             if ($type == 'PDF417') {
-                $barcodeobj = new TCPDF2DBarcode(trim($options['value']), 'PDF417');
-
-                //$barcodeobj->getBarcodePNG();
+                $barcodeobj = new \TCPDF2DBarcode(trim($options['value']), 'PDF417');
 
                 $html = '<img src="data:image/png;base64,' . base64_encode($barcodeobj->getBarcodePngData(2, 1)) . '">';
             } else {
-                $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+                $generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
                 $generator->useGd();
 
                 $generated = $generator->getBarcode(

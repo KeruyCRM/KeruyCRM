@@ -184,7 +184,8 @@ class Fields
         $html = '';
         $fields_query = \K::model()->db_query_exec(
             'select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (' . $required_types . ') and f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name',
-            $entities_id
+            $entities_id,
+            'app_fields,app_forms_tabs'
         );
         //while ($fields = db_fetch_array($fields_query)) {
         foreach ($fields_query as $fields) {
@@ -471,7 +472,8 @@ class Fields
 
         $fields_query = \K::model()->db_query_exec(
             'select f.id, f.type, f.configuration, f.name, f.is_heading, t.name as tab_name from app_fields f, app_forms_tabs t where f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name',
-            $entity_id
+            $entity_id,
+            'app_fields,app_forms_tabs'
         );
         //while ($v = db_fetch_array($fields_query)) {
         foreach ($fields_query as $v) {
@@ -514,18 +516,30 @@ class Fields
 
         //include fieldtype_parent_item_id only for sub entities
         if ($entity_info['parent_id'] > 0 and $show_parent_item_fitler) {
-            $types_for_filters_list .= ", 'fieldtype_parent_item_id'";
+            $types_for_filters_list .= ',' . \K::model()->quote('fieldtype_parent_item_id');
         }
 
         //include special filters for Users
         if ($entity_id == 1) {
-            $types_for_filters_list .= ", 'fieldtype_user_accessgroups', 'fieldtype_user_status'";
+            $types_for_filters_list .= ',' . \K::model()->quoteToString(
+                    ['fieldtype_user_accessgroups', 'fieldtype_user_status']
+                );
         }
 
         $choices = [];
         $choices[''] = '';
+        $typeIn = \K::model()->quoteToString(
+            [
+                'fieldtype_id',
+                'fieldtype_date_added',
+                'fieldtype_date_updated',
+                'fieldtype_created_by',
+                'fieldtype_parent_item_id'
+            ]
+        );
+
         $fields_query = \K::model()->db_query_exec(
-            "select f.*, t.name as tab_name, if(f.type in ('fieldtype_id','fieldtype_date_added','fieldtype_date_updated','fieldtype_created_by','fieldtype_parent_item_id'),-1,t.sort_order) as tab_sort_order from app_fields f, app_forms_tabs t where f.type in (" . $types_for_filters_list . ") " . (strlen(
+            "select f.*, t.name as tab_name, if(f.type in ({$typeIn}),-1,t.sort_order) as tab_sort_order from app_fields f, app_forms_tabs t where f.type in (" . $types_for_filters_list . ") " . (strlen(
                 $exclude
             ) ? " and f.type not in ({$exclude})" : '') . " and f.entities_id = ? and f.forms_tabs_id = t.id order by tab_sort_order, t.name, f.sort_order, f.name",
             $entity_id,
@@ -630,7 +644,8 @@ class Fields
         if (strlen($fields_list) > 0) {
             $fields_query = \K::model()->db_query_exec(
                 "select f.* from app_fields f, app_forms_tabs t where f.id in (" . $fields_list . ") and f.entities_id = ? and f.forms_tabs_id = t.id order by field(f.id," . $fields_list . ")",
-                $entities_id
+                $entities_id,
+                'app_fields,app_forms_tabs'
             );
             //while ($field = db_fetch_array($fields_query)) {
             foreach ($fields_query as $field) {
@@ -680,7 +695,8 @@ class Fields
         if (strlen($fields_list) > 0) {
             $fields_query = \K::model()->db_query_exec(
                 "select f.* from app_fields f, app_forms_tabs t where f.id in (" . $fields_list . ") and  f.entities_id = ? and f.forms_tabs_id=t.id order by field(f.id," . $fields_list . ")",
-                $entities_id
+                $entities_id,
+                'app_fields,app_forms_tabs'
             );
             //while ($field = db_fetch_array($fields_query)) {
             foreach ($fields_query as $field) {
@@ -799,7 +815,8 @@ class Fields
         $choices = [];
         $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where is_heading = 0 and f.type not in ('fieldtype_action','fieldtype_parent_item_id') and f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
-            $entities_id
+            $entities_id,
+            'app_fields,app_forms_tabs'
         );
         //while ($v = db_fetch_array($fields_query)) {
         foreach ($fields_query as $v) {
@@ -813,10 +830,13 @@ class Fields
     static function get_fields_in_listing_choices($entities_id, $app_id = false)
     {
         $choices = [];
-        $exclude_fields_types_sql = " and f.type not in ('fieldtype_section','fieldtype_mapbbcode','fieldtype_mind_map')";
+        $typeNotIn = \K::model()->quoteToString(['fieldtype_section', 'fieldtype_mapbbcode', 'fieldtype_mind_map']);
+        $exclude_fields_types_sql = " and f.type not in ({$typeNotIn})";
+
         $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.entities_id = ? and f.forms_tabs_id = t.id {$exclude_fields_types_sql} order by t.sort_order, t.name, f.sort_order, f.name",
-            $entities_id
+            $entities_id,
+            'app_fields,app_forms_tabs'
         );
         //while ($v = db_fetch_array($fields_query)) {
         foreach ($fields_query as $v) {
@@ -844,17 +864,14 @@ class Fields
 
         $where_sql = '';
         if (count($use_fieldtypes)) {
-            /*array_walk($use_fieldtypes, function (&$v, $k) {
-                 $v = "'{$v}'";
-             });*/
-
             $where_sql = " and f.type in (" . \K::model()->quoteToString($use_fieldtypes) . ")";
         }
 
         $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserverd_types_list(
             ) . ") and f.entities_id = ? and f.forms_tabs_id = t.id {$where_sql} order by t.sort_order, t.name, f.sort_order, f.name",
-            $entities_id
+            $entities_id,
+            'app_fields,app_forms_tabs'
         );
 
         if (\K::model()->count() == 0) {
@@ -927,7 +944,7 @@ class Fields
                 } else {
                     $html .= '
                         <li>
-                                    <a href="#"  class="insert_to_template_' . $unique_id . '" data-field="[' . $v['id'] . ']">' . fields_types::get_option(
+                                    <a href="#"  class="insert_to_template_' . $unique_id . '" data-field="[' . $v['id'] . ']">' . \Models\Main\Fields_types::get_option(
                             $v['type'],
                             'name',
                             $v['name']
@@ -1023,18 +1040,16 @@ class Fields
 
     static function get_query($entities_id, $where_sql = '')
     {
-        $reserverd_fields_types = array_merge(
+        $reserved_fields_types = array_merge(
             \Models\Main\Fields_types::get_reserved_data_types(),
             \Models\Main\Fields_types::get_users_types()
         );
-        $reserverd_fields_types_list = \K::model()->quoteToString($reserverd_fields_types);
+        $reserved_fields_types_list = \K::model()->quoteToString($reserved_fields_types);
 
-        $fields_query = \K::model()->db_query_exec(
-            "select f.*, t.name as tab_name, if(f.type in (" . $reserverd_fields_types_list . "),-1,t.sort_order) as tab_sort_order, fr.sort_order as form_rows_sort_order, right(f.forms_rows_position,1) as forms_rows_pos from app_fields f left join app_forms_rows fr on fr.id = LEFT(f.forms_rows_position,length(f.forms_rows_position)-2), app_forms_tabs t where f.entities_id = ? {$where_sql} and f.forms_tabs_id = t.id order by tab_sort_order, t.name, form_rows_sort_order, forms_rows_pos, f.sort_order, f.name",
-            $entities_id
-        //TODO Disable log for sql query?
+        return \K::model()->db_query_exec(
+            "select f.*, t.name as tab_name, if(f.type in (" . $reserved_fields_types_list . "),-1,t.sort_order) as tab_sort_order, fr.sort_order as form_rows_sort_order, right(f.forms_rows_position,1) as forms_rows_pos from app_fields f left join app_forms_rows fr on fr.id = LEFT(f.forms_rows_position,length(f.forms_rows_position)-2), app_forms_tabs t where f.entities_id = ? {$where_sql} and f.forms_tabs_id = t.id order by tab_sort_order, t.name, form_rows_sort_order, forms_rows_pos, f.sort_order, f.name",
+            $entities_id,
+            'app_fields,app_forms_rows,app_forms_tabs'
         );
-
-        return $fields_query;
     }
 }
