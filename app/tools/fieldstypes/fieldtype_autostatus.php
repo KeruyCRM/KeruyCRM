@@ -187,7 +187,7 @@ class Fieldtype_autostatus
                         ];
 
                         \K::model()->db_perform(
-                            'app_entity_' . $entities_id,
+                            'app_entity_' . (int)$entities_id,
                             $sql_data,
                             [
                                 'id = ?',
