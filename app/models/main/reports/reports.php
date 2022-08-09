@@ -971,7 +971,7 @@ class Reports
         $values = preg_split("/(&|\|)/", $filters['filters_values'], null, PREG_SPLIT_DELIM_CAPTURE);
 
         if (strlen($values[0]) > 0) {
-            $values[1] = (isset($values[1]) ? $values[1] : '');
+            $values[1] = ($values[1] ?? '');
 
             if ($values[1] == '|') {
                 $values = array_merge(['', '|'], $values);

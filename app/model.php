@@ -139,16 +139,22 @@ class Model extends \Prefab
         );
     }
 
-    public function db_fetch_one($table, $filter = [], $options = [], $column = null, $ttl = 0)
+    public function db_fetch_one($table, $filter = [], $options = [], $column = null, $virtualFields = [], $ttl = 0)
     {
         $ttl = $this->getTTL($table, $ttl);
 
         $mapper = $this->mapper($table, $column);
+
+        foreach ($virtualFields as $field => $value) {
+            $mapper->{$field} = $value;
+        }
+
         $value = $mapper->findone(
             $filter,
             $options,
             $ttl
         );
+
         if ($value) {
             return $value->cast();
         } else {
