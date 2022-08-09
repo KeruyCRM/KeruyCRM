@@ -1,38 +1,45 @@
 <?php
 
-class stages_panel
-{
+namespace Models\Main\Items;
 
+class Stages_panel
+{
     static function get_type_choices()
     {
-        return ['trianlge' => TEXT_TRIANGLE, 'rectangle' => TEXT_RECTANGLE, 'dot' => TEXT_DOT, 'circle' => TEXT_CIRCLE];
+        return [
+            'trianlge' => \K::$fw->TEXT_TRIANGLE,
+            'rectangle' => \K::$fw->TEXT_RECTANGLE,
+            'dot' => \K::$fw->TEXT_DOT,
+            'circle' => \K::$fw->TEXT_CIRCLE
+        ];
     }
 
     static function render($entities_id, $item_info)
     {
-        global $app_fields_cache, $app_path, $app_user;
-
-        $fields_access_schema = users::get_fields_access_schema($entities_id, $app_user['group_id']);
+        $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema(
+            $entities_id,
+            \K::$fw->app_user['group_id']
+        );
 
         //check access rules
-        $access_rules = new access_rules($entities_id, $item_info);
+        $access_rules = new \Models\Main\Access_rules($entities_id, $item_info);
         $fields_access_schema += $access_rules->get_fields_view_only_access();
 
         $has_update_access = false;
 
-        if (users::has_access('update', $access_rules->get_access_schema())) {
+        if (\Models\Main\Users\Users::has_access('update', $access_rules->get_access_schema())) {
             $has_update_access = true;
         }
 
-        if (users::has_users_access_name_to_entity('action_with_assigned', $entities_id)) {
-            if (!users::has_access_to_assigned_item($entities_id, $item_info['id'])) {
+        if (\Models\Main\Users\Users::has_users_access_name_to_entity('action_with_assigned', $entities_id)) {
+            if (!\Models\Main\Users\Users::has_access_to_assigned_item($entities_id, $item_info['id'])) {
                 $has_update_access = false;
             }
         }
 
         $html = '';
 
-        foreach ($app_fields_cache[$entities_id] as $field) {
+        foreach (\K::$fw->app_fields_cache[$entities_id] as $field) {
             //check field types
             if (!in_array($field['type'], ['fieldtype_stages', 'fieldtype_autostatus'])) {
                 continue;
@@ -45,7 +52,7 @@ class stages_panel
                 }
             }
 
-            $cfg = new fields_types_cfg($field['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
             //check if panel type is enabled
             if (!strlen($cfg->get('panel_type'))) {
@@ -61,15 +68,21 @@ class stages_panel
                         $current_choice_id
                     );
                 } else {
-                    $choices = global_lists::get_choices($cfg->get('use_global_list'), false, '', '', true);
+                    $choices = \Models\Main\Global_lists::get_choices(
+                        $cfg->get('use_global_list'),
+                        false,
+                        '',
+                        '',
+                        true
+                    );
                 }
+            } elseif ($cfg->get('display_type') == 'branching') {
+                $choices = self::get_branching_choices($field['id'], $current_choice_id);
             } else {
-                if ($cfg->get('display_type') == 'branching') {
-                    $choices = self::get_branching_choices($field['id'], $current_choice_id);
-                } else {
-                    $choices = fields_choices::get_choices($field['id'], false, '', '', '', true);
-                }
+                $choices = \Models\Main\Fields_choices::get_choices($field['id'], false, '', '', '', true);
             }
+
+            $panel_type = '';
 
             switch ($cfg->get('panel_type')) {
                 case 'trianlge':
@@ -86,13 +99,11 @@ class stages_panel
                     break;
             }
 
-
             $html .= '
 				<div class="prolet-body-actions form-group-' . $field['id'] . '">	
 					<ol class="stages-panel-' . $field['id'] . ' ' . $panel_type . '">';
 
-
-            $has_current = (isset($choices[$current_choice_id]) ? false : true);
+            $has_current = !isset($choices[$current_choice_id]);
             $count_after_current = 0;
             foreach ($choices as $choice_id => $choice_name) {
                 $li_class = '';
@@ -101,7 +112,7 @@ class stages_panel
                     $count_after_current++;
                 }
 
-                //hanlde lie css class
+                //handle lie css class
                 if ($current_choice_id == $choice_id) {
                     $li_class = 'class="current"';
                     $has_current = true;
@@ -117,17 +128,23 @@ class stages_panel
                 $process_url = '';
                 $process_access = false;
                 if (($process_id = (int)$cfg->get('run_process_for_choice_' . $choice_id)) > 0) {
-                    $buttons_query = db_query(
+                    /*$buttons_query = db_query(
                         "select * from app_ext_processes where id='" . $process_id . "' and is_active=1"
-                    );
-                    if ($buttons = db_fetch_array($buttons_query)) {
+                    );*/
+
+                    $buttons = \K::model()->db_fetch_one('app_ext_processes', [
+                        'id = ? and is_active = 1',
+                        $process_id
+                    ]);
+
+                    if ($buttons) {
                         $processes = new processes($entities_id);
 
                         //get manually url
                         if ($processes->has_enter_manually_fields($process_id)) {
-                            $process_url = url_for(
-                                'items/processes',
-                                'id=' . $process_id . '&path=' . $app_path . '&redirect_to=items_info'
+                            $process_url = \Helpers\Urls::url_for(
+                                'main/items/processes',
+                                'id=' . $process_id . '&path=' . \K::$fw->app_path . '&redirect_to=items_info'
                             );
                         }
 
@@ -143,14 +160,18 @@ class stages_panel
                 }
 
                 if ($cfg->get('click_action') == 'change_value') {
-                    $click_action = 'onClick="open_dialog(\'' . (strlen($process_url) ? $process_url : url_for(
-                            'items/stages',
-                            'path=' . $app_path . '&field_id=' . $field['id'] . '&value_id=' . $choice_id
+                    $click_action = 'onClick="open_dialog(\'' . (strlen(
+                            $process_url
+                        ) ? $process_url : \Helpers\Urls::url_for(
+                            'main/items/stages',
+                            'path=' . \K::$fw->app_path . '&field_id=' . $field['id'] . '&value_id=' . $choice_id
                         )) . '\')" class="clickable"';
                 } elseif ($cfg->get('click_action') == 'change_value_next_step' and $count_after_current == 1) {
-                    $click_action = 'onClick="open_dialog(\'' . (strlen($process_url) ? $process_url : url_for(
-                            'items/stages',
-                            'path=' . $app_path . '&field_id=' . $field['id'] . '&value_id=' . $choice_id
+                    $click_action = 'onClick="open_dialog(\'' . (strlen(
+                            $process_url
+                        ) ? $process_url : \Helpers\Urls::url_for(
+                            'main/items/stages',
+                            'path=' . \K::$fw->app_path . '&field_id=' . $field['id'] . '&value_id=' . $choice_id
                         )) . '\')" class="clickable"';
                 }
 
@@ -167,7 +188,6 @@ class stages_panel
                     $click_url = '#';
                     $click_action = 'onClick="return false"';
                 }
-
 
                 $html .= '<li ' . $li_class . '><a href="' . $click_url . '" ' . $click_action . '>' . $choice_name . '</a></li>';
 
@@ -189,7 +209,7 @@ class stages_panel
 
     static function render_css($field)
     {
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $css = '';
 
@@ -262,11 +282,9 @@ class stages_panel
 
     static function get_branching_choices($field_id, $current_choice_id)
     {
-        global $app_choices_cache;
-
         $choices = [];
 
-        $parents_ids = fields_choices::get_paretn_ids($current_choice_id);
+        $parents_ids = \Models\Main\Fields_choices::get_paretn_ids($current_choice_id);
         $exclude_ids = [];
         if (count($parents_ids)) {
             $parents_ids = array_reverse($parents_ids);
@@ -305,7 +323,7 @@ class stages_panel
         $choices_query = db_query(
             "select * from app_fields_choices where fields_id={$field_id} and is_active=1 and parent_id={$current_choice_id} order by sort_order, name"
         );
-        if (!db_num_rows($choices_query) and $app_choices_cache[$current_choice_id]['parent_id'] == 0) {
+        if (!db_num_rows($choices_query) and \K::$fw->app_choices_cache[$current_choice_id]['parent_id'] == 0) {
             //if empyt get all top parents
             $choices_query = db_query(
                 "select * from app_fields_choices where fields_id={$field_id} and is_active=1 and parent_id=0 " . (count(
@@ -377,6 +395,5 @@ class stages_panel
 
         return $choices;
     }
-
 
 }

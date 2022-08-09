@@ -198,7 +198,7 @@ class Fields_choices
     ) {
         $choices = [];
 
-        $tree = fields_choices::get_tree(
+        $tree = self::get_tree(
             $fields_id,
             0,
             [],
@@ -231,7 +231,7 @@ class Fields_choices
     ) {
         $choices = [];
 
-        $tree = fields_choices::get_tree(
+        $tree = self::get_tree(
             $fields_id,
             0,
             [],

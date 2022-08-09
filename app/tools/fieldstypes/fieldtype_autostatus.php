@@ -27,7 +27,7 @@ class Fieldtype_autostatus
             'name' => 'panel_type',
             'type' => 'dropdown',
             'params' => ['class' => 'form-control input-medium'],
-            'choices' => ['' => ''] + stages_panel::get_type_choices()
+            'choices' => ['' => ''] + \Models\Main\Items\Stages_panel::get_type_choices()
         ];
 
         $cfg[\K::$fw->TEXT_STAGES_PANEL][] = [
@@ -48,23 +48,34 @@ class Fieldtype_autostatus
         ];
 
         if (\Helpers\App::is_ext_installed()) {
-            $processes_chocies = [];
-            $processes_chocies[0] = '';
-            $processes_query = db_query(
+            $processes_choices = [];
+            $processes_choices[0] = '';
+            /*$processes_query = db_query(
                 "select id, name from app_ext_processes where entities_id='" . _post::int(
                     'entities_id'
                 ) . "' order by sort_order, name"
-            );
-            while ($processes = db_fetch_array($processes_query)) {
-                $processes_chocies[$processes['id']] = $processes['name'];
+            );*/
+
+            $processes_query = \K::model()->db_fetch('app_ext_processes', [
+                'entities_id = ?',
+                \K::$fw->POST['entities_id']
+            ], ['order' => 'sort_order, name'], 'id,name');
+
+            //while ($processes = db_fetch_array($processes_query)) {
+            foreach ($processes_query as $processes) {
+                $processes = $processes->cast();
+
+                $processes_choices[$processes['id']] = $processes['name'];
             }
 
-            foreach (fields_choices::get_choices(_POST('id'), false) as $choice_id => $choice_name) {
+            $getChoice = \Models\Main\Fields_choices::get_choices(\K::$fw->POST['id'], false);
+
+            foreach ($getChoice as $choice_id => $choice_name) {
                 $cfg[\K::$fw->TEXT_ACTION][] = [
                     'title' => $choice_name,
                     'name' => 'run_process_for_choice_' . $choice_id,
                     'type' => 'dropdown',
-                    'choices' => $processes_chocies,
+                    'choices' => $processes_choices,
                     'params' => ['class' => 'form-control input-large']
                 ];
             }
@@ -80,9 +91,9 @@ class Fieldtype_autostatus
 
     public function render($field, $obj, $params = [])
     {
-        return '<p><table><tr><td>' . fields_choices::render_value(
+        return '<p><table><tr><td>' . \Models\Main\Fields_choices::render_value(
                 $obj['field_' . $field['id']]
-            ) . '</td></tr></table></p>' . input_hidden_tag(
+            ) . '</td></tr></table></p>' . \Helpers\Html::input_hidden_tag(
                 'fields[' . $field['id'] . ']',
                 $obj['field_' . $field['id']]
             );
@@ -95,7 +106,7 @@ class Fieldtype_autostatus
 
     public function output($options)
     {
-        return fields_choices::render_value($options['value']);
+        return \Models\Main\Fields_choices::render_value($options['value']);
     }
 
     public function reports_query($options)
