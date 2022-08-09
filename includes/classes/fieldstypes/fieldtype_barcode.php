@@ -187,7 +187,7 @@ class fieldtype_barcode
                 ($field['is_heading'] == 1 ? ' autofocus' : '') .
                 ($field['is_required'] == 1 ? ' required' : '') .
                 ($cfg->get('is_unique') > 0 ? ' is-unique' : '') .
-                (strlen($cfg->get('template')) ? ' atuogenerate-value-by-template' : '')
+                (strlen($cfg->get('template')) ? ' autogenerate-value-by-template' : '')
         ];
 
         $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);

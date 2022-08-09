@@ -1,4 +1,4 @@
-$("#" + form.name + " .atuogenerate-value-by-template").each(function () {
+$("#" + form.name + " .autogenerate-value-by-template").each(function () {
     if ($(this).val().length == 0) {
         template = $(this).attr('data-template');
 
