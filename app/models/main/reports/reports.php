@@ -774,7 +774,7 @@ class Reports
         ];
     }
 
-    static function prepare_dates_sql_filters_operator($value)
+    public static function prepare_dates_sql_filters_operator($value)
     {
         $value = trim($value);
 
@@ -1444,7 +1444,7 @@ class Reports
         }
     }
 
-    static function count_filters_by_reports_id($reports_id)
+    public static function count_filters_by_reports_id($reports_id)
     {
         $count_filters = 0;
         $reports_list = [];
@@ -1458,7 +1458,7 @@ class Reports
         return $count_filters;
     }
 
-    static function count_filters_by_reports_type($entities_id, $reports_type)
+    public static function count_filters_by_reports_type($entities_id, $reports_type)
     {
         $count_filters = 0;
         $reports_info_query = db_query(
@@ -1473,7 +1473,7 @@ class Reports
         return $count_filters;
     }
 
-    static function auto_create_report_by_type($entities_id, $reports_type)
+    public static function auto_create_report_by_type($entities_id, $reports_type)
     {
         //global $app_user;
 
@@ -1504,7 +1504,7 @@ class Reports
         }
     }
 
-    static function get_reports_id_by_type($entities_id, $type)
+    public static function get_reports_id_by_type($entities_id, $type)
     {
         $reports_query = db_query(
             "select * from app_reports where entities_id='" . db_input($entities_id) . "' and reports_type='{$type}'"
@@ -1514,5 +1514,17 @@ class Reports
         } else {
             return false;
         }
+    }
+
+    public static function getReportsQuery($options)
+    {
+        $filters = $options['filters'];
+        $sql_query = $options['sql_query'];
+
+        $prefix = (strlen($options['prefix']) ? $options['prefix'] : 'e');
+
+        $sql_query[] = $prefix . '.field_' . $filters['fields_id'] . ($filters['filters_condition'] == 'include' ? ' in ' : ' not in ') . '(' . $filters['filters_values'] . ') ';
+
+        return $sql_query;
     }
 }
