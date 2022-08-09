@@ -123,7 +123,6 @@ class fieldtype_auto_increment
 
         $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
-
         if ($cfg->get('view_only') == 1) {
             return '<p class="form-control-static">' . $cfg->get('prefix') . $obj['field_' . $field['id']] . $cfg->get(
                     'suffix'
@@ -160,7 +159,8 @@ class fieldtype_auto_increment
                     "select (min(field_{$field['id']}+0)) as min_value from app_entity_{$field['entities_id']} where length(field_{$field['id']})>0 " . $where_sql
                 );
                 $min = db_fetch_array($min_query);
-                eval('$value = $min["min_value"]' . $step . ';');
+                //eval('$value = $min["min_value"]' . $step . ';');
+                $value = $min["min_value"] + $step;
             } else {
                 $max_query = db_query(
                     "select (max(field_{$field['id']}+0)) as max_value from app_entity_{$field['entities_id']} where length(field_{$field['id']})>0 " . $where_sql
