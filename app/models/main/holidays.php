@@ -35,11 +35,10 @@ class Holidays
         );
         $holidays = db_fetch_array($holidays_query);*/
 
-        $mapper = \K::model()->mapper('app_holidays','id');
-        $mapper->min_year = 'min(year(start_date))';
-        $mapper->max_year = 'max(year(end_date))';
-        $holidays = $mapper->findone();
-        $holidays = $holidays->cast();
+        $holidays = \K::model()->db_fetch_one('app_holidays', [], [], 'id', [
+            'min_year' => 'min(year(start_date))',
+            'max_year' => 'max(year(end_date))'
+        ]);
 
         if ($holidays['min_year'] > 0) {
             for ($i = $holidays['min_year']; $i <= ($holidays['max_year'] + 1); $i++) {

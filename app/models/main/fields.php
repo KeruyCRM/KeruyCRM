@@ -291,15 +291,10 @@ class Fields
         );*/
         //$v = db_fetch_array();
 
-        $mapper = \K::model()->mapper('app_fields');
-        $mapper->max_sort_order = 'max(sort_order)';
-        $value = $mapper->findone([
-                'forms_tabs_id = ?',
-                $forms_tabs_id
-            ]
-        );
-
-        $value = $value->cast();
+        $value = \K::model()->db_fetch_one('app_fields', [
+            'forms_tabs_id = ?',
+            $forms_tabs_id
+        ], [], null, ['max_sort_order' => 'max(sort_order)']);
 
         return $value['max_sort_order'];
     }
