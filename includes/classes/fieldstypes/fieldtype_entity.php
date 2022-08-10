@@ -247,7 +247,7 @@ class fieldtype_entity
         $cfg = new fields_types_cfg($field['configuration']);
 
         $entity_info = db_find('app_entities', $cfg->get('entity_id'));
-        $field_entity_info = db_find('app_entities', $field['entities_id']);
+        //$field_entity_info = db_find('app_entities', $field['entities_id']);
 
         //set value
         $value = (strlen($obj['field_' . $field['id']]) ? $obj['field_' . $field['id']] : '');
