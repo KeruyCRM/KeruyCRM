@@ -68,7 +68,9 @@ class Fieldtype_entity
         $cfg[] = ['title' => \K::$fw->TEXT_HIDE_PLUS_BUTTON, 'name' => 'hide_plus_button', 'type' => 'checkbox'];
 
         $cfg[] = [
-            'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
+            'title' => \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXT_DISPLAY_NAME_AS_LINK_INFO
+                ) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
             'name' => 'display_as_link',
             'type' => 'checkbox'
         ];
@@ -422,17 +424,6 @@ class Fieldtype_entity
 
     public function reports_query($options)
     {
-        $filters = $options['filters'];
-        $sql_query = $options['sql_query'];
-
-        $prefix = (strlen($options['prefix']) ? $options['prefix'] : 'e');
-
-        if (strlen($filters['filters_values']) > 0) {
-            $sql_query[] = "(select count(*) from app_entity_" . $options['entities_id'] . "_values as cv where cv.items_id=" . $prefix . ".id and cv.fields_id='" . db_input(
-                    $options['filters']['fields_id']
-                ) . "' and cv.value in (" . $filters['filters_values'] . ")) " . ($filters['filters_condition'] == 'include' ? '>0' : '=0');
-        }
-
-        return $sql_query;
+        return \Models\Main\Reports\Reports::getReportsQueryValues($options);
     }
 }

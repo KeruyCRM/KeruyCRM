@@ -1542,4 +1542,18 @@ class Reports
 
         return $sql_query;
     }
+
+    public static function getReportsQueryValues($options)
+    {
+        $filters = $options['filters'];
+        $sql_query = $options['sql_query'];
+
+        $prefix = (strlen($options['prefix']) ? $options['prefix'] : 'e');
+
+        if (strlen($filters['filters_values']) > 0) {
+            $sql_query[] = "(select count(*) from app_entity_" . (int)$options['entities_id'] . "_values as cv where cv.items_id = " . $prefix . ".id and cv.fields_id = " . (int)$options['filters']['fields_id'] . " and cv.value in (" . $filters['filters_values'] . ")) " . ($filters['filters_condition'] == 'include' ? ' > 0' : ' = 0');
+        }
+
+        return $sql_query;
+    }
 }
