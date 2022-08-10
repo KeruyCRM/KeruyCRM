@@ -372,9 +372,9 @@ switch ($app_module_action) {
 
                         case 'fieldtype_dropdown_multilevel':
                             if (strlen($value)) {
-                                $value_array = ($field_cfg->get('use_global_list') ? global_lists::get_paretn_ids(
+                                $value_array = ($field_cfg->get('use_global_list') ? global_lists::get_parent_ids(
                                     $value
-                                ) : fields_choices::get_paretn_ids($value));
+                                ) : fields_choices::get_parent_ids($value));
                                 $value = implode(',', array_reverse($value_array));
                             }
                             break;

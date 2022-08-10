@@ -316,7 +316,7 @@ class fields_choices
         return $html;
     }
 
-    public static function get_paretn_ids($id, $parents = [])
+    public static function get_parent_ids($id, $parents = [])
     {
         $choices_query = db_query(
             "select * from app_fields_choices where id = '" . db_input($id) . "' order by sort_order, name"
@@ -326,7 +326,7 @@ class fields_choices
             $parents[] = $v['id'];
 
             if ($v['parent_id'] > 0) {
-                $parents = self::get_paretn_ids($v['parent_id'], $parents);
+                $parents = self::get_parent_ids($v['parent_id'], $parents);
             }
         }
 
@@ -338,7 +338,7 @@ class fields_choices
         global $app_choices_cache;
 
         $parents = [];
-        foreach (self::get_paretn_ids($parent_id) as $id) {
+        foreach (self::get_parent_ids($parent_id) as $id) {
             $parents[] = $app_choices_cache[$id]['name'];
         }
 

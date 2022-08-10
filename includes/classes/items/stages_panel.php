@@ -266,7 +266,7 @@ class stages_panel
 
         $choices = [];
 
-        $parents_ids = fields_choices::get_paretn_ids($current_choice_id);
+        $parents_ids = fields_choices::get_parent_ids($current_choice_id);
         $exclude_ids = [];
         if (count($parents_ids)) {
             $parents_ids = array_reverse($parents_ids);
@@ -327,7 +327,7 @@ class stages_panel
 
         $choices = [];
 
-        $parents_ids = global_lists::get_paretn_ids($current_choice_id);
+        $parents_ids = global_lists::get_parent_ids($current_choice_id);
         $exclude_ids = [];
         if (count($parents_ids)) {
             $parents_ids = array_reverse($parents_ids);

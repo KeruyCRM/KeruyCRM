@@ -386,7 +386,7 @@ class xml_import
                                     if (isset($global_choices_parents_to_id[$value_id])) {
                                         $value_array = $global_choices_parents_to_id[$value_id];
                                     } else {
-                                        $value_array = global_lists::get_paretn_ids($value_id);
+                                        $value_array = global_lists::get_parent_ids($value_id);
 
                                         $global_choices_parents_to_id[$value_id] = $value_array;
                                     }
@@ -394,7 +394,7 @@ class xml_import
                                     if (isset($choices_parents_to_id[$field_id][$value_id])) {
                                         $value_array = $choices_parents_to_id[$field_id][$value_id];
                                     } else {
-                                        $value_array = fields_choices::get_paretn_ids($value_id);
+                                        $value_array = fields_choices::get_parent_ids($value_id);
 
                                         $choices_parents_to_id[$field_id][$value_id] = $value_array;
                                     }
