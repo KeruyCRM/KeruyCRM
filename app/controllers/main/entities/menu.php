@@ -129,6 +129,8 @@ class Menu extends \Controller
     public function delete()
     {
         if (\K::$fw->VERB == 'POST' and isset(\K::$fw->GET['id'])) {
+            \K::model()->begin();
+
             $obj = \K::model()->db_find('app_entities_menu', \K::$fw->GET['id']);
 
             \K::model()->db_delete_row('app_entities_menu', \K::$fw->GET['id']);
@@ -136,6 +138,8 @@ class Menu extends \Controller
             //db_query("update app_entities_menu set parent_id=0 where parent_id='" . _get::int('id') . "'");
 
             \K::model()->db_update('app_entities_menu', ['parent_id' => 0], ['parent_id = ?', \K::$fw->GET['id']]);
+
+            \K::model()->commit();
 
             \K::flash()->addMessage(sprintf(\K::$fw->TEXT_WARN_DELETE_SUCCESS, $obj['name']), 'success');
 
