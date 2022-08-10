@@ -1523,7 +1523,22 @@ class Reports
 
         $prefix = (strlen($options['prefix']) ? $options['prefix'] : 'e');
 
-        $sql_query[] = $prefix . '.field_' . $filters['fields_id'] . ($filters['filters_condition'] == 'include' ? ' in ' : ' not in ') . '(' . $filters['filters_values'] . ') ';
+        $sql_query[] = $prefix . '.field_' . (int)$filters['fields_id'] . ($filters['filters_condition'] == 'include' ? ' in ' : ' not in ') . '(' . $filters['filters_values'] . ') ';
+
+        return $sql_query;
+    }
+
+    public static function getReportsQueryBoolean($options)
+    {
+        $filters = $options['filters'];
+        $sql_query = $options['sql_query'];
+
+        $prefix = (strlen($options['prefix']) ? $options['prefix'] : 'e');
+
+        /*$sql_query[] = $prefix . '.field_' . $filters['fields_id'] . ($filters['filters_condition'] == 'include' ? ' = ' : ' != ') . "'" . $filters['filters_values'] . "'";*/
+
+        $sql_query[] = $prefix . '.field_' . (int)$filters['fields_id'] . ($filters['filters_condition'] == 'include' ? ' = ' : ' != ') . \K::model(
+            )->quote($filters['filters_values']);
 
         return $sql_query;
     }

@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -93,7 +97,7 @@ class Fieldtype_boolean
 
         $value = (strlen($obj['field_' . $field['id']]) > 0 ? $obj['field_' . $field['id']] : $default_id);
 
-        return select_tag('fields[' . $field['id'] . ']', $choices, $value, $attributes);
+        return \Helpers\Html::select_tag('fields[' . $field['id'] . ']', $choices, $value, $attributes);
     }
 
     public static function get_choices($field, $add_empty = false)
@@ -139,13 +143,11 @@ class Fieldtype_boolean
 
     public function process($options)
     {
-        global $app_changed_fields, $app_choices_cache;
-
         if (!$options['is_new_item']) {
             $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
-                $app_changed_fields[] = [
+                \K::$fw->app_changed_fields[] = [
                     'name' => $options['field']['name'],
                     'value' => self::get_boolean_value($options['field'], $options['value']),
                     'fields_id' => $options['field']['id'],
@@ -164,13 +166,6 @@ class Fieldtype_boolean
 
     public function reports_query($options)
     {
-        $filters = $options['filters'];
-        $sql_query = $options['sql_query'];
-
-        $prefix = (strlen($options['prefix']) ? $options['prefix'] : 'e');
-
-        $sql_query[] = $prefix . '.field_' . $filters['fields_id'] . ($filters['filters_condition'] == 'include' ? ' = ' : ' != ') . "'" . $filters['filters_values'] . "'";
-
-        return $sql_query;
+        return \Models\Main\Reports\Reports::getReportsQueryBoolean($options);
     }
 }

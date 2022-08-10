@@ -311,7 +311,7 @@ if (!defined('KERUY_CRM')) {
         )?>', {
             field_type: field_type,
             id: '<?= \K::$fw->obj["id"] ?>',
-            entities_id: '<?= \K::$fw->GET["entities_id"]?>'
+            entities_id: '<?= \K::$fw->GET["entities_id"] ?>'
         }, function (response, status, xhr) {
             if (status == "error") {
                 $(this).html('<div class="alert alert-error"><b>Error:</b> ' + xhr.status + ' ' + xhr.statusText + '<div>' + response + '</div></div>')

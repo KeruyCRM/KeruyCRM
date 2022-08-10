@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -63,7 +67,7 @@ class Fieldtype_boolean_checkbox
             $attributes['checked'] = 'checked';
         }
 
-        return '<div class="form-control-static"><div class="checkbox-list single-checkbox-fields_' . $field['id'] . '">' . input_checkbox_tag(
+        return '<div class="form-control-static"><div class="checkbox-list single-checkbox-fields_' . $field['id'] . '">' . \Helpers\Html::input_checkbox_tag(
                 'fields[' . $field['id'] . ']',
                 1,
                 $attributes
@@ -95,15 +99,13 @@ class Fieldtype_boolean_checkbox
 
     public function process($options)
     {
-        global $app_changed_fields, $app_choices_cache;
-
         $options['value'] = (($options['value'] == 1 or $options['value'] == 'true') ? 'true' : 'false');
 
         if (!$options['is_new_item']) {
             $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
-                $app_changed_fields[] = [
+                \K::$fw->app_changed_fields[] = [
                     'name' => $options['field']['name'],
                     'value' => self::get_boolean_value($options['field'], $options['value']),
                     'fields_id' => $options['field']['id'],
@@ -122,13 +124,6 @@ class Fieldtype_boolean_checkbox
 
     public function reports_query($options)
     {
-        $filters = $options['filters'];
-        $sql_query = $options['sql_query'];
-
-        $prefix = (strlen($options['prefix']) ? $options['prefix'] : 'e');
-
-        $sql_query[] = $prefix . '.field_' . $filters['fields_id'] . ($filters['filters_condition'] == 'include' ? ' = ' : ' != ') . "'" . $filters['filters_values'] . "'";
-
-        return $sql_query;
+        return \Models\Main\Reports\Reports::getReportsQueryBoolean($options);
     }
 }
