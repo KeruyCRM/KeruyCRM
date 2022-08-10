@@ -12,18 +12,23 @@ class Fields_choices
 
     public static function get_name_by_id($id)
     {
-        $obj = db_find('app_fields_choices', $id);
+        $obj = \K::model()->db_find('app_fields_choices', $id, 'id', 'name');
 
         return $obj['name'];
     }
 
     public static function get_default_id($fields_id)
     {
-        $obj_query = db_query(
-            "select * from app_fields_choices where fields_id = '" . db_input($fields_id) . "' and is_default=1 limit 1"
-        );
+        /*$obj_query = db_query(
+             "select * from app_fields_choices where fields_id = '" . db_input($fields_id) . "' and is_default=1 limit 1"
+         );*/
 
-        if ($obj = db_fetch_array($obj_query)) {
+        $obj = \K::model()->db_fetch_one('app_fields_choices', [
+            'fields_id = ? and is_default = 1',
+            $fields_id
+        ], [], 'id');
+
+        if ($obj) {
             return $obj['id'];
         } else {
             return 0;

@@ -22,8 +22,14 @@ class Global_lists
             $choices[''] = '';
         }
 
-        $groups_query = db_fetch_all('app_global_lists', '', 'name');
-        while ($v = db_fetch_array($groups_query)) {
+        //$groups_query = db_fetch_all('app_global_lists', '', 'name');
+
+        $groups_query = \K::model()->db_fetch('app_global_lists', [], ['order' => 'name'], 'id,name');
+
+        //while ($v = db_fetch_array($groups_query)) {
+        foreach ($groups_query as $v) {
+            $v = $v->cast();
+
             $choices[$v['id']] = $v['name'];
         }
 
@@ -32,27 +38,32 @@ class Global_lists
 
     public static function get_name_by_id($id)
     {
-        $item = db_find('app_global_lists', $id);
+        $item = \K::model()->db_find('app_global_lists', $id, 'id', 'name');
 
         return $item['name'];
     }
 
     public static function get_choices_name_by_id($id)
     {
-        $item = db_find('app_global_lists_choices', $id);
+        $item = \K::model()->db_find('app_global_lists_choices', $id, 'id', 'name');
 
         return $item['name'];
     }
 
     public static function get_choices_default_id($lists_id)
     {
-        $obj_query = db_query(
+        /*$obj_query = db_query(
             "select * from app_global_lists_choices where lists_id = '" . db_input(
                 $lists_id
             ) . "' and is_default=1 limit 1"
-        );
+        );*/
 
-        if ($obj = db_fetch_array($obj_query)) {
+        $obj = \K::model()->db_fetch_one('app_global_lists_choices', [
+            'lists_id = ? and is_default = 1',
+            $lists_id
+        ], [], 'id');
+
+        if ($obj) {
             return $obj['id'];
         } else {
             return 0;

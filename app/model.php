@@ -173,11 +173,11 @@ class Model extends \Prefab
         );
     }
 
-    public function db_find($table, $value, $column = 'id', $ttl = 0)
+    public function db_find($table, $value, $column = 'id', $fields = null, $ttl = 0)
     {
         $ttl = $this->getTTL($table, $ttl);
 
-        $mapper = $this->mapper($table);
+        $mapper = $this->mapper($table, $fields);
 
         $info_query = $mapper->findone(
             [$column . ' = ?', $value],
