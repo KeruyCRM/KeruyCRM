@@ -92,10 +92,17 @@ class Listing_types
 
     static function has_tree_table($entities_id)
     {
-        $check_query = db_query(
+        /*$check_query = db_query(
             "select id from app_listing_types where is_active=1 and type='tree_table' and entities_id='" . $entities_id . "'"
-        );
-        if ($check = db_fetch_array($check_query)) {
+        );*/
+
+        $check = \K::model()->db_fetch_one('app_listing_types', [
+            'is_active = 1 and type = ? and entities_id = ?',
+            'tree_table',
+            $entities_id
+        ], [], 'id');
+
+        if ($check) {
             return true;
         } else {
             return false;
@@ -104,33 +111,34 @@ class Listing_types
 
     static function get_sections_next_order($listing_types_id)
     {
-        $info_query = db_query(
+        /*$info_query = db_query(
             "select max(sort_order) as max_sort_order from app_listing_sections where listing_types_id={$listing_types_id}"
         );
-        $info = db_fetch_array($info_query);
+        $info = db_fetch_array($info_query);*/
+
+        $info = \K::model()->db_fetch_one('app_listing_sections', [
+            'listing_types_id = ?',
+            $listing_types_id
+        ], [], null, ['max_sort_order' => 'max(sort_order)']);
 
         return $info['max_sort_order'] + 1;
     }
 
     static function get_sections_align_choices()
     {
-        $choices = [
-            'left' => TEXT_ALIGN_LEFT,
-            'center' => TEXT_ALIGN_CENTER,
-            'right' => TEXT_ALIGN_RIGHT,
+        return [
+            'left' => \K::$fw->TEXT_ALIGN_LEFT,
+            'center' => \K::$fw->TEXT_ALIGN_CENTER,
+            'right' => \K::$fw->TEXT_ALIGN_RIGHT,
         ];
-
-        return $choices;
     }
 
     static function get_sections_display_choices()
     {
-        $choices = [
-            'list' => TEXT_TABLE,
-            'inline' => TEXT_INLINE_LIST,
+        return [
+            'list' => \K::$fw->TEXT_TABLE,
+            'inline' => \K::$fw->TEXT_INLINE_LIST,
         ];
-
-        return $choices;
     }
 
     static function get_sections_align_icon($align)

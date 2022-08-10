@@ -20,7 +20,7 @@ class Fieldtype_entity_ajax
             'name' => 'entity_id',
             'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_ENTITY_SELECT_ENTITY_TOOLTIP,
             'type' => 'dropdown',
-            'choices' => entities::get_choices(),
+            'choices' => \Models\Main\Entities::get_choices(),
             'params' => [
                 'class' => 'form-control input-xlarge',
                 'onChange' => 'fields_types_ajax_configuration(\'fields_for_search_box\',this.value)'
@@ -74,7 +74,9 @@ class Fieldtype_entity_ajax
         ];
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => \Helpers\App::tooltip_icon(TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
+            'title' => \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXT_DISPLAY_NAME_AS_LINK_INFO
+                ) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
             'name' => 'display_as_link',
             'type' => 'checkbox'
         ];
@@ -119,7 +121,7 @@ class Fieldtype_entity_ajax
             case 'fields_for_search_box':
                 $entities_id = $value;
 
-                if (listing_types::has_tree_table($entities_id)) {
+                if (\Models\Main\Listing_types::has_tree_table($entities_id)) {
                     $cfg[] = [
                         'title' => \K::$fw->TEXT_DISPLAY_AS . ' "' . \K::$fw->TEXT_TREE_TABLE . '"',
                         'name' => 'display_as_tree_table',
@@ -129,11 +131,17 @@ class Fieldtype_entity_ajax
 
                 $choices = [];
 
-                $fields_query = db_query(
-                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where is_heading = 0 and f.type not in ('fieldtype_action','fieldtype_parent_item_id') and  f.entities_id='" . $entities_id . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
+                $typeNotIn = \K::model()->quoteToString(['fieldtype_action', 'fieldtype_parent_item_id']);
+
+                $fields_query = \K::model()->db_query_exec(
+                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where is_heading = 0 and f.type not in (" . $typeNotIn . ") and  f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
+                    $entities_id,
+                    'app_fields,app_forms_tabs'
                 );
-                while ($fields = db_fetch_array($fields_query)) {
-                    $choices[$fields['id']] = fields_types::get_option(
+
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
+                    $choices[$fields['id']] = \Models\Main\Fields_types::get_option(
                             $fields['type'],
                             'name',
                             $fields['name']
@@ -155,12 +163,20 @@ class Fieldtype_entity_ajax
 
                 $choices = [];
 
-                $fields_query = db_query(
-                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (" . fields_types::get_types_for_search_list(
-                    ) . ") and  f.entities_id='" . $entities_id . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
+                $fields_query = \K::model()->db_query_exec(
+                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (" . \Models\Main\Fields_types::get_types_for_search_list(
+                    ) . ") and  f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
+                    $entities_id,
+                    'app_fields,app_forms_tabs'
                 );
-                while ($fields = db_fetch_array($fields_query)) {
-                    $choices[$fields['id']] = fields_types::get_option($fields['type'], 'name', $fields['name']);
+
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
+                    $choices[$fields['id']] = \Models\Main\Fields_types::get_option(
+                        $fields['type'],
+                        'name',
+                        $fields['name']
+                    );
                 }
 
                 $cfg[] = [
@@ -173,7 +189,7 @@ class Fieldtype_entity_ajax
                 ];
 
                 $cfg[] = [
-                    'title' => \K::$fw->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
+                    'title' => \K::$fw->TEXT_HEADING_TEMPLATE . \Models\Main\Fields::get_available_fields_helper(
                             $entities_id,
                             'fields_configuration_heading_template'
                         ),
@@ -186,15 +202,15 @@ class Fieldtype_entity_ajax
 
                 $cfg[] = [
                     'title' => \K::$fw->TEXT_COPY_VALUES .
-                        fields::get_available_fields_helper(
+                        \Models\Main\Fields::get_available_fields_helper(
                             $entities_id,
                             'fields_configuration_copy_values',
-                            entities::get_name_by_id($entities_id)
+                            \Models\Main\Entities::get_name_by_id($entities_id)
                         ) .
-                        '<div style="padding-top: 2px;">' . fields::get_available_fields_helper(
-                            $_POST['entities_id'],
+                        '<div style="padding-top: 2px;">' . \Models\Main\Fields::get_available_fields_helper(
+                            \K::$fw->POST['entities_id'],
                             'fields_configuration_copy_values',
-                            entities::get_name_by_id($_POST['entities_id'])
+                            \Models\Main\Entities::get_name_by_id(\K::$fw->POST['entities_id'])
                         ) . '</div>',
                     'name' => 'copy_values',
                     'type' => 'textarea',
@@ -213,10 +229,8 @@ class Fieldtype_entity_ajax
 
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
-        $entity_info = db_find('app_entities', $cfg->get('entity_id'));
-        $field_entity_info = db_find('app_entities', $field['entities_id']);
-
-        $add_empty = ($field['is_required'] == 1 ? false : true);
+        $entity_info = \K::model()->db_find('app_entities', $cfg->get('entity_id'));
+        $field_entity_info = \K::model()->db_find('app_entities', $field['entities_id']);
 
         $attributes = [
             'class' => 'form-control ' . $cfg->get(
@@ -227,7 +241,6 @@ class Fieldtype_entity_ajax
         if ($cfg->get('display_as') == 'dropdown_multiple') {
             $attributes['multiple'] = 'multiple';
             $attributes['data-placeholder'] = \K::$fw->TEXT_ENTER_VALUE;
-            $add_empty = false;
 
             $field_name = 'fields[' . $field['id'] . '][]';
         } else {
@@ -241,18 +254,26 @@ class Fieldtype_entity_ajax
         $html_on_change = '';
 
         if (strlen($value)) {
-            $listing_sql = "select  e.* from app_entity_" . $cfg->get('entity_id') . " e  where id in (" . $value . ")";
+           /* $listing_sql = "select  e.* from app_entity_" . $cfg->get('entity_id') . " e  where id in (" . $value . ")";
 
-            $items_query = db_query($listing_sql, false);
-            while ($item = db_fetch_array($items_query)) {
+            $items_query = db_query($listing_sql, false);*/
+
+            $items_query = \K::model()->db_fetch('app_entity_' . (int) $cfg->get('entity_id'),[
+                'id in (' . $value . ')'
+            ]);
+
+            //while ($item = db_fetch_array($items_query)) {
+            foreach ($items_query as $item){
+                $item = $item->cast();
+
                 $heading = self::render_heading_template($item, $entity_info, $field_entity_info, $cfg, false);
                 $choices[$item['id']] = $heading['text'];
             }
 
             if (isset($params['is_new_item']) and $params['is_new_item'] == 1 and is_numeric($value)) {
-                $html_on_change .= '$("#fields_' . $field['id'] . '_select2_on").load("' . url_for(
-                        'dashboard/select2_json',
-                        'action=copy_values&form_type=items/render_field_value&entity_id=' . $cfg->get(
+                $html_on_change .= '$("#fields_' . $field['id'] . '_select2_on").load("' . \Helpers\Urls::url_for(
+                        'main/dashboard/select2_json/copy_values',
+                        'form_type=items/render_field_value&entity_id=' . $cfg->get(
                             'entity_id'
                         ) . '&field_id=' . $field['id']
                     ) . '",{item_id:' . $value . '})' . "\n";
@@ -260,7 +281,6 @@ class Fieldtype_entity_ajax
         }
 
         //prepare button add
-
         $parent_entity_item_id = $params['parent_entity_item_id'];
         $parent_entity_item_is_the_same = false;
 
@@ -269,10 +289,11 @@ class Fieldtype_entity_ajax
             $parent_entity_item_is_the_same = true;
         }
 
+        //TODO $app_layout != 'public_layout.php'
         $button_add_html = '';
         if ($cfg->get(
                 'hide_plus_button'
-            ) != 1 and isset($current_path_array) and $app_action != 'account' and $app_action != 'comments_form' and $app_action != 'processes' and $app_layout != 'public_layout.php' and users::has_access_to_entity(
+            ) != 1 and isset($current_path_array) and $app_action != 'account' and $app_action != 'comments_form' and $app_action != 'processes' and $app_layout != 'public_layout.php' and \Models\Main\Users\Users::has_access_to_entity(
                 $cfg->get('entity_id'),
                 'create'
             ) and !isset($_GET['is_submodal']) and ($entity_info['parent_id'] == 0 or ($entity_info['parent_id'] > 0 and $parent_entity_item_is_the_same))) {
@@ -287,21 +308,19 @@ class Fieldtype_entity_ajax
                 $url_params .= '&path=' . implode('/', $path_array) . '/' . $cfg->get('entity_id');
             }
 
-            $submodal_url = url_for('items/form', $url_params);
+            $submodal_url = \Helpers\Urls::url_for('main/items/form', $url_params);
 
             $button_add_html = '<button type="button" class="btn btn-default btn-submodal-open btn-submodal-open-chosen" data-parent-entity-item-id="' . $parent_entity_item_id . '" data-field-id="' . $field['id'] . '" data-submodal-url="' . $submodal_url . '"><i class="fa fa-plus" aria-hidden="true"></i></button>';
         }
 
-        $html = '';
-
         if (strlen($button_add_html)) {
             $html = '
                 <div class="dropdown-with-plus-btn ' . $cfg->get('width') . '">
-                    <div class="left">' . select_tag($field_name, $choices, $value, $attributes) . '</div>
+                    <div class="left">' . \Helpers\Html::select_tag($field_name, $choices, $value, $attributes) . '</div>
                     <div class="right">' . $button_add_html . '</div>
                  </div>';
         } else {
-            $html = select_tag($field_name, $choices, $value, $attributes);
+            $html = \Helpers\Html::select_tag($field_name, $choices, $value, $attributes);
         }
 
         $html .= '<div id="fields_' . $field['id'] . '_select2_on"></div>';
@@ -310,9 +329,9 @@ class Fieldtype_entity_ajax
             $html_on_change .= '
     			$("#fields_' . $field['id'] . '").on("select2:select", function (e) {
       			var data = e.params.data;
-    				$("#fields_' . $field['id'] . '_select2_on").load("' . url_for(
-                    'dashboard/select2_json',
-                    'action=copy_values&form_type=' . $app_module_path . '&entity_id=' . $cfg->get(
+    				$("#fields_' . $field['id'] . '_select2_on").load("' . \Helpers\Urls::url_for(
+                    'main/dashboard/select2_json/copy_values',
+                    'form_type=' . $app_module_path . '&entity_id=' . $cfg->get(
                         'entity_id'
                     ) . '&field_id=' . $field['id']
                 ) . '",{item_id:data.id})	
@@ -320,7 +339,7 @@ class Fieldtype_entity_ajax
     			';
         }
 
-        //remove ruquired errro msg
+        //remove required error msg
         $html_on_change .= '
     			$("#fields_' . $field['id'] . '").change(function (e) {
                             $("#fields_' . $field['id'] . '-error").remove();

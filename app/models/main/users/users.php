@@ -101,7 +101,7 @@ class Users
             }
 
             if ($field_heading_id and $field_heading_id != 12) {
-                $name =  \Models\Main\Items\Items::get_heading_field_value($field_heading_id, $users);
+                $name = \Models\Main\Items\Items::get_heading_field_value($field_heading_id, $users);
             } else {
                 $name = (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? $users['field_7'] . ' ' . $users['field_8'] : $users['field_8'] . ' ' . $users['field_7']);
             }
@@ -656,8 +656,6 @@ class Users
 
     public static function has_access_to_entity($entities_id, $access, $access_groups_id = null)
     {
-        //global $app_user;
-
         $access_schema = [];
 
         if (!isset($access_groups_id)) {
@@ -668,12 +666,19 @@ class Users
             return true;
         }
 
-        $access_info_query = db_query(
+        /*$access_info_query = db_query(
             "select access_schema from app_entities_access where entities_id='" . db_input(
                 $entities_id
             ) . "' and access_groups_id='" . db_input($access_groups_id) . "'"
-        );
-        if ($access_info = db_fetch_array($access_info_query)) {
+        );*/
+
+        $access_info = \K::model()->db_fetch_one('app_entities_access', [
+            'entities_id = ? and access_groups_id = ?',
+            $entities_id,
+            $access_groups_id
+        ], [], 'access_schema');
+
+        if ($access_info) {
             $access_schema = explode(',', $access_info['access_schema']);
         }
 
@@ -682,9 +687,7 @@ class Users
 
     public static function has_access_to_assigned_item($entities_id, $items_id)
     {
-        //global $app_user;
-
-        //get users entiteis tree
+        //get users entities tree
         $users_entities_tree = entities::get_tree(1);
 
         //get users entities id list

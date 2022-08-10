@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -422,12 +426,12 @@ class Fieldtype_entity
         $output = [];
         $exp = explode(',', $options['value']);
         foreach ($exp as $item_id) {
-           /*$items_info_sql = "select e.* {$items_info_formula_sql} from app_entity_" . $cfg->get(
-                    'entity_id'
-                ) . " e where e.id='" . db_input($item_id) . "'";
-            $items_query = db_query($items_info_sql);*/
+            /*$items_info_sql = "select e.* {$items_info_formula_sql} from app_entity_" . $cfg->get(
+                     'entity_id'
+                 ) . " e where e.id='" . db_input($item_id) . "'";
+             $items_query = db_query($items_info_sql);*/
 
-            //TODO Add cache
+            //TODO Add cache?
             $item = \K::model()->db_query_exec_one(
                 "select e.* {$items_info_formula_sql} from app_entity_" . (int)$cfg->get(
                     'entity_id'
@@ -456,8 +460,8 @@ class Fieldtype_entity
                     if ($cfg->get('display_as_link') == 1) {
                         $path_info = \Models\Main\Items\Items::get_path_info($cfg->get('entity_id'), $item['id']);
 
-                        $name = '<a href="' . url_for(
-                                'items/info',
+                        $name = '<a href="' . \Helpers\Urls::url_for(
+                                'main/items/info',
                                 'path=' . $path_info['full_path']
                             ) . '">' . $name . '</a>';
                     }
