@@ -143,18 +143,7 @@ class Fieldtype_hours_difference
 
     public function reports_query($options)
     {
-        global $sql_query_having;
-
-        $filters = $options['filters'];
-        $sql_query = $options['sql_query'];
-
-        $sql = reports::prepare_numeric_sql_filters($filters, '');
-
-        if (count($sql) > 0) {
-            $sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
-        }
-
-        return $sql_query;
+        return \Models\Main\Reports\Reports::getReportsQueryHaving($options);
     }
 
     public static function prepare_procedure()

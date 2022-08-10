@@ -113,7 +113,7 @@ class Account extends \Controller
 
             $fields_values_cache = '';//FIX? but check
             if (\K::fw()->exists('POST.fields')) {
-                $fields_values_cache = \Tools\Items\Items::get_fields_values_cache(
+                $fields_values_cache =  \Models\Main\Items\Items::get_fields_values_cache(
                     \K::$fw->POST['fields'],
                     [\K::$fw->current_entity_id],
                     \K::$fw->current_entity_id

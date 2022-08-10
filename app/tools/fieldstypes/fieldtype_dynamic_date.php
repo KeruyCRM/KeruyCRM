@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -16,7 +20,7 @@ class Fieldtype_dynamic_date
         $cfg = [];
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => \K::$fw->TEXT_FORMULA . fields::get_available_fields_helper(
+            'title' => \K::$fw->TEXT_FORMULA . \Models\Main\Fields::get_available_fields_helper(
                     $_POST['entities_id'],
                     'fields_configuration_formula'
                 ),
@@ -31,7 +35,7 @@ class Fieldtype_dynamic_date
             'title' => \K::$fw->TEXT_DATE_FORMAT,
             'name' => 'date_format',
             'type' => 'input',
-            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . CFG_APP_DATE_FORMAT . ', ' . \K::$fw->TEXT_DATE_FORMAT_INFO,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->CFG_APP_DATE_FORMAT . ', ' . \K::$fw->TEXT_DATE_FORMAT_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 
@@ -65,12 +69,33 @@ class Fieldtype_dynamic_date
 
         $choices = ['' => ''];
 
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select * from app_fields where type in ('fieldtype_stages','fieldtype_dropdown','fieldtype_radioboxes','fieldtype_dropdown_multiple','fieldtype_tags','fieldtype_checkboxes','fieldtype_autostatus') and entities_id='" . db_input(
-                $_POST['entities_id']
+                \K::$fw->POST['entities_id']
             ) . "'"
+        );*/
+
+        $typeIn = \K::model()->quoteToString(
+            [
+                'fieldtype_stages',
+                'fieldtype_dropdown',
+                'fieldtype_radioboxes',
+                'fieldtype_dropdown_multiple',
+                'fieldtype_tags',
+                'fieldtype_checkboxes',
+                'fieldtype_autostatus'
+            ]
         );
-        while ($fields = db_fetch_array($fields_query)) {
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (' . $typeIn . ') and entities_id = ?',
+            \K::$fw->POST['entities_id']
+        ], [], 'id,name');
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $choices[$fields['id']] = $fields['name'];
         }
 
@@ -102,14 +127,23 @@ class Fieldtype_dynamic_date
         switch ($name) {
             case 'disable_color_by_field_values':
                 if (strlen($value)) {
-                    $field_query = db_query("select id, name, configuration from app_fields where id='" . $value . "'");
-                    if ($field = db_fetch_array($field_query)) {
+                    //$field_query = db_query("select id, name, configuration from app_fields where id='" . $value . "'");
+
+                    $field = \K::model()->db_fetch_one('app_fields', [
+                        'id = ?',
+                        $value
+                    ], [], 'id,name,configuration');
+
+                    if ($field) {
                         $field_cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
                         if ($field_cfg->get('use_global_list') > 0) {
-                            $choices = global_lists::get_choices($field_cfg->get('use_global_list'), false);
+                            $choices = \Models\Main\Global_lists::get_choices(
+                                $field_cfg->get('use_global_list'),
+                                false
+                            );
                         } else {
-                            $choices = fields_choices::get_choices($field['id'], false);
+                            $choices = \Models\Main\Fields_choices::get_choices($field['id'], false);
                         }
 
                         $cfg[] = [
@@ -142,9 +176,9 @@ class Fieldtype_dynamic_date
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if (isset($options['is_export']) and strlen($options['value']) > 0 and $options['value'] != 0) {
-            return format_date($options['value'], $cfg->get('date_format'));
+            return \Helpers\App::format_date($options['value'], $cfg->get('date_format'));
         } elseif (strlen($options['value']) > 0 and $options['value'] != 0) {
-            $html = format_date($options['value'], $cfg->get('date_format'));
+            $html = \Helpers\App::format_date($options['value'], $cfg->get('date_format'));
 
             //return simple value if color is disabled
             if (strlen($cfg->get('disable_color_by_field'))) {
@@ -166,9 +200,9 @@ class Fieldtype_dynamic_date
             if ((date('Y-m-d', $options['value']) == date('Y-m-d') or $options['value'] < time()) and strlen(
                     $cfg->get('background')
                 ) > 0) {
-                $html = render_bg_color_block(
+                $html = \Helpers\App::render_bg_color_block(
                     $cfg->get('background'),
-                    format_date($options['value'], $cfg->get('date_format'))
+                    \Helpers\App::format_date($options['value'], $cfg->get('date_format'))
                 );
             }
 
@@ -177,9 +211,9 @@ class Fieldtype_dynamic_date
                     $cfg->get('day_before_date_color')
                 ) > 0 and $options['value'] > time()) {
                 if ($options['value'] < strtotime('+' . $cfg->get('day_before_date') . ' day')) {
-                    $html = render_bg_color_block(
+                    $html = \Helpers\App::render_bg_color_block(
                         $cfg->get('day_before_date_color'),
-                        format_date($options['value'], $cfg->get('date_format'))
+                        \Helpers\App::format_date($options['value'], $cfg->get('date_format'))
                     );
                 }
             }
@@ -189,9 +223,9 @@ class Fieldtype_dynamic_date
                     $cfg->get('day_before_date2_color')
                 ) > 0 and $options['value'] > time()) {
                 if ($options['value'] < strtotime('+' . $cfg->get('day_before_date2') . ' day')) {
-                    $html = render_bg_color_block(
+                    $html = \Helpers\App::render_bg_color_block(
                         $cfg->get('day_before_date2_color'),
-                        format_date($options['value'], $cfg->get('date_format'))
+                        \Helpers\App::format_date($options['value'], $cfg->get('date_format'))
                     );
                 }
             }
@@ -205,15 +239,13 @@ class Fieldtype_dynamic_date
 
     public function reports_query($options)
     {
-        global $sql_query_having;
-
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = reports::prepare_dates_sql_filters($filters, false);
+        $sql = \Models\Main\Reports\Reports::prepare_dates_sql_filters($filters, false);
 
         if (count($sql) > 0) {
-            $sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
+            \K::$fw->sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
         }
 
         return $sql_query;
@@ -238,7 +270,7 @@ class Fieldtype_dynamic_date
                     'select e.* ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                         $entities_id,
                         ''
-                    ) . ' from app_entity_' . $entities_id . ' e where e.id = ?',
+                    ) . ' from app_entity_' . (int)$entities_id . ' e where e.id = ?',
                     $items_id
                 );
                 //$item_info = $item_info_query[0] ?? '';
@@ -254,7 +286,7 @@ class Fieldtype_dynamic_date
                 );*/
 
                 \K::model()->db_update('app_entity_' . $entities_id, [
-                    'field_' . $fields_id => $item_info['field_' . $fields_id]
+                    'field_' . (int)$fields_id => $item_info['field_' . $fields_id]
                 ], ['id = ?', $items_id]);
             }
 
@@ -266,20 +298,18 @@ class Fieldtype_dynamic_date
 
     public static function prepare_select_sql($field_info)
     {
-        global $app_not_formula_fields_cache, $app_formula_fields_cache, $app_user, $app_fields_cache;
-
         $cfg = new \Models\Main\Fields_types_cfg($field_info['configuration']);
 
         $formula = $cfg->get('formula');
 
         if (!strlen($formula)) {
-            return 'e.field_' . $field_info['id'];
+            return 'e.field_' . (int)$field_info['id'];
         }
 
         $formulas_fields = [];
 
-        foreach ($app_formula_fields_cache[$field_info['entities_id']] as $fields) {
-            $cfg = fields_types::parse_configuration($fields['configuration']);
+        foreach (\K::$fw->app_formula_fields_cache[$field_info['entities_id']] as $fields) {
+            $cfg = \Models\Main\Fields_types::parse_configuration($fields['configuration']);
 
             if (strlen($cfg['formula'])) {
                 $formulas_fields[$fields['id']] = '(' . $cfg['formula'] . ')';
@@ -287,41 +317,47 @@ class Fieldtype_dynamic_date
         }
 
         //prepare formula fields
-        $formula = fieldtype_formula::prepare_formula_fields($formulas_fields, $formula);
+        $formula = \Tools\FieldsTypes\Fieldtype_formula::prepare_formula_fields($formulas_fields, $formula);
 
-        //handle get_vallue()
-        $formula = fieldtype_formula::prepare_choices_get_value_function($field_info['entities_id'], $formula);
+        //handle get_value()
+        $formula = \Tools\FieldsTypes\Fieldtype_formula::prepare_choices_get_value_function(
+            $field_info['entities_id'],
+            $formula
+        );
 
         //prepare parent items values
-        $formula = fieldtype_formula::prepare_parent_entity_item_value($field_info['entities_id'], $formula);
+        $formula = \Tools\FieldsTypes\Fieldtype_formula::prepare_parent_entity_item_value(
+            $field_info['entities_id'],
+            $formula
+        );
 
         //prepare [TODAY]
-        $formula = str_replace('[TODAY]', get_date_timestamp(date('Y-m-d')), $formula);
+        $formula = str_replace('[TODAY]', \Helpers\App::get_date_timestamp(date('Y-m-d')), $formula);
 
         $formula = str_replace('[id]', 'e.id', $formula);
         $formula = str_replace('[date_added]', 'e.date_added', $formula);
         $formula = str_replace('[created_by]', 'e.created_by', $formula);
         $formula = str_replace('[parent_item_id]', 'e.parent_item_id', $formula);
-        $formula = str_replace('[current_user_id]', $app_user['id'], $formula);
+        $formula = str_replace('[current_user_id]', \K::$fw->app_user['id'], $formula);
 
-        $available_fields = $app_not_formula_fields_cache[$field_info['entities_id']];
+        $available_fields = \K::$fw->app_not_formula_fields_cache[$field_info['entities_id']];
         foreach ($available_fields as $fields_id) {
-            //hander mysql qeury field type in formula
+            //handler mysql query field type in formula
             if (strstr(
                     $formula,
                     '[' . $fields_id . ']'
-                ) and $app_fields_cache[$field_info['entities_id']][$fields_id]['type'] == 'fieldtype_mysql_query') {
+                ) and \K::$fw->app_fields_cache[$field_info['entities_id']][$fields_id]['type'] == 'fieldtype_mysql_query') {
                 $formula = str_replace(
                     '[' . $fields_id . ']',
-                    fieldtype_mysql_query::prepare_query(
-                        $app_fields_cache[$field_info['entities_id']][$fields_id],
+                    \Tools\FieldsTypes\Fieldtype_mysql_query::prepare_query(
+                        \K::$fw->app_fields_cache[$field_info['entities_id']][$fields_id],
                         'e',
                         true
                     ),
                     $formula
                 );
             } else {
-                $formula = str_replace('[' . $fields_id . ']', 'e.field_' . $fields_id, $formula);
+                $formula = str_replace('[' . $fields_id . ']', 'e.field_' . (int)$fields_id, $formula);
             }
         }
 

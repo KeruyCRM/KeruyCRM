@@ -1044,6 +1044,7 @@ class Fields
             \Models\Main\Fields_types::get_reserved_data_types(),
             \Models\Main\Fields_types::get_users_types()
         );
+
         $reserved_fields_types_list = \K::model()->quoteToString($reserved_fields_types);
 
         return \K::model()->db_query_exec(

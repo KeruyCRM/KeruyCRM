@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -28,12 +32,24 @@ class Fieldtype_days_difference
         $choices = [];
         $choices['today'] = '[' . \K::$fw->TEXT_CURRENT_DATE . ']';
         $choices['date_added'] = '[' . \K::$fw->TEXT_DATE_ADDED . ']';
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select * from app_fields where type in ('fieldtype_input_date','fieldtype_input_datetime','fieldtype_dynamic_date') and entities_id='" . db_input(
                 $_POST['entities_id']
             ) . "'"
+        );*/
+        $typeIn = \K::model()->quoteToString(
+            ['fieldtype_input_date', 'fieldtype_input_datetime', 'fieldtype_dynamic_date']
         );
-        while ($fields = db_fetch_array($fields_query)) {
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (' . $typeIn . ') and entities_id = ?',
+            \K::$fw->POST['entities_id']
+        ], [], 'id,name');
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $choices[$fields['id']] = $fields['name'];
         }
 
@@ -45,6 +61,7 @@ class Fieldtype_days_difference
             'choices' => $choices,
             'params' => ['class' => 'form-control input-large chosen-select required']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_END_DATE,
             'name' => 'end_date',
@@ -53,7 +70,9 @@ class Fieldtype_days_difference
             'choices' => $choices,
             'params' => ['class' => 'form-control input-large chosen-select required']
         ];
+
         $cfg[] = ['title' => \K::$fw->TEXT_EXCLUDE_LAST_DAY, 'name' => 'exclude_last_day', 'type' => 'checkbox'];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_EXCLUDE_WEEK_DAYS,
             'name' => 'exclude_days',
@@ -62,6 +81,7 @@ class Fieldtype_days_difference
             'choices' => \Helpers\App::app_get_mysql_days_choices(),
             'params' => ['class' => 'form-control input-xlarge chosen-select', 'multiple' => 'multiple']
         ];
+
         $cfg[] = ['title' => \K::$fw->TEXT_EXCLUDE_HOLIDAYS, 'name' => 'exclude_holidays', 'type' => 'checkbox'];
 
         $cfg[] = [
@@ -69,6 +89,7 @@ class Fieldtype_days_difference
             'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
@@ -81,6 +102,7 @@ class Fieldtype_days_difference
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
@@ -110,25 +132,12 @@ class Fieldtype_days_difference
         $value = $options['value'];
 
         //add prefix and sufix
-        $value = (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
-
-        return $value;
+        return (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
     }
 
     public function reports_query($options)
     {
-        global $sql_query_having;
-
-        $filters = $options['filters'];
-        $sql_query = $options['sql_query'];
-
-        $sql = reports::prepare_numeric_sql_filters($filters, '');
-
-        if (count($sql) > 0) {
-            $sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
-        }
-
-        return $sql_query;
+        return \Models\Main\Reports\Reports::getReportsQueryHaving($options);
     }
 
     public static function prepare_procedure()
@@ -204,10 +213,8 @@ END;";
 
     public static function prepare_query_select($entities_id, $listing_sql_query_select, $prefix = 'e')
     {
-        global $app_fields_cache;
-
-        if (isset($app_fields_cache[$entities_id])) {
-            foreach ($app_fields_cache[$entities_id] as $fields) {
+        if (isset(\K::$fw->app_fields_cache[$entities_id])) {
+            foreach (\K::$fw->app_fields_cache[$entities_id] as $fields) {
                 if ($fields['type'] == 'fieldtype_days_difference') {
                     $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
@@ -235,15 +242,15 @@ END;";
 
         //skip dynamic query
         if (isset($cfg->cfg['dynamic_query']) and $cfg->get('dynamic_query') != 1 and !$force_query) {
-            return $prefix . '.field_' . $fields['id'];
+            return $prefix . '.field_' . (int)$fields['id'];
         }
 
         $start_date_field = ($cfg->get('start_date') == 'today' ? time() : ($cfg->get(
             'start_date'
-        ) == 'date_added' ? $prefix . '.date_added' : $prefix . '.field_' . $cfg->get('start_date')));
+        ) == 'date_added' ? $prefix . '.date_added' : $prefix . '.field_' . (int)$cfg->get('start_date')));
         $end_date_field = ($cfg->get('end_date') == 'today' ? time() : ($cfg->get(
             'end_date'
-        ) == 'date_added' ? $prefix . '.date_added' : $prefix . '.field_' . $cfg->get('end_date')));
+        ) == 'date_added' ? $prefix . '.date_added' : $prefix . '.field_' . (int)$cfg->get('end_date')));
         $exclude_days = (is_array($cfg->get('exclude_days')) ? implode(',', $cfg->get('exclude_days')) : '');
         if ($single_select) {
             $mysql_query = "(keruycrm_days_diff(" . $start_date_field . "," . $end_date_field . ",'" . $exclude_days . "','" . $cfg->get(
@@ -252,7 +259,7 @@ END;";
         } else {
             $mysql_query = "keruycrm_days_diff(" . $start_date_field . "," . $end_date_field . ",'" . $exclude_days . "','" . $cfg->get(
                     'exclude_last_day'
-                ) . "','" . $cfg->get('exclude_holidays') . "') as field_" . $fields['id'];
+                ) . "','" . $cfg->get('exclude_holidays') . "') as field_" . (int)$fields['id'];
         }
 
         return $mysql_query;
@@ -275,7 +282,7 @@ END;";
                                 'e',
                                 false,
                                 true
-                            ) . " from app_entity_{$entities_id} e where e.id = ?",
+                            ) . " from app_entity_" . (int)$entities_id . " e where e.id = ?",
                             $items_id
                         );
                         //$item_info = $item_info_query[0] ?? '';
@@ -287,8 +294,8 @@ END;";
                                 $items_id
                             ) . "'"
                         );*/
-                        \K::model()->db_update('app_entity_' . $entities_id, [
-                            'field_' . $fields_id => $item_info['field_' . $fields_id]
+                        \K::model()->db_update('app_entity_' . (int)$entities_id, [
+                            'field_' . (int)$fields_id => $item_info['field_' . $fields_id]
                         ], ['id = ?', $items_id]);
                     }
                 }

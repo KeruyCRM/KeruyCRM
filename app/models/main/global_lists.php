@@ -294,28 +294,29 @@ class Global_lists
 
     public static function render_value_with_parents($values = [], $is_export = false, $separator = '')
     {
-        global $app_global_choices_cache;
-
         if (!is_array($values)) {
             $values = explode(',', $values);
         }
 
         $html = '';
         foreach ($values as $id) {
-            if (!isset($app_global_choices_cache[$id])) {
+            if (!isset(\K::$fw->app_global_choices_cache[$id])) {
                 continue;
             }
 
             $name = self::get_parents_names(
-                    $app_global_choices_cache[$id]['parent_id'],
+                    \K::$fw->app_global_choices_cache[$id]['parent_id'],
                     $separator
-                ) . $app_global_choices_cache[$id]['name'];
+                ) . \K::$fw->app_global_choices_cache[$id]['name'];
 
-            if (isset($app_global_choices_cache[$id])) {
+            if (isset(\K::$fw->app_global_choices_cache[$id])) {
                 if ($is_export) {
                     $html .= (strlen($html) == 0 ? $name : ', ' . $name);
-                } elseif (strlen($app_global_choices_cache[$id]['bg_color']) > 0) {
-                    $html .= render_bg_color_block($app_global_choices_cache[$id]['bg_color'], $name);
+                } elseif (strlen(\K::$fw->app_global_choices_cache[$id]['bg_color']) > 0) {
+                    $html .= \Helpers\App::render_bg_color_block(
+                        \K::$fw->app_global_choices_cache[$id]['bg_color'],
+                        $name
+                    );
                 } else {
                     $html .= '<div>' . $name . '</div>';
                 }
@@ -325,7 +326,7 @@ class Global_lists
         return $html;
     }
 
-    public static function get_paretn_ids($id, $parents = [])
+    public static function get_parent_ids($id, $parents = [])
     {
         $choices_query = db_query(
             "select * from app_global_lists_choices where id = '" . db_input($id) . "' order by sort_order, name"
@@ -335,7 +336,7 @@ class Global_lists
             $parents[] = $v['id'];
 
             if ($v['parent_id'] > 0) {
-                $parents = self::get_paretn_ids($v['parent_id'], $parents);
+                $parents = self::get_parent_ids($v['parent_id'], $parents);
             }
         }
 
@@ -347,7 +348,7 @@ class Global_lists
         global $app_global_choices_cache;
 
         $parents = [];
-        foreach (self::get_paretn_ids($parent_id) as $id) {
+        foreach (self::get_parent_ids($parent_id) as $id) {
             $parents[] = $app_global_choices_cache[$id]['name'];
         }
 

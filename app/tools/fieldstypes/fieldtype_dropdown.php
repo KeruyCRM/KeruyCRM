@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -61,7 +65,7 @@ class Fieldtype_dropdown
         ];
 
         //cfg global list if exist
-        if (count($choices = global_lists::get_lists_choices()) > 0) {
+        if (count($choices = \Models\Main\Global_lists::get_lists_choices()) > 0) {
             $cfg[\K::$fw->TEXT_SETTINGS][] = [
                 'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
@@ -112,9 +116,9 @@ class Fieldtype_dropdown
             'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
         ];
 
-//use global lists if exsit    
+        //use global lists if exist
         if ($cfg->get('use_global_list') > 0) {
-            $choices = global_lists::get_choices(
+            $choices = \Models\Main\Global_lists::get_choices(
                 $cfg->get('use_global_list'),
                 (($field['is_required'] == 0 or strlen($cfg->get('default_text')) > 0) ? true : false),
                 $cfg->get('default_text'),
@@ -122,9 +126,9 @@ class Fieldtype_dropdown
                 true,
                 $cfg->get('display_choices_values')
             );
-            $default_id = global_lists::get_choices_default_id($cfg->get('use_global_list'));
+            $default_id = \Models\Main\Global_lists::get_choices_default_id($cfg->get('use_global_list'));
         } else {
-            $choices = fields_choices::get_choices(
+            $choices = \Models\Main\Fields_choices::get_choices(
                 $field['id'],
                 (($field['is_required'] == 0 or strlen($cfg->get('default_text')) > 0) ? true : false),
                 $cfg->get('default_text'),
@@ -132,34 +136,32 @@ class Fieldtype_dropdown
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = fields_choices::get_default_id($field['id']);
+            $default_id = \Models\Main\Fields_choices::get_default_id($field['id']);
         }
 
         $value = ($obj['field_' . $field['id']] > 0 ? $obj['field_' . $field['id']] : ($params['form'] == 'comment' ? '' : $default_id));
 
-        return select_tag(
+        return \Helpers\Html::select_tag(
                 'fields[' . $field['id'] . ']',
                 $choices,
                 $value,
                 $attributes
-            ) . fields_types::custom_error_handler($field['id']);
+            ) . \Models\Main\Fields_types::custom_error_handler($field['id']);
     }
 
     public function process($options)
     {
-        global $app_changed_fields, $app_choices_cache, $app_global_choices_cache;
-
         if (!$options['is_new_item']) {
             $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] > 0 and $options['value'] != $options['current_field_value'] and $cfg->get(
                     'notify_when_changed'
                 ) == 1) {
-                $app_changed_fields[] = [
+                \K::$fw->app_changed_fields[] = [
                     'name' => $options['field']['name'],
                     'value' => ($cfg->get(
                         'use_global_list'
-                    ) > 0 ? $app_global_choices_cache[$options['value']]['name'] : $app_choices_cache[$options['value']]['name']),
+                    ) > 0 ? \K::$fw->app_global_choices_cache[$options['value']]['name'] : \K::$fw->app_choices_cache[$options['value']]['name']),
                     'fields_id' => $options['field']['id'],
                     'fields_value' => $options['value'],
                 ];
@@ -176,25 +178,23 @@ class Fieldtype_dropdown
         if ($cfg->get('display_parent_name') == 1) {
             //render global list value
             if ($cfg->get('use_global_list') > 0) {
-                return global_lists::render_value_with_parents(
+                return \Models\Main\Global_lists::render_value_with_parents(
                     $options['value'],
                     false,
                     $cfg->get('parent_name_separator')
                 );
             } else {
-                return fields_choices::render_value_with_parents(
+                return \Models\Main\Fields_choices::render_value_with_parents(
                     $options['value'],
                     false,
                     $cfg->get('parent_name_separator')
                 );
             }
-        } else {
+        } elseif ($cfg->get('use_global_list') > 0) {
             //render global list value
-            if ($cfg->get('use_global_list') > 0) {
-                return global_lists::render_value($options['value']);
-            } else {
-                return fields_choices::render_value($options['value']);
-            }
+            return \Models\Main\Global_lists::render_value($options['value']);
+        } else {
+            return \Models\Main\Fields_choices::render_value($options['value']);
         }
     }
 

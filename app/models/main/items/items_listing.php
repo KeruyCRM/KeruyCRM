@@ -1,8 +1,9 @@
 <?php
 
-class items_listing
-{
+namespace Models\Main\Items;
 
+class Items_listing
+{
     private $fields_in_listing;
     private $entities_id;
     public $rows_per_page;
@@ -11,7 +12,7 @@ class items_listing
     public $entity_cfg;
     public $reports_info;
 
-    function __construct($reports_id, $entity_cfg = false)
+    public function __construct($reports_id, $entity_cfg = false)
     {
         $reports_info = db_find('app_reports', $reports_id);
 
@@ -39,15 +40,14 @@ class items_listing
             "select settings from app_listing_types where  type='" . $this->listing_type . "' and entities_id='" . $this->entities_id . "' and is_active=1"
         );
         if ($listing_types = db_fetch_array($listing_types_query)) {
-            $this->settings = new settings($listing_types['settings']);
+            $this->settings = new \Tools\Settings($listing_types['settings']);
         } else {
-            $this->settings = new settings('');
+            $this->settings = new \Tools\Settings('');
         }
 
         if (!strlen($this->fields_in_listing) and is_array($this->settings->get('fields_in_listing'))) {
             $this->fields_in_listing = implode(',', $this->settings->get('fields_in_listing'));
         }
-
 
         if (!$entity_cfg) {
             $this->entity_cfg = new entities_cfg($reports_info['entities_id']);
@@ -56,7 +56,7 @@ class items_listing
         }
     }
 
-    function get_fields_query()
+    public function get_fields_query()
     {
         if (strlen($this->fields_in_listing) > 0) {
             $sql = "select f.*,if(length(f.short_name)>0,f.short_name,f.name) as name, f.name as long_name  from app_fields f where f.id in (" . $this->fields_in_listing . ") and  f.entities_id='" . db_input(
@@ -71,7 +71,7 @@ class items_listing
         return $sql;
     }
 
-    function get_listing_type()
+    public function get_listing_type()
     {
         if (is_mobile()) {
             if (listing_types::has_mobile($this->entities_id)) {
@@ -82,7 +82,7 @@ class items_listing
         return (strlen($this->listing_type) ? $this->listing_type : listing_types::get_default($this->entities_id));
     }
 
-    function get_listing_type_info($type)
+    public function get_listing_type_info($type)
     {
         $listing_type = [];
         $sections = [];
@@ -124,7 +124,7 @@ class items_listing
         return $listing_type;
     }
 
-    function is_resizable()
+    public function is_resizable()
     {
         if ($this->listing_type == 'tree_table') {
             return (int)$this->settings->get('change_col_width_in_listing');
@@ -133,7 +133,7 @@ class items_listing
         }
     }
 
-    function get_listing_col_width($field_id)
+    public function get_listing_col_width($field_id)
     {
         global $app_fields_cache;
 
@@ -158,7 +158,7 @@ class items_listing
         }
     }
 
-    function resizable_table_widht()
+    public function resizable_table_widht()
     {
         if (!$this->is_resizable()) {
             return '';
@@ -179,7 +179,7 @@ class items_listing
         return $html;
     }
 
-    function select_all_choices($number_of_pages)
+    public function select_all_choices($number_of_pages)
     {
         $html = '';
         if ($number_of_pages == 1) {
@@ -199,16 +199,16 @@ class items_listing
                     ['class' => 'select_all_items_current_page']
                 ) . '</span>    
                 <div class="btn-group">
-                    <button class="btn dropdown-toggle btn-select-all" type="button" data-toggle="dropdown" data-hover="dropdown" title="' . TEXT_SELECT_ALL . '" aria-expanded="false"><i class="fa fa-angle-down"></i></button>
+                    <button class="btn dropdown-toggle btn-select-all" type="button" data-toggle="dropdown" data-hover="dropdown" title="' . \K::$fw->TEXT_SELECT_ALL . '" aria-expanded="false"><i class="fa fa-angle-down"></i></button>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a href="javascript: handle_itmes_select_all(\'' . $listing_container . '\')">' . TEXT_SELECT_ALL_RECORDS . '</a>
+                            <a href="javascript: handle_itmes_select_all(\'' . $listing_container . '\')">' . \K::$fw->TEXT_SELECT_ALL_RECORDS . '</a>
                         </li>
                         <li>
-                            <a href="javascript: handle_itmes_select_currnt_page(\'' . $listing_container . '\')">' . TEXT_ON_CURRENT_PAGE_ONLY . '</a>
+                            <a href="javascript: handle_itmes_select_currnt_page(\'' . $listing_container . '\')">' . \K::$fw->TEXT_ON_CURRENT_PAGE_ONLY . '</a>
                         </li>
                         <li>
-                            <a href="javascript: handle_itmes_select_reset(\'' . $listing_container . '\')">' . TEXT_RESET_SELECTION . '</a>
+                            <a href="javascript: handle_itmes_select_reset(\'' . $listing_container . '\')">' . \K::$fw->TEXT_RESET_SELECTION . '</a>
                         </li>
                     </ul>
                 </div>
@@ -217,5 +217,4 @@ class items_listing
 
         return $html;
     }
-
 }

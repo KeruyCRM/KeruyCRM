@@ -118,7 +118,7 @@ class Favorites
                     <a href="' . \Helpers\Urls::url_for(
                     'main/items/info',
                     'path=' . $favorites['entities_id'] . '-' . $favorites['items_id']
-                ) . '">' . \Tools\Items\Items::get_heading_field(
+                ) . '">' .  \Models\Main\Items\Items::get_heading_field(
                     $favorites['entities_id'],
                     $favorites['items_id']
                 ) . ' <span class="parent-name"><i class="fa fa-angle-left"></i> ' . $favorites['entity_name'] . '</span></a>

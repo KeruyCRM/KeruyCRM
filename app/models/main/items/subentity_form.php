@@ -4,24 +4,30 @@ namespace Models\Main\Items;
 
 class Subentity_form
 {
-    function __construct($entities_id, $items_id, $field_id)
+    public $entities_id;
+    public $items_id;
+    public $cfg;
+    public $field_id;
+    public $field_name;
+
+    public function __construct($entities_id, $items_id, $field_id)
     {
         global $app_fields_cache;
 
         $this->entities_id = $entities_id;
         $this->items_id = ($items_id > 0 ? $items_id : false);
-        $this->cfg = new fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
+        $this->cfg = new \Models\Main\Fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
         $this->field_id = $field_id;
         $this->field_name = $app_fields_cache[$entities_id][$field_id]['name'];
     }
 
-    function render_button()
+    public function render_button()
     {
         global $app_path, $app_items_form_name, $public_form;
 
         $html = '';
 
-        $button_title = (strlen($this->cfg->get('button_title')) ? $this->cfg->get('button_title') : TEXT_ADD);
+        $button_title = (strlen($this->cfg->get('button_title')) ? $this->cfg->get('button_title') : \K::$fw->TEXT_ADD);
         $btn_css = 'btn-color-' . $this->field_id;
 
         if (strlen($this->cfg->get('button_icon'))) {
@@ -76,7 +82,7 @@ class Subentity_form
         return $html;
     }
 
-    function render_js()
+    public function render_js()
     {
         $html = '
             <script>
@@ -111,7 +117,7 @@ class Subentity_form
             
             function subentity_form' . $this->field_id . '_remove(rows_count,item_id)
             {
-                if(confirm("' . addslashes(TEXT_ARE_YOU_SURE) . '"))
+                if(confirm("' . addslashes(\K::$fw->TEXT_ARE_YOU_SURE) . '"))
                 {
                     $("#subentity_form' . $this->field_id . ' #suentity_form_row_"+rows_count).remove();
                     $(window).resize();
@@ -131,7 +137,7 @@ class Subentity_form
             
             function subentity_form' . $this->field_id . '_itemrow_remove(row)
             {
-                if(confirm("' . addslashes(TEXT_ARE_YOU_SURE) . '"))
+                if(confirm("' . addslashes(\K::$fw->TEXT_ARE_YOU_SURE) . '"))
                 {
                     $("#subentity_form' . $this->field_id . ' #itemrow_"+row).remove();
                     $(window).resize();
@@ -174,7 +180,7 @@ class Subentity_form
         return $html;
     }
 
-    function render_form($rows_count, $form_item_id = false)
+    public function render_form($rows_count, $form_item_id = false)
     {
         switch ($this->cfg->get('fields_display')) {
             case 'column':
@@ -186,7 +192,7 @@ class Subentity_form
         }
     }
 
-    function render_form_column($rows_count, $form_item_id = false)
+    public function render_form_column($rows_count, $form_item_id = false)
     {
         $form_fields = $this->get_form_fields($rows_count, $form_item_id);
 
@@ -200,7 +206,7 @@ class Subentity_form
                 'has_count'
             ) == 1 ? ' <span>' . $rows_count . '</span>' : '') . '</h3>
            <button onClick="subentity_form' . $this->field_id . '_remove(' . $rows_count . ',' . $form_item_id . ')"  type="button" class="btn btn-default btn-subentity-form-remove" title="' . addslashes(
-                TEXT_DELETE
+                \K::$fw->TEXT_DELETE
             ) . '"><i class="las la-times"></i></button>
            ';
 
@@ -209,7 +215,7 @@ class Subentity_form
                 <div class="row form-group form-group-' . $field['id'] . ' form-group-' . $field['type'] . '">
 	          	<label class="col-md-3 control-label" for="fields_' . $field['id'] . '">' .
                 ($field['is_required'] == 1 ? '<span class="required-label">*</span>' : '') .
-                ($field['tooltip_display_as'] == 'icon' ? tooltip_icon($field['tooltip']) : '') .
+                ($field['tooltip_display_as'] == 'icon' ? \Helpers\App::tooltip_icon($field['tooltip']) : '') .
                 $field['name'] .
                 '</label>
 	            <div class="col-md-9">	
@@ -227,7 +233,7 @@ class Subentity_form
         return $html;
     }
 
-    function render_form_row($rows_count, $form_item_id = false)
+    public function render_form_row($rows_count, $form_item_id = false)
     {
         $form_fields = $this->get_form_fields($rows_count, $form_item_id);
 
@@ -251,7 +257,7 @@ class Subentity_form
                 <div class="col-md-3 form-group-' . $field['id'] . ' form-group-' . $field['type'] . '" ' . ((isset($column_width[$k]) and $column_width[$k] > 0) ? 'style="width: ' . $column_width[$k] . '%"' : '') . '>
 	          	<label class="control-label" for="fields_' . $field['id'] . '">' .
                 ($field['is_required'] == 1 ? '<span class="required-label">*</span>' : '') .
-                ($field['tooltip_display_as'] == 'icon' ? tooltip_icon($field['tooltip']) : '') .
+                ($field['tooltip_display_as'] == 'icon' ? \Helpers\App::tooltip_icon($field['tooltip']) : '') .
                 $field['name'] .
                 '</label>
 	            <div>	
@@ -266,7 +272,7 @@ class Subentity_form
                     </div>
                 </td>
                 <td class="control-label"><button onClick="subentity_form' . $this->field_id . '_remove(' . $rows_count . ',' . $form_item_id . ')"  type="button" class="btn btn-default btn-subentity-form-row-remove" title="' . addslashes(
-                TEXT_DELETE
+                \K::$fw->TEXT_DELETE
             ) . '"><i class="las la-times"></i></button></td>
                 </tr>
            </table>
@@ -277,7 +283,7 @@ class Subentity_form
         return $html;
     }
 
-    function get_form_fields($rows_count, $form_item_id = false)
+    public function get_form_fields($rows_count, $form_item_id = false)
     {
         $fields_in_form = (is_array($this->cfg->get('fields_in_form')) ? implode(
             ',',
@@ -371,7 +377,7 @@ class Subentity_form
         return $form_fields;
     }
 
-    function save_form()
+    public function save_form()
     {
         switch ($this->cfg->get('fields_display')) {
             case 'column':
@@ -392,7 +398,7 @@ class Subentity_form
         }
     }
 
-    function save_form_post($subentityform)
+    public function save_form_post($subentityform)
     {
         //TODO Add Transaction
         $current_entity_id = $this->cfg->get('entity_id');
@@ -504,7 +510,7 @@ class Subentity_form
         }
     }
 
-    function render_items()
+    public function render_items()
     {
         global $app_subentity_form_items;
 
@@ -549,7 +555,7 @@ class Subentity_form
         }
     }
 
-    function render_items_list()
+    public function render_items_list()
     {
         if (!$this->items_id) {
             return ['rows_count' => 0, 'html' => ''];
@@ -568,7 +574,7 @@ class Subentity_form
         return ['rows_count' => $rows_count, 'html' => $html];
     }
 
-    function render_items_listing_preview()
+    public function render_items_listing_preview()
     {
         global $app_subentity_form_items;
 
@@ -586,7 +592,7 @@ class Subentity_form
         }
     }
 
-    function get_listing_fields()
+    public function get_listing_fields()
     {
         $fields_in_listing = (is_array($this->cfg->get('fields_in_listing')) ? implode(
             ',',
@@ -611,7 +617,7 @@ class Subentity_form
         return $listing_fields;
     }
 
-    function render_items_listing_table()
+    public function render_items_listing_table()
     {
         global $app_subentity_form_items, $app_path, $app_items_form_name;
 
@@ -679,7 +685,7 @@ class Subentity_form
             $edit_button = '<button type="button" class="btn btn-default btn-xs purple btn-submodal-open" data-parent-entity-item-id="" data-field-id="" data-submodal-url="' . $submodal_url . '"><i class="fa fa-edit"></i></button>';
 
             $html .= '<td style="white-space:nowrap">' . $edit_button . ' <button onClick="subentity_form' . $this->field_id . '_itemrow_remove(\'' . $row . '\')"  type="button" class="btn btn-default btn-xs purple" title="' . addslashes(
-                    TEXT_DELETE
+                    \K::$fw->TEXT_DELETE
                 ) . '"><i class="fa fa-times" aria-hidden="true"></i></button></td>';
 
             $html .= '</tr>';
@@ -693,7 +699,7 @@ class Subentity_form
         return ['rows_count' => 0, 'html' => $html];
     }
 
-    function render_items_listing_list()
+    public function render_items_listing_list()
     {
         global $app_subentity_form_items, $app_path, $app_items_form_name;
 
@@ -725,7 +731,7 @@ class Subentity_form
             $edit_button = '<button type="button" class="btn btn-default btn-xs purple btn-submodal-open" data-parent-entity-item-id="" data-field-id="" data-submodal-url="' . $submodal_url . '"><i class="fa fa-edit"></i></button>';
 
             $html .= '<div class="item-panel-action-btn">' . $edit_button . ' <button onClick="subentity_form' . $this->field_id . '_itemrow_remove(\'' . $row . '\')"  type="button" class="btn btn-default btn-xs purple" title="' . addslashes(
-                    TEXT_DELETE
+                    \K::$fw->TEXT_DELETE
                 ) . '"><i class="fa fa-times" aria-hidden="true"></i></button></div>';
 
             foreach ($listing_fields as $col => $field) {
@@ -762,7 +768,7 @@ class Subentity_form
         return ['rows_count' => 0, 'html' => $html];
     }
 
-    static function prepare_item_value_by_field_type($field, $value)
+    public static function prepare_item_value_by_field_type($field, $value)
     {
         if (is_array($value)) {
             $value = implode(',', $value);

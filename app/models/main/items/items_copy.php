@@ -1,8 +1,9 @@
 <?php
 
-class items_copy
-{
+namespace Models\Main\Items;
 
+class Items_copy
+{
     private $entities_id;
     private $items_id;
     private $parent_item_id;
@@ -10,7 +11,7 @@ class items_copy
     private $new_item_id;
     private $sql_data;
 
-    function __construct($entities_id, $items_id, $settings = [])
+    public function __construct($entities_id, $items_id, $settings = [])
     {
         $this->entities_id = $entities_id;
         $this->items_id = $items_id;
@@ -25,17 +26,17 @@ class items_copy
         $this->sql_data = [];
     }
 
-    function set_sql_data($sql_data)
+    public function set_sql_data($sql_data)
     {
         $this->sql_data = $sql_data;
     }
 
-    function set_parent_item_id($id)
+    public function set_parent_item_id($id)
     {
         $this->parent_item_id = $id;
     }
 
-    function run()
+    public function run()
     {
         if ($new_item_id = $this->copy_item()) {
             $this->copy_related_items();
@@ -50,7 +51,7 @@ class items_copy
         return $this->new_item_id;
     }
 
-    function copy_nested_items($new_item_id)
+    public function copy_nested_items($new_item_id)
     {
         $nested_list = tree_table::get_nested_list($this->entities_id, $this->items_id);
 
@@ -100,7 +101,6 @@ class items_copy
             db_query("update app_entity_{$this->entities_id} set parent_id={$parent_id} where id={$item_id}");
         }
 
-
         /*
          * Step 3: update calcaulation 
          */
@@ -113,7 +113,7 @@ class items_copy
         $this->new_item_id = $top_new_item_id;
     }
 
-    function copy_item($item_info = null)
+    public function copy_item($item_info = null)
     {
         global $app_fields_cache, $app_logged_users_id, $parent_entity_item_id;
 
@@ -144,7 +144,7 @@ class items_copy
 
                     //barcode
                     if ($app_fields_cache[$this->entities_id][substr($k, 6)]['type'] == 'fieldtype_barcode') {
-                        $cfg = new fields_types_cfg(
+                        $cfg = new \Models\Main\Fields_types_cfg(
                             $app_fields_cache[$this->entities_id][substr($k, 6)]['configuration']
                         );
                         if (strlen($cfg->get('template'))) {
@@ -208,7 +208,7 @@ class items_copy
         return false;
     }
 
-    function copy_related_items()
+    public function copy_related_items()
     {
         if (!count($this->copy_related_items)) {
             return false;
@@ -231,7 +231,7 @@ class items_copy
         }
     }
 
-    function copy_comments()
+    public function copy_comments()
     {
         if ($this->copy_comments != 1) {
             return false;
@@ -259,8 +259,12 @@ class items_copy
         }
     }
 
-    function copy_sub_entities($copy_sub_entities, $entities_id = false, $parent_item_id = false, $new_item_id = false)
-    {
+    public function copy_sub_entities(
+        $copy_sub_entities,
+        $entities_id = false,
+        $parent_item_id = false,
+        $new_item_id = false
+    ) {
         //check if exist sub entities
         if (!count($copy_sub_entities)) {
             return false;
@@ -311,5 +315,4 @@ class items_copy
             }
         }
     }
-
 }

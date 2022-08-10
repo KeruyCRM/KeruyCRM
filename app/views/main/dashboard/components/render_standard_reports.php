@@ -78,7 +78,7 @@ if (!strlen($add_button) and !strlen($with_selected_menu)) {
     $report_title_html = (!\K::$fw->has_reports_on_dashboard ? '' : '');//<br><br>
 }
 
-$listing = new \Tools\Items\Items_listing(\K::$fw->reports['id']);
+$listing = new  \Models\Main\Items\Items_listing(\K::$fw->reports['id']);
 $curren_listing_type = $listing->get_listing_type();
 $select_all_html = '';
 if (in_array($curren_listing_type, ['grid', 'mobile'])) {

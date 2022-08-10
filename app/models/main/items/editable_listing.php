@@ -1,8 +1,10 @@
 <?php
 
-class editable_listing
+namespace Models\Main\Items;
+
+class Editable_listing
 {
-    function __construct($entity_id, $item, $field, $fields_access_schema, $report_id, $page, $listing_type)
+    public function __construct($entity_id, $item, $field, $fields_access_schema, $report_id, $page, $listing_type)
     {
         $this->entity_id = $entity_id;
         $this->item = $item;
@@ -17,12 +19,11 @@ class editable_listing
         $this->enabled = $this->is_enabled();
     }
 
-    function is_enabled()
+    public function is_enabled()
     {
         global $editable_listing_access_rules, $editable_listing_access_assigned, $cfg_tree_table_editable_fields_in_listing;
 
-
-        //check if option enabled  
+        //check if option enabled
         if ($this->listing_type == 'table' and $this->entity_cfg->get('editable_fields_in_listing') != 1) {
             return false;
         }
@@ -30,7 +31,6 @@ class editable_listing
         if ($this->listing_type == 'tree_table' and $cfg_tree_table_editable_fields_in_listing != 1) {
             return false;
         }
-
 
         //check allowed types
         $excluded_field_types = [
@@ -85,7 +85,7 @@ class editable_listing
         return true;
     }
 
-    function td_css_class()
+    public function td_css_class()
     {
         if (!$this->enabled) {
             return '';
@@ -94,7 +94,7 @@ class editable_listing
         return ' editable-cell';
     }
 
-    function td_params()
+    public function td_params()
     {
         if (!$this->enabled) {
             return '';

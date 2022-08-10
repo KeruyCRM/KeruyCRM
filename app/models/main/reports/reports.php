@@ -273,8 +273,6 @@ class Reports
         $is_parent_report = false,
         $exclude_fields = []
     ) {
-        //global $sql_query_having, $app_entities_cache;
-
         //$reports_info_query = db_query("select * from app_reports where id='" . db_input($reports_id) . "'");
 
         $reports_info = \K::model()->db_fetch_one('app_reports', [
@@ -311,10 +309,10 @@ class Reports
                         case 'fieldtype_dropdown':
                         case 'fieldtype_progress':
                         case 'fieldtype_jalali_calendar':
-                            $sql_query[] = "field_" . $filters['fields_id'] . " = 0";
+                            $sql_query[] = "field_" . (int)$filters['fields_id'] . " = 0";
                             break;
                         default:
-                            $sql_query[] = "length(field_" . $filters['fields_id'] . ") = 0";
+                            $sql_query[] = "length(field_" . (int)$filters['fields_id'] . ") = 0";
                             break;
                     }
                 } elseif ($filters['filters_condition'] == 'not_empty_value') {
@@ -329,10 +327,10 @@ class Reports
                         case 'fieldtype_input_datetime':
                         case 'fieldtype_dropdown':
                         case 'fieldtype_jalali_calendar':
-                            $sql_query[] = "field_" . $filters['fields_id'] . " > 0";
+                            $sql_query[] = "field_" . (int)$filters['fields_id'] . " > 0";
                             break;
                         default:
-                            $sql_query[] = "length(field_" . $filters['fields_id'] . ") > 0";
+                            $sql_query[] = "length(field_" . (int)$filters['fields_id'] . ") > 0";
                             break;
                     }
                 } elseif (in_array($filters['type'], \Models\Main\Fields_types::get_types_for_search()) and !in_array(
@@ -397,7 +395,7 @@ class Reports
                         $listing_sql_query .= ' and e.parent_item_id in (select item_id from (select e.id as item_id ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                                 $report_info['entities_id'],
                                 ''
-                            ) . ' from app_entity_' . $report_info['entities_id'] . ' e where e.id > 0 ' . \Models\Main\Items\Items::add_access_query(
+                            ) . ' from app_entity_' . (int)$report_info['entities_id'] . ' e where e.id > 0 ' . \Models\Main\Items\Items::add_access_query(
                                 $report_info['entities_id'],
                                 ''
                             ) . ' ' . \Models\Main\Reports\Reports::add_filters_query(
@@ -405,9 +403,9 @@ class Reports
                                 '',
                                 '',
                                 true
-                            ) . ') as parent_entity_' . $report_info['entities_id'] . ' )';
+                            ) . ') as parent_entity_' . (int)$report_info['entities_id'] . ' )';
                     } else {
-                        $listing_sql_query .= ' and e.parent_item_id in (select e.id from app_entity_' . $report_info['entities_id'] . ' e where e.id > 0  ' . \Models\Main\Items\Items::add_access_query(
+                        $listing_sql_query .= ' and e.parent_item_id in (select e.id from app_entity_' . (int)$report_info['entities_id'] . ' e where e.id > 0  ' . \Models\Main\Items\Items::add_access_query(
                                 $report_info['entities_id'],
                                 ''
                             ) . ' ' . \Models\Main\Reports\Reports::add_filters_query(
@@ -576,8 +574,6 @@ class Reports
 
     public static function add_order_query($reports_order_fields, $entities_id)
     {
-        //global $app_heading_fields_cache, $app_fields_cache;
-
         $listing_sql_query_join = '';
         $listing_sql_query = '';
         $listing_sql_query_from = '';
@@ -586,7 +582,9 @@ class Reports
         $listing_order_fields = [];
         $listing_order_clauses = [];
 
-        foreach (explode(',', $reports_order_fields) as $key => $order_field) {
+        $exp = explode(',', $reports_order_fields);
+
+        foreach ($exp as $key => $order_field) {
             if (strlen($order_field) == 0) {
                 continue;
             }
@@ -600,17 +598,23 @@ class Reports
 
             //prepare sql for order by last comment date
             if ($field_id == 'lastcommentdate') {
-                $listing_order_fields[] = "(select comments.date_added from app_comments comments where comments.items_id=e.id and comments.entities_id='{$entities_id}' order by comments.date_added desc limit 1) " . $order_cause;
+                $listing_order_fields[] = "(select comments.date_added from app_comments comments where comments.items_id = e.id and comments.entities_id = " . (int)$entities_id . " order by comments.date_added desc limit 1) " . $order_cause;
 
                 continue;
             }
 
             //prepare order for fields
-            $field_info_query = db_query("select * from app_fields where id='" . db_input((int)$field_id) . "'");
-            if ($field_info = db_fetch_array($field_info_query)) {
+            //$field_info_query = db_query("select * from app_fields where id='" . db_input((int)$field_id) . "'");
+
+            $field_info = \K::model()->db_fetch_one('app_fields', [
+                'id = ?',
+                $field_id
+            ]);
+
+            if ($field_info) {
                 $listing_order_fields_id[] = $field_id;
                 $listing_order_clauses[$field_id] = $order_cause;
-                $field_cfg = new fields_types_cfg($field_info['configuration']);
+                $field_cfg = new \Models\Main\Fields_types_cfg($field_info['configuration']);
 
                 if (in_array(
                     $field_info['type'],
@@ -626,18 +630,17 @@ class Reports
                     )) {
                     $field_id_array = explode('-', $field_id);
                     $level = $field_id_array[1];
-                    $field_id = (int)$field_id;
 
                     if ($level == 0) {
-                        $field_name_to_join = "SUBSTRING_INDEX(field_" . $field_id . ",','," . ($level + 1) . ")";
+                        $field_name_to_join = "SUBSTRING_INDEX(field_" . (int)$field_id . ",','," . ($level + 1) . ")";
                     } else {
-                        $field_name_to_join = "REPLACE(SUBSTRING_INDEX(REPLACE(field_" . $field_id . ",SUBSTRING_INDEX(field_" . $field_id . ",','," . $level . "),''),','," . ($level + 1) . "),',','')";
+                        $field_name_to_join = "REPLACE(SUBSTRING_INDEX(REPLACE(field_" . (int)$field_id . ",SUBSTRING_INDEX(field_" . (int)$field_id . ",','," . $level . "),''),','," . ($level + 1) . "),',','')";
                     }
 
                     if ($field_cfg->get('use_global_list') > 0) {
-                        $listing_sql_query_join .= " left join app_global_lists_choices {$alias} on {$alias}.id=" . $field_name_to_join;
+                        $listing_sql_query_join .= " left join app_global_lists_choices {$alias} on {$alias}.id = " . $field_name_to_join;
                     } else {
-                        $listing_sql_query_join .= " left join app_fields_choices {$alias} on {$alias}.id=" . $field_name_to_join; //field_" . (int)$field_id . "_level_" . $level;
+                        $listing_sql_query_join .= " left join app_fields_choices {$alias} on {$alias}.id = " . $field_name_to_join;
                     }
 
                     $listing_order_fields[] = "{$alias}.sort_order " . $order_cause . ", {$alias}.name " . $order_cause;
@@ -654,9 +657,9 @@ class Reports
                     ]
                 )) {
                     if ($field_cfg->get('use_global_list') > 0) {
-                        $listing_sql_query_join .= " left join app_global_lists_choices {$alias} on {$alias}.id=e.field_" . $field_id;
+                        $listing_sql_query_join .= " left join app_global_lists_choices {$alias} on {$alias}.id = e.field_" . (int)$field_id;
                     } else {
-                        $listing_sql_query_join .= " left join app_fields_choices {$alias} on {$alias}.id=e.field_" . $field_id;
+                        $listing_sql_query_join .= " left join app_fields_choices {$alias} on {$alias}.id = e.field_" . (int)$field_id;
                     }
 
                     $listing_order_fields[] = "{$alias}.sort_order " . $order_cause . ", {$alias}.name " . $order_cause;
@@ -664,35 +667,41 @@ class Reports
                     $field_info['type'],
                     ['fieldtype_entity', 'fieldtype_entity_ajax', 'fieldtype_entity_multilevel']
                 )) {
-                    $entity_info_query = db_query(
+                    /*$entity_info_query = db_query(
                         "select * from app_entities where id='" . $field_cfg->get('entity_id') . "'"
-                    );
-                    if ($entity_info = db_fetch_array($entity_info_query)) {
+                    );*/
+
+                    $entity_info = \K::model()->db_fetch_one('app_entities', [
+                        'id = ?',
+                        $field_cfg->get('entity_id')
+                    ], [], 'id');
+
+                    if ($entity_info) {
                         //if entity is Users then order by firstname/lastname
                         if ($entity_info['id'] == 1) {
-                            $listing_sql_query_join .= " left join app_entity_{$entity_info['id']} {$alias} on {$alias}.id=e.field_" . $field_id;
+                            $listing_sql_query_join .= " left join app_entity_" . (int)$entity_info['id'] . " {$alias} on {$alias}.id = e.field_" . (int)$field_id;
                             $listing_order_fields[] = (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? "{$alias}.field_7 {$order_cause}, {$alias}.field_8 {$order_cause}" : "{$alias}.field_8 {$order_cause}, {$alias}.field_7 {$order_cause}");
-                        } //if exist haeading field then order by heading
-                        elseif ($heading_id = fields::get_heading_id($entity_info['id'])) {
+                        } //if exist heading field then order by heading
+                        elseif ($heading_id = \Models\Main\Fields::get_heading_id($entity_info['id'])) {
                             if (\K::$fw->app_heading_fields_cache[$heading_id]['type'] == 'fieldtype_id') {
-                                $listing_order_fields[] = 'e.field_' . $field_id . ' ' . $order_cause;
+                                $listing_order_fields[] = 'e.field_' . (int)$field_id . ' ' . $order_cause;
                             } elseif (in_array(
                                 \K::$fw->app_heading_fields_cache[$heading_id]['type'],
                                 ['fieldtype_created_by', 'fieldtype_date_added', 'fieldtype_date_updated']
                             )) {
-                                $listing_sql_query_join .= " left join app_entity_{$entity_info['id']} {$alias} on {$alias}.id=e.field_" . $field_id;
+                                $listing_sql_query_join .= " left join app_entity_" . (int)$entity_info['id'] . " {$alias} on {$alias}.id = e.field_" . (int)$field_id;
                                 $listing_order_fields[] = "{$alias}." . str_replace(
                                         'fieldtype_',
                                         '',
                                         \K::$fw->app_heading_fields_cache[$heading_id]['type']
                                     ) . ' ' . $order_cause;
                             } else {
-                                $listing_sql_query_join .= " left join app_entity_{$entity_info['id']} {$alias} on {$alias}.id=e.field_" . $field_id;
-                                $listing_order_fields[] = "{$alias}.field_{$heading_id} " . $order_cause;
+                                $listing_sql_query_join .= " left join app_entity_" . (int)$entity_info['id'] . " {$alias} on {$alias}.id = e.field_" . (int)$field_id;
+                                $listing_order_fields[] = "{$alias}.field_" . (int)$heading_id . " " . $order_cause;
                             }
                         } //default order by ID
                         else {
-                            $listing_order_fields[] = 'e.field_' . $field_id . ' ' . $order_cause;
+                            $listing_order_fields[] = 'e.field_' . (int)$field_id . ' ' . $order_cause;
                         }
                     }
                 } elseif (in_array($field_info['type'], [
@@ -704,16 +713,18 @@ class Reports
                     'fieldtype_js_formula',
                     'fieldtype_auto_increment',
                 ])) {
-                    $listing_order_fields[] = '(e.field_' . $field_id . '+0) ' . $order_cause;
+                    $listing_order_fields[] = '(e.field_' . (int)$field_id . '+0) ' . $order_cause;
                 } elseif (in_array($field_info['type'], ['fieldtype_mysql_query'])) {
-                    $cfg = new fields_types_cfg(\K::$fw->app_fields_cache[$entities_id][$field_id]['configuration']);
+                    $cfg = new \Models\Main\Fields_types_cfg(
+                        \K::$fw->app_fields_cache[$entities_id][$field_id]['configuration']
+                    );
                     if ($cfg->get('dynamic_query') != 1 and preg_match(
                             '/sum|min|max|count/',
                             $cfg->get('select_query')
                         )) {
-                        $listing_order_fields[] = '(field_' . $field_id . '+0) ' . $order_cause;
+                        $listing_order_fields[] = '(field_' . (int)$field_id . '+0) ' . $order_cause;
                     } else {
-                        $listing_order_fields[] = '(field_' . $field_id . ') ' . $order_cause;
+                        $listing_order_fields[] = '(field_' . (int)$field_id . ') ' . $order_cause;
                     }
                 } elseif (in_array($field_info['type'], [
                     'fieldtype_formula',
@@ -724,26 +735,26 @@ class Reports
                     'fieldtype_dynamic_date',
                     'fieldtype_related_records',
                 ])) {
-                    $listing_order_fields[] = '(field_' . $field_id . ') ' . $order_cause;
+                    $listing_order_fields[] = '(field_' . (int)$field_id . ') ' . $order_cause;
                 } elseif (in_array($field_info['type'], ['fieldtype_parent_item_id'])) {
-                    $entity_info = db_find('app_entities', $field_info['entities_id']);
+                    $entity_info = \K::model()->db_find('app_entities', $field_info['entities_id']);
                     if ($entity_info['parent_id'] > 0) {
-                        if ($heading_id = fields::get_heading_id($entity_info['parent_id'])) {
+                        if ($heading_id = \Models\Main\Fields::get_heading_id($entity_info['parent_id'])) {
                             switch (\K::$fw->app_fields_cache[$entity_info['parent_id']][$heading_id]['type']) {
                                 case 'fieldtype_id':
                                     $listing_order_fields[] = 'e.parent_item_id ' . $order_cause;
                                     break;
                                 case 'fieldtype_date_added':
-                                    $listing_sql_query_join .= " left join app_entity_{$entity_info['parent_id']} {$alias} on {$alias}.id=e.parent_item_id";
+                                    $listing_sql_query_join .= " left join app_entity_" . (int)$entity_info['parent_id'] . " {$alias} on {$alias}.id = e.parent_item_id";
                                     $listing_order_fields[] = "{$alias}.date_added " . $order_cause;
                                     break;
                                 case 'fieldtype_created_by':
-                                    $listing_sql_query_join .= " left join app_entity_{$entity_info['parent_id']} {$alias} on {$alias}.id=e.parent_item_id";
+                                    $listing_sql_query_join .= " left join app_entity_" . (int)$entity_info['parent_id'] . " {$alias} on {$alias}.id = e.parent_item_id";
                                     $listing_order_fields[] = "{$alias}.created_by " . $order_cause;
                                     break;
                                 default:
-                                    $listing_sql_query_join .= " left join app_entity_{$entity_info['parent_id']} {$alias} on {$alias}.id=e.parent_item_id";
-                                    $listing_order_fields[] = "{$alias}.field_{$heading_id} " . $order_cause;
+                                    $listing_sql_query_join .= " left join app_entity_" . (int)$entity_info['parent_id'] . " {$alias} on {$alias}.id = e.parent_item_id";
+                                    $listing_order_fields[] = "{$alias}.field_" . (int)$heading_id . " " . $order_cause;
                                     break;
                             }
                         } else {
@@ -751,9 +762,9 @@ class Reports
                         }
                     }
                 } elseif (in_array($field_info['type'], ['fieldtype_attachments', 'fieldtype_input_file'])) {
-                    $listing_order_fields[] = 'SUBSTRING(e.field_' . $field_id . ',LOCATE("_",e.field_' . $field_id . ')) ' . $order_cause;
+                    $listing_order_fields[] = 'SUBSTRING(e.field_' . (int)$field_id . ',LOCATE("_",e.field_' . (int)$field_id . ')) ' . $order_cause;
                 } else {
-                    $listing_order_fields[] = 'e.field_' . $field_id . ' ' . $order_cause;
+                    $listing_order_fields[] = 'e.field_' . (int)$field_id . ' ' . $order_cause;
                 }
             }
         }
@@ -815,12 +826,7 @@ class Reports
         } elseif ($filters['type'] == 'fieldtype_date_updated') {
             $field_name = $prefix . 'date_updated';
         } else {
-            $field_name = $prefix . 'field_' . $filters['fields_id'];
-        }
-
-        //to fix issue with FROM_UNIXTIME that return -1 hour difference then php		
-        {
-            //$field_name = $field_name . '+3600';
+            $field_name = $prefix . 'field_' . (int)$filters['fields_id'];
         }
 
         $sql = [];
@@ -849,40 +855,42 @@ class Reports
                 } else {
                     if (strlen($values[1]) > 0) {
                         if ($filters['type'] == 'fieldtype_jalali_calendar') {
-                            $values[1] = fieldtype_jalali_calendar::jalali_date_to_gregorian($values[1]);
+                            $values[1] = \Tools\FieldsTypes\Fieldtype_jalali_calendar::jalali_date_to_gregorian(
+                                $values[1]
+                            );
                         }
 
                         $minutes = (strstr($values[1], ':') ? ' %H:%i:%s' : '');
 
                         if (strtotime($values[1]) < 0) {
-                            $sql[] = "DATE_FORMAT(DATE_ADD(FROM_UNIXTIME(0),INTERVAL " . $field_name . " SECOND),'%Y-%m-%d{$minutes}')>='" . db_input(
-                                    $values[1]
-                                ) . "'";
+                            $sql[] = "DATE_FORMAT(DATE_ADD(FROM_UNIXTIME(0),INTERVAL " . $field_name . " SECOND),'%Y-%m-%d{$minutes}') >= " . \K::model(
+                                )->quote($values[1]);
                         } else {
-                            $sql[] = "FROM_UNIXTIME(" . $field_name . ",'%Y-%m-%d{$minutes}')>='" . db_input(
+                            $sql[] = "FROM_UNIXTIME(" . $field_name . ",'%Y-%m-%d{$minutes}') >= " . \K::model()->quote(
                                     $values[1]
-                                ) . "'";
+                                );
                         }
                     }
 
                     if (strlen($values[2]) > 0) {
                         if ($filters['type'] == 'fieldtype_jalali_calendar') {
-                            $values[2] = fieldtype_jalali_calendar::jalali_date_to_gregorian($values[2]);
+                            $values[2] = \Tools\FieldsTypes\Fieldtype_jalali_calendar::jalali_date_to_gregorian(
+                                $values[2]
+                            );
                         }
 
                         $minutes = (strstr($values[2], ':') ? ' %H:%i:%s' : '');
 
                         if (strtotime($values[2]) < 0) {
-                            $sql[] = "DATE_FORMAT(DATE_ADD(FROM_UNIXTIME(0),INTERVAL " . $field_name . " SECOND),'%Y-%m-%d{$minutes}')<='" . db_input(
-                                    $values[2]
-                                ) . "'";
+                            $sql[] = "DATE_FORMAT(DATE_ADD(FROM_UNIXTIME(0),INTERVAL " . $field_name . " SECOND),'%Y-%m-%d{$minutes}') <= " . \K::model(
+                                )->quote($values[2]);
                         } else {
-                            $sql[] = "FROM_UNIXTIME(" . $field_name . ",'%Y-%m-%d{$minutes}')<='" . db_input(
+                            $sql[] = "FROM_UNIXTIME(" . $field_name . ",'%Y-%m-%d{$minutes}') <= " . \K::model()->quote(
                                     $values[2]
-                                ) . "'";
+                                );
                         }
 
-                        $sql[] = "{$field_name}>0";
+                        $sql[] = "{$field_name} > 0";
                     }
                 }
                 break;
@@ -892,10 +900,10 @@ class Reports
 
                 switch (\K::$fw->CFG_APP_FIRST_DAY_OF_WEEK) {
                     case '0':
-                        $myslq_date_format = '%Y-%V';
+                        $mysql_date_format = '%Y-%V';
                         break;
-                    case '1':
-                        $myslq_date_format = '%Y-%v';
+                    default:
+                        $mysql_date_format = '%Y-%v';
                         break;
                 }
 
@@ -905,7 +913,7 @@ class Reports
                     $operator = self::prepare_dates_sql_filters_operator($v);
                     $v = str_replace(['+', '-', '<', '>', '=', '"', "!"], '', trim($v));
 
-                    $sql_or[] = "FROM_UNIXTIME(" . $field_name . ",'" . $myslq_date_format . "'){$operator}date_format(" . $use_function . "(now(),INTERVAL " . (int)$v . " WEEK),'" . $myslq_date_format . "')";
+                    $sql_or[] = "FROM_UNIXTIME(" . $field_name . ",'" . $mysql_date_format . "'){$operator}date_format(" . $use_function . "(now(),INTERVAL " . (int)$v . " WEEK),'" . $mysql_date_format . "')";
                 }
 
                 if (count($sql_or) > 0) {
@@ -952,14 +960,14 @@ class Reports
                         '+3600',
                         '',
                         $field_name
-                    ) . ">0";
+                    ) . " > 0";
                 break;
             case 'filter_by_overdue_with_time':
                 $sql[] = "FROM_UNIXTIME(" . $field_name . ",'%Y-%m-%d %H:%i')<date_format(now(),'%Y-%m-%d %H:%i') and " . str_replace(
                         '+3600',
                         '',
                         $field_name
-                    ) . ">0";
+                    ) . " > 0";
                 break;
         }
 
@@ -1013,9 +1021,6 @@ class Reports
                     break;
             }
         }
-
-        //print_r($sql_or);
-        //print_r($sql_and);
 
         if (count($sql_or) > 0) {
             $sql[] = "(" . implode(' or ', $sql_or) . ")";
@@ -1552,6 +1557,20 @@ class Reports
 
         if (strlen($filters['filters_values']) > 0) {
             $sql_query[] = "(select count(*) from app_entity_" . (int)$options['entities_id'] . "_values as cv where cv.items_id = " . $prefix . ".id and cv.fields_id = " . (int)$options['filters']['fields_id'] . " and cv.value in (" . $filters['filters_values'] . ")) " . ($filters['filters_condition'] == 'include' ? ' > 0' : ' = 0');
+        }
+
+        return $sql_query;
+    }
+
+    public static function getReportsQueryHaving($options)
+    {
+        $filters = $options['filters'];
+        $sql_query = $options['sql_query'];
+
+        $sql = reports::prepare_numeric_sql_filters($filters, '');
+
+        if (count($sql) > 0) {
+            \K::$fw->sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
         }
 
         return $sql_query;

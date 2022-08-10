@@ -1,6 +1,8 @@
 <?php
 
-class items_search
+namespace Models\Main\Items;
+
+class Items_search
 {
 
     public $access_schema;
@@ -11,7 +13,7 @@ class items_search
     public $path;
     public $prefix;
 
-    function __construct($entities_id)
+    public function __construct($entities_id)
     {
         global $app_user, $app_fields_cache;
 
@@ -30,7 +32,7 @@ class items_search
         //set search by Name by default
         if ($id = fields::get_heading_id($this->entities_id)) {
             if ($app_fields_cache[$this->entities_id][$id]['type'] == 'fieldtype_text_pattern') {
-                $cfg = new settings($app_fields_cache[$this->entities_id][$id]['configuration']);
+                $cfg = new \Tools\Settings($app_fields_cache[$this->entities_id][$id]['configuration']);
                 $pattern = $cfg->get('pattern');
                 if (preg_match_all('/\[(\d+)\]/', $pattern, $output_array)) {
                     foreach ($output_array[1] as $id) {
@@ -51,17 +53,17 @@ class items_search
         $this->path = false;
     }
 
-    function set_path($path)
+    public function set_path($path)
     {
         $this->path = $path;
     }
 
-    function set_search_keywords($keywords)
+    public function set_search_keywords($keywords)
     {
         $this->search_keywords = $keywords;
     }
 
-    function build_search_sql_query($search_operator = 'or')
+    public function build_search_sql_query($search_operator = 'or')
     {
         global $app_fields_cache;
 
@@ -95,7 +97,7 @@ class items_search
                                     case 'fieldtype_entity_multilevel':
                                     case 'fieldtype_users':
                                     case 'fieldtype_users_ajax':
-                                        $cfg = new settings(
+                                        $cfg = new \Tools\Settings(
                                             $app_fields_cache[$this->entities_id][$field['id']]['configuration']
                                         );
 
@@ -139,7 +141,6 @@ class items_search
                 $sql_query[] = $this->prefix . ".id='" . db_input($search_keywords[0]) . "'";
             }
 
-
             if (count($sql_query) > 0) {
                 //print_r($sql_query);
 
@@ -159,7 +160,7 @@ class items_search
         return $listing_sql_query;
     }
 
-    function get_choices()
+    public function get_choices()
     {
         $choices = [];
 
@@ -198,5 +199,4 @@ class items_search
 
         return $choices;
     }
-
 }

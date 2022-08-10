@@ -101,7 +101,7 @@ class Users
             }
 
             if ($field_heading_id and $field_heading_id != 12) {
-                $name = \Tools\Items\Items::get_heading_field_value($field_heading_id, $users);
+                $name =  \Models\Main\Items\Items::get_heading_field_value($field_heading_id, $users);
             } else {
                 $name = (\K::$fw->CFG_APP_DISPLAY_USER_NAME_ORDER == 'firstname_lastname' ? $users['field_7'] . ' ' . $users['field_8'] : $users['field_8'] . ' ' . $users['field_7']);
             }
@@ -163,16 +163,16 @@ class Users
 
     public static function render_public_profile($users_cache, $is_photo_display = false)
     {
-        //global $app_module_action;
-
         if (strlen(\K::$fw->app_module_action) > 0) {
             return '';
         }
 
         if (strlen($users_cache['photo']) and is_file(\K::$fw->DIR_WS_USERS . $users_cache['photo'])) {
-            $photo = '<img src=' . url_for_file(\K::$fw->DIR_WS_USERS . $users_cache['photo']) . ' width=50>';
+            $photo = '<img src="' . \Helpers\Urls::url_for_file(
+                    \K::$fw->DIR_WS_USERS . $users_cache['photo']
+                ) . '" width="50">';
         } else {
-            $photo = '<img src=' . url_for_file('images/' . 'no_photo.png') . ' width=50>';
+            $photo = '<img src="' . \Helpers\Urls::url_for_file('images/' . 'no_photo.png') . '" width="50">';
         }
 
         if (!isset($users_cache['profile'])) {
@@ -611,12 +611,21 @@ class Users
     {
         $access_schema = [];
 
-        $access_info_query = db_query(
+        /*$access_info_query = db_query(
             "select access_schema,access_groups_id  from app_entities_access where entities_id='" . db_input(
                 $entities_id
             ) . "'"
-        );
-        while ($access_info = db_fetch_array($access_info_query)) {
+        );*/
+
+        $access_info_query = \K::model()->db_fetch('app_entities_access', [
+            'entities_id = ?',
+            $entities_id
+        ], [], 'access_schema,access_groups_id');
+
+        //while ($access_info = db_fetch_array($access_info_query)) {
+        foreach ($access_info_query as $access_info) {
+            $access_info = $access_info->cast();
+
             $access_schema[$access_info['access_groups_id']] = explode(',', $access_info['access_schema']);
         }
 

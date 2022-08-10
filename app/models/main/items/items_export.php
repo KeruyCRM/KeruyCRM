@@ -1,22 +1,23 @@
 <?php
 
-require(CFG_PATH_TO_PHPSPREADSHEET);
+namespace Models\Main\Items;
+
+require(\K::$fw->CFG_PATH_TO_PHPSPREADSHEET);
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-
-class items_export
+class Items_export
 {
     public $filename;
 
-    function __construct($filename)
+    public function __construct($filename)
     {
         $this->filename = app_remove_special_characters($filename);
     }
 
-    function xlsx_from_array($export_data)
+    public function xlsx_from_array($export_data)
     {
         global $app_user;
 
@@ -41,7 +42,7 @@ class items_export
         $spreadsheet->getActiveSheet()->getStyle($highest_column . '1')->getFont()->setBold(true);
 
         // Rename worksheet
-        $spreadsheet->getActiveSheet()->setTitle(TEXT_LIST);
+        $spreadsheet->getActiveSheet()->setTitle(\K::$fw->TEXT_LIST);
 
         // Redirect output to a client’s web browser (Xlsx)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

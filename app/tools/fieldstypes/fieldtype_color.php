@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -47,7 +51,7 @@ class Fieldtype_color
             'title' => \K::$fw->TEXT_COLUMN,
             'name' => 'ul-class',
             'type' => 'dropdown',
-            'choices' => fieldtype_radioboxes::get_display_as_choices(),
+            'choices' => \Tools\FieldsTypes\Fieldtype_radioboxes::get_display_as_choices(),
             'default' => 'list-column-1',
             'params' => ['class' => 'form-control input-medium'],
             'form_group' => ['form_display_rules' => 'fields_configuration_display_as:checkboxes']
@@ -68,7 +72,7 @@ class Fieldtype_color
         ];
 
         //cfg global list if exist
-        if (count($choices = global_lists::get_lists_choices()) > 0) {
+        if (count($choices = \Models\Main\Global_lists::get_lists_choices()) > 0) {
             $cfg[] = [
                 'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
@@ -95,16 +99,16 @@ class Fieldtype_color
 
         //use global lists if exsit    
         if ($cfg->get('use_global_list') > 0) {
-            $choices = global_lists::get_choices_with_color(
+            $choices = \Models\Main\Global_lists::get_choices_with_color(
                 $cfg->get('use_global_list'),
                 ($field['is_required'] == 1 ? false : true),
                 '',
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = global_lists::get_choices_default_id($cfg->get('use_global_list'));
+            $default_id = \Models\Main\Global_lists::get_choices_default_id($cfg->get('use_global_list'));
         } else {
-            $choices = fields_choices::get_choices_with_color(
+            $choices = \Models\Main\Fields_choices::get_choices_with_color(
                 $field['id'],
                 ($field['is_required'] == 1 ? false : true),
                 '',
@@ -112,7 +116,7 @@ class Fieldtype_color
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = fields_choices::get_default_id($field['id']);
+            $default_id = \Models\Main\Fields_choices::get_default_id($field['id']);
         }
 
         $value = ($obj['field_' . $field['id']] > 0 ? $obj['field_' . $field['id']] : ($params['form'] == 'comment' ? '' : $default_id));
@@ -120,11 +124,21 @@ class Fieldtype_color
         $html = '';
         switch ($cfg->get('display_as')) {
             case 'dropdown':
-                $html = select_tag_with_color('fields[' . $field['id'] . ']', $choices, $value, $attributes);
+                $html = \Helpers\Html::select_tag_with_color(
+                    'fields[' . $field['id'] . ']',
+                    $choices,
+                    $value,
+                    $attributes
+                );
                 break;
             case 'dropdown_multiple':
                 $attributes['multiple'] = 'multiple';
-                $html = select_tag_with_color('fields[' . $field['id'] . '][]', $choices, $value, $attributes);
+                $html = \Helpers\Html::select_tag_with_color(
+                    'fields[' . $field['id'] . '][]',
+                    $choices,
+                    $value,
+                    $attributes
+                );
                 break;
             case 'checkboxes':
                 $attributes = ['class' => 'field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')];
@@ -134,7 +148,7 @@ class Fieldtype_color
                     unset($choices['']);
                 }
 
-                $html = '<div class="checkbox-list ' . ($attributes['ul-class'] == 'list-inline' ? ' form-control-static' : '') . '">' . select_checkboxes_ul_color_tag(
+                $html = '<div class="checkbox-list ' . ($attributes['ul-class'] == 'list-inline' ? ' form-control-static' : '') . '">' . \Helpers\Html::select_checkboxes_ul_color_tag(
                         'fields[' . $field['id'] . ']',
                         $choices,
                         $value,
@@ -144,7 +158,7 @@ class Fieldtype_color
                 break;
         }
 
-        return $html . fields_types::custom_error_handler($field['id']);
+        return $html . \Models\Main\Fields_types::custom_error_handler($field['id']);
     }
 
     public function process($options)
@@ -160,9 +174,9 @@ class Fieldtype_color
 
         //render global list value
         if ($cfg->get('use_global_list') > 0) {
-            return global_lists::render_value($options['value'], $is_export);
+            return \Models\Main\Global_lists::render_value($options['value'], $is_export);
         } else {
-            return fields_choices::render_value($options['value'], $is_export);
+            return \Models\Main\Fields_choices::render_value($options['value'], $is_export);
         }
     }
 

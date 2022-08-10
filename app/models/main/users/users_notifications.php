@@ -128,7 +128,7 @@ class Users_notifications
 
         //while ($items = db_fetch_array($items_query)) {
         foreach ($items_query as $items) {
-            $path_info = \Tools\Items\Items::get_path_info($items['entities_id'], $items['items_id']);
+            $path_info =  \Models\Main\Items\Items::get_path_info($items['entities_id'], $items['items_id']);
 
             $items_html .= '
           <li>

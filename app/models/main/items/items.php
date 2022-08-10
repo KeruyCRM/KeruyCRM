@@ -367,7 +367,7 @@ class Items
                     $fields = \K::model()->db_fetch_one('app_fields', [
                         'is_heading = 1 and entities_id = ?',
                         $cfg['entity_id']
-                    ]);
+                    ],[],'id');
 
                     if ($fields) {
                         $entity_heading_field_id = $fields['id'];
@@ -1052,41 +1052,40 @@ class Items
 
     public static function get_path_info($entities_id, $items_id, $current_item_info = false)
     {
-        $path_array = items::get_path_array($entities_id, $items_id, [], $current_item_info);
+        $path_array = self::get_path_array($entities_id, $items_id, [], $current_item_info);
 
         $path_array = array_reverse($path_array);
 
-        $cout = 0;
-        $paent_path_list = [];
+        $count = 0;
+        $parent_path_list = [];
         $path_list = [];
         $name_list = [];
         $path_to_entity = [];
         foreach ($path_array as $v) {
             $path_list[] = $v['path'];
 
-            if ($cout != (count($path_array) - 1)) {
-                $paent_path_list[] = $v['path'];
+            if ($count != (count($path_array) - 1)) {
+                $parent_path_list[] = $v['path'];
                 $name_list[] = $v['name'];
             }
 
-            if ($cout == (count($path_array) - 1)) {
+            if ($count == (count($path_array) - 1)) {
                 $last = explode('-', $v['path']);
                 $path_to_entity[] = $last[0];
             } else {
                 $path_to_entity[] = $v['path'];
             }
 
-            $cout++;
+            $count++;
         }
 
         return [
             'parent_name' => implode('<br>', $name_list),
-            'parent_path' => implode('/', $paent_path_list),
+            'parent_path' => implode('/', $parent_path_list),
             'full_path' => implode('/', $path_list),
             'full_path_array' => $path_list,
             'path_to_entity' => implode('/', $path_to_entity),
         ];
-        //print_r($path_array);
     }
 
     public static function get_path_array($entities_id, $items_id, $path_array = [], $current_item_info = false)
@@ -1294,6 +1293,7 @@ class Items
             );*/
 
             $in = ['fieldtype_users', 'fieldtype_users_ajax', 'fieldtype_user_roles', 'fieldtype_users_approve'];
+
             $fields_query = \K::model()->db_fetch('app_fields', [
                 'type in (' . \K::model()->quoteToString($in) . ') and entities_id = ?',
                 $current_entity_id

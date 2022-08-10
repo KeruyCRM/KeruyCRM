@@ -27,7 +27,7 @@ class Fieldtype_digital_signature
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_MODULE,
             'name' => 'module_id',
-            'tooltip' => (!is_ext_installed() ? \K::$fw->TEXT_EXTENSION_REQUIRED : ''),
+            'tooltip' => (!\Helpers\App::is_ext_installed() ? \K::$fw->TEXT_EXTENSION_REQUIRED : ''),
             'type' => 'dropdown',
             'choices' => $choices,
             'params' => ['class' => 'form-control input-large required']
@@ -36,10 +36,28 @@ class Fieldtype_digital_signature
         //signature fields
 
         $choices = [];
-        $exclude_types = " and f.type not in ('fieldtype_action','fieldtype_digital_signature','fieldtype_google_map','fieldtype_google_map_directions','fieldtype_iframe','fieldtype_image_map','fieldtype_mapbbcode','fieldtype_mind_map','fieldtype_signature','fieldtype_section','fieldtype_todo_list')";
-        $fields_query = fields::get_query($_POST['entities_id'], $exclude_types);
-        while ($fields = db_fetch_array($fields_query)) {
-            $choices[$fields['id']] = fields_types::get_option($fields['type'], 'name', $fields['name']);
+        $typeNotIn = \K::model()->quoteToString(
+            [
+                'fieldtype_action',
+                'fieldtype_digital_signature',
+                'fieldtype_google_map',
+                'fieldtype_google_map_directions',
+                'fieldtype_iframe',
+                'fieldtype_image_map',
+                'fieldtype_mapbbcode',
+                'fieldtype_mind_map',
+                'fieldtype_signature',
+                'fieldtype_section',
+                'fieldtype_todo_list'
+            ]
+        );
+        $exclude_types = " and f.type not in (" . $typeNotIn . ")";
+
+        $fields_query = \Models\Main\Fields::get_query(\K::$fw->POST['entities_id'], $exclude_types);
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $choices[$fields['id']] = \Models\Main\Fields_types::get_option($fields['type'], 'name', $fields['name']);
         }
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
@@ -54,11 +72,16 @@ class Fieldtype_digital_signature
 
         $choices = [];
         $choices[0] = '';
+        $typeIn = \K::model()->quoteToString(['fieldtype_users', 'fieldtype_users_ajax']);
 
-        $fields_query = db_query(
-            "select f.id,f.name, e.name as entity_name from app_fields f, app_entities e where e.id='" . $_POST['entities_id'] . "' and e.id=f.entities_id and type in ('fieldtype_users','fieldtype_users_ajax')  order by e.sort_order, e.name, f.name"
+        $fields_query = \K::model()->db_query_exec(
+            'select f.id, f.name, e.name as entity_name from app_fields f, app_entities e where e.id = ' . (int)\K::$fw->POST['entities_id'] . ' and e.id = f.entities_id and type in (' . $typeIn . ') order by e.sort_order, e.name, f.name',
+            null,
+            'app_fields,app_entities'
         );
-        while ($fields = db_fetch_array($fields_query)) {
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
             $choices[$fields['id']] = $fields['name'];
         }
 
@@ -78,10 +101,19 @@ class Fieldtype_digital_signature
         $choices[0] = '';
 
         if (\Helpers\App::is_ext_installed()) {
-            $processes_query = db_query(
+            /*$processes_query = db_query(
                 "select id, name from app_ext_processes where entities_id='" . $_POST['entities_id'] . "' order by sort_order, name"
-            );
-            while ($processes = db_fetch_array($processes_query)) {
+            );*/
+
+            $processes_query = \K::model()->db_fetch('app_ext_processes', [
+                'entities_id = ?',
+                \K::$fw->POST['entities_id']
+            ], ['order' => 'sort_order,name'], 'id,name');
+
+            //while ($processes = db_fetch_array($processes_query)) {
+            foreach ($processes_query as $processes) {
+                $processes = $processes->cast();
+
                 $choices[$processes['id']] = $processes['name'];
             }
         }
@@ -101,6 +133,7 @@ class Fieldtype_digital_signature
             'params' => ['class' => 'form-control input-medium'],
             'tooltip_icon' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->TEXT_DIGITAL_SIGNATURE
         ];
+
         $cfg[\K::$fw->TEXT_BUTTON][] = [
             'title' => \K::$fw->TEXT_ICON,
             'name' => 'button_icon',
@@ -108,6 +141,7 @@ class Fieldtype_digital_signature
             'params' => ['class' => 'form-control input-medium'],
             'tooltip' => \K::$fw->TEXT_MENU_ICON_TITLE_TOOLTIP
         ];
+
         $cfg[\K::$fw->TEXT_BUTTON][] = [
             'title' => \K::$fw->TEXT_COLOR,
             'name' => 'button_color',
@@ -141,7 +175,11 @@ class Fieldtype_digital_signature
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
         $entities_id = $options['field']['entities_id'];
 
-        $path_info = items::get_path_info($options['field']['entities_id'], $options['item']['id'], $options['item']);
+        $path_info = \Models\Main\Items\Items::get_path_info(
+            $options['field']['entities_id'],
+            $options['item']['id'],
+            $options['item']
+        );
 
         $has_sign_button = true;
 

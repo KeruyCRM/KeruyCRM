@@ -1,8 +1,17 @@
 <?php
 
-class items_page
+namespace Models\Main\Items;
+
+class Items_page
 {
-    function __construct($entities_id, $items_id)
+    public $items_id;
+    public $entities_id;
+    public $entity_cfg;
+    public $fields_access_schema;
+    public $fields_display_rules;
+    public $item;
+
+    public function __construct($entities_id, $items_id)
     {
         global $app_user, $current_item_info;
 
@@ -12,7 +21,6 @@ class items_page
         $this->entity_cfg = new entities_cfg($this->entities_id);
         $this->fields_access_schema = users::get_fields_access_schema($this->entities_id, $app_user['group_id']);
         $this->fields_display_rules = [];
-
 
         $item_query = db_query(
             "select e.* " . fieldtype_formula::prepare_query_select(
@@ -24,7 +32,7 @@ class items_page
         $current_item_info = $this->item = db_fetch_array($item_query);
     }
 
-    function render($type)
+    public function render($type)
     {
         switch ($type) {
             case 'one_column_tabs':
@@ -36,7 +44,7 @@ class items_page
         }
     }
 
-    function get_tabs()
+    public function get_tabs()
     {
         $tabs_list = [];
         $tabs_query = db_fetch_all(
@@ -66,7 +74,7 @@ class items_page
         return $tabs_list;
     }
 
-    function get_tab_fields($tabs_id)
+    public function get_tab_fields($tabs_id)
     {
         global $current_path;
 
@@ -101,7 +109,7 @@ class items_page
                 'path' => $current_path,
             ];
 
-            $cfg = new fields_types_cfg($field['configuration']);
+            $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
             //hide if empty
             if ($cfg->get('hide_field_if_empty') == 1 and fields_types::is_empty_value($value, $field['type'])) {
@@ -157,7 +165,6 @@ class items_page
                 )) {
                 continue;
             }
-
 
             $field_name = fields_types::get_option($field['type'], 'name', $field['name']);
 
@@ -231,7 +238,7 @@ class items_page
         return $html;
     }
 
-    function render_fields_display_rules()
+    public function render_fields_display_rules()
     {
         $html = '';
 
@@ -242,7 +249,7 @@ class items_page
         return $html;
     }
 
-    function render_tabs()
+    public function render_tabs()
     {
         if (!count($tabs_list = $this->get_tabs())) {
             return '';
@@ -256,7 +263,6 @@ class items_page
                     <li class="dropdown check-form-tabs-dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">' . $tab['name'] . ' <i class="fa fa-angle-down"></i></a>
                             <ul class="dropdown-menu" role="menu">';
-
 
                 $subtabs_query = db_query(
                     "select * from app_forms_tabs where parent_id={$tab['id']} and entities_id={$this->entities_id} order by sort_order, name"
@@ -302,12 +308,11 @@ class items_page
         return $html;
     }
 
-    function render_accordion()
+    public function render_accordion()
     {
         if (!count($tabs_list = $this->get_tabs())) {
             return '';
         }
-
 
         $html = '<div class="panel-group accordion item-page-accordion" id="item_page_accordion">';
 
@@ -330,5 +335,4 @@ class items_page
 
         return $html;
     }
-
 }

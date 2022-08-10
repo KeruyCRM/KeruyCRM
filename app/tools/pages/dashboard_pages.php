@@ -110,7 +110,7 @@ class Dashboard_pages
                     foreach ($fields_query as $field) {
                         $field = $field->cast();
                         //prepare field value
-                        $value = \Tools\Items\Items::prepare_field_value_by_type($field, $item);
+                        $value =  \Models\Main\Items\Items::prepare_field_value_by_type($field, $item);
 
                         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 

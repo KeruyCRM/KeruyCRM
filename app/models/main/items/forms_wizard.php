@@ -1,6 +1,8 @@
 <?php
 
-class forms_wizard
+namespace Models\Main\Items;
+
+class Forms_wizard
 {
     private $entities_id,
         $form_name,
@@ -8,7 +10,7 @@ class forms_wizard
         $is_form_wizard,
         $is_form_wizard_progress_bar;
 
-    function __construct($form_name, $entities_id, $entity_cfg)
+    public function __construct($form_name, $entities_id, $entity_cfg)
     {
         $this->entities_id = $entities_id;
         $this->form_name = $form_name;
@@ -24,13 +26,16 @@ class forms_wizard
         }
     }
 
-    function is_active()
+    public function is_active()
     {
         return $this->is_form_wizard;
     }
 
-    function ajax_modal_template_footer($action_button_tille = TEXT_SAVE)
+    public function ajax_modal_template_footer($action_button_title = null)
     {
+        if ($action_button_title === null) {
+            $action_button_title = \K::$fw->TEXT_SAVE;
+        }
         $html_bar = '';
 
         if ($this->is_form_wizard_progress_bar == 1) {
@@ -52,12 +57,12 @@ class forms_wizard
                 ' . $html_bar . '
                 <div class="row">    
                     <div class="col-md-6 col-xs-6" style="text-align: left">
-                        <a href="#" class="btn btn-default btn-wizard-previous"><i class="fa fa-angle-left"></i> ' . TEXT_PREVIOUS . '</a>
+                        <a href="#" class="btn btn-default btn-wizard-previous"><i class="fa fa-angle-left"></i> ' . \K::$fw->TEXT_PREVIOUS . '</a>
                     </div>
                     <div class="col-md-6 col-xs-6">
                         <div class="fa fa-spinner fa-spin primary-modal-action-loading"></div>	
-                        <a href="#" type="button" class="btn btn-info btn-wizard-next">' . TEXT_NEXT . ' <i class="fa fa-angle-right"></i></a>
-                        <button type="submit" class="btn btn-primary btn-primary-modal-action btn-wizard-finish">' . $action_button_tille . '</button>
+                        <a href="#" type="button" class="btn btn-info btn-wizard-next">' . \K::$fw->TEXT_NEXT . ' <i class="fa fa-angle-right"></i></a>
+                        <button type="submit" class="btn btn-primary btn-primary-modal-action btn-wizard-finish">' . $action_button_title . '</button>
                     </div>
                 </div>   
                 
@@ -78,7 +83,7 @@ class forms_wizard
                             var total = navigation.find(\'li:not(".dropdown")\').length;
                             var current = index+1;
                             var $percent = (current / total) * 100;
-                            $("#' . $this->form_name . '").find(".progress-bar").css({width: $percent + "%"}).html("' . TEXT_STEP . ' " + current + " ' . TEXT_OF . ' "+total);
+                            $("#' . $this->form_name . '").find(".progress-bar").css({width: $percent + "%"}).html("' . \K::$fw->TEXT_STEP . ' " + current + " ' . \K::$fw->TEXT_OF . ' "+total);
                         },
                         onNext: function (tab, navigation, index) 
                         {
@@ -104,7 +109,6 @@ class forms_wizard
             });
             </script>
             ';
-
 
         return $html;
     }

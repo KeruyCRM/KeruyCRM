@@ -500,7 +500,7 @@ class Fieldtype_formula
                         $formula
                     );
 
-                    //preapre [currecny code]
+                    //prepare [currency code]
                     if (\Helpers\App::is_ext_installed() and \K::fw()->exists('app_currencies_cache')) {
                         foreach (\K::$fw->app_currencies_cache as $currency) {
                             $formula = str_replace('[' . $currency['code'] . ']', $currency['value'], $formula);
@@ -568,9 +568,7 @@ class Fieldtype_formula
             $listing_sql_query_select
         );
 
-        $listing_sql_query_select = \K::app_global_vars()->apply_to_text($listing_sql_query_select);
-
-        return $listing_sql_query_select;
+        return \K::app_global_vars()->apply_to_text($listing_sql_query_select);
     }
 
     public static function prepare_parent_entity_item_value($entities_id, $listing_sql_query_select)

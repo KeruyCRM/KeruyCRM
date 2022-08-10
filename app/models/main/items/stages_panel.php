@@ -4,7 +4,7 @@ namespace Models\Main\Items;
 
 class Stages_panel
 {
-    static function get_type_choices()
+    public static function get_type_choices()
     {
         return [
             'trianlge' => \K::$fw->TEXT_TRIANGLE,
@@ -14,7 +14,7 @@ class Stages_panel
         ];
     }
 
-    static function render($entities_id, $item_info)
+    public static function render($entities_id, $item_info)
     {
         $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema(
             $entities_id,
@@ -207,7 +207,7 @@ class Stages_panel
         return $html;
     }
 
-    static function render_css($field)
+    public static function render_css($field)
     {
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
@@ -280,11 +280,11 @@ class Stages_panel
         return $css;
     }
 
-    static function get_branching_choices($field_id, $current_choice_id)
+    public static function get_branching_choices($field_id, $current_choice_id)
     {
         $choices = [];
 
-        $parents_ids = \Models\Main\Fields_choices::get_paretn_ids($current_choice_id);
+        $parents_ids = \Models\Main\Fields_choices::get_parent_ids($current_choice_id);
         $exclude_ids = [];
         if (count($parents_ids)) {
             $parents_ids = array_reverse($parents_ids);
@@ -339,13 +339,13 @@ class Stages_panel
         return $choices;
     }
 
-    static function get_branching_choices_global_list($lists_id, $current_choice_id)
+    public static function get_branching_choices_global_list($lists_id, $current_choice_id)
     {
         global $app_global_choices_cache;
 
         $choices = [];
 
-        $parents_ids = global_lists::get_paretn_ids($current_choice_id);
+        $parents_ids = global_lists::get_parent_ids($current_choice_id);
         $exclude_ids = [];
         if (count($parents_ids)) {
             $parents_ids = array_reverse($parents_ids);
@@ -395,5 +395,4 @@ class Stages_panel
 
         return $choices;
     }
-
 }

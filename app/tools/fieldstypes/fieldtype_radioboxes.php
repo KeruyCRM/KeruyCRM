@@ -55,15 +55,13 @@ class Fieldtype_radioboxes
 
     public static function get_display_as_choices()
     {
-        $choices = [
+        return [
             'list-inline' => \K::$fw->TEXT_INLINE_LIST,
             'list-column-1' => \K::$fw->TEXT_COLUMN . ' 1',
             'list-column-2' => \K::$fw->TEXT_COLUMN . ' 2',
             'list-column-3' => \K::$fw->TEXT_COLUMN . ' 3',
             'list-column-4' => \K::$fw->TEXT_COLUMN . ' 4',
         ];
-
-        return $choices;
     }
 
     public function render($field, $obj, $params = [])

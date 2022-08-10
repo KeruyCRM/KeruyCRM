@@ -1,20 +1,22 @@
 <?php
 
-class items_filters
+namespace Models\Main\Items;
+
+class Items_filters
 {
     private $entity_id, $item_id;
 
-    function __construct($entity_id, $item_id)
+    public function __construct($entity_id, $item_id)
     {
         $this->entity_id = $entity_id;
         $this->item_id = $item_id;
     }
 
-    function check($cfg = [])
+    public function check($cfg = [])
     {
         global $sql_query_having;
 
-        $cfg = new settings($cfg, [
+        $cfg = new \Tools\Settings($cfg, [
             'report_type' => '',
             'report_id' => 0,
         ]);
@@ -60,4 +62,3 @@ class items_filters
         }
     }
 }
-

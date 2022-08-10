@@ -1278,7 +1278,9 @@ class App
     public static function app_get_mysql_days_choices()
     {
         $choices = [];
-        foreach (explode(",", \K::$fw->TEXT_DATEPICKER_DAYS) as $k => $d) {
+        $exp = explode(",", \K::$fw->TEXT_DATEPICKER_DAYS);
+
+        foreach ($exp as $k => $d) {
             $d = str_replace('"', '', $d);
 
             $choices[$k + 1] = $d;

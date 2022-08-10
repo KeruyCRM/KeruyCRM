@@ -4,7 +4,20 @@ namespace Models\Main\Items;
 
 class Tree_table
 {
-    function __construct($entities_id, $listing_fields, $fields_access_schema)
+    public $listing_fields;
+    public $entities_id;
+    public $fields_access_schema;
+    public $redirect_to;
+    public $is_info_page;
+    public $reset_parent;
+    public $users_notifications;
+    public $reports_id;
+    public $current_page_number;
+    public $listing;
+    public $listing_highlight;
+    public $entity_cfg;
+
+    public function __construct($entities_id, $listing_fields, $fields_access_schema)
     {
         $this->listing_fields = $listing_fields;
         $this->entities_id = $entities_id;
@@ -14,7 +27,7 @@ class Tree_table
         $this->reset_parent = false;
     }
 
-    function render_nested($parent_id, $html = '')
+    public function render_nested($parent_id, $html = '')
     {
         global $has_with_selected, $app_selected_items, $current_path, $current_entity_info, $reports_entities_id;
 
@@ -80,7 +93,7 @@ class Tree_table
 
                 if ($field['type'] == 'fieldtype_parent_item_id' and (strlen(
                             $this->redirect_to
-                        ) == 0 or $current_entity_info['parent_id'] == 0 or $listing->report_type == 'parent_item_info_page')) {
+                        ) == 0 or $current_entity_info['parent_id'] == 0 or $this->listing->report_type == 'parent_item_info_page')) {
                     continue;
                 }
 
@@ -176,7 +189,7 @@ class Tree_table
         return $html;
     }
 
-    static function render_nested_items($entities_id, $item_id, $position)
+    public static function render_nested_items($entities_id, $item_id, $position)
     {
         global $app_user;
 
@@ -188,7 +201,7 @@ class Tree_table
             return '';
         }
 
-        $settings = new settings($listing_types['settings']);
+        $settings = new \Tools\Settings($listing_types['settings']);
 
         //check position
         if ($settings->get('display_nested_records') != $position) {
@@ -210,7 +223,7 @@ class Tree_table
         $listing = new class {
             function __construct()
             {
-                $this->settings = new settings('');
+                $this->settings = new \Tools\Settings('');
             }
 
             function get_listing_type()
@@ -292,7 +305,7 @@ class Tree_table
         return $html;
     }
 
-    static function get_parents($entities_id, $item_id, $parents = [])
+    public static function get_parents($entities_id, $item_id, $parents = [])
     {
         $item_info = db_query("select id, parent_id from app_entity_{$entities_id} where id = {$item_id}");
         if ($item = db_fetch_array($item_info)) {
@@ -306,7 +319,7 @@ class Tree_table
         return $parents;
     }
 
-    static function get_top_parent_item_id($entities_id, $item_id)
+    public static function get_top_parent_item_id($entities_id, $item_id)
     {
         //$item_info = db_query("select id, parent_id from app_entity_{$entities_id} where id = {$item_id}");
         $item = \K::model()->db_fetch_one('app_entity_' . $entities_id, [
@@ -325,7 +338,7 @@ class Tree_table
         return $item_id;
     }
 
-    static function get_items_tree($entities_id, $item_id, $tree)
+    public static function get_items_tree($entities_id, $item_id, $tree)
     {
         //$items_query = db_query("select id from app_entity_{$entities_id} where parent_id={$item_id}");
 
@@ -346,7 +359,7 @@ class Tree_table
         return $tree;
     }
 
-    static function get_html_tree($entities_id, $item_id, $tree = '')
+    public static function get_html_tree($entities_id, $item_id, $tree = '')
     {
         $count_query = db_query(
             "select count(*) as total from app_entity_{$entities_id} where parent_id = '" . db_input(
@@ -382,7 +395,7 @@ class Tree_table
         return $tree;
     }
 
-    static function get_nested_list($entities_id, $item_id, $tree = [])
+    public static function get_nested_list($entities_id, $item_id, $tree = [])
     {
         $items_query = db_query(
             "select * from app_entity_{$entities_id}  where parent_id = '" . db_input(
@@ -401,7 +414,7 @@ class Tree_table
         return $tree;
     }
 
-    static function sort_tree($entities_id, $item_id, $tree)
+    public static function sort_tree($entities_id, $item_id, $tree)
     {
         $sort_order = 0;
         foreach ($tree as $v) {

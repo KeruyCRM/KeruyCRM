@@ -97,7 +97,7 @@ class Fieldtype_text_pattern
 
                                 if ($enitites_info['parent_id'] > 0 and $item['parent_item_id'] > 0) {
                                     if (!isset(\K::$fw->parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']])) {
-                                        $value = \K::$fw->parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']] = \Tools\Items\Items::get_heading_field(
+                                        $value = \K::$fw->parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']] =  \Models\Main\Items\Items::get_heading_field(
                                             $enitites_info['parent_id'],
                                             $item['parent_item_id']
                                         );

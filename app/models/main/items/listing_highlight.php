@@ -1,11 +1,12 @@
 <?php
 
-class listing_highlight
-{
+namespace Models\Main\Items;
 
+class Listing_highlight
+{
     public $entities_id, $has_rules, $rules, $css;
 
-    function __construct($entities_id)
+    public function __construct($entities_id)
     {
         $this->entities_id = $entities_id;
         $this->rules = [];
@@ -61,12 +62,12 @@ class listing_highlight
         }
     }
 
-    function has_rules()
+    public function has_rules()
     {
         return (count($this->rules) ? true : false);
     }
 
-    function render_css()
+    public function render_css()
     {
         if (!$this->has_rules()) {
             return '';
@@ -78,7 +79,7 @@ class listing_highlight
             '</style>';
     }
 
-    function apply($item)
+    public function apply($item)
     {
         if (!$this->has_rules()) {
             return '';
@@ -98,7 +99,7 @@ class listing_highlight
         return '';
     }
 
-    function match_rule($rule, $item_field_value)
+    public function match_rule($rule, $item_field_value)
     {
         switch (listing_highlight::get_field_type_key($rule['type'])) {
             case 'boolean':
@@ -144,14 +145,13 @@ class listing_highlight
                         ) . ') ? true:false);';
                 }
 
-
                 //echo $eval_str;
 
                 try {
                     eval($eval_str);
                 } catch (ParseError $e) {
                     echo alert_error(
-                        TEXT_ERROR . ' listing highlight #' . $rule['id'] . ' <br>' . $eval_str . '<br>' . $e->getMessage(
+                        \K::$fw->TEXT_ERROR . ' listing highlight #' . $rule['id'] . ' <br>' . $eval_str . '<br>' . $e->getMessage(
                         )
                     );
                 }
@@ -214,7 +214,7 @@ class listing_highlight
                                 eval($eval_str);
                             } catch (ParseError $e) {
                                 echo alert_error(
-                                    TEXT_ERROR . ' listing highlight #' . $rule['id'] . ' <br>' . $eval_str . '<br>' . $e->getMessage(
+                                    \K::$fw->TEXT_ERROR . ' listing highlight #' . $rule['id'] . ' <br>' . $eval_str . '<br>' . $e->getMessage(
                                     )
                                 );
                             }
@@ -230,7 +230,7 @@ class listing_highlight
                                 eval($eval_str);
                             } catch (ParseError $e) {
                                 echo alert_error(
-                                    TEXT_ERROR . ' listing highlight #' . $rule['id'] . '<br>' . $eval_str . '<br>' . $e->getMessage(
+                                    \K::$fw->TEXT_ERROR . ' listing highlight #' . $rule['id'] . '<br>' . $eval_str . '<br>' . $e->getMessage(
                                     )
                                 );
                             }
@@ -259,7 +259,7 @@ class listing_highlight
         return false;
     }
 
-    static function get_allowed_types()
+    public static function get_allowed_types()
     {
         $allowed_types = [];
 
@@ -305,7 +305,7 @@ class listing_highlight
         return $allowed_types;
     }
 
-    static function get_field_type_key($field_type)
+    public static function get_field_type_key($field_type)
     {
         foreach (self::get_allowed_types() as $key => $types) {
             foreach ($types as $type) {
@@ -316,7 +316,7 @@ class listing_highlight
         }
     }
 
-    static function get_fields_allowed_types()
+    public static function get_fields_allowed_types()
     {
         $fields_allowed_types = [];
         foreach (self::get_allowed_types() as $types) {
@@ -328,7 +328,7 @@ class listing_highlight
         return $fields_allowed_types;
     }
 
-    static function get_fields_choices($entity_id)
+    public static function get_fields_choices($entity_id)
     {
         $choices = [];
         $fields_query = db_query(
@@ -346,15 +346,15 @@ class listing_highlight
         return $choices;
     }
 
-    static function get_field_value_by_type($field, $value)
+    public static function get_field_value_by_type($field, $value)
     {
         $html = '';
 
-        $cfg = new fields_types_cfg($field['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         switch (self::get_field_type_key($field['type'])) {
             case 'boolean':
-                $html = ($value == 'true' ? TEXT_BOOLEAN_TRUE : TEXT_BOOLEAN_FALSE);
+                $html = ($value == 'true' ? \K::$fw->TEXT_BOOLEAN_TRUE : \K::$fw->TEXT_BOOLEAN_FALSE);
                 break;
             case 'choices':
                 if ($cfg->get('use_global_list') > 0) {
@@ -382,5 +382,4 @@ class listing_highlight
 
         return $html;
     }
-
 }
