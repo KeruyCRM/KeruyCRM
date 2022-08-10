@@ -53,7 +53,7 @@ class Items
             $processes->run_before_delete($items_id);
         }
 
-        $item_info = \K::model()->db_find("app_entity_" . $entities_id, $items_id);
+        $item_info = \K::model()->db_find("app_entity_" . (int)$entities_id, $items_id);
 
         $parent_item_id = ($item_info['parent_id'] > 0 ? \Models\Main\Items\Tree_table::get_top_parent_item_id(
             $entities_id,
@@ -264,7 +264,7 @@ class Items
         $heading_field_id = \Models\Main\Fields::get_heading_id($entity_id);
 
         if ($heading_field_id and !$item_info) {
-            $item_info = \K::model()->db_find('app_entity_' . $entity_id, $item_id);
+            $item_info = \K::model()->db_find('app_entity_' . (int)$entity_id, $item_id);
         }
 
         return ($heading_field_id > 0 ? self::get_heading_field_value($heading_field_id, $item_info) : $item_id);
@@ -1475,7 +1475,7 @@ class Items
     public static function get_send_to($entity_id, $item_id, $item = false)
     {
         if (!$item) {
-            $item = \K::model()->db_find('app_entity_' . $entity_id, $item_id);
+            $item = \K::model()->db_find('app_entity_' . (int)$entity_id, $item_id);
         }
 
         //start build $send_to array

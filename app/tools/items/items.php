@@ -261,7 +261,7 @@ class Items
         $heading_field_id = \Models\Main\Fields::get_heading_id($entity_id);
 
         if ($heading_field_id and !$item_info) {
-            $item_info = \K::model()->db_find('app_entity_' . $entity_id, $item_id);
+            $item_info = \K::model()->db_find('app_entity_' . (int)$entity_id, $item_id);
         }
 
         return ($heading_field_id > 0 ? self::get_heading_field_value($heading_field_id, $item_info) : $item_id);
