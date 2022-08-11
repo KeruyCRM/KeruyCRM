@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -57,12 +61,14 @@ class Fieldtype_image_map
             'choices' => $choices,
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'map_width',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_HEIGHT,
             'name' => 'map_height',
@@ -71,23 +77,33 @@ class Fieldtype_image_map
         ];
 
         //fields in popup
-        $exclude_types = [
-            "'fieldtype_action'",
-            "'fieldtype_parent_item_id'",
-            "'fieldtype_related_records'",
-            "'fieldtype_mapbbcode'",
-            "'fieldtype_section'",
-            "'fieldtype_image_map'",
-            "'fieldtype_image_map_nested'"
-        ];
+        $exclude_types = \K::model()->quoteToString([
+            'fieldtype_action',
+            'fieldtype_parent_item_id',
+            'fieldtype_related_records',
+            'fieldtype_mapbbcode',
+            'fieldtype_section',
+            'fieldtype_image_map',
+            'fieldtype_image_map_nested'
+        ]);
+
         $choices = [];
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select * from app_fields where type not in (" . implode(
                 ",",
                 $exclude_types
             ) . ") and entities_id='" . db_input($_POST['entities_id']) . "'"
-        );
-        while ($fields = db_fetch_array($fields_query)) {
+        );*/
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type not in (' . $exclude_types . ') and entities_id = ?',
+            \K::$fw->POST['entities_id']
+        ], [], 'id,name');
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $choices[$fields['id']] = $fields['name'];
         }
 
@@ -103,12 +119,23 @@ class Fieldtype_image_map
         //background
         $choices = [];
         $choices[''] = '';
-        $fields_query = db_query(
+        $typeIn = \K::model()->quoteToString(['fieldtype_dropdown', 'fieldtype_radioboxes']);
+
+        /*$fields_query = db_query(
             "select * from app_fields where type in ('fieldtype_dropdown','fieldtype_radioboxes') and entities_id='" . db_input(
                 $_POST['entities_id']
             ) . "'"
-        );
-        while ($fields = db_fetch_array($fields_query)) {
+        );*/
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (' . $typeIn . ') and entities_id = ?',
+            \K::$fw->POST['entities_id']
+        ], [], 'id,name');
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $choices[$fields['id']] = $fields['name'];
         }
 
@@ -142,7 +169,7 @@ class Fieldtype_image_map
         switch ($name) {
             case 'background_icons':
                 if (strlen($value)) {
-                    $choices = fields_choices::get_choices($value, false);
+                    $choices = \Models\Main\Fields_choices::get_choices($value, false);
                     if (count($choices)) {
                         $cfg[] = [
                             'title' => \K::$fw->TEXT_ICONS,
@@ -185,50 +212,55 @@ class Fieldtype_image_map
             $choices[''] = $cfg->get('default_text');
         }
 
-        $choices_query = db_query(
+        /*$choices_query = db_query(
             "select * from app_fields_choices where fields_id = '" . db_input(
                 $field['id']
             ) . "' and parent_id=0 order by sort_order, name"
-        );
-        while ($v = db_fetch_array($choices_query)) {
+        );*/
+
+        $choices_query = \K::model()->db_fetch('app_fields_choices', [
+            'fields_id = ? and parent_id = 0',
+            $field['id']
+        ], ['order' => 'sort_order,name'], 'id,name');
+
+        //while ($v = db_fetch_array($choices_query)) {
+        foreach ($choices_query as $v) {
+            $v = $v->cast();
+
             $choices[$v['id']] = $v['name'];
         }
 
-        $default_id = fields_choices::get_default_id($field['id']);
+        $default_id = \Models\Main\Fields_choices::get_default_id($field['id']);
 
         $value = ($obj['field_' . $field['id']] > 0 ? $obj['field_' . $field['id']] : ($params['form'] == 'comment' ? '' : $default_id));
 
-        return select_tag('fields[' . $field['id'] . ']', $choices, $value, $attributes);
+        return \Helpers\Html::select_tag('fields[' . $field['id'] . ']', $choices, $value, $attributes);
     }
 
     public function process($options)
     {
-        global $app_changed_fields, $app_choices_cache, $app_global_choices_cache;
-
         return $options['value'];
     }
 
     public function output($options)
     {
-        global $app_choices_cache;
-
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         //check if value exist
-        if ($options['value'] == 0 or !isset($app_choices_cache[$options['value']])) {
+        if ($options['value'] == 0 or !isset(\K::$fw->app_choices_cache[$options['value']])) {
             return '';
         }
 
         if (isset($options['is_listing']) or isset($options['is_export'])) {
-            return fields_choices::render_value($options['value']);
+            return \Models\Main\Fields_choices::render_value($options['value']);
         } else {
             $width_css = (strlen($cfg->get('map_width')) ? 'style="max-width: ' . $cfg->get('map_width') . 'px"' : '');
             $height_css = (strlen($cfg->get('map_height')) ? 'style="height: ' . $cfg->get('map_height') . 'px"' : '');
 
             return '
       		<div class="image-map-iframe-box" ' . $width_css . '>
-      			<iframe src="' . url_for(
-                    'image_map/single',
+      			<iframe src="' . \Helpers\Urls::url_for(
+                    'main/image_map/single',
                     'path=' . $options['path'] . '&map_id=' . $options['value'] . '&fields_id=' . $options['field']['id']
                 ) . '" class="image-map-iframe" scrolling="no" frameborder="no" ' . $height_css . '></iframe>
       		</div>';
@@ -243,8 +275,8 @@ class Fieldtype_image_map
     public static function upload_map_filename($choices_id)
     {
         //upload
-        if (isset($_FILES['filename']['name'])) {
-            if (strlen($_FILES['filename']['name']) > 0) {
+        if (isset(\K::$fw->FILES['filename']['name'])) {
+            if (strlen(\K::$fw->FILES['filename']['name']) > 0) {
                 $map_dir = \K::$fw->DIR_WS_UPLOADS . 'maps/' . $choices_id;
 
                 //check dir
@@ -259,23 +291,25 @@ class Fieldtype_image_map
                     }
                 }
 
-                $filename = str_replace(' ', '_', $_FILES['filename']['name']);
+                $filename = str_replace(' ', '_', \K::$fw->FILES['filename']['name']);
                 $upload_filepath = $map_dir . '/' . $filename;
 
-                if (move_uploaded_file($_FILES['filename']['tmp_name'], $upload_filepath)) {
+                if (move_uploaded_file(\K::$fw->FILES['filename']['tmp_name'], $upload_filepath)) {
                     //update db
-                    db_query(
+                    /*db_query(
                         "update app_fields_choices set filename = '" . db_input(
                             $filename
                         ) . "' where id = '" . db_input($choices_id) . "'"
-                    );
+                    );*/
 
-                    require('includes/libs/openzoom/GdThumb.php');
-                    require('includes/libs/openzoom/OzDeepzoomImageCreator.php');
-                    require('includes/libs/openzoom/OzDeepzoomDescriptor.php');
+                    \K::model()->db_update('app_fields_choices', ['filename' => $filename], ['id = ?', $choices_id]);
+
+                    require('app/libs/openzoom/GdThumb.php');
+                    require('app/libs/openzoom/OzDeepzoomImageCreator.php');
+                    require('app/libs/openzoom/OzDeepzoomDescriptor.php');
 
                     //prepare image
-                    $mapCreator = @new Flexphperia_OzDeepzoomImageCreator($upload_filepath, $map_dir);
+                    $mapCreator = @new \Flexphperia_OzDeepzoomImageCreator($upload_filepath, $map_dir);
                     @$mapCreator->create();
                 }
             }
@@ -298,6 +332,7 @@ class Fieldtype_image_map
         }
 
         //remove markers
-        db_query("delete from app_image_map_markers where map_id='" . $choices_id . "'");
+        //db_query("delete from app_image_map_markers where map_id='" . $choices_id . "'");
+        \K::model()->db_delete_row('app_image_map_markers', $choices_id, 'map_id');
     }
 }

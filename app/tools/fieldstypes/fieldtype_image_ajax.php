@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -14,17 +18,20 @@ class Fieldtype_image_ajax
     public function get_configuration()
     {
         $cfg = [];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
             'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_ALLOW_CHANGE_FILE_NAME,
             'name' => 'allow_change_file_name',
             'type' => 'checkbox'
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_FILES_UPLOAD_SIZE_LIMIT,
             'name' => 'upload_size_limit',
@@ -33,6 +40,7 @@ class Fieldtype_image_ajax
             'tooltip' => \K::$fw->TEXT_MAX_UPLOAD_FILE_SIZE . ' ' . \K::$fw->CFG_SERVER_UPLOAD_MAX_FILESIZE . 'MB ' . \K::$fw->TEXT_MAX_UPLOAD_FILE_SIZE_TIP,
             'params' => ['class' => 'form-control input-xsmall']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_PREVIEW_IMAGE_SIZE,
             'name' => 'width',
@@ -40,6 +48,7 @@ class Fieldtype_image_ajax
             'tooltip_icon' => \K::$fw->TEXT_PREVIEW_IMAGE_SIZE_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_PREVIEW_IMAGE_SIZE_IN_LISTING,
             'name' => 'width_in_listing',
@@ -66,68 +75,66 @@ class Fieldtype_image_ajax
 
     public function render($field, $obj, $params = [])
     {
-        global $uploadify_attachments, $uploadify_attachments_queue, $current_path, $app_user, $app_items_form_name, $public_form, $app_session_token;
-
-        $filename = $obj['field_' . $field['id']];
         $html = '';
 
         $field_id = $field['id'];
 
-        $uploadify_attachments[$field_id] = [];
-        $uploadify_attachments_queue[$field_id] = [];
+        \K::$fw->uploadify_attachments[$field_id] = [];
+        \K::$fw->uploadify_attachments_queue[$field_id] = [];
 
         if (strlen($obj['field_' . $field['id']]) > 0) {
-            $uploadify_attachments[$field_id] = explode(',', $obj['field_' . $field['id']]);
+            \K::$fw->uploadify_attachments[$field_id] = explode(',', $obj['field_' . $field['id']]);
         }
 
-        $timestamp = time();
-
         $delete_file_url = '';
+        $form_token = \K::security()->getAppToken(64);
 
-        if ($app_items_form_name == 'registration_form') {
-            $form_token = md5($app_session_token . $timestamp);
-            $uploadScript = url_for('users/registration', 'action=attachments_upload&field_id=' . $field_id, true);
-            $previewScript = url_for(
-                'users/registration',
-                'action=attachments_preview&field_id=' . $field_id . '&token=' . $form_token
+        if (\K::$fw->app_items_form_name == 'registration_form') {
+            //$form_token = md5($app_session_token . $timestamp);
+            $uploadScript = \Helpers\Urls::url_for(
+                'main/users/registration/attachments_upload',
+                'field_id=' . $field_id
             );
-        } elseif ($app_items_form_name == 'public_form' or (isset($_GET['form_name'])) and $_GET['form_name'] == 'public_form') {
-            $public_form['id'] = isset($_GET['public_form_id']) ? _GET('public_form_id') : $public_form['id'];
-            $form_token = md5($app_session_token . $timestamp);
-            $uploadScript = url_for(
-                'ext/public/form',
-                'action=attachments_upload&id=' . $public_form['id'] . '&field_id=' . $field_id,
-                true
+            $previewScript = \Helpers\Urls::url_for(
+                'main/users/registration/attachments_preview',
+                'field_id=' . $field_id . '&token=' . $form_token
             );
-            $previewScript = url_for(
-                'ext/public/form',
-                'action=attachments_preview&field_id=' . $field_id . '&id=' . $public_form['id'] . '&token=' . $form_token,
-                true
+        } elseif (\K::$fw->app_items_form_name == 'public_form' or (isset(\K::$fw->GET['form_name'])) and $_GET['form_name'] == 'public_form') {
+            \K::$fw->public_form['id'] = \K::$fw->GET['public_form_id'] ?? \K::$fw->public_form['id'];
+            //$form_token = md5($app_session_token . $timestamp);
+            $uploadScript = \Helpers\Urls::url_for(
+                'ext/public/form/attachments_upload',
+                'id=' . \K::$fw->public_form['id'] . '&field_id=' . $field_id
             );
-        } elseif ($app_items_form_name == 'account_form') {
-            $form_token = md5($app_user['id'] . $timestamp);
-            $uploadScript = url_for(
-                'users/account',
-                'action=attachments_upload&path=' . $current_path . '&field_id=' . $field_id,
-                true
+            $previewScript = \Helpers\Urls::url_for(
+                'ext/public/form/attachments_preview',
+                'field_id=' . $field_id . '&id=' . \K::$fw->public_form['id'] . '&token=' . $form_token
             );
-            $previewScript = url_for(
-                'users/account',
-                'action=attachments_preview&field_id=' . $field_id . '&path=' . $current_path . '&token=' . $form_token
+        } elseif (\K::$fw->app_items_form_name == 'account_form') {
+            //$form_token = md5(\K::$fw->app_user['id'] . $timestamp);
+            $uploadScript = \Helpers\Urls::url_for(
+                'main/users/account/attachments_upload',
+                'path=' . \K::$fw->current_path . '&field_id=' . $field_id
             );
-            $delete_file_url = url_for('users/account', 'action=attachments_delete_in_queue');
+            $previewScript = \Helpers\Urls::url_for(
+                'main/users/account/attachments_preview',
+                'field_id=' . $field_id . '&path=' . \K::$fw->current_path . '&token=' . $form_token
+            );
+            $delete_file_url = \Helpers\Urls::url_for('main/users/account/attachments_delete_in_queue');
         } else {
-            $form_token = md5($app_user['id'] . $timestamp);
-            $uploadScript = url_for(
-                'items/items',
-                'action=attachments_upload&path=' . $current_path . '&field_id=' . $field_id,
-                true
+            //$form_token = md5(\K::$fw->app_user['id'] . $timestamp);
+            $uploadScript = \Helpers\Urls::url_for(
+                'main/items/items/attachments_upload',
+                'path=' . \K::$fw->current_path . '&field_id=' . $field_id
             );
-            $previewScript = url_for(
-                'items/items',
-                'action=attachments_preview&field_id=' . $field_id . '&path=' . $current_path . '&token=' . $form_token
+            $previewScript = \Helpers\Urls::url_for(
+                'main/items/items/attachments_preview',
+                'field_id=' . $field_id . '&path=' . \K::$fw->current_path . '&token=' . $form_token
             );
-            $delete_file_url = url_for('items/items', 'action=attachments_delete_in_queue&path=' . $_GET['path']);
+            $delete_file_url = \Helpers\Urls::url_for(
+                'main/items/items/attachments_delete_in_queue',
+                'path=' . \K::$fw->GET['path']
+            );
         }
 
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
@@ -139,7 +146,7 @@ class Fieldtype_image_ajax
             'png'
         ];
 
-        $mime_types = fieldtype_attachments::get_mime_types();
+        $mime_types = \Tools\FieldsTypes\Fieldtype_attachments::get_mime_types();
         $allowed_mime_types = [];
         foreach ($allowed_extensions as $v) {
             foreach ($mime_types[$v] as $vv) {
@@ -147,9 +154,9 @@ class Fieldtype_image_ajax
             }
         }
 
-        $attachments_preview_html = attachments::render_preview(
+        $attachments_preview_html = \Tools\Attachments::render_preview(
             $field_id,
-            $uploadify_attachments[$field_id],
+            \K::$fw->uploadify_attachments[$field_id],
             $delete_file_url
         );
 
@@ -174,16 +181,15 @@ function uploadifive_oncomplate_filed_' . $field_id . '()
 
 $(function(){
     $("#uploadifive_attachments_upload_' . $field['id'] . '").uploadifive({
-        auto             : true,  
-        dnd              : false, 
+        auto             : true,
+        dnd              : false,
         fileType         : [\'' . implode("','", $allowed_mime_types) . '\'],
         fileTypeExtra    : "' . implode(',', $allowed_extensions) . '",
         buttonClass      : "btn btn-default btn-upload",
-        buttonText       : "<i class=\"fa fa-upload\"></i> ' . \K::$fw->TEXT_SELECT_IMAGE . '",				            
+        buttonText       : "<i class=\"fa fa-upload\"></i> ' . \K::$fw->TEXT_SELECT_IMAGE . '",
         formData       :  {
-                                "timestamp" : ' . $timestamp . ',
                                 "token"     : "' . $form_token . '",
-                                "form_session_token" : "' . $app_session_token . '"		
+                                "form_session_token" : "' . \K::$fw->app_session_token . '"
                             },    
         queueID          : "uploadifive_queue_list_' . $field_id . '",
         fileSizeLimit : "' . (strlen($cfg->get('upload_size_limit')) ? (int)$cfg->get(
@@ -193,19 +199,16 @@ $(function(){
         uploadScript: "' . $uploadScript . '",
         onUpload: function (filesToUpload)
         {
-            
         },
         onUploadComplete: function (file, data)
         {
-            uploadifive_oncomplate_filed_' . $field_id . '()              
+            uploadifive_oncomplate_filed_' . $field_id . '()
         },
         onError: function (errorType)
         {
-            
         },
         onCancel: function ()
         {
-            
         }
     });
 })        
@@ -221,12 +224,12 @@ $(function(){
 
         if (is_array($options['value'])) {
             foreach ($options['value'] as $v) {
-                $file = attachments::parse_filename($v['file']);
+                $file = \Tools\Attachments::parse_filename($v['file']);
 
                 if ($file['filename'] == $v['name']) {
                     $attachment = $v['file'];
                 } else {
-                    $new_name = $file['date_added'] . '_' . db_input_protect($v['name']) . (strlen(
+                    $new_name = $file['date_added'] . '_' . \K::model()->db_input_protect($v['name']) . (strlen(
                             $file['extension']
                         ) ? '.' . $file['extension'] : '');
                     $filepath = \K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . (\K::$fw->CFG_ENCRYPT_FILE_NAME == 1 ? sha1(
@@ -252,76 +255,77 @@ $(function(){
         $options_cfg = new \Models\Main\Fields_types_options_cfg($options);
 
         if (strlen($options['value']) > 0) {
-            $file = attachments::parse_filename($options['value']);
+            $file = \Tools\Attachments::parse_filename($options['value']);
 
             if (isset($options['is_print'])) {
-                return '<img width=120 height=120 src=' . url_for(
-                        'items/info&path=' . $options['field']['entities_id'],
-                        '&action=download_attachment&preview=small&file=' . urlencode(base64_encode($options['value']))
+                return '<img width=120 height=120 src=' . \Helpers\Urls::url_for(
+                        'main/items/info/download_attachment',
+                        'path=' . $options['field']['entities_id'] . '&preview=small&file=' . urlencode(
+                            base64_encode($options['value'])
+                        )
                     ) . '>';
             } elseif (isset($options['is_email'])) {
                 if ($options_cfg->get('hide_attachments_url') == 1) {
                     return $file['name'];
                 } else {
-                    return link_to(
+                    return \Helpers\Urls::link_to(
                             $file['name'],
-                            url_for(
-                                'items/info',
-                                'path=' . $options['path'] . '&action=download_attachment&file=' . urlencode(
+                            \Helpers\Urls::url_for(
+                                'main/items/info/download_attachment',
+                                'path=' . $options['path'] . '&file=' . urlencode(
                                     base64_encode($options['value'])
                                 ) . '&field=' . $options['field']['id']
                             ),
                             ['target' => '_blank']
-                        ) . (!$use_file_storage ? ' <small>(' . $file['size'] . ')</small>' : '');
+                        ) . ' <small>(' . $file['size'] . ')</small>';
                 }
             } elseif (isset($options['is_export'])) {
                 return $file['name'];
-            } else {
-                if ($file['is_image']) {
-                    $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
+            } elseif ($file['is_image']) {
+                $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
-                    $fancybox_css_class = 'fancybox' . $options['field']['id'] . time();
+                $fancybox_css_class = 'fancybox' . $options['field']['id'] . time();
 
-                    $img = '<img class="fieldtype_image field_' . $options['field']['id'] . '"   src="' . url_for(
-                            'items/info&path=' . $options['path'],
-                            '&action=download_attachment&preview=small&file=' . urlencode(
-                                base64_encode($options['value'])
-                            )
-                        ) . '">';
+                $img = '<img class="fieldtype_image field_' . $options['field']['id'] . '"   src="' . \Helpers\Urls::url_for(
+                        'main/items/info/download_attachment',
+                        'path=' . $options['path'] . '&preview=small&file=' . urlencode(
+                            base64_encode($options['value'])
+                        )
+                    ) . '">';
 
-                    $width = (isset($options['is_listing']) ? (strlen($cfg->get('width_in_listing')) ? $cfg->get(
-                        'width_in_listing'
-                    ) : 250) : (strlen($cfg->get('width')) ? $cfg->get('width') : 250));
+                $width = (isset($options['is_listing']) ? (strlen($cfg->get('width_in_listing')) ? $cfg->get(
+                    'width_in_listing'
+                ) : 250) : (strlen($cfg->get('width')) ? $cfg->get('width') : 250));
 
-                    $html = '
+                $html = '
           <div class="fieldtype-image-container" style="width: ' . $width . 'px; max-height: ' . $width . 'px;">' .
-                        link_to(
-                            $img,
-                            url_for(
-                                'items/info&path=' . $options['path'],
-                                '&action=preview_attachment_image&file=' . urlencode(base64_encode($options['value']))
-                            ),
-                            ['class' => $fancybox_css_class]
-                        ) . '
+                    \Helpers\Urls::link_to(
+                        $img,
+                        \Helpers\Urls::url_for(
+                            'main/items/info/preview_attachment_image',
+                            'path=' . $options['path'] . '&file=' . urlencode(base64_encode($options['value']))
+                        ),
+                        ['class' => $fancybox_css_class]
+                    ) . '
            </div> 
           ';
 
-                    if (!isset($options['is_listing'])) {
-                        $html .= '
-          	<div class="fieldtype-image-filename" style="width: ' . $width . 'px">
-              ' . link_to(
-                                '<i class="fa fa-download"></i> ' . $file['name'],
-                                url_for(
-                                    'items/info',
-                                    'path=' . $options['path'] . '&action=download_attachment&file=' . urlencode(
-                                        base64_encode($options['value'])
-                                    )
-                                )
-                            ) . '
-            </div>';
-                    }
-
+                if (!isset($options['is_listing'])) {
                     $html .= '
+          	<div class="fieldtype-image-filename" style="width: ' . $width . 'px">
+              ' . \Helpers\Urls::link_to(
+                            '<i class="fa fa-download"></i> ' . $file['name'],
+                            \Helpers\Urls::url_for(
+                                'main/items/info/download_attachment',
+                                'path=' . $options['path'] . '&file=' . urlencode(
+                                    base64_encode($options['value'])
+                                )
+                            )
+                        ) . '
+            </div>';
+                }
+
+                $html .= '
           <script>
             $(document).ready(function() {
             	$(".' . $fancybox_css_class . '").fancybox({
@@ -334,19 +338,18 @@ $(function(){
           </script>
           ';
 
-                    return $html;
-                } else {
-                    return '<img src="' . $file['icon'] . '"> ' . link_to(
-                            $file['name'],
-                            url_for(
-                                'items/info',
-                                'path=' . $options['path'] . '&action=download_attachment&file=' . urlencode(
-                                    base64_encode($options['value'])
-                                )
-                            ),
-                            ['target' => '_blank']
-                        ) . '  <small>(' . $file['size'] . ')</small>';
-                }
+                return $html;
+            } else {
+                return '<img src="' . $file['icon'] . '"> ' . \Helpers\Urls::link_to(
+                        $file['name'],
+                        \Helpers\Urls::url_for(
+                            'main/items/info/download_attachment',
+                            'path=' . $options['path'] . '&file=' . urlencode(
+                                base64_encode($options['value'])
+                            )
+                        ),
+                        ['target' => '_blank']
+                    ) . '  <small>(' . $file['size'] . ')</small>';
             }
         } else {
             return '';

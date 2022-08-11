@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -79,14 +83,15 @@ class Fieldtype_iframe
                 ($field['is_required'] == 1 ? ' required noSpace' : '')
         ];
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        //TODO Rename uniquer
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
-        return input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
+        return \Helpers\Html::input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
     }
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
