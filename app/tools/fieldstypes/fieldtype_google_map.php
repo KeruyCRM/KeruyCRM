@@ -299,8 +299,8 @@ class Fieldtype_google_map
                                     $value
                                 ) . "' where id='" . db_input($items_id) . "'"
                             );*/
-                            \K::model()->db_update('app_entity_' . $entities_id, [
-                                'field_' . $fields_id => $value
+                            \K::model()->db_update('app_entity_' . (int)$entities_id, [
+                                'field_' . (int)$fields_id => $value
                             ], ['id = ?', $items_id]);
                         }
                     }

@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -24,8 +28,8 @@ class Fieldtype_google_map_directions
         ];
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => \K::$fw->TEXT_ADDRESS . fields::get_available_fields_helper(
-                    $_POST['entities_id'],
+            'title' => \K::$fw->TEXT_ADDRESS . \Models\Main\Fields::get_available_fields_helper(
+                    \K::$fw->POST['entities_id'],
                     'fields_configuration_address_pattern',
                     \K::$fw->TEXT_SELECT_FIELD,
                     [
@@ -51,6 +55,7 @@ class Fieldtype_google_map_directions
             'tooltip_icon' => \K::$fw->TEXT_WIDTH_INPUT_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_HEIGHT,
             'name' => 'map_height',
@@ -80,11 +85,13 @@ class Fieldtype_google_map_directions
             'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_LABEL_TIP,
             'params' => ['class' => 'form-control input-xlarge']
         ];
+
         $cfg[\K::$fw->TEXT_MARKER][] = [
             'title' => \K::$fw->TEXT_LABEL_COLOR,
             'name' => 'label_color',
             'type' => 'colorpicker'
         ];
+
         $cfg[\K::$fw->TEXT_MARKER][] = [
             'title' => \K::$fw->TEXT_ICONS,
             'name' => 'icons',
@@ -92,6 +99,7 @@ class Fieldtype_google_map_directions
             'tooltip' => \K::$fw->TEXT_FIELDTYPE_GOOGLE_MAP_DIRECTIONS_ICONS_TIP,
             'params' => ['class' => 'form-control input-xlarge']
         ];
+
         $cfg[\K::$fw->TEXT_MARKER][] = [
             'title' => \K::$fw->TEXT_FIELDS_IN_POPUP,
             'name' => 'fields_in_popup',
@@ -120,21 +128,25 @@ class Fieldtype_google_map_directions
             'name' => 'optimizeWaypoints',
             'type' => 'checkbox'
         ];
+
         $cfg[\K::$fw->TEXT_DIRECTIONS][] = [
             'title' => \K::$fw->TEXT_PROVIDE_ROUTE_ALTERNATIVES,
             'name' => 'provideRouteAlternatives',
             'type' => 'checkbox'
         ];
+
         $cfg[\K::$fw->TEXT_DIRECTIONS][] = [
             'title' => \K::$fw->TEXT_AVOID_FERRIES,
             'name' => 'avoidFerries',
             'type' => 'checkbox'
         ];
+
         $cfg[\K::$fw->TEXT_DIRECTIONS][] = [
             'title' => \K::$fw->TEXT_AVOID_HIGHWAYS,
             'name' => 'avoidHighways',
             'type' => 'checkbox'
         ];
+
         $cfg[\K::$fw->TEXT_DIRECTIONS][] = [
             'title' => \K::$fw->TEXT_AVOID_TOLLS,
             'name' => 'avoidTolls',
@@ -156,12 +168,22 @@ class Fieldtype_google_map_directions
         ];
 
         $choices = ['' => ''];
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select id, name from app_fields where type in ('fieldtype_input_numeric') and entities_id = '" . _POST(
                 'entities_id'
             ) . "'"
-        );
-        while ($fields = db_fetch_array($fields_query)) {
+        );*/
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (?) and entities_id = ?',
+            'fieldtype_input_numeric',
+            \K::$fw->POST['entities_id']
+        ], [], 'id,name');
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $choices[$fields['id']] = $fields['name'];
         }
 
@@ -184,13 +206,11 @@ class Fieldtype_google_map_directions
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
     {
-        global $is_google_map_script, $app_user;
-
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         //skip
@@ -202,15 +222,16 @@ class Fieldtype_google_map_directions
 
         $field_id = $options['field']['id'];
 
-        $access_rules = new access_rules($options['field']['entities_id'], $options['item']);
-        $has_update_access = users::has_access('update', $access_rules->get_access_schema());
+        $access_rules = new \Models\Main\Access_rules($options['field']['entities_id'], $options['item']);
+        $has_update_access = \Models\Main\Users\Users::has_access('update', $access_rules->get_access_schema());
 
         //check fields access if have update access
         if ($has_update_access) {
-            $fields_access_schema = users::get_fields_access_schema(
+            $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema(
                 $options['field']['entities_id'],
-                $app_user['group_id']
+                \K::$fw->app_user['group_id']
             );
+
             if (isset($fields_access_schema[$options['field']['id']])) {
                 if ($fields_access_schema[$options['field']['id']] == 'view') {
                     $has_update_access = false;
@@ -224,10 +245,10 @@ class Fieldtype_google_map_directions
 
         $html_directions = '';
 
-        //bild markers
+        //build markers
         $address_array = preg_split("/\\r\\n|\\r|\\n/", $options['value']);
 
-        $labesl_array = preg_split("/\\r\\n|\\r|\\n/", $cfg->get('labels'));
+        $labels_array = preg_split("/\\r\\n|\\r|\\n/", $cfg->get('labels'));
 
         $icons_array = preg_split("/\\r\\n|\\r|\\n/", $cfg->get('icons'));
 
@@ -248,9 +269,9 @@ class Fieldtype_google_map_directions
 
                 //configure marker label
                 $label = '';
-                if (isset($labesl_array[$address_key])) {
-                    if (strlen($labesl_array[$address_key])) {
-                        $label = 'label: {text:"' . $labesl_array[$address_key] . '"';
+                if (isset($labels_array[$address_key])) {
+                    if (strlen($labels_array[$address_key])) {
+                        $label = 'label: {text:"' . $labels_array[$address_key] . '"';
 
                         if (strlen($cfg->get('label_color'))) {
                             $label .= ',color:"' . $cfg->get('label_color') . '"';
@@ -279,14 +300,24 @@ class Fieldtype_google_map_directions
                         $fields_in_popup_html .= '
 									<table class="table">
 										<tbody>';
+                        $exp = explode(',', $fields_in_popup_array[$address_key]);
 
-                        foreach (explode(',', $fields_in_popup_array[$address_key]) as $fields_id) {
-                            $field_query = db_query(
+                        foreach ($exp as $fields_id) {
+                            /*$field_query = db_query(
                                 "select * from app_fields where id='" . (int)trim($fields_id) . "'"
-                            );
-                            if ($field = db_fetch_array($field_query)) {
+                            );*/
+
+                            $field = \K::model()->db_fetch_one('app_fields', [
+                                'id = ?',
+                                $fields_id
+                            ]);
+
+                            if ($field) {
                                 //prepare field value
-                                $value = items::prepare_field_value_by_type($field, $options['item']);
+                                $value = \Models\Main\Items\Items::prepare_field_value_by_type(
+                                    $field,
+                                    $options['item']
+                                );
 
                                 $output_options = [
                                     'class' => $field['type'],
@@ -297,7 +328,7 @@ class Fieldtype_google_map_directions
                                     'path' => ''
                                 ];
 
-                                $value = trim(fields_types::output($output_options));
+                                $value = trim(\Models\Main\Fields_types::output($output_options));
 
                                 if (strlen(strip_tags($value)) > 255 and in_array(
                                         $field['type'],
@@ -309,7 +340,7 @@ class Fieldtype_google_map_directions
                                 if (strlen($value)) {
                                     $fields_in_popup_html .= '
 											<tr>
-												<td valign="top" style="padding-right: 7px;">' . fields_types::get_option(
+												<td valign="top" style="padding-right: 7px;">' . \Models\Main\Fields_types::get_option(
                                             $field['type'],
                                             'name',
                                             $field['name']
@@ -350,9 +381,9 @@ class Fieldtype_google_map_directions
 				        google.maps.event.addListener(marker' . $address_key . ', "dragend", function(evt){			        		
 				          		$.ajax({
 											  method: "POST",
-											  url: "' . url_for(
-                            'items/google_map',
-                            'path=' . $options['path'] . '&action=update_latlng_multiple'
+											  url: "' . \Helpers\Urls::url_for(
+                            'main/items/google_map/update_latlng_multiple',
+                            'path=' . $options['path']
                         ) . '",
 											  data: { lat: evt.latLng.lat(), lng: evt.latLng.lng(),filed_id: ' . $field_id . ', address_key:' . $address_key . ' } 
 											})
@@ -368,7 +399,7 @@ class Fieldtype_google_map_directions
                     var myLatlng = new google.maps.LatLng(' . $map_center[0] . ',' . $map_center[1] . ');
 
                       //Got result, center the map and put it out there
-                    map.setCenter(myLatlng);	
+                    map.setCenter(myLatlng);
             ';
         }
 
@@ -397,15 +428,14 @@ class Fieldtype_google_map_directions
             }
 
             $html_directions = '
-                var isDirectionInit = false
+        var isDirectionInit = false
 	  	var directionsService = new google.maps.DirectionsService();
-	        var directionsRenderer = new google.maps.DirectionsRenderer({
-	  						map: map,
-	  						draggable: ' . ($has_update_access ? 'true' : 'false') . ',
-	  					});
+        var directionsRenderer = new google.maps.DirectionsRenderer({
+            map: map,
+            draggable: ' . ($has_update_access ? 'true' : 'false') . ',
+        });
 	  								
 		 directionsRenderer.addListener("directions_changed", function() {
-                        
                         if(!isDirectionInit)
                         {
                             isDirectionInit = true
@@ -436,15 +466,13 @@ class Fieldtype_google_map_directions
 
                         $.ajax({
                                   method: "POST",
-                                  url: "' . url_for(
-                    'items/google_map',
-                    'path=' . $options['path'] . '&action=update_latlng_directions'
+                                  url: "' . \Helpers\Urls::url_for(
+                    'main/items/google_map/update_latlng_directions',
+                    'path=' . $options['path']
                 ) . '",
                                   data: { lat: lat, lng: lng,filed_id: ' . $field_id . ' } 
                                 })
-						  		
                 });
-	  	  					  
             var waypts = [];
 
             ' . $waypts_html . '
@@ -479,19 +507,16 @@ class Fieldtype_google_map_directions
         if (count($markers_array) or strlen($html_directions)) {
             $html = '';
 
-            if ($is_google_map_script != true) {
+            if (\K::$fw->is_google_map_script != true) {
                 $html .= '<script src="https://maps.googleapis.com/maps/api/js?key=' . $cfg->get(
                         'api_key'
                     ) . '&libraries=places"></script>';
-                $is_google_map_script = true;
+                \K::$fw->is_google_map_script = true;
             }
 
             $html .= '
-  				
-  				<script>
-					  				
-  					$(function(){
-  						  				
+  				<script>		
+  					$(function(){			
 						  var mapOptions = {
 						    zoom: ' . $cfg->get('zoom') . ',    
 						  }
@@ -507,9 +532,8 @@ class Fieldtype_google_map_directions
 			        ' . implode('', $markers_array) . '
 			        		
 			        ' . $html_directions . '
-						  		
-						})
-																		
+
+						})										
 						</script>  
 					';
 
@@ -551,9 +575,9 @@ class Fieldtype_google_map_directions
                         ' . ($cfg->get('save_value_in') > 0 ? '
                             $.ajax({
                                   method: "POST",
-                                  url: "' . url_for(
-                        'items/google_map',
-                        'path=' . $options['path'] . '&action=save_value_in'
+                                  url: "' . \Helpers\Urls::url_for(
+                        'main/items/google_map/save_value_in',
+                        'path=' . $options['path']
                     ) . '",
                                   data: { distance: distance, filed_id: ' . $cfg->get('save_value_in') . ' } 
                                 }).done(function(response){
@@ -658,8 +682,6 @@ class Fieldtype_google_map_directions
 
                             $result = json_decode($result, true);
 
-                            //print_rr($result);
-
                             if (isset($result['error_message'])) {
                                 \K::flash()->addMessage(
                                     \K::$fw->TEXT_FIELD . ' "' . $fields['name'] . '": ' . $result['error_message'],
@@ -692,8 +714,8 @@ class Fieldtype_google_map_directions
                         );*/
 
                         \K::model()->db_update(
-                            'app_entity_' . $entities_id,
-                            ['field_' . $fields_id => implode("\n", $address_values)],
+                            'app_entity_' . (int)$entities_id,
+                            ['field_' . (int)$fields_id => implode("\n", $address_values)],
                             ['id = ?', $items_id]
                         );
                     }
