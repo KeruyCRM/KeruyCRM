@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -50,10 +54,11 @@ class Fieldtype_input_dynamic_mask
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST['entities_id']),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
@@ -105,7 +110,7 @@ class Fieldtype_input_dynamic_mask
                 ($cfg->get('is_unique') > 0 ? ' is-unique' : ''),
         ];
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
         $script = '';
 
@@ -123,7 +128,7 @@ class Fieldtype_input_dynamic_mask
                     }
                   });
                 </script>';
-        } elseif (strlen($cfg->get('mask'))) {
+        } elseif (strlen($cfg->get('mask'))) {//TODO Add UA
             $script = '
                 <script>
                   jQuery(function($){                                    
@@ -141,12 +146,16 @@ class Fieldtype_input_dynamic_mask
                 </script>';
         }
 
-        return input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes) . $script;
+        return \Helpers\Html::input_tag(
+                'fields[' . $field['id'] . ']',
+                $obj['field_' . $field['id']],
+                $attributes
+            ) . $script;
     }
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)

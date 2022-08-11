@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -33,7 +37,7 @@ class Fieldtype_input_date
             'title' => \K::$fw->TEXT_DATE_FORMAT,
             'name' => 'date_format',
             'type' => 'input',
-            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . CFG_APP_DATE_FORMAT . ', ' . \K::$fw->TEXT_DATE_FORMAT_INFO,
+            'tooltip' => \K::$fw->TEXT_DEFAULT . ': ' . \K::$fw->CFG_APP_DATE_FORMAT . ', ' . \K::$fw->TEXT_DATE_FORMAT_INFO,
             'params' => ['class' => 'form-control input-small']
         ];
 
@@ -65,10 +69,11 @@ class Fieldtype_input_date
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST['entities_id']),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
+
         $cfg[\K::$fw->TEXT_EXTRA][] = [
             'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
@@ -100,13 +105,33 @@ class Fieldtype_input_date
         ];
 
         $choices = ['' => ''];
+        $typeIn = \K::model()->quoteToString(
+            [
+                'fieldtype_stages',
+                'fieldtype_dropdown',
+                'fieldtype_radioboxes',
+                'fieldtype_dropdown_multiple',
+                'fieldtype_tags',
+                'fieldtype_checkboxes',
+                'fieldtype_autostatus'
+            ]
+        );
 
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select * from app_fields where type in ('fieldtype_stages','fieldtype_dropdown','fieldtype_radioboxes','fieldtype_dropdown_multiple','fieldtype_tags','fieldtype_checkboxes','fieldtype_autostatus') and entities_id='" . db_input(
                 $_POST['entities_id']
             ) . "'"
-        );
-        while ($fields = db_fetch_array($fields_query)) {
+        );*/
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (' . $typeIn . ') and entities_id = ?',
+            \K::$fw->POST['entities_id']
+        ], [], 'id,name');
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $choices[$fields['id']] = $fields['name'];
         }
 
@@ -138,14 +163,23 @@ class Fieldtype_input_date
         switch ($name) {
             case 'disable_color_by_field_values':
                 if (strlen($value)) {
-                    $field_query = db_query("select id, name, configuration from app_fields where id='" . $value . "'");
-                    if ($field = db_fetch_array($field_query)) {
+                    //$field_query = db_query("select id, name, configuration from app_fields where id='" . $value . "'");
+
+                    $field = \K::model()->db_fetch_one('app_fields', [
+                        'id = ?',
+                        $value
+                    ], [], 'id,name,configuration');
+
+                    if ($field) {
                         $field_cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
                         if ($field_cfg->get('use_global_list') > 0) {
-                            $choices = global_lists::get_choices($field_cfg->get('use_global_list'), false);
+                            $choices = \Models\Main\Global_lists::get_choices(
+                                $field_cfg->get('use_global_list'),
+                                false
+                            );
                         } else {
-                            $choices = fields_choices::get_choices($field['id'], false);
+                            $choices = \Models\Main\Fields_choices::get_choices($field['id'], false);
                         }
 
                         $cfg[] = [
@@ -190,20 +224,20 @@ class Fieldtype_input_date
                 ) > 0 ? ' is-unique' : '')
         ];
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
         //handle extra attributes
-        $exra_attributes = [];
+        $extra_attributes = [];
 
         if (strlen($cfg->get('min_date'))) {
-            $exra_attributes[] = 'data-date-start-date="' . date(
+            $extra_attributes[] = 'data-date-start-date="' . date(
                     'Y-m-d',
                     strtotime("+" . (int)$cfg->get('min_date') . " day")
                 ) . '"';
         }
 
         if (strlen($cfg->get('max_date'))) {
-            $exra_attributes[] = 'data-date-end-date="' . date(
+            $extra_attributes[] = 'data-date-end-date="' . date(
                     'Y-m-d',
                     strtotime("+" . (int)$cfg->get('max_date') . " day")
                 ) . '"';
@@ -215,8 +249,8 @@ class Fieldtype_input_date
 
         return '<div class="input-group input-medium date datepicker" ' . implode(
                 ' ',
-                $exra_attributes
-            ) . '>' . input_tag(
+                $extra_attributes
+            ) . '>' . \Helpers\Html::input_tag(
                 'fields[' . $field['id'] . ']',
                 $value,
                 $attributes
@@ -225,17 +259,17 @@ class Fieldtype_input_date
 
     public function process($options)
     {
-        global $app_changed_fields;
-
-        $value = !is_numeric($options['value']) ? (int)get_date_timestamp($options['value']) : (int)$options['value'];
+        $value = !is_numeric($options['value']) ? (int)\Helpers\App::get_date_timestamp(
+            $options['value']
+        ) : (int)$options['value'];
 
         if (!$options['is_new_item']) {
             $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
             if ($value != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
-                $app_changed_fields[] = [
+                \K::$fw->app_changed_fields[] = [
                     'name' => $options['field']['name'],
-                    'value' => format_date($value),
+                    'value' => \Helpers\App::format_date($value),
                     'fields_id' => $options['field']['id'],
                     'fields_value' => $value,
                 ];
@@ -250,9 +284,9 @@ class Fieldtype_input_date
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if (isset($options['is_export']) and strlen($options['value']) > 0 and $options['value'] != 0) {
-            return format_date($options['value'], $cfg->get('date_format'));
+            return \Helpers\App::format_date($options['value'], $cfg->get('date_format'));
         } elseif (strlen($options['value']) > 0 and $options['value'] != 0) {
-            $html = format_date($options['value'], $cfg->get('date_format'));
+            $html = \Helpers\App::format_date($options['value'], $cfg->get('date_format'));
 
             //return simple value if color is disabled
             if (strlen($cfg->get('disable_color_by_field'))) {
@@ -274,9 +308,9 @@ class Fieldtype_input_date
             if ((date('Y-m-d', $options['value']) == date('Y-m-d') or $options['value'] < time()) and strlen(
                     $cfg->get('background')
                 ) > 0) {
-                $html = render_bg_color_block(
+                $html = \Helpers\App::render_bg_color_block(
                     $cfg->get('background'),
-                    format_date($options['value'], $cfg->get('date_format'))
+                    \Helpers\App::format_date($options['value'], $cfg->get('date_format'))
                 );
             }
 
@@ -285,9 +319,9 @@ class Fieldtype_input_date
                     $cfg->get('day_before_date_color')
                 ) > 0 and $options['value'] > time()) {
                 if ($options['value'] < strtotime('+' . $cfg->get('day_before_date') . ' day')) {
-                    $html = render_bg_color_block(
+                    $html = \Helpers\App::render_bg_color_block(
                         $cfg->get('day_before_date_color'),
-                        format_date($options['value'], $cfg->get('date_format'))
+                        \Helpers\App::format_date($options['value'], $cfg->get('date_format'))
                     );
                 }
             }
@@ -297,9 +331,9 @@ class Fieldtype_input_date
                     $cfg->get('day_before_date2_color')
                 ) > 0 and $options['value'] > time()) {
                 if ($options['value'] < strtotime('+' . $cfg->get('day_before_date2') . ' day')) {
-                    $html = render_bg_color_block(
+                    $html = \Helpers\App::render_bg_color_block(
                         $cfg->get('day_before_date2_color'),
-                        format_date($options['value'], $cfg->get('date_format'))
+                        \Helpers\App::format_date($options['value'], $cfg->get('date_format'))
                     );
                 }
             }
@@ -316,7 +350,7 @@ class Fieldtype_input_date
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = reports::prepare_dates_sql_filters($filters, $options['prefix']);
+        $sql = \Models\Main\Reports\Reports::prepare_dates_sql_filters($filters, $options['prefix']);
 
         if (count($sql) > 0) {
             $sql_query[] = implode(' and ', $sql);

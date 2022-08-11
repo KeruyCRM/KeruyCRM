@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -61,10 +65,11 @@ class Fieldtype_input
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST['entities_id']),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
@@ -89,7 +94,7 @@ class Fieldtype_input
                 ($cfg->get('is_unique') > 0 ? ' is-unique' : '')
         ];
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
         $value = $obj['field_' . $field['id']];
 
@@ -97,29 +102,27 @@ class Fieldtype_input
             $value = $cfg->get('default_value');
         }
 
-        return input_tag('fields[' . $field['id'] . ']', $value, $attributes);
+        return \Helpers\Html::input_tag('fields[' . $field['id'] . ']', $value, $attributes);
     }
 
     public function process($options)
     {
-        global $app_changed_fields;
-
         if (!$options['is_new_item']) {
             $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
-                $app_changed_fields[] = [
+                \K::$fw->app_changed_fields[] = [
                     'name' => $options['field']['name'],
-                    'value' => db_prepare_input($options['value']),
+                    'value' => \K::model()->db_prepare_input($options['value']),
                     'fields_id' => $options['field']['id'],
                     'fields_value' => $options['value'],
                     'current_field_value' => $options['current_field_value'],
-                    'current_value' => db_prepare_input($options['current_field_value']),
+                    'current_value' => \K::model()->db_prepare_input($options['current_field_value']),
                 ];
             }
         }
 
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
