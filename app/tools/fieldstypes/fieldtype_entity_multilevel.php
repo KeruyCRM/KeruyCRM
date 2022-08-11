@@ -2,7 +2,7 @@
 
 namespace Tools\FieldsTypes;
 
-class fieldtype_entity_multilevel
+class Fieldtype_entity_multilevel
 {
     public $options;
 
@@ -20,7 +20,7 @@ class fieldtype_entity_multilevel
             'name' => 'entity_id',
             'tooltip' => \K::$fw->TEXT_FIELDTYPE_ENTITY_MULTILEVEL_SELECT_ENTITY_TOOLTIP,
             'type' => 'dropdown',
-            'choices' => entities::get_choices(),
+            'choices' => \Models\Main\Entities::get_choices(),
             'params' => [
                 'class' => 'form-control input-xlarge',
                 'onChange' => 'fields_types_ajax_configuration(\'fields_for_search_box\',this.value); fields_types_ajax_configuration(\'parent_value_box\',this.value)'
@@ -53,7 +53,9 @@ class fieldtype_entity_multilevel
         ];
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
-            'title' => \Helpers\App::tooltip_icon(TEXT_DISPLAY_NAME_AS_LINK_INFO) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
+            'title' => \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXT_DISPLAY_NAME_AS_LINK_INFO
+                ) . \K::$fw->TEXT_DISPLAY_NAME_AS_LINK,
             'name' => 'display_as_link',
             'type' => 'checkbox'
         ];
@@ -77,8 +79,6 @@ class fieldtype_entity_multilevel
 
     public function get_ajax_configuration($name, $value)
     {
-        global $app_entities_cache;
-
         $cfg = [];
 
         switch ($name) {
@@ -87,20 +87,28 @@ class fieldtype_entity_multilevel
 
                 $choices = [];
                 $choices[''] = '';
-                $fields_query = db_query(
-                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in ('fieldtype_entity','fieldtype_entity_ajax','fieldtype_entity_multilevel') and  f.entities_id='" . $_POST['entities_id'] . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
+                $typeIn = \K::model()->quoteToString(
+                    ['fieldtype_entity', 'fieldtype_entity_ajax', 'fieldtype_entity_multilevel']
                 );
-                while ($fields = db_fetch_array($fields_query)) {
+
+                $fields_query = \K::model()->db_query_exec(
+                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (" . $typeIn . ") and  f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
+                    \K::$fw->POST['entities_id'],
+                    'app_fields,app_forms_tabs'
+                );
+
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
                     $field_cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
-                    if ($field_cfg->get('entity_id') == $app_entities_cache[$entities_id]['parent_id']) {
+                    if ($field_cfg->get('entity_id') == \K::$fw->app_entities_cache[$entities_id]['parent_id']) {
                         $choices[$fields['id']] = $fields['name'];
                     }
                 }
 
                 if (count($choices) > 1) {
                     $cfg[] = [
-                        'title' => VALUE_FROM_PARENT_ENTITY,
+                        'title' => \K::$fw->VALUE_FROM_PARENT_ENTITY,
                         'name' => 'force_parent_item_id',
                         'type' => 'dropdown',
                         'choices' => $choices,
@@ -113,14 +121,18 @@ class fieldtype_entity_multilevel
                 break;
             case 'fields_for_search_box':
                 $entities_id = $value;
-
                 $choices = [];
+                $typeNotIn = \K::model()->quoteToString(['fieldtype_action', 'fieldtype_parent_item_id']);
 
-                $fields_query = db_query(
-                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where is_heading = 0 and f.type not in ('fieldtype_action','fieldtype_parent_item_id') and  f.entities_id='" . $entities_id . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
+                $fields_query = \K::model()->db_query_exec(
+                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where is_heading = 0 and f.type not in (" . $typeNotIn . ") and  f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
+                    $entities_id,
+                    'app_fields,app_forms_tabs'
                 );
-                while ($fields = db_fetch_array($fields_query)) {
-                    $choices[$fields['id']] = fields_types::get_option(
+
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
+                    $choices[$fields['id']] = \Models\Main\Fields_types::get_option(
                             $fields['type'],
                             'name',
                             $fields['name']
@@ -142,12 +154,20 @@ class fieldtype_entity_multilevel
 
                 $choices = [];
 
-                $fields_query = db_query(
-                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (" . fields_types::get_types_for_search_list(
-                    ) . ") and  f.entities_id='" . $entities_id . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
+                $fields_query = \K::model()->db_query(
+                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (" . \Models\Main\Fields_types::get_types_for_search_list(
+                    ) . ") and  f.entities_id= ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
+                    $entities_id,
+                    'app_fields,app_forms_tabs'
                 );
-                while ($fields = db_fetch_array($fields_query)) {
-                    $choices[$fields['id']] = fields_types::get_option($fields['type'], 'name', $fields['name']);
+
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
+                    $choices[$fields['id']] = \Models\Main\Fields_types::get_option(
+                        $fields['type'],
+                        'name',
+                        $fields['name']
+                    );
                 }
 
                 $cfg[] = [
@@ -160,7 +180,7 @@ class fieldtype_entity_multilevel
                 ];
 
                 $cfg[] = [
-                    'title' => \K::$fw->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
+                    'title' => \K::$fw->TEXT_HEADING_TEMPLATE . \Models\Main\Fields::get_available_fields_helper(
                             $entities_id,
                             'fields_configuration_heading_template'
                         ),
@@ -173,15 +193,15 @@ class fieldtype_entity_multilevel
 
                 $cfg[] = [
                     'title' => \K::$fw->TEXT_COPY_VALUES .
-                        fields::get_available_fields_helper(
+                        \Models\Main\Fields::get_available_fields_helper(
                             $entities_id,
                             'fields_configuration_copy_values',
-                            entities::get_name_by_id($entities_id)
+                            \Models\Main\Entities::get_name_by_id($entities_id)
                         ) .
-                        '<div style="padding-top: 2px;">' . fields::get_available_fields_helper(
-                            $_POST['entities_id'],
+                        '<div style="padding-top: 2px;">' . \Models\Main\Fields::get_available_fields_helper(
+                            \K::$fw->POST['entities_id'],
                             'fields_configuration_copy_values',
-                            entities::get_name_by_id($_POST['entities_id'])
+                            \Models\Main\Entities::get_name_by_id(\K::$fw->POST['entities_id'])
                         ) . '</div>',
                     'name' => 'copy_values',
                     'type' => 'textarea',
@@ -191,17 +211,14 @@ class fieldtype_entity_multilevel
 
                 break;
         }
-
         return $cfg;
     }
 
     public function render($field, $obj, $params = [])
     {
-        global $app_module_path, $app_layout, $app_action, $app_entities_cache, $app_user;
-
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
-        $entities_levels = array_reverse(entities::get_parents($cfg->get('entity_id')));
+        $entities_levels = array_reverse(\Models\Main\Entities::get_parents($cfg->get('entity_id')));
 
         //check if there are parent entities
         if (!count($entities_levels)) {
@@ -215,8 +232,6 @@ class fieldtype_entity_multilevel
             $entities_levels[] = $cfg->get('entity_id');
         }
 
-        //print_r($entities_levels);
-
         $html = '';
         $script = '';
         $script_function = '';
@@ -226,13 +241,13 @@ class fieldtype_entity_multilevel
         $value = ($obj['field_' . $field['id']] > 0 ? $obj['field_' . $field['id']] : '');
 
         if (strlen($value)) {
-            $path_array = items::get_path_array($cfg->get('entity_id'), $value);
+            $path_array = \Models\Main\Items\Items::get_path_array($cfg->get('entity_id'), $value);
         }
 
         for ($i = 0; $i < count($entities_levels); $i++) {
             $entities_id = $entities_levels[$i];
-            $next_entities_id = (isset($entities_levels[$i + 1]) ? $entities_levels[$i + 1] : false);
-            $previous_entities_id = (isset($entities_levels[$i - 1]) ? $entities_levels[$i - 1] : false);
+            $next_entities_id = ($entities_levels[$i + 1] ?? false);
+            $previous_entities_id = ($entities_levels[$i - 1] ?? false);
 
             $attributes = [
                 'class' => 'form-control entity-multilevel' . $field['id'] . ' ' . $cfg->get(
@@ -241,7 +256,7 @@ class fieldtype_entity_multilevel
                             'entity_id'
                         )) ? ' required fieldtype_entity_multilevel' : '')
             ];
-            $attributes['data-placeholder'] = entities::get_name_by_id($entities_id);
+            $attributes['data-placeholder'] = \Models\Main\Entities::get_name_by_id($entities_id);
             $attributes['data-entity-id'] = $entities_id;
 
             $choices = [];
@@ -267,18 +282,18 @@ class fieldtype_entity_multilevel
 
             //add "+" button    	
             if ($entities_id == $cfg->get('entity_id')) {
-                $button_add_entity_id_check = (isset($entities_levels[$i - 1]) ? $entities_levels[$i - 1] : 0);
+                $button_add_entity_id_check = ($entities_levels[$i - 1] ?? 0);
 
                 $button_add_html = '';
                 if ($cfg->get(
                         'hide_plus_button'
-                    ) != 1 and $app_action != 'account' and $app_action != 'processes' and $app_layout != 'public_layout.php' and users::has_access_to_entity(
+                    ) != 1 and \K::$fw->app_action != 'account' and \K::$fw->app_action != 'processes' and \K::$fw->app_layout != 'public_layout.php' and \Models\Main\Users\Users::has_access_to_entity(
                         $cfg->get('entity_id'),
                         'create'
-                    ) and $cfg->get('entity_id') != 1 and !isset($_GET['is_submodal'])) {
+                    ) and $cfg->get('entity_id') != 1 and !isset(\K::$fw->GET['is_submodal'])) {
                     $url_params = 'is_submodal=true&redirect_to=parent_modal&refresh_field=' . $field['id'];
 
-                    $submodal_url = url_for('items/form', $url_params);
+                    $submodal_url = \Helpers\Urls::url_for('main/items/form', $url_params);
 
                     $button_add_html = '<button id="btn_submodal_open' . $field['id'] . '" type="button" class="btn btn-default btn-submodal-open btn-submodal-open-chosen hidden" data-parent-entity-item-id="' . $params['parent_entity_item_id'] . '" data-field-id="' . $field['id'] . '" data-submodal-url="" data-submodal-url-tmp="' . $submodal_url . '"><i class="fa fa-plus" aria-hidden="true"></i></button>';
                 }
@@ -286,7 +301,7 @@ class fieldtype_entity_multilevel
                 if (strlen($button_add_html)) {
                     $html .= '
                         <div class="dropdown-with-plus-btn ' . $cfg->get('width') . '">
-                            <div class="left"><p class="slect2_tag" style="margin: 0">' . select_tag(
+                            <div class="left"><p class="slect2_tag" style="margin: 0">' . \Helpers\Html::select_tag(
                             $field_name,
                             $choices,
                             $value,
@@ -295,7 +310,7 @@ class fieldtype_entity_multilevel
                             <div class="right">' . $button_add_html . '</div>
                          </div>';
                 } else {
-                    $html .= '<p class="slect2_tag" style="margin: 0">' . select_tag(
+                    $html .= '<p class="slect2_tag" style="margin: 0">' . \Helpers\Html::select_tag(
                             $field_name,
                             $choices,
                             $value,
@@ -303,42 +318,49 @@ class fieldtype_entity_multilevel
                         ) . '</p>';
                 }
             } else {
-                $html .= '<p class="slect2_tag">' . select_tag($field_name, $choices, $value, $attributes) . '</p>';
+                $html .= '<p class="slect2_tag">' . \Helpers\Html::select_tag(
+                        $field_name,
+                        $choices,
+                        $value,
+                        $attributes
+                    ) . '</p>';
 
                 $button_add_html = '';
             }
 
             $script .= '
-                let is_form_row_' . $field_id . ' = $("#' . $field_id . '").parents(".forms-rows").size();
-                    
-    		$("#' . $field_id . '").select2({		      
+            let is_form_row_' . $field_id . ' = $("#' . $field_id . '").parents(".forms-rows").size();
+
+    		$("#' . $field_id . '").select2({
 		      width: (is_form_row_' . $field_id . '==0 ? ' . self::get_select2_width_by_class(
                     $cfg->get('width'),
                     (strlen($button_add_html) ? true : false)
-                ) . ':"100%"),		      
-		      ' . ((in_array($app_layout, ['public_layout.php']) or in_array($app_module_path, ['users/account']
-                    ) or $app_user['id'] == 0) ? '' : 'dropdownParent: $("#ajax-modal"),') . '
+                ) . ':"100%"),
+		      ' . ((in_array(\K::$fw->app_layout, ['public_layout.php']) or in_array(
+                        \K::$fw->app_module_path,
+                        ['users/account']
+                    ) or \K::$fw->app_user['id'] == 0) ? '' : 'dropdownParent: $("#ajax-modal"),') . '
 		      "language":{
-		        "noResults" : function () { return "' . addslashes(TEXT_NO_RESULTS_FOUND) . '"; },
-		    		"searching" : function () { return "' . addslashes(TEXT_SEARCHING) . '"; },
-		    		"errorLoading" : function () { return "' . addslashes(TEXT_RESULTS_COULD_NOT_BE_LOADED) . '"; },
-		    		"loadingMore" : function () { return "' . addslashes(TEXT_LOADING_MORE_RESULTS) . '"; }		    				
-		      },	
+                    "noResults" : function () { return "' . addslashes(\K::$fw->TEXT_NO_RESULTS_FOUND) . '"; },
+		    		"searching" : function () { return "' . addslashes(\K::$fw->TEXT_SEARCHING) . '"; },
+		    		"errorLoading" : function () { return "' . addslashes(\K::$fw->TEXT_RESULTS_COULD_NOT_BE_LOADED) . '"; },
+		    		"loadingMore" : function () { return "' . addslashes(\K::$fw->TEXT_LOADING_MORE_RESULTS) . '"; }	
+		      },
 		    	allowClear: true,		    	
 		      ajax: {
-        		url: "' . url_for(
-                    'dashboard/select2_ml_json',
-                    'action=select_items&form_type=' . $app_module_path . '&entity_id=' . $entities_id . '&field_id=' . $field['id']
+        		url: "' . \Helpers\Urls::url_for(
+                    'main/dashboard/select2_ml_json/select_items',
+                    'form_type=' . \K::$fw->app_module_path . '&entity_id=' . $entities_id . '&field_id=' . $field['id']
                 ) . '",
         		dataType: "json",
-        		cache: false,		
+        		cache: false,
         		data: function (params) {
 				      var query = {
 				        search: params.term,
 				        page: params.page || 1,
         				parent_entity_item_id: ' . $parent_entity_item_id_val . '
 				      }
-				
+
 				      // Query parameters will be ?search=[term]&page=[page]
 				      return query;
 				    },        				        				
@@ -358,13 +380,12 @@ class fieldtype_entity_multilevel
                         {
                             $("#' . $field_id . '").empty().trigger("change");
                         }
-                        
-                            
+
                         let val = $("#fields_' . $cfg->get('force_parent_item_id') . '").val()
                                                         		
                         if(val>0)
-                        {								
-                            path = "' . $app_entities_cache[$cfg->get(
+                        {
+                            path = "' . \K::$fw->app_entities_cache[$cfg->get(
                         'entity_id'
                     )]['parent_id'] . '-"+val+"/' . $cfg->get('entity_id') . '";
                             $("#btn_submodal_open' . $field['id'] . '").attr("data-submodal-url",$("#btn_submodal_open' . $field['id'] . '").attr("data-submodal-url-tmp")+"&path="+path)
@@ -396,16 +417,16 @@ class fieldtype_entity_multilevel
             }
         }
 
-        //copy fields valuss
+        //copy fields values
         if (strlen($cfg->get('copy_values'))) {
             $html .= '<div id="fields_' . $field['id'] . '_select2_on"></div>';
 
             $html_on_change .= '
     			$("#fields_' . $field['id'] . '").on("select2:select", function (e) {
       			var data = e.params.data;
-    				$("#fields_' . $field['id'] . '_select2_on").load("' . url_for(
-                    'dashboard/select2_json',
-                    'action=copy_values&form_type=' . $app_module_path . '&entity_id=' . $cfg->get(
+    				$("#fields_' . $field['id'] . '_select2_on").load("' . \Helpers\Urls::url_for(
+                    'main/dashboard/select2_json/copy_values',
+                    'form_type=' . \K::$fw->app_module_path . '&entity_id=' . $cfg->get(
                         'entity_id'
                     ) . '&field_id=' . $field['id']
                 ) . '",{item_id:data.id})	
@@ -413,7 +434,7 @@ class fieldtype_entity_multilevel
     			';
         }
 
-        //remove ruquired errro msg
+        //remove required error msg
         $html_on_change .= '
     			$("#fields_' . $field['id'] . '").change(function (e) {
 						$("#fields_' . $field['id'] . '-error").remove();								
@@ -422,14 +443,13 @@ class fieldtype_entity_multilevel
 
         $html .= '
     	<script>
-        
         ' . $script_function . '
     	
-    //check if we can display "+" button	
+        //check if we can display "+" button
     	function button_add_entity_id_check' . $field['id'] . '()
     	{    		
     		check_val = $("#fields' . $field['id'] . '_entity' . $button_add_entity_id_check . '").val()
-                    
+
                 if(typeof check_val == "undefined")
                 {
                     return false
@@ -444,32 +464,27 @@ class fieldtype_entity_multilevel
     				path = path+"/"+$(this).attr("data-entity-id")
     				if($(this).val()>0)
     				{
-    					path = path+"-"+$(this).val();	
+    					path = path+"-"+$(this).val();
   					}
   				})
-    					
+
     			path = path.substr(1);
     			//console.log(path)
-    					
+
     			$("#btn_submodal_open' . $field['id'] . '").attr("data-submodal-url",$("#btn_submodal_open' . $field['id'] . '").attr("data-submodal-url-tmp")+"&path="+path)
   			}
     		else
     		{
-    			$("#btn_submodal_open' . $field['id'] . '").addClass("hidden")		
+    			$("#btn_submodal_open' . $field['id'] . '").addClass("hidden")
   			}
-    				
   		}
-    					
-    		
+
     	$(function(){
-    		
-	    	' . $script . '
-        				
-        ' . $html_on_change . '
+            ' . $script . '
+            ' . $html_on_change . '
         		
-        button_add_entity_id_check' . $field['id'] . '()		
+            button_add_entity_id_check' . $field['id'] . '()
       })
-        		
     	</script>
     ';
 
@@ -483,8 +498,6 @@ class fieldtype_entity_multilevel
 
     public function output($options)
     {
-        global $app_user;
-
         if (strlen($options['value']) == 0) {
             return '';
         }
@@ -500,11 +513,15 @@ class fieldtype_entity_multilevel
         //prepare sql if not export
         $items_info_formula_sql = '';
         if (!isset($options['is_export'])) {
-            $fields_access_schema = users::get_fields_access_schema($cfg->get('entity_id'), $app_user['group_id']);
+            $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema(
+                $cfg->get('entity_id'),
+                \K::$fw->app_user['group_id']
+            );
 
-            $fields_in_listing = fields::get_heading_id($cfg->get('entity_id')) . (strlen(
+            $fields_in_listing = \Models\Main\Fields::get_heading_id($cfg->get('entity_id')) . (strlen(
                     $fields_in_popup_cfg
                 ) ? ',' . $fields_in_popup_cfg : '');
+
             $items_info_formula_sql = fieldtype_formula::prepare_query_select(
                 $cfg->get('entity_id'),
                 '',
@@ -514,34 +531,39 @@ class fieldtype_entity_multilevel
         }
 
         $output = [];
-        foreach (explode(',', $options['value']) as $item_id) {
-            $items_info_sql = "select e.* {$items_info_formula_sql} from app_entity_" . $cfg->get(
+        $exp = explode(',', $options['value']);
+        foreach ($exp as $item_id) {
+            //TODO Add cache?
+            $item = \K::model()->db_query_exec_one(
+                "select e.* {$items_info_formula_sql} from app_entity_" . (int)$cfg->get(
                     'entity_id'
-                ) . " e where e.id='" . db_input($item_id) . "'";
-            $items_query = db_query($items_info_sql);
-            if ($item = db_fetch_array($items_query)) {
-                $name = items::get_heading_field($cfg->get('entity_id'), $item['id']);
+                ) . " e where e.id = ?",
+                $item_id
+            );
+
+            if ($item) {
+                $name = \Models\Main\Items\Items::get_heading_field($cfg->get('entity_id'), $item['id']);
 
                 //get fields in popup in not export
                 if (!isset($options['is_export'])) {
-                    $fields_in_popup = fields::get_items_fields_data_by_id(
+                    $fields_in_popup = \Models\Main\Fields::get_items_fields_data_by_id(
                         $item,
                         $fields_in_popup_cfg,
                         $cfg->get('entity_id'),
                         $fields_access_schema
                     );
-                    $popup_html = '';
+
                     if (count($fields_in_popup) > 0) {
-                        $popup_html = app_render_fields_popup_html($fields_in_popup);
+                        $popup_html = \Helpers\App::app_render_fields_popup_html($fields_in_popup);
 
                         $name = '<span ' . $popup_html . '>' . $name . '</span>';
                     }
 
                     if ($cfg->get('display_as_link') == 1) {
-                        $path_info = items::get_path_info($cfg->get('entity_id'), $item['id']);
+                        $path_info = \Models\Main\Items\Items::get_path_info($cfg->get('entity_id'), $item['id']);
 
-                        $name = '<a href="' . url_for(
-                                'items/info',
+                        $name = '<a href="' . \Helpers\Urls::url_for(
+                                'main/items/info',
                                 'path=' . $path_info['full_path']
                             ) . '">' . $name . '</a>';
                     }
@@ -565,7 +587,7 @@ class fieldtype_entity_multilevel
 
     public static function get_select2_width_by_class($class, $has_add_button)
     {
-        if (is_mobile()) {
+        if (\Helpers\App::is_mobile()) {
             return '($("body").width()-70' . ($has_add_button ? '-37' : '') . ')';
         }
 
@@ -592,10 +614,10 @@ class fieldtype_entity_multilevel
 
     public static function render_heading_template($item, $entity_info, $field_entity_info, $cfg, $get_html = true)
     {
+        //TODO Refactoring unused $field_entity_info
         $html = '';
-        $text = '';
 
-        $field_heading_id = fields::get_heading_id($entity_info['id']);
+        $field_heading_id = \Models\Main\Fields::get_heading_id($entity_info['id']);
 
         if (strlen($heading_template = $cfg->get('heading_template')) and $get_html) {
             $fieldtype_text_pattern = new fieldtype_text_pattern();
@@ -603,9 +625,9 @@ class fieldtype_entity_multilevel
         }
 
         if ($cfg->get('entity_id') == 1) {
-            $text = $app_users_cache[$item['id']]['name'];
+            $text = \K::$fw->app_users_cache[$item['id']]['name'];
         } elseif ($field_heading_id > 0) {
-            $text = items::get_heading_field_value($field_heading_id, $item);
+            $text = \Models\Main\Items\Items::get_heading_field_value($field_heading_id, $item);
         } else {
             $text = $item['id'];
         }
