@@ -1174,13 +1174,9 @@ class App
 
     public static function app_render_fields_popup_html($fields_in_popup, $reports_info = [])
     {
-        global $app_module_action;
-
-        if (strlen($app_module_action) > 0) {
+        if (strlen(\K::$fw->app_module_action) > 0) {
             return '';
         }
-
-        //print_r($fields_in_popup);
 
         $popup_html = '<table class=popover-table-data>';
         foreach ($fields_in_popup as $fields) {
