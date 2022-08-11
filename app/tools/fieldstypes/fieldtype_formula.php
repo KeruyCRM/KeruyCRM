@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -93,28 +97,20 @@ class Fieldtype_formula
 
     public function reports_query($options)
     {
-        global $sql_query_having;
-
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
         $sql = \Models\Main\Reports\Reports::prepare_numeric_sql_filters($filters, '');
 
         if (count($sql) > 0) {
-            $sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
+            \K::$fw->sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
         }
 
         return $sql_query;
     }
 
-    /*
-     * to save server load we check if formula needed in listing
-     */
-
     public static function check_formula_query_needed($formula_fields_id, $entities_id, $check_needed)
     {
-        //global $mysql_formula_reports_info_holder;
-
         $check_formula_needed = false;
         $reports_info = [];
 
@@ -154,6 +150,7 @@ class Fieldtype_formula
                         $entities_id,
                         $reports_info['listing_type']
                     ], [], 'id');
+
                     //if ($listing_type = db_fetch_array($listing_type_query)) {
                     if ($listing_type) {
                         /*$listing_sections_query = db_query(
@@ -209,7 +206,6 @@ class Fieldtype_formula
         $text_pattern_where_sql = '';
 
         //check custom listing fields
-
         if (isset($check_needed['fields_in_query'])) {
             if (in_array($formula_fields_id, explode(',', $check_needed['fields_in_query']))) {
                 return true;
@@ -330,8 +326,6 @@ class Fieldtype_formula
         $prepare_field_sum = false,
         $check_needed = false
     ) {
-        //global $app_not_formula_fields_cache, $app_formula_fields_cache, $app_entities_cache, $app_currencies_cache, $app_fields_cache, $app_user, $app_global_vars;
-
         //get available fields for formula
         $available_fields = [];
         if (isset(\K::$fw->app_not_formula_fields_cache[$entities_id])) {
@@ -439,7 +433,7 @@ class Fieldtype_formula
                         }
                     }
 
-                    //handle get_vallue()
+                    //handle get_value()
                     $formula = self::prepare_choices_get_value_function($entities_id, $formula);
 
                     //prepare parent items values
@@ -491,11 +485,11 @@ class Fieldtype_formula
 
                     if (!strstr($formula, '[') and !strstr($formula, '{')) {
                         if ($prepare_field_sum) {
-                            $listing_sql_query_select .= ", sum(" . $formula . ") as sum_field_" . $fields['id'] . " ";
+                            $listing_sql_query_select .= ", sum(" . $formula . ") as sum_field_" . (int)$fields['id'] . " ";
                         } elseif (is_array($listing_sql_query_select)) {
-                            $listing_sql_query_select[] = "(" . $formula . ") as field_" . $fields['id'];
+                            $listing_sql_query_select[] = "(" . $formula . ") as field_" . (int)$fields['id'];
                         } else {
-                            $listing_sql_query_select .= ", (" . $formula . ") as field_" . $fields['id'];
+                            $listing_sql_query_select .= ", (" . $formula . ") as field_" . (int)$fields['id'];
                         }
                     } else {
                         echo '<div class="alert alert-danger">' . sprintf(
@@ -551,8 +545,6 @@ class Fieldtype_formula
 
     public static function prepare_parent_entity_item_value($entities_id, $listing_sql_query_select)
     {
-        global $app_entities_cache;
-
         if (preg_match_all("/parent_entity_item_value\((\d+),(\d+)\)/", $listing_sql_query_select, $matches)) {
             foreach ($matches[1] as $key => $use_parent_entity_id) {
                 $use_field_id = $matches[2][$key];
@@ -575,10 +567,8 @@ class Fieldtype_formula
 
                     $parents = array_reverse($use_parents);
 
-                    //print_rr($parents);
-
                     $count = 0;
-                    $slq = "(select field_{$use_field_id} from app_entity_{$use_parent_entity_id} where id = ";
+                    $slq = "(select field_" . (int)$use_field_id . " from app_entity_" . (int)$use_parent_entity_id . " where id = ";
 
                     //if no parents means use next level parent
                     if (!count($parents)) {
@@ -587,10 +577,10 @@ class Fieldtype_formula
 
                     //build query for all next parents
                     foreach ($parents as $parent_entity_id) {
-                        if ($app_entities_cache[$entities_id]['parent_id'] == $parent_entity_id) {
-                            $slq .= "(select parent_item_id from app_entity_{$parent_entity_id} where id=e.parent_item_id";
+                        if (\K::$fw->app_entities_cache[$entities_id]['parent_id'] == $parent_entity_id) {
+                            $slq .= "(select parent_item_id from app_entity_" . (int)$parent_entity_id . " where id = e.parent_item_id";
                         } else {
-                            $slq .= "(select parent_item_id from app_entity_{$parent_entity_id} where id=";
+                            $slq .= "(select parent_item_id from app_entity_" . (int)$parent_entity_id . " where id = ";
                         }
 
                         $count++;
@@ -600,7 +590,6 @@ class Fieldtype_formula
 
                     $listing_sql_query_select = str_replace($matches[0][$key], $slq, $listing_sql_query_select);
                 }
-                //echo $slq. '<br>';
             }
         }
 
@@ -632,8 +621,6 @@ class Fieldtype_formula
 
     public static function prepare_choices_get_value_function($entities_id, $formula, $prefix = 'e')
     {
-        //global $app_fields_cache;
-
         if (preg_match_all("/get_value\([^)]*\)/", $formula, $matches)) {
             foreach ($matches[0] as $get_value_function) {
                 $field_id = str_replace(['get_value(' . $prefix . '.field_', ')'], '', $get_value_function);
@@ -655,15 +642,15 @@ class Fieldtype_formula
                             case 'fieldtype_dropdown':
                             case 'fieldtype_radioboxes':
                                 $formula = str_replace(
-                                    "get_value({$prefix}.field_" . $field_id,
-                                    "(select fcv.value from app_global_lists_choices fcv where fcv.lists_id ={$list_id} and fcv.id = {$prefix}.field_" . $field_id,
+                                    "get_value({$prefix}.field_" . (int)$field_id,
+                                    "(select fcv.value from app_global_lists_choices fcv where fcv.lists_id = " . (int)$list_id . " and fcv.id = {$prefix}.field_" . (int)$field_id,
                                     $formula
                                 );
                                 break;
                             default:
                                 $to_replace_str = str_replace(
                                         "get_value(",
-                                        "(select sum(fcv.value) from app_global_lists_choices fcv where fcv.lists_id ={$list_id} and find_in_set(fcv.id,",
+                                        "(select sum(fcv.value) from app_global_lists_choices fcv where fcv.lists_id = " . (int)$list_id . " and find_in_set(fcv.id,",
                                         $get_value_function
                                     ) . ")";
                                 $formula = str_replace($get_value_function, $to_replace_str, $formula);
@@ -674,8 +661,8 @@ class Fieldtype_formula
                             case 'fieldtype_dropdown':
                             case 'fieldtype_radioboxes':
                                 $formula = str_replace(
-                                    "get_value({$prefix}.field_" . $field_id,
-                                    "(select fcv.value from app_fields_choices fcv where fcv.id = {$prefix}.field_" . $field_id,
+                                    "get_value({$prefix}.field_" . (int)$field_id,
+                                    "(select fcv.value from app_fields_choices fcv where fcv.id = {$prefix}.field_" . (int)$field_id,
                                     $formula
                                 );
                                 break;
@@ -694,10 +681,9 @@ class Fieldtype_formula
         }
 
         if (preg_match_all("/entity_item_value\((\d+),(\d+)\)/", $formula, $matches)) {
-            //print_rr($matches);
-
             foreach ($matches[1] as $key => $entity_field_id) {
-                $select_field_id = $matches[2][$key];
+                $select_field_id = (int)$matches[2][$key];
+                $entity_field_id = (int)$entity_field_id;
 
                 if (!isset(\K::$fw->app_fields_cache[$entities_id][$entity_field_id])) {
                     continue;
@@ -712,7 +698,7 @@ class Fieldtype_formula
 
                 switch ($cfg->get('display_as')) {
                     case 'dropdown':
-                        $sql = "(select field_{$select_field_id} from app_entity_{$select_entity_id} where id=e.field_{$entity_field_id})";
+                        $sql = "(select field_{$select_field_id} from app_entity_{$select_entity_id} where id = e.field_{$entity_field_id})";
                         break;
                     default:
                         $sql = "(select sum(field_{$select_field_id}) from app_entity_{$select_entity_id} where find_in_set(id,e.field_{$entity_field_id}))";
