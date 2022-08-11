@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -24,8 +28,8 @@ class Fieldtype_google_map
         ];
 
         $cfg[] = [
-            'title' => \K::$fw->TEXT_ADDRESS . fields::get_available_fields_helper(
-                    $_POST['entities_id'],
+            'title' => \K::$fw->TEXT_ADDRESS . \Models\Main\Fields::get_available_fields_helper(
+                    \K::$fw->POST['entities_id'],
                     'fields_configuration_address_pattern',
                     \K::$fw->TEXT_SELECT_FIELD,
                     [
@@ -51,6 +55,7 @@ class Fieldtype_google_map
             'tooltip_icon' => \K::$fw->TEXT_WIDTH_INPUT_TIP,
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_HEIGHT,
             'name' => 'map_height',
@@ -83,13 +88,11 @@ class Fieldtype_google_map
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
     {
-        global $is_google_map_script;
-
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         //skip
@@ -108,24 +111,21 @@ class Fieldtype_google_map
         if (strlen($lat) and strlen($lng)) {
             $html = '';
 
-            if ($is_google_map_script != true) {
+            if (\K::$fw->is_google_map_script != true) {
                 $html .= '<script src="https://maps.googleapis.com/maps/api/js?key=' . $cfg->get(
                         'api_key'
                     ) . '&libraries=places"></script>';
-                $is_google_map_script = true;
+                \K::$fw->is_google_map_script = true;
             }
 
             $field_id = $options['field']['id'];
 
-            $access_rules = new access_rules($options['field']['entities_id'], $options['item']);
-            $has_update_access = users::has_access('update', $access_rules->get_access_schema());
+            $access_rules = new \Models\Main\Access_rules($options['field']['entities_id'], $options['item']);
+            $has_update_access = \Models\Main\Users\Users::has_access('update', $access_rules->get_access_schema());
 
             $html .= '
-  				
-  				<script>
-					  				
-  					$(function(){
-  						  				
+  				<script>			
+  					$(function(){		
 						  var mapOptions = {
 						    zoom: ' . $cfg->get('zoom') . ',    
 						  }
@@ -145,11 +145,11 @@ class Fieldtype_google_map
 						  		draggable: ' . ($has_update_access ? 'true' : 'false') . '
 			        });
 						  		
-						  var infowindow = new google.maps.InfoWindow();
+					var infowindow = new google.maps.InfoWindow();
 						  		
-						  google.maps.event.addListener(marker, "click", function() {
-			          infowindow.close();//hide the infowindow
-			          infowindow.setContent(\'<div id="content">' . str_replace(["\n", "\r", "\n\r"],
+					google.maps.event.addListener(marker, "click", function() {
+			        infowindow.close();//hide the infowindow
+			        infowindow.setContent(\'<div id="content">' . str_replace(["\n", "\r", "\n\r"],
                     ' ',
                     nl2br(urldecode($current_address))) . '</div>\');
 			          infowindow.open(map,marker);
@@ -158,16 +158,14 @@ class Fieldtype_google_map
 			        google.maps.event.addListener(marker, "dragend", function(evt){			        		
 			          		$.ajax({
 										  method: "POST",
-										  url: "' . url_for(
-                    'items/google_map',
-                    'path=' . $options['path'] . '&action=update_latlng'
+										  url: "' . \Helpers\Urls::url_for(
+                    'main/items/google_map/update_latlng',
+                    'path=' . $options['path']
                 ) . '",
 										  data: { lat: evt.latLng.lat(), lng: evt.latLng.lng(),filed_id: ' . $field_id . ' } 
 										})
 							});
-						  		
-						})
-																		
+						})										
 						</script>  
 					';
 
@@ -282,8 +280,6 @@ class Fieldtype_google_map
                         curl_close($ch);
 
                         $result = json_decode($result, true);
-
-                        //print_rr($result);
 
                         if (isset($result['error_message'])) {
                             \K::flash()->addMessage(
