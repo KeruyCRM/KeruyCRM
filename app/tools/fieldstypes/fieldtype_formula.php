@@ -34,11 +34,13 @@ class Fieldtype_formula
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
             'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
+
         $cfg[] = [
             'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
             'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
+
         $cfg[] = [
             'title' => \Helpers\App::tooltip_icon(
                     \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO
@@ -46,6 +48,7 @@ class Fieldtype_formula
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
@@ -59,6 +62,7 @@ class Fieldtype_formula
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
@@ -84,33 +88,7 @@ class Fieldtype_formula
 
     public function output($options)
     {
-        //return non-formated value if export
-        if (isset($options['is_export']) and !isset($options['is_print'])) {
-            return $options['value'];
-        }
-
-        $value = $options['value'];
-
-        //just return value if not numeric (not numeric values can be returned using IF operator)
-        if (!is_numeric($value)) {
-            return $value;
-        }
-
-        //return value using number format
-        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
-
-        if (strlen($cfg->get('number_format')) > 0 and strlen($value) > 0) {
-            $format = explode('/', str_replace('*', '', $cfg->get('number_format')));
-
-            $value = number_format($value, $format[0], $format[1], $format[2]);
-        } elseif (strstr($value, '.')) {
-            $value = number_format((float)$value, 2, '.', '');
-        }
-
-        //add prefix and sufix
-        $value = (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
-
-        return $value;
+        return \Models\Main\Fields_types::outputFormula($options);
     }
 
     public function reports_query($options)

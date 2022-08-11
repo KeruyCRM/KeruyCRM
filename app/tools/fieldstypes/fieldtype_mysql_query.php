@@ -100,33 +100,7 @@ class Fieldtype_mysql_query
 
     public function output($options)
     {
-        //return non-formated value if export
-        if (isset($options['is_export']) and !isset($options['is_print'])) {
-            return $options['value'];
-        }
-
-        $value = $options['value'];
-
-        //just return value if not numeric (not numeric values can be returned using IF operator)
-        if (!is_numeric($value)) {
-            return $value;
-        }
-
-        //return value using number format
-        $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
-
-        if (strlen($cfg->get('number_format')) > 0 and strlen($value) > 0) {
-            $format = explode('/', str_replace('*', '', $cfg->get('number_format')));
-
-            $value = number_format($value, $format[0], $format[1], $format[2]);
-        } elseif (strstr($value, '.')) {
-            $value = number_format((float)$value, 2, '.', '');
-        }
-
-        //add prefix and sufix
-        $value = (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
-
-        return $value;
+        return \Models\Main\Fields_types::outputFormula($options);
     }
 
     public function reports_query($options)
