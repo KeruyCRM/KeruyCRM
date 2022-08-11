@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -58,7 +62,7 @@ class Fieldtype_grouped_users
         ];
 
         //cfg global list if exist
-        if (count($choices = global_lists::get_lists_choices()) > 0) {
+        if (count($choices = \Models\Main\Global_lists::get_lists_choices()) > 0) {
             $cfg[\K::$fw->TEXT_SETTINGS][] = [
                 'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
@@ -92,14 +96,12 @@ class Fieldtype_grouped_users
 
     public function render($field, $obj, $params = [])
     {
-        $attributes = ['class' => 'form-control input-medium field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')];
-
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $display_as = (strlen($cfg->get('display_as')) > 0 ? $cfg->get('display_as') : 'dropdown');
 
         if ($cfg->get('use_global_list') > 0) {
-            $choices = global_lists::get_choices(
+            $choices = \Models\Main\Global_lists::get_choices(
                 $cfg->get('use_global_list'),
                 (($display_as == 'dropdown' and ($field['is_required'] == 0 or strlen(
                             $cfg->get('default_text')
@@ -108,9 +110,9 @@ class Fieldtype_grouped_users
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = global_lists::get_choices_default_id($cfg->get('use_global_list'));
+            $default_id = \Models\Main\Global_lists::get_choices_default_id($cfg->get('use_global_list'));
         } else {
-            $choices = fields_choices::get_choices(
+            $choices = \Models\Main\Fields_choices::get_choices(
                 $field['id'],
                 (($display_as == 'dropdown' and ($field['is_required'] == 0 or strlen(
                             $cfg->get('default_text')
@@ -120,7 +122,7 @@ class Fieldtype_grouped_users
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = fields_choices::get_default_id($field['id']);
+            $default_id = \Models\Main\Fields_choices::get_default_id($field['id']);
         }
 
         $value = $obj['field_' . $field['id']];
@@ -134,12 +136,12 @@ class Fieldtype_grouped_users
                         ) . ' field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')
                 ];
 
-                return select_tag('fields[' . $field['id'] . ']', $choices, $value, $attributes);
+                return \Helpers\Html::select_tag('fields[' . $field['id'] . ']', $choices, $value, $attributes);
                 break;
             case 'checkboxes':
                 $attributes = ['class' => 'field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')];
 
-                return '<div class="checkboxes_list ' . ($field['is_required'] == 1 ? ' required' : '') . '">' . select_checkboxes_tag(
+                return '<div class="checkboxes_list ' . ($field['is_required'] == 1 ? ' required' : '') . '">' . \Helpers\Html::select_checkboxes_tag(
                         'fields[' . $field['id'] . ']',
                         $choices,
                         $value,
@@ -155,44 +157,64 @@ class Fieldtype_grouped_users
                     'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
                 ];
 
-                return select_tag('fields[' . $field['id'] . '][]', $choices, explode(',', $value), $attributes);
+                return \Helpers\Html::select_tag(
+                    'fields[' . $field['id'] . '][]',
+                    $choices,
+                    explode(',', $value),
+                    $attributes
+                );
                 break;
         }
     }
 
     public function process($options)
     {
-        global $app_send_to, $app_send_to_new_assigned;
-
         $value = (is_array($options['value']) ? implode(',', $options['value']) : $options['value']);
 
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if ($cfg->get('disable_notification') != 1) {
-            foreach (explode(',', $value) as $choices_id) {
+            $exp = explode(',', $value);
+
+            foreach ($exp as $choices_id) {
                 if ($cfg->get('use_global_list') > 0) {
-                    $choice_query = db_query(
+                    /*$choice_query = db_query(
                         "select * from app_global_lists_choices where id='" . db_input(
                             $choices_id
                         ) . "' and lists_id = '" . db_input($cfg->get('use_global_list')) . "' and length(users)>0"
-                    );
+                    );*/
+
+                    $choice = \K::model()->db_fetch_one('app_global_lists_choices', [
+                        'id = ? and lists_id = ? and length(users) > 0',
+                        $choices_id,
+                        $cfg->get('use_global_list')
+                    ], [], 'users');
                 } else {
-                    $choice_query = db_query(
-                        "select * from app_fields_choices where id='" . db_input($choices_id) . "' and length(users)>0"
-                    );
+                    /* $choice_query = db_query(
+                         "select * from app_fields_choices where id='" . db_input($choices_id) . "' and length(users)>0"
+                     );*/
+
+                    $choice = \K::model()->db_fetch_one('app_fields_choices', [
+                        'id = ? and length(users) > 0',
+                        $choices_id
+                    ], [], 'users');
                 }
 
-                if ($choice = db_fetch_array($choice_query)) {
-                    foreach (explode(',', $choice['users']) as $id) {
-                        $app_send_to[] = $id;
-                    }
+                if ($choice) {
+                    $exp = explode(',', $choice['users']);
+
+                    \K::$fw->app_send_to = array_merge(\K::$fw->app_send_to, $exp);
+                    /*foreach ($exp as $id) {
+                        \K::$fw->app_send_to[] = $id;
+                    }*/
 
                     //check if value changed
                     if (!$options['is_new_item']) {
                         if (!in_array($choices_id, explode(',', $options['current_field_value']))) {
-                            foreach (explode(',', $choice['users']) as $id) {
-                                $app_send_to_new_assigned[] = $id;
-                            }
+                            \K::$fw->app_send_to_new_assigned = array_merge(\K::$fw->app_send_to_new_assigned, $exp);
+                            /*foreach ($exp as $id) {
+                                \K::$fw->app_send_to_new_assigned[] = $id;
+                            }*/
                         }
                     }
                 }
@@ -206,9 +228,9 @@ class Fieldtype_grouped_users
     {
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
-        $html = ($cfg->get('use_global_list') > 0 ? global_lists::render_value(
+        $html = ($cfg->get('use_global_list') > 0 ? \Models\Main\Global_lists::render_value(
             $options['value']
-        ) : fields_choices::render_value($options['value']));
+        ) : \Models\Main\Fields_choices::render_value($options['value']));
 
         if (!isset($options['is_export'])) {
             $html .= $this->show_users($options);
@@ -219,8 +241,6 @@ class Fieldtype_grouped_users
 
     public function show_users($options)
     {
-        global $app_users_cache;
-
         $html = '';
 
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
@@ -234,25 +254,40 @@ class Fieldtype_grouped_users
             $users_list = [];
 
             if (strlen($options['value'])) {
-                foreach (explode(',', $options['value']) as $choices_id) {
+                $exp = explode(',', $options['value']);
+
+                foreach ($exp as $choices_id) {
                     if ($cfg->get('use_global_list') > 0) {
-                        $choice_query = db_query(
+                        /*$choice_query = db_query(
                             "select * from app_global_lists_choices where id='" . db_input(
                                 $choices_id
                             ) . "' and lists_id = '" . db_input($cfg->get('use_global_list')) . "' and length(users)>0"
-                        );
+                        );*/
+
+                        $choice = \K::model()->db_fetch_one('app_global_lists_choices', [
+                            'id = ? and lists_id = ? and length(users) > 0',
+                            $choices_id,
+                            $cfg->get('use_global_list')
+                        ], [], 'users');
                     } else {
-                        $choice_query = db_query(
+                        /*$choice_query = db_query(
                             "select * from app_fields_choices where id='" . db_input(
                                 $choices_id
                             ) . "' and length(users)>0"
-                        );
+                        );*/
+
+                        $choice = \K::model()->db_fetch_one('app_fields_choices', [
+                            'id = ? and length(users) > 0',
+                            $choices_id
+                        ], [], 'users');
                     }
 
-                    if ($choice = db_fetch_array($choice_query)) {
-                        foreach (explode(',', $choice['users']) as $id) {
+                    if ($choice) {
+                        $exp = explode(',', $choice['users']);
+                        $users_list = array_merge($users_list, $exp);
+                        /*foreach (explode(',', $choice['users']) as $id) {
                             $users_list[] = $id;
-                        }
+                        }*/
                     }
                 }
             }
@@ -262,22 +297,22 @@ class Fieldtype_grouped_users
 
                 $html .= '<div class="grouped_users_list">';
                 foreach ($users_list as $users_id) {
-                    if (!isset($app_users_cache[$users_id])) {
+                    if (!isset(\K::$fw->app_users_cache[$users_id])) {
                         continue;
                     }
 
                     if ($cfg->get(
                             'show_users_access_group'
-                        ) == 1 and $current_group_name != $app_users_cache[$users_id]['group_name']) {
-                        $current_group_name = $app_users_cache[$users_id]['group_name'];
+                        ) == 1 and $current_group_name != \K::$fw->app_users_cache[$users_id]['group_name']) {
+                        $current_group_name = \K::$fw->app_users_cache[$users_id]['group_name'];
 
                         $html .= '<span class="grouped_users_group_name">' . $current_group_name . '</span><br>';
                     }
 
-                    $html .= '<span ' . users::render_public_profile(
-                            $app_users_cache[$users_id],
+                    $html .= '<span ' . \Models\Main\Users\Users::render_public_profile(
+                            \K::$fw->app_users_cache[$users_id],
                             true
-                        ) . '> - ' . $app_users_cache[$users_id]['name'] . '</span><br>';
+                        ) . '> - ' . \K::$fw->app_users_cache[$users_id]['name'] . '</span><br>';
                 }
             }
 
@@ -293,9 +328,7 @@ class Fieldtype_grouped_users
         $sql_query = $options['sql_query'];
 
         if (strlen($filters['filters_values']) > 0) {
-            $sql_query[] = "(select count(*) from app_entity_" . $options['entities_id'] . "_values as cv where cv.items_id=e.id and cv.fields_id='" . db_input(
-                    $options['filters']['fields_id']
-                ) . "' and cv.value in (" . $filters['filters_values'] . ")) " . ($filters['filters_condition'] == 'include' ? '>0' : '=0');
+            $sql_query[] = "(select count(*) from app_entity_" . (int)$options['entities_id'] . "_values as cv where cv.items_id = e.id and cv.fields_id = " . (int)$options['filters']['fields_id'] . " and cv.value in (" . $filters['filters_values'] . ")) " . ($filters['filters_condition'] == 'include' ? ' > 0' : ' = 0');
         }
 
         return $sql_query;
@@ -306,23 +339,37 @@ class Fieldtype_grouped_users
         $send_to = [];
 
         if (strlen($value) > 0) {
-            foreach (explode(',', $value) as $choices_id) {
+            $exp = explode(',', $value);
+
+            foreach ($exp as $choices_id) {
                 if ($cfg->get('use_global_list') > 0) {
-                    $choice_query = db_query(
+                    /*$choice_query = db_query(
                         "select * from app_global_lists_choices where id='" . db_input(
                             $choices_id
                         ) . "' and lists_id = '" . db_input($cfg->get('use_global_list')) . "' and length(users)>0"
-                    );
+                    );*/
+                    $choice = \K::model()->db_fetch_one('app_global_lists_choices', [
+                        'id = ? and lists_id = ? and length(users) > 0',
+                        $choices_id,
+                        $cfg->get('use_global_list')
+                    ], [], 'users');
                 } else {
-                    $choice_query = db_query(
+                    /*$choice_query = db_query(
                         "select * from app_fields_choices where id='" . db_input($choices_id) . "' and length(users)>0"
-                    );
+                    );*/
+
+                    $choice = \K::model()->db_fetch_one('app_fields_choices', [
+                        'id = ? and length(users) > 0',
+                        $choices_id
+                    ], [], 'users');
                 }
 
-                if ($choice = db_fetch_array($choice_query)) {
-                    foreach (explode(',', $choice['users']) as $id) {
+                if ($choice) {
+                    $exp = explode(',', $choice['users']);
+                    $send_to = array_merge($send_to, $exp);
+                    /*foreach (explode(',', $choice['users']) as $id) {
                         $send_to[] = $id;
-                    }
+                    }*/
                 }
             }
         }
