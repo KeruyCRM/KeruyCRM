@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -57,10 +61,11 @@ class Fieldtype_input_masked
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST['entities_id']),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
@@ -84,7 +89,7 @@ class Fieldtype_input_masked
                 ($cfg->get('is_unique') > 0 ? ' is-unique' : ''),
         ];
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
         $script = '';
 
@@ -99,20 +104,24 @@ class Fieldtype_input_masked
 
             $script = '
         <script>
-          jQuery(function($){   
-      			 ' . $mask_definitions . '	
-             $(".field_' . $field['id'] . '").mask("' . $cfg->get('mask') . '");                 
+            jQuery(function($){   
+                ' . $mask_definitions . '
+                $(".field_' . $field['id'] . '").mask("' . $cfg->get('mask') . '");
           });
         </script>
       ';
         }
 
-        return input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes) . $script;
+        return \Helpers\Html::input_tag(
+                'fields[' . $field['id'] . ']',
+                $obj['field_' . $field['id']],
+                $attributes
+            ) . $script;
     }
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)

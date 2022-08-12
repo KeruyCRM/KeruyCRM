@@ -1130,7 +1130,7 @@ class Items
         $item_array = explode('-', $path_array[count($path_array) - 1]);
 
         $entity_id = $item_array[0];
-        $item_id = (isset($item_array[1]) ? $item_array[1] : 0);
+        $item_id = ($item_array[1] ?? 0);
 
         if (count($path_array) > 1) {
             $v = explode('-', $path_array[count($path_array) - 2]);

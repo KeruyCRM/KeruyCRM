@@ -1,8 +1,12 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
-class fieldtype_input_email
+class Fieldtype_input_email
 {
     public $options;
 
@@ -49,10 +53,11 @@ class fieldtype_input_email
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST['entities_id']),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
@@ -77,14 +82,14 @@ class fieldtype_input_email
                 ($cfg->get('is_unique') > 0 ? ' is-unique' : ''),
             'type' => 'email'
         ];
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
-        return input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
+        return \Helpers\Html::input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
     }
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
@@ -96,8 +101,9 @@ class fieldtype_input_email
         } elseif ($cfg->get('display_as_link') == 1) {
             $html = '<a href="mailto:' . $options['value'] . '" target="_blank">' . $options['value'] . '</a>';
 
-            if (\Helpers\App::is_ext_installed() and \K::$fw->CFG_MAIL_INTEGRATION and mail_accounts_users::has_access()) {
-                $html = '<a href="javascript: open_dialog(\'' . url_for(
+            if (\Helpers\App::is_ext_installed() and \K::$fw->CFG_MAIL_INTEGRATION and mail_accounts_users::has_access(
+                )) {
+                $html = '<a href="javascript: open_dialog(\'' . \Helpers\Urls::url_for(
                         'ext/mail/create',
                         'mail_to=' . $options['value'] . '&path=' . $options['field']['entities_id'] . '-' . $options['item']['id']
                     ) . '\')" >' . $options['value'] . '</a>';

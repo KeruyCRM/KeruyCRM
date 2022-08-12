@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -43,11 +47,13 @@ class Fieldtype_input_numeric
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
             'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \Helpers\App::tooltip_icon(\K::$fw->TEXT_CALCULATE_TOTALS_INFO) . \K::$fw->TEXT_CALCULATE_TOTALS,
             'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \Helpers\App::tooltip_icon(
                     \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE_INFO
@@ -55,20 +61,23 @@ class Fieldtype_input_numeric
             'name' => 'calculate_average',
             'type' => 'checkbox'
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
             'type' => 'checkbox',
             'tooltip_icon' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY_TIP
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST['entities_id']),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
@@ -92,17 +101,20 @@ class Fieldtype_input_numeric
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[\K::$fw->TEXT_VALUE][] = [
             'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[\K::$fw->TEXT_VALUE][] = [
             'title' => \K::$fw->TEXT_DISPLAY_PREFIX_SUFFIX_IN_FORM,
             'name' => 'display_prefix_suffix_in_form',
             'type' => 'checkbox'
         ];
+
         $cfg[\K::$fw->TEXT_VALUE][] = [
             'title' => \K::$fw->TEXT_MIN_VALUE,
             'tooltip_icon' => \K::$fw->TEXT_MIN_MAX_VALUE_TIP,
@@ -110,6 +122,7 @@ class Fieldtype_input_numeric
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[\K::$fw->TEXT_VALUE][] = [
             'title' => \K::$fw->TEXT_MAX_VALUE,
             'tooltip_icon' => \K::$fw->TEXT_MIN_MAX_VALUE_TIP,
@@ -135,8 +148,6 @@ class Fieldtype_input_numeric
 
     public function render($field, $obj, $params = [])
     {
-        global $app_currencies_cache;
-
         $value = $obj['field_' . $field['id']];
 
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
@@ -169,9 +180,9 @@ class Fieldtype_input_numeric
             $attributes['max'] = $cfg->get('max_value');
         }
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
-        //hande cusrrencies
+        //hande currencies
         $html = '';
         $currencies = [];
 
@@ -182,7 +193,7 @@ class Fieldtype_input_numeric
         }
 
         if (count($currencies) > 1) {
-            foreach ($app_currencies_cache as $currency) {
+            foreach (\K::$fw->app_currencies_cache as $currency) {
                 if (!in_array($currency['code'], $cfg->get('currencies'))) {
                     continue;
                 }
@@ -198,7 +209,7 @@ class Fieldtype_input_numeric
                     $html .= '
     						<div class="input-group input-small" style="margin-top: 3px;">
 									<span class="input-group-addon">' . $currency['symbol'] . '</span>
-									' . input_tag(
+									' . \Helpers\Html::input_tag(
                             'currency_' . $currency['code'],
                             '',
                             [
@@ -252,7 +263,7 @@ class Fieldtype_input_numeric
 						' . (strlen($cfg->get('prefix')) ? '<span class="input-group-addon">' . $cfg->get(
                         'prefix'
                     ) . '</span>' : '')
-                . input_tag('fields[' . $field['id'] . ']', $value, $attributes)
+                . \Helpers\Html::input_tag('fields[' . $field['id'] . ']', $value, $attributes)
                 . (strlen($cfg->get('suffix')) ? '<span class="input-group-addon">' . $cfg->get(
                         'suffix'
                     ) . '</span>' : '') .
@@ -260,37 +271,35 @@ class Fieldtype_input_numeric
 				<label id="fields_' . $field['id'] . '-error" class="error" for="fields_' . $field['id'] . '" style="none"></label>		    
     			' . $html;
         } else {
-            return input_tag('fields[' . $field['id'] . ']', $value, $attributes) . $html;
+            return \Helpers\Html::input_tag('fields[' . $field['id'] . ']', $value, $attributes) . $html;
         }
     }
 
     public function process($options)
     {
-        global $app_changed_fields;
-
         if (!$options['is_new_item']) {
             $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] != $options['current_field_value'] and $cfg->get('notify_when_changed') == 1) {
-                $app_changed_fields[] = [
+                \K::$fw->app_changed_fields[] = [
                     'name' => $options['field']['name'],
-                    'value' => str_replace([',', ' '], ['.', ''], db_prepare_input($options['value'])),
+                    'value' => str_replace([',', ' '], ['.', ''], \K::model()->db_prepare_input($options['value'])),
                     'fields_id' => $options['field']['id'],
                     'fields_value' => $options['value'],
                     'current_field_value' => $options['current_field_value'],
                     'current_value' => str_replace([',', ' '],
                         ['.', ''],
-                        db_prepare_input($options['current_field_value'])),
+                        \K::model()->db_prepare_input($options['current_field_value'])),
                 ];
             }
         }
 
-        return str_replace([',', ' '], ['.', ''], db_prepare_input($options['value']));
+        return str_replace([',', ' '], ['.', ''], \K::model()->db_prepare_input($options['value']));
     }
 
     public function output($options)
     {
-        //return non-formated value if export
+        //return non-formatted value if export
         if (isset($options['is_export']) and !isset($options['is_print'])) {
             return $options['value'];
         }
@@ -307,10 +316,8 @@ class Fieldtype_input_numeric
             $value = $options['value'];
         }
 
-        //add prefix and sufix
-        $value = (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
-
-        return $value;
+        //add prefix and suffix
+        return (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
     }
 
     public function reports_query($options)
@@ -318,7 +325,7 @@ class Fieldtype_input_numeric
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = reports::prepare_numeric_sql_filters($filters, $options['prefix']);
+        $sql = \Models\Main\Reports\Reports::prepare_numeric_sql_filters($filters, $options['prefix']);
 
         if (count($sql) > 0) {
             $sql_query[] = implode(' and ', $sql);
@@ -336,7 +343,7 @@ class Fieldtype_input_numeric
 
             $value = number_format($value, $format[0], $format[1], $format[2]);
 
-            //add prefix and sufix
+            //add prefix and suffix
             $value = (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
         }
 

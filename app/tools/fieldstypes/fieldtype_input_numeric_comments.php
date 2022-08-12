@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -86,7 +90,7 @@ class Fieldtype_input_numeric_comments
 						' . (strlen($cfg->get('prefix')) ? '<span class="input-group-addon">' . $cfg->get(
                             'prefix'
                         ) . '</span>' : '')
-                    . input_tag(
+                    . \Helpers\Html::input_tag(
                         'fields[' . $field['id'] . ']',
                         $value,
                         ['class' => 'form-control input-small fieldtype_input_numeric field_' . $field['id'] . ($field['is_required'] == 1 ? ' required noSpace' : '') . ' number']
@@ -97,7 +101,7 @@ class Fieldtype_input_numeric_comments
                     '</div>
     			';
             } else {
-                return input_tag(
+                return \Helpers\Html::input_tag(
                     'fields[' . $field['id'] . ']',
                     $value,
                     ['class' => 'form-control input-small fieldtype_input_numeric field_' . $field['id'] . ($field['is_required'] == 1 ? ' required noSpace' : '') . ' number']
@@ -106,7 +110,10 @@ class Fieldtype_input_numeric_comments
         } else {
             return '<p class="form-control-static">' . $cfg->get('prefix') . $obj['field_' . $field['id']] . $cfg->get(
                     'suffix'
-                ) . '</p>' . input_hidden_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']]);
+                ) . '</p>' . \Helpers\Html::input_hidden_tag(
+                    'fields[' . $field['id'] . ']',
+                    $obj['field_' . $field['id']]
+                );
         }
     }
 
@@ -114,18 +121,38 @@ class Fieldtype_input_numeric_comments
     {
         $total = 0;
 
-        $comments_query = db_query(
+        /*$comments_query = db_query(
             "select * from app_comments where entities_id='" . db_input($entity_id) . "' and items_id='" . db_input(
                 $item_id
             ) . "'"
-        );
-        while ($comments = db_fetch_array($comments_query)) {
-            $history_query = db_query(
+        );*/
+
+        $comments_query = \K::model()->db_fetch('app_comments', [
+            'entities_id = ? and items_id = ?',
+            $entity_id,
+            $item_id
+        ], [], 'id');
+
+        //while ($comments = db_fetch_array($comments_query)) {
+        foreach ($comments_query as $comments) {
+            $comments = $comments->cast();
+
+            /*$history_query = db_query(
                 "select * from app_comments_history where comments_id='" . db_input(
                     $comments['id']
                 ) . "' and fields_id='" . $field_id . "'"
-            );
-            while ($history = db_fetch_array($history_query)) {
+            );*/
+
+            $history_query = \K::model()->db_fetch('app_comments_history', [
+                'comments_id = ? and fields_id = ?',
+                $comments['id'],
+                $field_id
+            ], [], 'fields_value');
+
+            //while ($history = db_fetch_array($history_query)) {
+            foreach ($history_query as $history) {
+                $history = $history->cast();
+
                 $total += $history['fields_value'];
             }
         }
@@ -135,12 +162,12 @@ class Fieldtype_input_numeric_comments
 
     public function process($options)
     {
-        return str_replace([',', ' '], ['.', ''], db_prepare_input($options['value']));
+        return str_replace([',', ' '], ['.', ''], \K::model()->db_prepare_input($options['value']));
     }
 
     public function output($options)
     {
-        //return non-formated value if export
+        //return non-formatted value if export
         if (isset($options['is_export']) and !isset($options['is_print'])) {
             return $options['value'];
         }
@@ -157,10 +184,8 @@ class Fieldtype_input_numeric_comments
             $value = $options['value'];
         }
 
-        //add prefix and sufix
-        $value = (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
-
-        return $value;
+        //add prefix and suffix
+        return (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
     }
 
     public function reports_query($options)
@@ -168,7 +193,7 @@ class Fieldtype_input_numeric_comments
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = reports::prepare_numeric_sql_filters($filters, $options['prefix']);
+        $sql = \Models\Main\Reports\Reports::prepare_numeric_sql_filters($filters, $options['prefix']);
 
         if (count($sql) > 0) {
             $sql_query[] = implode(' and ', $sql);

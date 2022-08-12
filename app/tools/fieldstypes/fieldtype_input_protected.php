@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -29,6 +33,7 @@ class Fieldtype_input_protected
             'type' => 'input',
             'params' => ['class' => 'form-control input-small number']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_DISCLOSE_NUMBER_LAST_LETTERS,
             'name' => 'count_last_letters',
@@ -39,9 +44,18 @@ class Fieldtype_input_protected
         $choices = [];
         $choices[0] = \K::$fw->TEXT_ADMINISTRATOR;
 
-        $groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
-        while ($groups = db_fetch_array($groups_query)) {
-            $entities_access_schema = users::get_entities_access_schema($_POST['entities_id'], $groups['id']);
+        //$groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
+
+        $groups_query = \K::model()->db_fetch('app_access_groups', [], ['order' => 'sort_order,name'], 'id,name');
+
+        //while ($groups = db_fetch_array($groups_query)) {
+        foreach ($groups_query as $groups) {
+            $groups = $groups->cast();
+
+            $entities_access_schema = \Models\Main\Users\Users::get_entities_access_schema(
+                \K::$fw->POST['entities_id'],
+                $groups['id']
+            );
 
             if (!in_array('view', $entities_access_schema) and !in_array('view_assigned', $entities_access_schema)) {
                 continue;
@@ -91,10 +105,11 @@ class Fieldtype_input_protected
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST['entities_id']),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
@@ -119,20 +134,18 @@ class Fieldtype_input_protected
                 ($cfg->get('is_unique') > 0 ? ' is-unique' : '')
         ];
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
-        return input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
+        return \Helpers\Html::input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
     }
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
     {
-        global $app_user;
-
         if (!strlen($options['value'])) {
             return '';
         }
@@ -142,7 +155,7 @@ class Fieldtype_input_protected
         $users_groups = $cfg->get('users_groups');
 
         if (is_array($users_groups)) {
-            if (in_array($app_user['group_id'], $users_groups)) {
+            if (in_array(\K::$fw->app_user['group_id'], $users_groups)) {
                 return $options['value'];
             }
         }

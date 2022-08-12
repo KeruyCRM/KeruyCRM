@@ -1478,12 +1478,12 @@ class App
 
     public static function app_crop_str($str)
     {
-        if (mb_strlen($str) > 53) {
-            return '<span class="croped-str" title="' . addslashes($str) . '">' . mb_substr(
+        if (\K::utf()->strlen($str) > 53) {
+            return '<span class="croped-str" title="' . addslashes($str) . '">' . \K::utf()->substr(
                     $str,
                     0,
                     25
-                ) . '...' . mb_substr($str, -25) . '</span>';
+                ) . '...' . \K::utf()->substr($str, -25) . '</span>';
         } else {
             return $str;
         }

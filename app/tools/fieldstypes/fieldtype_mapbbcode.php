@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -14,6 +18,7 @@ class Fieldtype_mapbbcode
     public function get_configuration()
     {
         $cfg = [];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_DEFAULT_POSITION,
             'name' => 'default_position',
@@ -58,7 +63,7 @@ class Fieldtype_mapbbcode
             $attributes['style'] = 'display:none';
         }
 
-        $html = textarea_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
+        $html = \Helpers\Html::textarea_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
 
         $map_id = $field['id'];
 
@@ -103,7 +108,7 @@ class Fieldtype_mapbbcode
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
@@ -112,11 +117,10 @@ class Fieldtype_mapbbcode
 
         if (isset($options['is_export'])) {
             return $options['value'];
-        } else {
-            if (strlen($options['value'])) {
-                $map_id = $options['field']['id'];
+        } elseif (strlen($options['value'])) {
+            $map_id = $options['field']['id'];
 
-                $html = '
+            $html = '
 						<div id="mapbb' . $map_id . '"></div>
 						<script>
 							$(function(){	
@@ -125,8 +129,8 @@ class Fieldtype_mapbbcode
 							})
 						</script>		
 				';
-            }
         }
+
         return $html;
     }
 }

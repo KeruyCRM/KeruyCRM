@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -41,7 +45,7 @@ class Fieldtype_jalali_calendar
         $value = explode(' ', $value);
 
         $date = $value[0];
-        $hours = (isset($value[1]) ? $value[1] : '');
+        $hours = ($value[1] ?? '');
 
         $date = explode('/', $date);
 
@@ -70,7 +74,7 @@ class Fieldtype_jalali_calendar
 
         $html = '
         <div class="input-group input-medium" style="direction: ltr;">
-            ' . input_tag('fields[' . $field['id'] . ']', $value, $attributes) . '
+            ' . \Helpers\Html::input_tag('fields[' . $field['id'] . ']', $value, $attributes) . '
             <span class="input-group-btn">
                 <label class="btn btn-default date-set" type="button"  for="fields_' . $field['id'] . '"><i class="fa fa-calendar"></i></label>
             </span>
@@ -107,7 +111,7 @@ class Fieldtype_jalali_calendar
         if ($value) {
             $value = self::jalali_date_to_gregorian($value);
 
-            $value = (int)get_date_timestamp($value);
+            $value = (int)\Helpers\App::get_date_timestamp($value);
         }
 
         return $value;
@@ -251,13 +255,11 @@ class Fieldtype_jalali_calendar
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = reports::prepare_dates_sql_filters($filters, $options['prefix']);
+        $sql = \Models\Main\Reports\Reports::prepare_dates_sql_filters($filters, $options['prefix']);
 
         if (count($sql) > 0) {
             $sql_query[] = implode(' and ', $sql);
         }
-
-        //print_rr($sql_query);
 
         return $sql_query;
     }

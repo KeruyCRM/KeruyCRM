@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -48,7 +52,7 @@ class Fieldtype_input_vpic
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST['entities_id']),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
@@ -77,11 +81,11 @@ class Fieldtype_input_vpic
             'maxlength' => 17,
         ];
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
-        $html = '
+        return '
     		<div class="input-group input-medium">' .
-            input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes) .
+            \Helpers\Html::input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes) .
             '<div class="input-group-btn">  			
 	        		<button type="button" title="' . \K::$fw->TEXT_DECODE_VIN . '" class="btn btn-default vpic-vin-decoder" data-field-id="' . $field['id'] . '" data-toggle="dropdown"><i class="fa fa-search"></i></button>
 	        				<div class="dropdown-menu hold-on-click dropdown-checkboxes" role="menu">
@@ -93,25 +97,21 @@ class Fieldtype_input_vpic
 	  		   </div>
 	    	</div>
 	      ';
-
-        return $html;
     }
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
     {
         if (isset($options['is_export'])) {
             return $options['value'];
+        } elseif ($options['field']['is_heading']) {
+            return $options['value'];
         } else {
-            if ($options['field']['is_heading']) {
-                return $options['value'];
-            } else {
-                return '<a href="https://vpic.nhtsa.dot.gov/decoder/Decoder?VIN=' . $options['value'] . '" target="blank">' . $options['value'] . '</a>';
-            }
+            return '<a href="https://vpic.nhtsa.dot.gov/decoder/Decoder?VIN=' . $options['value'] . '" target="blank">' . $options['value'] . '</a>';
         }
     }
 }

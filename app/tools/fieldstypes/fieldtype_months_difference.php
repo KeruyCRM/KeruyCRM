@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -28,12 +32,25 @@ class Fieldtype_months_difference
         $choices = [];
         $choices['today'] = '[' . \K::$fw->TEXT_CURRENT_DATE . ']';
         $choices['date_added'] = '[' . \K::$fw->TEXT_DATE_ADDED . ']';
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select * from app_fields where type in ('fieldtype_input_date','fieldtype_input_datetime','fieldtype_dynamic_date') and entities_id='" . db_input(
                 $_POST['entities_id']
             ) . "'"
+        );*/
+
+        $typeIn = \K::model()->quoteToString(
+            ['fieldtype_input_date', 'fieldtype_input_datetime', 'fieldtype_dynamic_date']
         );
-        while ($fields = db_fetch_array($fields_query)) {
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type in (' . $typeIn . ') and entities_id = ?',
+            \K::$fw->POST['entities_id']
+        ], [], 'id,name');
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $choices[$fields['id']] = $fields['name'];
         }
 
@@ -45,6 +62,7 @@ class Fieldtype_months_difference
             'choices' => $choices,
             'params' => ['class' => 'form-control input-large chosen-select required']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_END_DATE,
             'name' => 'end_date',
@@ -66,6 +84,7 @@ class Fieldtype_months_difference
             'name' => 'calculate_totals',
             'type' => 'checkbox'
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_CALCULATE_AVERAGE_VALUE,
             'name' => 'calculate_average',
@@ -78,6 +97,7 @@ class Fieldtype_months_difference
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
@@ -106,10 +126,8 @@ class Fieldtype_months_difference
 
         $value = $options['value'];
 
-        //add prefix and sufix
-        $value = (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
-
-        return $value;
+        //add prefix and suffix
+        return (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
     }
 
     public function reports_query($options)
@@ -238,8 +256,8 @@ END;";
                                 $items_id
                             ) . "'"
                         );*/
-                        \K::model()->db_update('app_entity_' . $entities_id, [
-                            'field_' . $fields_id => $item_info['field_' . $fields_id]
+                        \K::model()->db_update('app_entity_' . (int)$entities_id, [
+                            'field_' . (int)$fields_id => $item_info['field_' . (int)$fields_id]
                         ], ['id = ?', $items_id]);
                     }
                 }

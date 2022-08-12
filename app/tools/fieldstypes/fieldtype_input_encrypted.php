@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -15,16 +19,16 @@ class Fieldtype_input_encrypted
     {
         $cfg = [];
 
-        $encryption_key = (defined('DB_ENCRYPTION_KEY') ? DB_ENCRYPTION_KEY : '');
+        $encryption_key = \K::fw()->exists('DB_ENCRYPTION_KEY') ?? '';
 
         $html = '
                 <div class="form-group">
         	        <label class="col-md-3 control-label" >' . \K::$fw->TEXT_ENCRYPTION_KEY . '</label>
-            	    <div class="col-md-9">' . input_tag(
+            	    <div class="col-md-9">' . \Helpers\Html::input_tag(
                 'encryption_key',
                 $encryption_key,
                 ['class' => 'form-control input-large required', 'readonly' => 'readonly']
-            ) . tooltip_text(\K::$fw->TEXT_ENCRYPTION_KEY_INFO) . '
+            ) . \Helpers\App::tooltip_text(\K::$fw->TEXT_ENCRYPTION_KEY_INFO) . '
         	        </div>			
     	        </div>
             ';
@@ -89,9 +93,18 @@ class Fieldtype_input_encrypted
         $choices = [];
         $choices[0] = \K::$fw->TEXT_ADMINISTRATOR;
 
-        $groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
-        while ($groups = db_fetch_array($groups_query)) {
-            $entities_access_schema = users::get_entities_access_schema($_POST['entities_id'], $groups['id']);
+        //$groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
+
+        $groups_query = \K::model()->db_fetch('app_access_groups', [], ['order' => 'sort_order, name'], 'id,name');
+
+        //while ($groups = db_fetch_array($groups_query)) {
+        foreach ($groups_query as $groups) {
+            $groups = $groups->cast();
+
+            $entities_access_schema = \Models\Main\Users\Users::get_entities_access_schema(
+                \K::$fw->POST['entities_id'],
+                $groups['id']
+            );
 
             if (!in_array('view', $entities_access_schema) and !in_array('view_assigned', $entities_access_schema)) {
                 continue;
@@ -114,19 +127,26 @@ class Fieldtype_input_encrypted
 
     public static function decrypt_value($value)
     {
-        if (!strlen($value) or !db_has_encryption_key()) {
+        if (!strlen($value) or !\K::model()->db_has_encryption_key()) {
             return '';
         }
 
         //check if value is encrypted
         if (!ctype_print($value)) {
-            $value_query = db_query(
+            /*$value_query = db_query(
                 "select AES_DECRYPT('" . db_input($value) . "','" . db_input(
                     \K::$fw->DB_ENCRYPTION_KEY
                 ) . "') as text",
                 false
             );
-            $value = db_fetch_array($value_query);
+            $value = db_fetch_array($value_query);*/
+
+            $value = \K::model()->db_query_exec_one(
+                'select AES_DECRYPT(?,?) as text',
+                [$value, \K::$fw->DB_ENCRYPTION_KEY],
+                '',
+                false
+            );
 
             return $value['text'];
         } else {
@@ -145,7 +165,7 @@ class Fieldtype_input_encrypted
                 ($field['is_required'] == 1 ? ' required noSpace' : '')
         ];
 
-        return input_tag(
+        return \Helpers\Html::input_tag(
             'fields[' . $field['id'] . ']',
             self::decrypt_value($obj['field_' . $field['id']]),
             $attributes
@@ -154,21 +174,27 @@ class Fieldtype_input_encrypted
 
     public function process($options)
     {
-        global $alerts;
-
-        if (!db_has_encryption_key()) {
-            $alerts->add(sprintf(\K::$fw->TEXT_ENCRYPTION_KEY_ERROR, $options['field']['name']), 'error');
+        if (!\K::model()->db_has_encryption_key()) {
+            \K::flash()->addMessage(sprintf(\K::$fw->TEXT_ENCRYPTION_KEY_ERROR, $options['field']['name']), 'error');
             return '';
         }
 
         if (strlen($options['value'])) {
-            $value_query = db_query(
+            /*$value_query = db_query(
                 "select AES_ENCRYPT('" . db_input(trim($options['value'])) . "','" . db_input(
                     \K::$fw->DB_ENCRYPTION_KEY
                 ) . "') as text",
                 false
             );
-            $value = db_fetch_array($value_query);
+            $value = db_fetch_array($value_query);*/
+
+            $value = \K::model()->db_query_exec_one(
+                'select AES_ENCRYPT(?,?) as text',
+                [trim($options['value']), \K::$fw->DB_ENCRYPTION_KEY],
+                '',
+                false
+            );
+
             return $value['text'];
         } else {
             return '';
@@ -177,8 +203,6 @@ class Fieldtype_input_encrypted
 
     public function output($options)
     {
-        global $app_user;
-
         if (!strlen($options['value'])) {
             return '';
         }
@@ -192,7 +216,7 @@ class Fieldtype_input_encrypted
         $users_groups = $cfg->get('users_groups');
 
         if (is_array($users_groups)) {
-            if (in_array($app_user['group_id'], $users_groups)) {
+            if (in_array(\K::$fw->app_user['group_id'], $users_groups)) {
                 return $options['value'];
             }
         }
@@ -222,9 +246,9 @@ class Fieldtype_input_encrypted
         foreach (\K::$fw->app_fields_cache[$entities_id] as $field) {
             if (in_array($field['type'], ['fieldtype_input_encrypted', 'fieldtype_textarea_encrypted']
                 ) and \K::model()->db_has_encryption_key()) {
-                $listing_sql_query_select .= ", AES_DECRYPT(field_" . $field['id'] . "," . \K::model()->quote(
+                $listing_sql_query_select .= ", AES_DECRYPT(field_" . (int)$field['id'] . "," . \K::model()->quote(
                         \K::$fw->DB_ENCRYPTION_KEY
-                    ) . ") as field_" . $field['id'];
+                    ) . ") as field_" . (int)$field['id'];
             }
         }
 
