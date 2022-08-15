@@ -8,8 +8,6 @@ namespace Controllers\Main\Configuration;
 
 class Security extends \Controller
 {
-    private $app_layout = 'layout.php';
-
     public function __construct()
     {
         parent::__construct();
@@ -22,6 +20,6 @@ class Security extends \Controller
     {
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'security.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 }

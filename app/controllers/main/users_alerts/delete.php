@@ -8,8 +8,6 @@ namespace Controllers\Main\Users_alerts;
 
 class Delete extends \Controller
 {
-    private $app_layout = 'layout.php';
-
     public function __construct()
     {
         parent::__construct();

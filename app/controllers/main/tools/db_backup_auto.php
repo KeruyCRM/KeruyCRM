@@ -8,9 +8,7 @@ namespace Controllers\Main\Tools;
 
 class Db_backup_auto extends \Controller
 {
-    private $app_layout = 'layout.php';
-
-    public function __construct()
+   public function __construct()
     {
         parent::__construct();
         \K::security()->checkCsrfToken();
@@ -37,6 +35,6 @@ class Db_backup_auto extends \Controller
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'db_backup_auto.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 }

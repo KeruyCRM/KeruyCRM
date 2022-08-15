@@ -4,12 +4,12 @@ namespace Controllers\Main\Users;
 
 class Two_step_verification extends \Controller
 {
-    private $app_layout = 'public_layout.php';
-
     public function __construct()
     {
         parent::__construct();
         \K::security()->checkCsrfToken('main/users/login');
+
+        \K::$fw->app_layout = 'public_layout.php';
 
         //check security settings if they are enabled
         \Helpers\App_restricted_countries::verify();
@@ -54,7 +54,7 @@ class Two_step_verification extends \Controller
         }
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'two_step_verification.php';
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 
     public function check()

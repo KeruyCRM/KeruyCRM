@@ -8,8 +8,6 @@ namespace Controllers\Main\Users_alerts;
 
 class Users_alerts extends \Controller
 {
-    private $app_layout = 'layout.php';
-
     public function __construct()
     {
         parent::__construct();
@@ -26,7 +24,7 @@ class Users_alerts extends \Controller
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'users_alerts.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 
     public function save()

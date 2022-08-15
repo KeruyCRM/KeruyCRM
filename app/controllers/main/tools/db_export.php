@@ -8,8 +8,6 @@ namespace Controllers\Main\Tools;
 
 class Db_export extends \Controller
 {
-    private $app_layout = 'layout.php';
-
     public function __construct()
     {
         parent::__construct();

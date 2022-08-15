@@ -4,12 +4,12 @@ namespace Controllers\Main\Users;
 
 class Email_verification extends \Controller
 {
-    private $app_layout = 'public_layout.php';
-
     public function __construct()
     {
         parent::__construct();
         \K::security()->checkCsrfToken('main/users/login');
+
+        \K::$fw->app_layout = 'public_layout.php';
 
         //check if user is logged
         if (!\K::app_session_is_registered('app_logged_users_id')
@@ -32,7 +32,7 @@ class Email_verification extends \Controller
     {
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'email_verification.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 
     public function resend()

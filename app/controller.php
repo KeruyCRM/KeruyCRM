@@ -34,6 +34,7 @@ class Controller
         'feeders/rss',
         'feeders/ical',
     ];
+
     private $defaultCfg = [
         'CFG_APP_FIRST_DAY_OF_WEEK' => 0,
         'CFG_APP_LOGIN_PAGE_BACKGROUND' => '',
@@ -222,6 +223,8 @@ class Controller
         \K::$fw->app_path = ($_GET['path'] ?? ($_POST['path'] ?? ''));
 
         \K::$fw->pathSubTemplate = \K::$fw->app_extension . '/' . \K::$fw->app_module . '/';
+
+        \K::$fw->app_layout = 'layout.php';
 
         if (\K::$fw->CFG_USE_PUBLIC_REGISTRATION == 1) {
             $this->allowed_modules[] = 'users/registration';

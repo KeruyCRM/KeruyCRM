@@ -4,12 +4,12 @@ namespace Controllers\Main\Users;
 
 class Login extends \Controller
 {
-    private $app_layout = 'login_layout.php';
-
     public function __construct()
     {
         parent::__construct();
         \K::security()->checkCsrfToken('main/users/login');
+
+        \K::$fw->app_layout = 'login_layout.php';
 
         //force ldap login only
         if (\K::$fw->CFG_LDAP_USE == 1 and \K::$fw->CFG_USE_LDAP_LOGIN_ONLY == 1 and \K::$fw->app_module_action != 'logoff') {
@@ -29,7 +29,7 @@ class Login extends \Controller
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'login.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 
     public function login()

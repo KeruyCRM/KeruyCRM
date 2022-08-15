@@ -4,12 +4,12 @@ namespace Controllers\Main\Users;
 
 class Login_by_phone extends \Controller
 {
-    private $app_layout = 'login_layout.php';
-
     public function __construct()
     {
         parent::__construct();
         \K::security()->checkCsrfToken('main/users/login_by_phone');
+
+        \K::$fw->app_layout = 'login_layout.php';
 
         if (\K::$fw->CFG_2STEP_VERIFICATION_ENABLED != 1 or \K::$fw->CFG_LOGIN_BY_PHONE_NUMBER != 1 or \K::$fw->CFG_2STEP_VERIFICATION_TYPE != 'sms' or !isset(\K::$fw->app_fields_cache[1][\K::$fw->CFG_2STEP_VERIFICATION_USER_PHONE])) {
             \Helpers\Urls::redirect_to('main/users/login');
@@ -28,7 +28,7 @@ class Login_by_phone extends \Controller
     {
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'login_by_phone.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 
     public function login()

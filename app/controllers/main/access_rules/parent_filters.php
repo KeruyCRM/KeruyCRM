@@ -8,8 +8,6 @@ namespace Controllers\Main\Access_rules;
 
 class Parent_filters extends \Controller
 {
-    private $app_layout = 'layout.php';
-
     public function __construct()
     {
         parent::__construct();

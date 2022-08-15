@@ -4,8 +4,6 @@ namespace Controllers\Main\Users;
 
 class Account extends \Controller
 {
-    private $app_layout = 'layout.php';
-
     public function __construct()
     {
         parent::__construct();
@@ -32,7 +30,7 @@ class Account extends \Controller
     {
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'account.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 
     public function set_cfg()
@@ -113,7 +111,7 @@ class Account extends \Controller
 
             $fields_values_cache = '';//FIX? but check
             if (\K::fw()->exists('POST.fields')) {
-                $fields_values_cache =  \Models\Main\Items\Items::get_fields_values_cache(
+                $fields_values_cache = \Models\Main\Items\Items::get_fields_values_cache(
                     \K::$fw->POST['fields'],
                     [\K::$fw->current_entity_id],
                     \K::$fw->current_entity_id

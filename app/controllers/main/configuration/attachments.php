@@ -8,8 +8,6 @@ namespace Controllers\Main\Configuration;
 
 class Attachments extends \Controller
 {
-    private $app_layout = 'layout.php';
-
     public function __construct()
     {
         parent::__construct();
@@ -40,6 +38,6 @@ class Attachments extends \Controller
         \K::$fw->choices = $choices;
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'attachments.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 }

@@ -8,14 +8,14 @@ namespace Controllers\Main\Tools;
 
 class Db_restore_process extends \Controller
 {
-    private $app_layout = 'public_layout.php';
-
     public function __construct()
     {
         parent::__construct();
         \K::security()->checkCsrfToken();
 
         \Controllers\Main\Tools\_Module::top();
+
+        \K::$fw->app_layout = 'public_layout.php';
     }
 
     public function index()
@@ -125,7 +125,7 @@ class Db_restore_process extends \Controller
 		';
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'db_restore_process.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 
     public function restore_from_file()
@@ -159,7 +159,7 @@ class Db_restore_process extends \Controller
 
             \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'db_restore_process.php';
 
-            echo \K::view()->render($this->app_layout);
+            echo \K::view()->render(\K::$fw->app_layout);
         } else {
             \Helpers\Urls::redirect_to('main/dashboard');
         }

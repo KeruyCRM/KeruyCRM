@@ -8,8 +8,6 @@ namespace Controllers\Main\Entities;
 
 class Entities_configuration extends \Controller
 {
-    private $app_layout = 'layout.php';
-
     public function __construct()
     {
         parent::__construct();
@@ -28,7 +26,7 @@ class Entities_configuration extends \Controller
     {
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'entities_configuration.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 
     public function save()

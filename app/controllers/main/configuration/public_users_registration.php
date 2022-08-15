@@ -8,8 +8,6 @@ namespace Controllers\Main\Configuration;
 
 class Public_users_registration extends \Controller
 {
-    private $app_layout = 'layout.php';
-
     public function __construct()
     {
         parent::__construct();
@@ -53,6 +51,6 @@ class Public_users_registration extends \Controller
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'public_users_registration.php';
 
-        echo \K::view()->render($this->app_layout);
+        echo \K::view()->render(\K::$fw->app_layout);
     }
 }

@@ -8,8 +8,6 @@ namespace Controllers\Main\Users;
 
 class Change_skin extends \Controller
 {
-    private $app_layout = 'layout.php';
-
     public function __construct()
     {
         parent::__construct();
