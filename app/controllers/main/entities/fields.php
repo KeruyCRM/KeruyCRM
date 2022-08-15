@@ -472,16 +472,16 @@ class Fields extends \Controller
 
     public function get_entities_form_tabs()
     {
-        $choices = forms_tabs::get_choices(\K::$fw->POST['entities_id']);
+        $choices = \Models\Main\Forms_tabs::get_choices(\K::$fw->POST['entities_id']);
 
         if (count($choices) == 1) {
-            $html = input_hidden_tag('copy_to_form_tabs_id', key($choices));
+            $html = \Helpers\Html::input_hidden_tag('copy_to_form_tabs_id', key($choices));
         } else {
             $html = '
          <div class="form-group">
-          	<label class="col-md-4 control-label" for="type">' . TEXT_SELECT_FORM_TAB . '</label>
+          	<label class="col-md-4 control-label" for="type">' . \K::$fw->TEXT_SELECT_FORM_TAB . '</label>
             <div class="col-md-8">	
-          	  ' . select_tag('copy_to_form_tabs_id', $choices, '', ['class' => 'form-control']) . '        
+          	  ' . \Helpers\Html::select_tag('copy_to_form_tabs_id', $choices, '', ['class' => 'form-control']) . '        
             </div>			
           </div>        
         ';
@@ -490,85 +490,148 @@ class Fields extends \Controller
         echo $html;
     }
 
-    public function mulitple_edit()
+    public function multiple_edit()
     {
-        if (strlen(\K::$fw->POST['selected_fields'])) {
-            $fields_query = db_query(
-                "select * from app_fields where entities_id='" . \K::$fw->GET['entities_id'] . "' and id in (" . \K::$fw->POST['selected_fields'] . ")"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
-                if (\K::$fw->POST['is_required'] == 'yes') {
-                    db_query("update app_fields set is_required=1 where id='" . $fields['id'] . "'");
-                } elseif (\K::$fw->POST['is_required'] == 'no') {
-                    db_query("update app_fields set is_required=0 where id='" . $fields['id'] . "'");
-                }
-            }
-        }
+        if (\K::$fw->VERB == 'POST') {
+            if (strlen(\K::$fw->POST['selected_fields'])) {
+                /*$fields_query = db_query(
+                    "select * from app_fields where entities_id='" . \K::$fw->GET['entities_id'] . "' and id in (" . \K::$fw->POST['selected_fields'] . ")"
+                );*/
 
-        redirect_to('entities/fields', 'entities_id=' . \K::$fw->GET['entities_id']);
+                //FIX SECURITY
+                $post = \K::model()->quoteToString(explode(',', \K::$fw->POST['selected_fields']), \PDO::PARAM_INT);
+
+                $fields_query = \K::model()->db_fetch('app_fields', [
+                    'entities_id = ? and id in (' . $post . ')',
+                    \K::$fw->GET['entities_id']
+                ], [], 'id');
+
+                \K::model()->begin();
+
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
+                    $fields = $fields->cast();
+
+                    if (\K::$fw->POST['is_required'] == 'yes') {
+                        //db_query("update app_fields set is_required=1 where id='" . $fields['id'] . "'");
+
+                        \K::model()->db_update('app_fields', ['is_required' => 1], ['id = ?', $fields['id']]);
+                    } elseif (\K::$fw->POST['is_required'] == 'no') {
+                        //db_query("update app_fields set is_required=0 where id='" . $fields['id'] . "'");
+
+                        \K::model()->db_update('app_fields', ['is_required' => 0], ['id = ?', $fields['id']]);
+                    }
+                }
+
+                \K::model()->commit();
+            }
+
+            \Helpers\Urls::redirect_to('main/entities/fields', 'entities_id=' . \K::$fw->GET['entities_id']);
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 
     public function copy_selected()
     {
-        if (strlen(\K::$fw->POST['selected_fields']) > 0 and \K::$fw->POST['copy_to_entities_id'] > 0) {
-            $fields_query = db_query(
-                "select * from app_fields where entities_id='" . \K::$fw->GET['entities_id'] . "' and id in (" . \K::$fw->POST['selected_fields'] . ")"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
-                //prepare sql data
-                $sql_data = $fields;
-                unset($sql_data['id']);
-                $sql_data['entities_id'] = \K::$fw->POST['copy_to_entities_id'];
-                $sql_data['forms_tabs_id'] = \K::$fw->POST['copy_to_form_tabs_id'];
-                $sql_data['is_heading'] = 0;
-                $sql_data['forms_rows_position'] = '';
+        if (\K::$fw->VERB == 'POST') {
+            if (strlen(\K::$fw->POST['selected_fields']) > 0 and \K::$fw->POST['copy_to_entities_id'] > 0) {
+                /*$fields_query = db_query(
+                    "select * from app_fields where entities_id='" . \K::$fw->GET['entities_id'] . "' and id in (" . \K::$fw->POST['selected_fields'] . ")"
+                );*/
 
-                db_perform('app_fields', $sql_data);
-                $new_fields_id = db_insert_id();
+                //FIX SECURITY
+                $post = \K::model()->quoteToString(explode(',', \K::$fw->POST['selected_fields']), \PDO::PARAM_INT);
 
-                entities::prepare_field(\K::$fw->POST['copy_to_entities_id'], $new_fields_id, $fields['type']);
+                $fields_query = \K::model()->db_fetch('app_fields', [
+                    'entities_id = ? and id in (' . $post . ')',
+                    \K::$fw->GET['entities_id']
+                ]);
 
-                //create app_related_items_#_# table
-                related_records::prepare_entities_related_items_table(
-                    \K::$fw->POST['copy_to_entities_id'],
-                    $new_fields_id
-                );
+                \K::model()->begin();
 
-                $choices_parent_id_to_replace = [];
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
+                    $fields = $fields->cast();
 
-                //check fields choices
-                $fields_choices_query = db_query(
-                    "select * from app_fields_choices where fields_id='" . $fields['id'] . "'"
-                );
-                while ($fields_choices = db_fetch_array($fields_choices_query)) {
                     //prepare sql data
-                    $sql_data = $fields_choices;
+                    $sql_data = $fields;
                     unset($sql_data['id']);
-                    $sql_data['fields_id'] = $new_fields_id;
+                    $sql_data['entities_id'] = \K::$fw->POST['copy_to_entities_id'];
+                    $sql_data['forms_tabs_id'] = \K::$fw->POST['copy_to_form_tabs_id'];
+                    $sql_data['is_heading'] = 0;
+                    $sql_data['forms_rows_position'] = '';
 
-                    db_perform('app_fields_choices', $sql_data);
-                    $new_fields_choices_id = db_insert_id();
+                    $mapper = \K::model()->db_perform('app_fields', $sql_data);
+                    $new_fields_id = \K::model()->db_insert_id($mapper);
 
-                    $choices_parent_id_to_replace[$fields_choices['id']] = $new_fields_choices_id;
-                }
-
-                foreach ($choices_parent_id_to_replace as $from_id => $to_id) {
-                    db_query(
-                        "update app_fields_choices set parent_id='" . $to_id . "' where parent_id='" . $from_id . "' and fields_id='" . $new_fields_id . "'"
+                    \Models\Main\Entities::prepare_field(
+                        \K::$fw->POST['copy_to_entities_id'],
+                        $new_fields_id,
+                        $fields['type']
                     );
+
+                    //create app_related_items_#_# table
+                    \Tools\Related_records::prepare_entities_related_items_table(
+                        \K::$fw->POST['copy_to_entities_id'],
+                        $new_fields_id
+                    );
+
+                    $choices_parent_id_to_replace = [];
+
+                    //check fields choices
+                    /*$fields_choices_query = db_query(
+                        "select * from app_fields_choices where fields_id='" . $fields['id'] . "'"
+                    );*/
+
+                    $fields_choices_query = \K::model()->db_fetch('app_fields_choices', [
+                        'fields_id = ?',
+                        $fields['id']
+                    ]);
+
+                    //while ($fields_choices = db_fetch_array($fields_choices_query)) {
+                    foreach ($fields_choices_query as $fields_choices) {
+                        $fields_choices = $fields_choices->cast();
+
+                        //prepare sql data
+                        $sql_data = $fields_choices;
+                        unset($sql_data['id']);
+                        $sql_data['fields_id'] = $new_fields_id;
+
+                        $mapper = \K::model()->db_perform('app_fields_choices', $sql_data);
+                        $new_fields_choices_id = \K::model()->db_insert_id($mapper);
+
+                        $choices_parent_id_to_replace[$fields_choices['id']] = $new_fields_choices_id;
+                    }
+
+                    foreach ($choices_parent_id_to_replace as $from_id => $to_id) {
+                        /*db_query(
+                            "update app_fields_choices set parent_id='" . $to_id . "' where parent_id='" . $from_id . "' and fields_id='" . $new_fields_id . "'"
+                        );*/
+
+                        \K::model()->db_update('app_fields_choices', ['parent_id' => $to_id], [
+                            'parent_id = ? and fields_id = ?',
+                            $from_id,
+                            $new_fields_id
+                        ]);
+                    }
                 }
+
+                \K::model()->commit();
+
+                \K::flash()->addMessage(\K::$fw->TEXT_FIELDS_COPY_SUCCESS, 'success');
             }
 
-            $alerts->add(TEXT_FIELDS_COPY_SUCCESS, 'success');
+            \Helpers\Urls::redirect_to('main/entities/fields', 'entities_id=' . \K::$fw->POST['copy_to_entities_id']);
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
-
-        redirect_to('entities/fields', 'entities_id=' . \K::$fw->POST['copy_to_entities_id']);
     }
 
     public function import()
     {
         //rename file (issue with HTML.php:495 if file have UTF symbols)
-        $filepath = DIR_WS_UPLOADS . 'import_fields.xml';
+        $filepath = \K::$fw->DIR_WS_UPLOADS . 'import_fields.xml';
 
         if (move_uploaded_file(\K::$fw->FILES['filename']['tmp_name'], $filepath)) {
             $data = file_get_contents($filepath);
@@ -578,18 +641,22 @@ class Fields extends \Controller
 
             unlink($filepath);
 
-            //print_rr($fields);
-            //exit();
-
-            $entities_id = _get::int('entities_id');
+            $entities_id = \K::$fw->GET['entities_id'];
             $imported_fields = 0;
 
-            $tab_query = db_query(
+            /*$tab_query = db_query(
                 "select forms_tabs_id from app_fields where entities_id='" . db_input(
                     $entities_id
                 ) . "' and type='fieldtype_id'"
             );
-            $tab = db_fetch_array($tab_query);
+            $tab = db_fetch_array($tab_query);*/
+
+            $tab = \K::model()->db_fetch_one('app_fields', [
+                'entities_id = ? and type = ?',
+                $entities_id,
+                'fieldtype_id'
+            ], [], 'forms_tabs_id');
+
             $default_forms_tabs_id = $tab['forms_tabs_id'];
 
             if (isset($fields['Field'])) {
@@ -600,9 +667,9 @@ class Fields extends \Controller
                     $fields_list = $fields['Field'];
                 }
 
-                foreach ($fields_list as $field) {
-                    //print_rr($field);
+                \K::model()->begin();
 
+                foreach ($fields_list as $field) {
                     $sql_data = ['entities_id' => $entities_id];
 
                     foreach ($field as $k => $v) {
@@ -612,29 +679,33 @@ class Fields extends \Controller
                     }
 
                     //check if tab id exist for this entity
-                    $tab_query = db_query(
+                    /*$tab_query = db_query(
                         "select id from app_forms_tabs where entities_id='" . db_input(
                             $entities_id
                         ) . "'  and id='" . $sql_data['forms_tabs_id'] . "'"
-                    );
-                    if (!$tab = db_fetch_array($tab_query)) {
+                    );*/
+
+                    $tab = \K::model()->db_fetch_one('app_forms_tabs', [
+                        'entities_id = ? and id = ?',
+                        $entities_id,
+                        $sql_data['forms_tabs_id']
+                    ]);
+
+                    if (!$tab) {
                         $sql_data['forms_tabs_id'] = $default_forms_tabs_id;
                     }
 
                     $sql_data['forms_rows_position'] = '';
 
-                    //print_rr($sql_data);
-                    //exit();
-
-                    db_perform('app_fields', $sql_data);
-                    $fields_id = db_insert_id();
+                    $mapper = \K::model()->db_perform('app_fields', $sql_data);
+                    $fields_id = \K::model()->db_insert_id($mapper);
 
                     $imported_fields++;
 
-                    entities::prepare_field($sql_data['entities_id'], $fields_id, $sql_data['type']);
+                    \Models\Main\Entities::prepare_field($sql_data['entities_id'], $fields_id, $sql_data['type']);
 
                     //create app_related_items_#_# table
-                    related_records::prepare_entities_related_items_table($sql_data['entities_id'], $fields_id);
+                    \Tools\Related_records::prepare_entities_related_items_table($sql_data['entities_id'], $fields_id);
 
                     //check choices
                     if (isset($field['Choices'])) {
@@ -654,59 +725,87 @@ class Fields extends \Controller
                                 }
                             }
 
-                            db_perform('app_fields_choices', $sql_data);
+                            \K::model()->db_perform('app_fields_choices', $sql_data);
                         }
                     }
                 }
+
+                \K::model()->commit();
             }
 
-            $alerts->add(sprintf(TEXT_IMPORTED_FIELDS, $imported_fields), 'success');
-            redirect_to('entities/fields', 'entities_id=' . \K::$fw->GET['entities_id']);
+            \K::flash()->addMessage(sprintf(\K::$fw->TEXT_IMPORTED_FIELDS, $imported_fields), 'success');
         } else {
-            $alerts->add(TEXT_FILE_NOT_LOADED, 'warning');
-            redirect_to('entities/fields', 'entities_id=' . \K::$fw->GET['entities_id']);
+            \K::flash()->addMessage(\K::$fw->TEXT_FILE_NOT_LOADED, 'warning');
         }
+
+        \Helpers\Urls::redirect_to('main/entities/fields', 'entities_id=' . \K::$fw->GET['entities_id']);
     }
 
     public function export()
     {
-        if (strlen(\K::$fw->POST['selected_fields'])) {
-            $writer = new XMLWriter();
-            $writer->openMemory();
-            $writer->setIndent(true);
-            $writer->startDocument('1.0', 'UTF-8');
+        if (\K::$fw->VERB == 'POST') {
+            if (strlen(\K::$fw->POST['selected_fields'])) {
+                $writer = new \XMLWriter();
+                $writer->openMemory();
+                $writer->setIndent(true);
+                $writer->startDocument('1.0', 'UTF-8');
 
-            $writer->startElement('Fields');
-            $fields_query = db_query(
-                "select * from app_fields where entities_id='" . \K::$fw->GET['entities_id'] . "' and id in (" . \K::$fw->POST['selected_fields'] . ")"
-            );
-            while ($fields = db_fetch_array($fields_query)) {
-                //export field data
-                $writer->startElement('Field');
+                $writer->startElement('Fields');
 
-                foreach ($fields as $k => $v) {
-                    if (in_array($k, ['id', 'entities_id', 'is_heading'])) {
-                        continue;
+                /*$fields_query = db_query(
+                    "select * from app_fields where entities_id='" . \K::$fw->GET['entities_id'] . "' and id in (" . \K::$fw->POST['selected_fields'] . ")"
+                );*/
+
+                $post = \K::model()->quoteToString(explode(',', \K::$fw->POST['selected_fields']), \PDO::PARAM_INT);
+
+                $fields_query = \K::model()->db_fetch('app_fields', [
+                    'entities_id = ? and id in (' . $post . ')',
+                    \K::$fw->GET['entities_id']
+                ]);
+
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
+                    $fields = $fields->cast();
+
+                    //export field data
+                    $writer->startElement('Field');
+
+                    foreach ($fields as $k => $v) {
+                        if (in_array($k, ['id', 'entities_id', 'is_heading'])) {
+                            continue;
+                        }
+
+                        $writer->writeElement($k, $v);
                     }
 
-                    $writer->writeElement($k, $v);
-                }
+                    //export field choices data
+                    /*$choices_query = db_query(
+                        "select * from app_fields_choices where fields_id='" . $fields['id'] . "'"
+                    );*/
 
-                //export field choices data
-                $choices_query = db_query("select * from app_fields_choices where fields_id='" . $fields['id'] . "'");
+                    $choices_query = \K::model()->db_fetch('app_fields_choices', [
+                        'fields_id = ?',
+                        $fields['id']
+                    ]);
 
-                if (db_num_rows($choices_query)) {
-                    $writer->startElement('Choices');
+                    if (count($choices_query)) {
+                        $writer->startElement('Choices');
 
-                    while ($choices = db_fetch_array($choices_query)) {
-                        $writer->startElement('Choice');
+                        //while ($choices = db_fetch_array($choices_query)) {
+                        foreach ($choices_query as $choices) {
+                            $choices = $choices->cast();
 
-                        foreach ($choices as $k => $v) {
-                            if (in_array($k, ['id', 'fields_id', 'filename', 'parent_id'])) {
-                                continue;
+                            $writer->startElement('Choice');
+
+                            foreach ($choices as $k => $v) {
+                                if (in_array($k, ['id', 'fields_id', 'filename', 'parent_id'])) {
+                                    continue;
+                                }
+
+                                $writer->writeElement($k, $v);
                             }
 
-                            $writer->writeElement($k, $v);
+                            $writer->endElement();
                         }
 
                         $writer->endElement();
@@ -716,21 +815,21 @@ class Fields extends \Controller
                 }
 
                 $writer->endElement();
+
+                $filename = str_replace([" ", ","], "_", trim(\K::$fw->POST['filename']));
+
+                header('Content-Type: application/xml; charset=utf-8');
+                header('Content-Disposition: attachment;filename="' . $filename . '.xml"');
+                header('Cache-Control: max-age=0');
+
+                echo $writer->outputMemory();
+
+                exit();
             }
 
-            $writer->endElement();
-
-            $filename = str_replace([" ", ","], "_", trim(\K::$fw->POST['filename']));
-
-            header('Content-Type: application/xml; charset=utf-8');
-            header('Content-Disposition: attachment;filename="' . $filename . '.xml"');
-            header('Cache-Control: max-age=0');
-
-            echo $writer->outputMemory();
-
-            exit();
+            \Helpers\Urls::redirect_to('main/entities/fields', 'entities_id=' . \K::$fw->GET['entities_id']);
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
-
-        redirect_to('entities/fields', 'entities_id=' . \K::$fw->GET['entities_id']);
     }
 }

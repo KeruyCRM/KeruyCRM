@@ -644,10 +644,10 @@ class Related_records
 
                     $table = $schema->createTable($table_info['table_name']);
 
-                    $table->addColumn('entity_' . $entities_id . '_items_id')->type('INT(11) UNSIGNED', true)->nullable(
+                    $table->addColumn('entity_' . (int)$entities_id . '_items_id')->type('INT(11) UNSIGNED', true)->nullable(
                         false
                     )->index();
-                    $table->addColumn('entity_' . $related_entities_id . $table_info['suffix'] . '_items_id')->type(
+                    $table->addColumn('entity_' . (int)$related_entities_id . $table_info['suffix'] . '_items_id')->type(
                         'INT(11) UNSIGNED',
                         true
                     )->nullable(false)->index();
