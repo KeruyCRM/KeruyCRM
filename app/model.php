@@ -110,18 +110,16 @@ class Model extends \Prefab
         return $this->db->quotekey($key, $split);
     }
 
-    public function db_fetch_all($table, $column = null, $ttl = 0)
-    {
-        $ttl = $this->getTTL($table, $ttl);
-
-        return $this->db_fetch($table, [], [], $column, $ttl);
-    }
-
-    public function db_fetch($table, $filter = [], $options = [], $column = null, $ttl = 0)
+    public function db_fetch($table, $filter = [], $options = [], $column = null, $virtualFields = [], $ttl = 'auto')
     {
         $ttl = $this->getTTL($table, $ttl);
 
         $mapper = $this->mapper($table, $column);
+
+        foreach ($virtualFields as $field => $value) {
+            $mapper->{$field} = $value;
+        }
+
         return $mapper->find(
             $filter,
             $options,
@@ -139,8 +137,14 @@ class Model extends \Prefab
         );
     }
 
-    public function db_fetch_one($table, $filter = [], $options = [], $column = null, $virtualFields = [], $ttl = 0)
-    {
+    public function db_fetch_one(
+        $table,
+        $filter = [],
+        $options = [],
+        $column = null,
+        $virtualFields = [],
+        $ttl = 'auto'
+    ) {
         $ttl = $this->getTTL($table, $ttl);
 
         $mapper = $this->mapper($table, $column);
@@ -162,7 +166,7 @@ class Model extends \Prefab
         }
     }
 
-    public function db_fetch_count($table, $filter = [], $ttl = 0)
+    public function db_fetch_count($table, $filter = [], $ttl = 'auto')
     {
         $ttl = $this->getTTL($table, $ttl);
 
@@ -173,7 +177,7 @@ class Model extends \Prefab
         );
     }
 
-    public function db_find($table, $value, $column = 'id', $fields = null, $ttl = 0)
+    public function db_find($table, $value, $column = 'id', $fields = null, $ttl = 'auto')
     {
         $ttl = $this->getTTL($table, $ttl);
 
@@ -194,7 +198,7 @@ class Model extends \Prefab
         }
     }
 
-    public function db_count($table, $value = '', $column = 'id', $ttl = 0)
+    public function db_count($table, $value = '', $column = 'id', $ttl = 'auto')
     {
         $ttl = $this->getTTL($table, $ttl);
 
@@ -226,14 +230,22 @@ class Model extends \Prefab
 
             $exp = explode(',', $tagCache);
             sort($exp);
-
-            foreach ($exp as $value) {
-                if (isset(\K::$fw->SKIP_CACHE_TABLE[$value])) {
-                    return $this->db->exec($cmds, $args, 0, $log, $stamp);
-                }
-            }
-
             $tagCache = implode(',', $exp);
+
+            if (!$ttlQuery = \K::cache()->get($tagCache . '.ttl')) {
+                $flip = array_flip($exp);
+
+                $intersect = array_intersect_key(\K::$fw->TTL_CACHE_TABLE, $flip);
+
+                if (count($intersect)) {
+                    sort($intersect);//Get MIN value TTL for table
+                    $ttlQuery = array_shift($intersect);
+                } else {
+                    $ttlQuery = \K::$fw->TTL_QUERY;
+                }
+
+                \K::cache()->set($tagCache . '.ttl', $ttlQuery, \K::$fw->TTL_FOR_MIN_TTL_TABLE);
+            }
 
             if (!$cache = \K::cache()->get('tags')) {
                 $cache = [];
@@ -255,7 +267,7 @@ class Model extends \Prefab
                 }
             }
 
-            $ttl = [\K::$fw->TTL_QUERY, $tagCache];
+            $ttl = [$ttlQuery, $tagCache];
         } else {
             $ttl = 0;
         }
@@ -381,11 +393,11 @@ class Model extends \Prefab
 
     private function getTTL($table, $ttl)
     {
-        if (isset(\K::$fw->SKIP_CACHE_TABLE[$table])) {
-            return 0;
+        if (isset(\K::$fw->TTL_CACHE_TABLE[$table])) {
+            return [\K::$fw->TTL_CACHE_TABLE[$table], $table];
         }
 
-        if (!$ttl) {
+        if ($ttl == 'auto') {
             //TODO add rand time
             return [\K::$fw->TTL_QUERY, $table];
         }
