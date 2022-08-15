@@ -12,26 +12,24 @@ class Subentity_form
 
     public function __construct($entities_id, $items_id, $field_id)
     {
-        global $app_fields_cache;
-
         $this->entities_id = $entities_id;
         $this->items_id = ($items_id > 0 ? $items_id : false);
-        $this->cfg = new \Models\Main\Fields_types_cfg($app_fields_cache[$entities_id][$field_id]['configuration']);
+        $this->cfg = new \Models\Main\Fields_types_cfg(
+            \K::$fw->app_fields_cache[$entities_id][$field_id]['configuration']
+        );
         $this->field_id = $field_id;
-        $this->field_name = $app_fields_cache[$entities_id][$field_id]['name'];
+        $this->field_name = \K::$fw->app_fields_cache[$entities_id][$field_id]['name'];
     }
 
     public function render_button()
     {
-        global $app_path, $app_items_form_name, $public_form;
-
         $html = '';
 
         $button_title = (strlen($this->cfg->get('button_title')) ? $this->cfg->get('button_title') : \K::$fw->TEXT_ADD);
         $btn_css = 'btn-color-' . $this->field_id;
 
         if (strlen($this->cfg->get('button_icon'))) {
-            $button_title = app_render_icon($this->cfg->get('button_icon')) . ' ' . $button_title;
+            $button_title = \Helpers\App::app_render_icon($this->cfg->get('button_icon')) . ' ' . $button_title;
         }
 
         switch ($this->cfg->get('fields_display')) {
@@ -63,21 +61,21 @@ class Subentity_form
             case 'window':
                 $url_params = 'is_submodal=true&redirect_to=subentity_form_' . $this->entities_id . '_' . $this->field_id . '&entities_id=' . $this->entities_id . '&fields_id=' . $this->field_id . '&current_entity_id=' . $this->cfg->get(
                         'entity_id'
-                    ) . '&path=' . ($this->items_id ? $app_path . '/' : '') . $this->cfg->get(
+                    ) . '&path=' . ($this->items_id ? \K::$fw->app_path . '/' : '') . $this->cfg->get(
                         'entity_id'
-                    ) . '&form_name=' . $app_items_form_name;
+                    ) . '&form_name=' . \K::$fw->app_items_form_name;
 
-                if ($app_items_form_name == 'public_form' and isset($public_form['id'])) {
-                    $url_params .= '&public_form_id=' . $public_form['id'];
+                if (\K::$fw->app_items_form_name == 'public_form' and isset(\K::$fw->public_form['id'])) {
+                    $url_params .= '&public_form_id=' . \K::$fw->public_form['id'];
                 }
 
-                $submodal_url = url_for('subentity/form', $url_params);
+                $submodal_url = \Helpers\Urls::url_for('main/subentity/form', $url_params);
                 $html = '<button type="button" id="subentity_form_btn' . $this->field_id . '" class="btn btn-default btn-submodal-open btn-submodal-open-chosen subentity_form_btn ' . $btn_css . '" data-parent-entity-item-id="" data-field-id="" data-submodal-url="' . $submodal_url . '">' . $button_title . '</button>';
                 break;
         }
 
         $html = '<div style="text-align: ' . $this->cfg->get('button_position') . '">' . $html . '</div>';
-        $html .= app_button_color_css($this->cfg->get('button_color'), $btn_css);
+        $html .= \Helpers\App::app_button_color_css($this->cfg->get('button_color'), $btn_css);
 
         return $html;
     }
@@ -97,9 +95,9 @@ class Subentity_form
                                                         
                 $.ajax({
                     method: "POST",
-                    url: "' . url_for(
-                'subentity/form',
-                'path=' . $this->entities_id . '&action=add&entities_id=' . $this->entities_id . '&items_id=' . $this->items_id . '&fields_id=' . $this->field_id
+                    url: "' . \Helpers\Urls::url_for(
+                'main/subentity/form/add',
+                'path=' . $this->entities_id . '&entities_id=' . $this->entities_id . '&items_id=' . $this->items_id . '&fields_id=' . $this->field_id
             ) . '",
                     data: {rows_count: rows_count}
                 }).done(function( data ) {
@@ -124,9 +122,9 @@ class Subentity_form
                     
                     $.ajax({
                         method:"POST", 
-                        url:"' . url_for(
-                'subentity/form',
-                'path=' . $this->entities_id . '&action=remove_item&entities_id=' . $this->entities_id . '&fields_id=' . $this->field_id
+                        url:"' . \Helpers\Urls::url_for(
+                'main/subentity/form/remove_item',
+                'path=' . $this->entities_id . '&entities_id=' . $this->entities_id . '&fields_id=' . $this->field_id
             ) . '",
                         data: {row: item_id}
                     })
@@ -144,9 +142,9 @@ class Subentity_form
                     
                     $.ajax({
                         method:"POST", 
-                        url:"' . url_for(
-                'subentity/form',
-                'path=' . $this->entities_id . '&action=remove_item&entities_id=' . $this->entities_id . '&fields_id=' . $this->field_id
+                        url:"' . \Helpers\Urls::url_for(
+                'main/subentity/form/remove_item',
+                'path=' . $this->entities_id . '&entities_id=' . $this->entities_id . '&fields_id=' . $this->field_id
             ) . '",
                         data: {row: row}
                     })
@@ -196,8 +194,6 @@ class Subentity_form
     {
         $form_fields = $this->get_form_fields($rows_count, $form_item_id);
 
-        //print_rr($form_fields);
-
         $html = '
         <div id="suentity_form_row_' . $rows_count . '" class="suentity-form-row-' . $this->field_id . '">   
            <h3 class="form-section">' . ($this->cfg->get(
@@ -220,7 +216,7 @@ class Subentity_form
                 '</label>
 	            <div class="col-md-9">	
 	          	  <div id="fields_' . $field['id'] . '_rendered_value">' . $field['html'] . '</div>
-	              ' . ($field['tooltip_display_as'] != 'icon' ? tooltip_text($field['tooltip']) : '') . '
+	              ' . ($field['tooltip_display_as'] != 'icon' ? \Helpers\App::tooltip_text($field['tooltip']) : '') . '
 	            </div>			
 	          </div> 
                 ';
@@ -236,8 +232,6 @@ class Subentity_form
     public function render_form_row($rows_count, $form_item_id = false)
     {
         $form_fields = $this->get_form_fields($rows_count, $form_item_id);
-
-        //print_rr($form_fields);
 
         $html = '                        
         <div id="suentity_form_row_' . $rows_count . '" class="suentity-form-row-' . $this->field_id . '">              
@@ -262,7 +256,7 @@ class Subentity_form
                 '</label>
 	            <div>	
 	          	  <div id="fields_' . $field['id'] . '_rendered_value">' . $field['html'] . '</div>
-	              ' . ($field['tooltip_display_as'] != 'icon' ? tooltip_text($field['tooltip']) : '') . '
+	              ' . ($field['tooltip_display_as'] != 'icon' ? \Helpers\App::tooltip_text($field['tooltip']) : '') . '
 	            </div>			
 	          </div> 
                 ';
@@ -277,7 +271,6 @@ class Subentity_form
                 </tr>
            </table>
            </div>
-           
            ';
 
         return $html;
@@ -512,13 +505,10 @@ class Subentity_form
 
     public function render_items()
     {
-        global $app_subentity_form_items;
-
         switch ($this->cfg->get('fields_display')) {
             case 'column':
             case 'row':
                 return $this->render_items_list();
-                break;
             case 'window':
 
                 if (!$this->items_id) {
@@ -526,14 +516,31 @@ class Subentity_form
                 }
 
                 //reset items
-                $app_subentity_form_items[$this->field_id] = [];
+                \K::$fw->app_subentity_form_items[$this->field_id] = [];
 
-                $items_query = db_query(
-                    "select * " . fieldtype_input_encrypted::prepare_query_select(
+                /*$items_query = db_query(
+                    "select * " . \Tools\FieldsTypes\Fieldtype_input_encrypted::prepare_query_select(
                         $this->cfg->get('entity_id')
-                    ) . " from app_entity_" . $this->cfg->get('entity_id') . " where parent_item_id=" . $this->items_id
+                    ) . " from app_entity_" . (int)$this->cfg->get('entity_id') . " where parent_item_id=" . $this->items_id
+                );*/
+
+                $items_query = \K::model()->db_fetch(
+                    'app_entity_' . (int)$this->cfg->get('entity_id'),
+                    [
+                        'parent_item_id = ?',
+                        $this->items_id
+                    ],
+                    [],
+                    null,
+                    \Tools\FieldsTypes\Fieldtype_input_encrypted::prepare_query_select_mapper(
+                        $this->cfg->get('entity_id')
+                    )
                 );
-                while ($items = db_fetch_array($items_query)) {
+
+                //while ($items = db_fetch_array($items_query)) {
+                foreach ($items_query as $items) {
+                    $items = $items->cast();
+
                     $fields = [];
                     foreach ($items as $field_id => $field_value) {
                         if (strstr($field_id, 'field_')) {
@@ -545,13 +552,10 @@ class Subentity_form
                         }
                     }
 
-                    $app_subentity_form_items[$this->field_id][$items['id']] = $fields;
+                    \K::$fw->app_subentity_form_items[$this->field_id][$items['id']] = $fields;
                 }
 
-                //print_rr($app_subentity_form_items);
-
                 return $this->render_items_listing_preview();
-                break;
         }
     }
 
@@ -563,10 +567,19 @@ class Subentity_form
 
         $rows_count = 0;
         $html = '';
-        $items_query = db_query(
+        /*$items_query = db_query(
             "select id from app_entity_" . $this->cfg->get('entity_id') . " where parent_item_id=" . $this->items_id
-        );
-        while ($items = db_fetch_array($items_query)) {
+        );*/
+
+        $items_query = \K::model()->db_fetch('app_entity_' . (int)$this->cfg->get('entity_id'), [
+            'parent_item_id = ?',
+            $this->items_id
+        ], [], 'id');
+
+        //while ($items = db_fetch_array($items_query)) {
+        foreach ($items_query as $items) {
+            $items = $items->cast();
+
             $rows_count++;
             $html .= $this->render_form($rows_count, $items['id']);
         }
@@ -576,19 +589,15 @@ class Subentity_form
 
     public function render_items_listing_preview()
     {
-        global $app_subentity_form_items;
-
-        if (!count($app_subentity_form_items)) {
+        if (!count(\K::$fw->app_subentity_form_items)) {
             return ['rows_count' => 0, 'html' => ''];
         }
 
         switch ($this->cfg->get('listing_type')) {
             case 'table':
                 return $this->render_items_listing_table();
-                break;
             case 'list':
                 return $this->render_items_listing_list();
-                break;
         }
     }
 

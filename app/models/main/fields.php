@@ -14,10 +14,7 @@ class Fields
         //$fields_query = \K::model()->db_query_exec("select * from app_fields where is_heading = 1");
         $fields_query = \K::model()->db_fetch(
             'app_fields',
-            ['is_heading = ?', 1],
-            [],
-            null,
-            [\K::$fw->TTL_APP, 'app_fields']
+            ['is_heading = ?', 1]
         );
 
         //while ($fields = db_fetch_array($fields_query)) {
@@ -38,14 +35,14 @@ class Fields
         //    "select * from app_fields where type not in ('fieldtype_formula','fieldtype_dynamic_date')"
         //);
         $fields_query = \K::model()->db_fetch(
-            'app_fields', [
-            'type not in (?, ?)',
-            'fieldtype_formula',
-            'fieldtype_dynamic_date'
-        ],
+            'app_fields',
+            [
+                'type not in (?, ?)',
+                'fieldtype_formula',
+                'fieldtype_dynamic_date'
+            ],
             [],
-            'id,entities_id,',//FIX
-            [\K::$fw->TTL_APP, 'app_fields']
+            'id,entities_id,'//FIX
         );
 
         //while ($fields = db_fetch_array($fields_query)) {
@@ -66,14 +63,14 @@ class Fields
         //);
 
         $fields_query = \K::model()->db_fetch(
-            'app_fields', [
-            'type in (?, ?)',
-            'fieldtype_formula',
-            'fieldtype_dynamic_date'
-        ],
+            'app_fields',
+            [
+                'type in (?, ?)',
+                'fieldtype_formula',
+                'fieldtype_dynamic_date'
+            ],
             [],
-            'id,name,configuration',//FIX
-            [\K::$fw->TTL_APP, 'app_fields']
+            'id,name,configuration,entities_id'//FIX
         );
 
         //while ($fields = db_fetch_array($fields_query)) {
@@ -95,10 +92,11 @@ class Fields
         $cache = [];
         //$fields_query = \K::model()->db_query_exec("select id, type, name, entities_id, configuration from app_fields");
 
-        $fields_query = \K::model()->db_fetch_all(
+        $fields_query = \K::model()->db_fetch(
             'app_fields',
-            'id,type,name,entities_id,configuration',
-            [\K::$fw->TTL_APP, 'app_fields']
+            [],
+            [],
+            'id,type,name,entities_id,configuration'
         );
 
         //while ($fields = db_fetch_array($fields_query)) {
@@ -268,7 +266,7 @@ class Fields
         $cache = [];
         //$fields_query = \K::model()->db_query_exec("select * from app_fields");
 
-        $fields_query = \K::model()->db_fetch_all('app_fields', 'id,type,name');
+        $fields_query = \K::model()->db_fetch('app_fields', [], [], 'id,type,name');
 
         foreach ($fields_query as $fields) {
             $fields = $fields->cast();

@@ -16,8 +16,8 @@ class Fieldtype_text_pattern
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::$fw->TEXT_PATTERN . fields::get_available_fields_helper(
-                    $_POST['entities_id'],
+            'title' => \K::$fw->TEXT_PATTERN . \Models\Main\Fields::get_available_fields_helper(
+                    \K::$fw->POST['entities_id'],
                     'fields_configuration_pattern'
                 ),
             'name' => 'pattern',
@@ -49,11 +49,7 @@ class Fieldtype_text_pattern
 
         $item = $options['item'];
 
-        if (isset($options['custom_pattern'])) {
-            $pattern = $options['custom_pattern'];
-        } else {
-            $pattern = $cfg->get('pattern');
-        }
+        $pattern = $options['custom_pattern'] ?? $cfg->get('pattern');
 
         if (strlen($pattern) > 0) {
             //handle current user name, id, item id etc
@@ -93,16 +89,16 @@ class Fieldtype_text_pattern
                     if ($field) {
                         switch ($field['type']) {
                             case 'fieldtype_parent_item_id':
-                                $enitites_info = \K::$fw->app_entities_cache[$entities_id];
+                                $entities_info = \K::$fw->app_entities_cache[$entities_id];
 
-                                if ($enitites_info['parent_id'] > 0 and $item['parent_item_id'] > 0) {
-                                    if (!isset(\K::$fw->parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']])) {
-                                        $value = \K::$fw->parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']] =  \Models\Main\Items\Items::get_heading_field(
-                                            $enitites_info['parent_id'],
+                                if ($entities_info['parent_id'] > 0 and $item['parent_item_id'] > 0) {
+                                    if (!isset(\K::$fw->parent_items_name_holder[$entities_info['parent_id']][$item['parent_item_id']])) {
+                                        $value = \K::$fw->parent_items_name_holder[$entities_info['parent_id']][$item['parent_item_id']] = \Models\Main\Items\Items::get_heading_field(
+                                            $entities_info['parent_id'],
                                             $item['parent_item_id']
                                         );
                                     } else {
-                                        $value = \K::$fw->parent_items_name_holder[$enitites_info['parent_id']][$item['parent_item_id']];
+                                        $value = \K::$fw->parent_items_name_holder[$entities_info['parent_id']][$item['parent_item_id']];
                                     }
                                 } else {
                                     $value = '';
@@ -127,11 +123,12 @@ class Fieldtype_text_pattern
                                 if (strlen($item['field_' . $field['id']]) == 0) {
                                     //prepare formulas query
                                     if (!$formulas_fields) {
+                                        //TODO Add cache
                                         $formulas_fields = \K::model()->db_query_exec_one(
                                             "select e.* " . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                                                 $entities_id,
                                                 ''
-                                            ) . " from app_entity_" . $entities_id . " e where id = ?",
+                                            ) . " from app_entity_" . (int)$entities_id . " e where id = ?",
                                             $item['id']
                                         );
                                         //$formulas_fields = $formulas_fields_query[0] ?? '';
@@ -175,8 +172,7 @@ class Fieldtype_text_pattern
                                         'main/dashboard/select2_users_json/preview_image',
                                         'form_type=' . \K::$fw->GET['form_type'] . '&entity_id=' . \K::$fw->GET['entity_id'] . '&field_id=' . \K::$fw->GET['field_id'] . '&file=' . urlencode(
                                             base64_encode($output_options['value'])
-                                        ),
-                                        true
+                                        )
                                     ) . '">';
                             } else {
                                 $output = \Models\Main\Fields_types::output($output_options);
@@ -300,49 +296,58 @@ class Fieldtype_text_pattern
 
     public static function get_last_comment_info($entities_id, $items_id, $path)
     {
-        global $app_users_cache, $fields_access_schema_holder, $app_user;
-
-        if (!isset($fields_access_schema_holder[$entities_id])) {
-            $fields_access_schema = $fields_access_schema_holder[$entities_id] = users::get_fields_access_schema(
+        if (!isset(\K::$fw->fields_access_schema_holder[$entities_id])) {
+            $fields_access_schema = \K::$fw->fields_access_schema_holder[$entities_id] = \Models\Main\Users\Users::get_fields_access_schema(
                 $entities_id,
-                $app_user['group_id']
+                \K::$fw->app_user['group_id']
             );
         } else {
-            $fields_access_schema = $fields_access_schema_holder[$entities_id];
+            $fields_access_schema = \K::$fw->fields_access_schema_holder[$entities_id];
         }
 
-        $comments_query_sql = "select * from app_comments where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'  order by date_added desc limit 1";
-        $items_query = db_query($comments_query_sql);
-        if ($item = db_fetch_array($items_query)) {
-            $descripttion = $item['description'];
+        /*$comments_query_sql = "select * from app_comments where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'  order by date_added desc limit 1";
+        $items_query = db_query($comments_query_sql);*/
+
+        $item = \K::model()->db_fetch_one('app_comments', [
+            'entities_id = ? and items_id = ?',
+            $entities_id,
+            $items_id
+        ], ['order' => 'date_added desc']);
+
+        if ($item) {
+            $description = $item['description'];
 
             //include attachments
             if (strlen($item['attachments'])) {
-                $descripttion .= "<ul style='padding: 7px 0 0 0; margin: 0px;'>";
-                foreach (explode(',', $item['attachments']) as $filename) {
-                    $file = attachments::parse_filename($filename);
-                    $descripttion .= "<li style='list-style: none; padding:0;'><img src='" . url_for_file(
+                $description .= "<ul style='padding: 7px 0 0 0; margin: 0px;'>";
+                $exp = explode(',', $item['attachments']);
+
+                foreach ($exp as $filename) {
+                    $file = \Tools\Attachments::parse_filename($filename);
+                    $description .= "<li style='list-style: none; padding:0;'><img src='" . \Helpers\Urls::url_for_file(
                             $file['icon']
-                        ) . "'>&nbsp;" . link_to(
+                        ) . "'>&nbsp;" . \Helpers\Urls::link_to(
                             $file['name'],
-                            url_for(
-                                'items/info',
-                                'path=' . $path . '&action=download_attachment&file=' . urlencode(
+                            \Helpers\Urls::url_for(
+                                'main/items/info/download_attachment',
+                                'path=' . $path . '&file=' . urlencode(
                                     base64_encode($filename)
                                 )
                             )
                         ) . " (" . $file['size'] . ")</li>";
                 }
-                $descripttion .= "</ul>";
+                $description .= "</ul>";
             }
 
             $html_fields = '';
-            $comments_fields_query = db_query(
-                "select f.*,ch.fields_value from app_comments_history ch, app_fields f where comments_id='" . db_input(
-                    $item['id']
-                ) . "' and f.id=ch.fields_id order by ch.id"
+            $comments_fields_query = \K::model()->db_query_exec(
+                "select f.*, ch.fields_value from app_comments_history ch, app_fields f where comments_id = ? and f.id = ch.fields_id order by ch.id",
+                $item['id'],
+                'app_comments_history,app_fields'
             );
-            while ($field = db_fetch_array($comments_fields_query)) {
+
+            //while ($field = db_fetch_array($comments_fields_query)) {
+            foreach ($comments_fields_query as $field) {
                 //check field access
                 if (isset($fields_access_schema[$field['id']])) {
                     if ($fields_access_schema[$field['id']] == 'hide') {
@@ -363,22 +368,22 @@ class Fieldtype_text_pattern
                         $field['name']
                     ) . ":&nbsp;</th>
       				<td style='font-size: 11px;'>" . htmlspecialchars(
-                        strip_tags(fields_types::output($output_options))
+                        strip_tags(\Models\Main\Fields_types::output($output_options))
                     ) . "</td>
       			</tr>
         ";
             }
 
-            //include comments fileds
+            //include comments fields
             if (strlen($html_fields)) {
-                $descripttion .= "<table style='padding-top: 7px;'>" . $html_fields . "</table>";
+                $description .= "<table style='padding-top: 7px;'>" . $html_fields . "</table>";
             }
 
-            if (strlen($descripttion)) {
-                $html = '<div><b>' . $app_users_cache[$item['created_by']]['name'] . ' - ' . format_date_time(
+            if (strlen($description)) {
+                $html = '<div><b>' . \K::$fw->app_users_cache[$item['created_by']]['name'] . ' - ' . \Helpers\App::format_date_time(
                         $item['date_added']
                     ) . '</b></div>';
-                $html .= $descripttion;
+                $html .= $description;
 
                 return $html;
             }

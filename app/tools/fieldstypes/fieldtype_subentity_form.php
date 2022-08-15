@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -16,20 +20,44 @@ class Fieldtype_subentity_form
         $cfg = [];
 
         $exclude_entities = [];
-        $fields_query = db_query(
-            "select configuration from app_fields where entities_id='" . _POST(
-                'entities_id'
-            ) . "' and type='fieldtype_subentity_form' " . ($_POST['id'] > 0 ? " and id!='" . _POST('id') . "'" : '')
+        /*$fields_query = db_query(
+             "select configuration from app_fields where entities_id='" . _POST(
+                 'entities_id'
+             ) . "' and type='fieldtype_subentity_form' " . ($_POST['id'] > 0 ? " and id!='" . _POST('id') . "'" : '')
+         );*/
+
+        $fields_query = \K::model()->db_fetch(
+            'app_fields',
+            [
+                'entities_id = :entities_id and type = :type' . \K::$fw->POST['id'] > 0 ? 'and id != :id' : '',
+                ':entities_id' => \K::$fw->POST['entities_id'],
+                ':type' => 'fieldtype_subentity_form'
+            ] + (\K::$fw->POST['id'] > 0 ? [':id' => \K::$fw->POST['id']] : []),
+            [],
+            'configuration'
         );
-        while ($fields = db_fetch_array($fields_query)) {
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $fields_cfg = new \Tools\Settings($fields['configuration']);
             $exclude_entities[] = $fields_cfg->get('entity_id');
         }
 
         $choices = [];
 
-        $entities_query = db_query("select id, name from app_entities where parent_id='" . _POST('entities_id') . "'");
-        while ($entities = db_fetch_array($entities_query)) {
+        //$entities_query = db_query("select id, name from app_entities where parent_id='" . _POST('entities_id') . "'");
+
+        $entities_query = \K::model()->db_fetch('app_entities', [
+            'parent_id = ?',
+            \K::$fw->POST['entities_id']
+        ], [], 'id,name');
+
+        //while ($entities = db_fetch_array($entities_query)) {
+        foreach ($entities_query as $entities) {
+            $entities = $entities->cast();
+
             if (!in_array($entities['id'], $exclude_entities)) {
                 $choices[$entities['id']] = $entities['name'];
             }
@@ -71,12 +99,12 @@ class Fieldtype_subentity_form
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'type' => 'html',
             'html' => '
-                <div class="form-group">
-                    <label class="col-md-3 control-label"></label>
-                    <div class="col-md-9">
-                        <div class="help-block" id="help_blcok_row">' . \K::$fw->TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_ROW . '</div>
-                        <div class="help-block" id="help_blcok_windows">' . \K::$fw->TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_NEW_WINDOW . '</div>
-                    </div>			
+            <div class="form-group">
+                <label class="col-md-3 control-label"></label>
+                <div class="col-md-9">
+                    <div class="help-block" id="help_blcok_row">' . \K::$fw->TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_ROW . '</div>
+                    <div class="help-block" id="help_blcok_windows">' . \K::$fw->TEXT_FIELDS_DISPLAY_IN_FOR_TYPE_NEW_WINDOW . '</div>
+                </div>
 	        </div>
                 
                 <script>
@@ -119,8 +147,6 @@ class Fieldtype_subentity_form
                             $(".from_group_column_width").show()
                             $(".from_group_has_count").hide()
                         }
-                        
-
                     }
                 </script>
                 ',
@@ -139,11 +165,13 @@ class Fieldtype_subentity_form
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_SHOW_NUMBER_OF_RECORDS,
             'name' => 'has_count',
             'type' => 'checkbox'
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_HIDE_FIELD_NAME,
             'name' => 'hide_field_name',
@@ -180,6 +208,7 @@ class Fieldtype_subentity_form
             'params' => ['class' => 'form-control input-medium'],
             'tooltip' => \K::$fw->TEXT_MENU_ICON_TITLE_TOOLTIP
         ];
+
         $cfg[\K::$fw->TEXT_BUTTON][] = [
             'title' => \K::$fw->TEXT_COLOR,
             'name' => 'button_color',
@@ -191,8 +220,6 @@ class Fieldtype_subentity_form
 
     public function get_ajax_configuration($name, $value)
     {
-        global $app_entities_cache;
-
         $cfg = [];
 
         switch ($name) {
@@ -233,14 +260,18 @@ class Fieldtype_subentity_form
 
                 $choices = [];
 
-                $fields_query = db_query(
-                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in ('" . implode(
-                        "','",
+                $fields_query = \K::model()->db_query_exec(
+                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (" . \K::model(
+                    )->quoteToString(
                         $allowed_types
-                    ) . "') and  f.entities_id='" . $entities_id . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
+                    ) . ") and f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
+                    $entities_id,
+                    'app_fields,app_forms_tabs'
                 );
-                while ($fields = db_fetch_array($fields_query)) {
-                    $choices[$fields['id']] = fields_types::get_option(
+
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
+                    $choices[$fields['id']] = \Models\Main\Fields_types::get_option(
                             $fields['type'],
                             'name',
                             $fields['name']
@@ -260,14 +291,18 @@ class Fieldtype_subentity_form
 
                 $choices = [];
 
-                $fields_query = db_query(
-                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserverd_types_list(
-                    ) . "," . fields_types::get_type_list_excluded_in_form(
-                    ) . "," . fields_types::get_attachments_types_list(
-                    ) . ") and  f.entities_id='" . $entities_id . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
+                $fields_query = \K::model()->db_query_exec(
+                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserverd_types_list(
+                    ) . "," . \Models\Main\Fields_types::get_type_list_excluded_in_form(
+                    ) . "," . \Models\Main\Fields_types::get_attachments_types_list(
+                    ) . ") and  f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
+                    $entities_id,
+                    'app_fields,app_forms_tabs'
                 );
-                while ($fields = db_fetch_array($fields_query)) {
-                    $choices[$fields['id']] = fields_types::get_option(
+
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
+                    $choices[$fields['id']] = \Models\Main\Fields_types::get_option(
                             $fields['type'],
                             'name',
                             $fields['name']
@@ -333,21 +368,19 @@ class Fieldtype_subentity_form
 
     public function render($field, $obj, $params = [])
     {
-        global $app_subentity_form_items;
-
-        //print_rr($app_subentity_form_items);
-
-        //reset items list 
-        if (isset($app_subentity_form_items[$field['id']])) {
-            $app_subentity_form_items[$field['id']] = [];
+        //reset items list
+        if (isset(\K::$fw->app_subentity_form_items[$field['id']])) {
+            \K::$fw->app_subentity_form_items[$field['id']] = [];
         }
+
         if (isset($app_subentity_form_items_deleted[$field['id']])) {
-            $app_subentity_form_items_deleted[$field['id']] = [];
+            //TODO Not init in global
+            \K::$fw->app_subentity_form_items_deleted[$field['id']] = [];
         }
 
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
-        $subentity_form = new subentity_form($field['entities_id'], $obj['id'], $field['id']);
+        $subentity_form = new \Models\Main\Items\Subentity_form($field['entities_id'], $obj['id'], $field['id']);
 
         $html = '
             <style>
@@ -369,17 +402,15 @@ class Fieldtype_subentity_form
 
         $items = $subentity_form->render_items();
 
-        //
-
         $html .= '
             <div id="subentity_form' . $field['id'] . '" class="subentity_form">' . $items['html'] . '</div>';
 
-        $html .= input_hidden_tag('subentity_form' . $field['id'] . '_rows_count', $items['rows_count']);
-        $html .= input_hidden_tag(
+        $html .= \Helpers\Html::input_hidden_tag('subentity_form' . $field['id'] . '_rows_count', $items['rows_count']);
+        $html .= \Helpers\Html::input_hidden_tag(
             'subentity_form' . $field['id'] . '_max_rows_count',
             (int)$cfg->get('max_count_records')
         );
-        $html .= input_hidden_tag(
+        $html .= \Helpers\Html::input_hidden_tag(
             'fields[' . $field['id'] . ']',
             '',
             ['class' => ($field['is_required'] == 1 ? ' required' : '')]
@@ -403,6 +434,7 @@ class Fieldtype_subentity_form
             $entities_id,
             'fieldtype_subentity_form'
         ]);
+
         //while ($fields = db_fetch_array($fields_query)) {
         $forceCommit = \K::model()->forceCommit();
 

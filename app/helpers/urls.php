@@ -118,13 +118,10 @@ class Urls
 
     public static function callback_prepare_link_in_text($matches)
     {
-        $scheme = (is_ssl() ? 'https://' : 'http://');
-        $host = $_SERVER['HTTP_HOST'];
-
         $self = pathinfo($_SERVER['PHP_SELF']);
         $path = $self['dirname'];
 
-        $current_path = $scheme . $host . $path;
+        $current_path = \K::$fw->SCHEME . '://' . \K::$fw->HOST . $path;
 
         $href = $matches[2];
 

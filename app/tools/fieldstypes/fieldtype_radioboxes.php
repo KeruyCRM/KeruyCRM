@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -39,7 +43,7 @@ class Fieldtype_radioboxes
         ];
 
         //cfg global list if exist
-        if (count($choices = global_lists::get_lists_choices()) > 0) {
+        if (count($choices = \Models\Main\Global_lists::get_lists_choices()) > 0) {
             $cfg[] = [
                 'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
@@ -73,18 +77,18 @@ class Fieldtype_radioboxes
             'data-raido-list' => $field['id']
         ];
 
-        //use global lists if exsit
+        //use global lists if exist
         if ($cfg->get('use_global_list') > 0) {
-            $choices = global_lists::get_choices(
+            $choices = \Models\Main\Global_lists::get_choices(
                 $cfg->get('use_global_list'),
                 false,
                 '',
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = global_lists::get_choices_default_id($cfg->get('use_global_list'));
+            $default_id = \Models\Main\Global_lists::get_choices_default_id($cfg->get('use_global_list'));
         } else {
-            $choices = fields_choices::get_choices(
+            $choices = \Models\Main\Fields_choices::get_choices(
                 $field['id'],
                 false,
                 '',
@@ -92,13 +96,13 @@ class Fieldtype_radioboxes
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = fields_choices::get_default_id($field['id']);
+            $default_id = \Models\Main\Fields_choices::get_default_id($field['id']);
         }
 
         $value = ($obj['field_' . $field['id']] > 0 ? $obj['field_' . $field['id']] : $default_id);
 
         if ($cfg->get('display_as') == '' or $cfg->get('display_as') == 'list-column-1') {
-            return '<div class="radio-list radio-list-' . $field['id'] . '">' . select_radioboxes_tag(
+            return '<div class="radio-list radio-list-' . $field['id'] . '">' . \Helpers\Html::select_radioboxes_tag(
                     'fields[' . $field['id'] . ']',
                     $choices,
                     $value,
@@ -106,7 +110,7 @@ class Fieldtype_radioboxes
                 ) . '</div>';
         } else {
             $attributes['ul-class'] = $cfg->get('display_as');
-            return '<div class="radio-list radio-list-' . $field['id'] . ($attributes['ul-class'] == 'list-inline' ? ' form-control-static' : '') . '">' . select_radioboxes_ul_tag(
+            return '<div class="radio-list radio-list-' . $field['id'] . ($attributes['ul-class'] == 'list-inline' ? ' form-control-static' : '') . '">' . \Helpers\Html::select_radioboxes_ul_tag(
                     'fields[' . $field['id'] . ']',
                     $choices,
                     $value,
@@ -126,9 +130,9 @@ class Fieldtype_radioboxes
 
         //render global list value
         if ($cfg->get('use_global_list') > 0) {
-            return global_lists::render_value($options['value']);
+            return \Models\Main\Global_lists::render_value($options['value']);
         } else {
-            return fields_choices::render_value($options['value']);
+            return \Models\Main\Fields_choices::render_value($options['value']);
         }
     }
 

@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -45,7 +49,7 @@ class Fieldtype_stages
         ];
 
         //cfg global list if exist
-        if (count($choices = global_lists::get_lists_choices()) > 0) {
+        if (count($choices = \Models\Main\Global_lists::get_lists_choices()) > 0) {
             $cfg[\K::$fw->TEXT_SETTINGS][] = [
                 'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
@@ -68,10 +72,10 @@ class Fieldtype_stages
             'name' => 'panel_type',
             'type' => 'dropdown',
             'params' => ['class' => 'form-control input-medium'],
-            'choices' => stages_panel::get_type_choices()
+            'choices' => \Models\Main\Items\Stages_panel::get_type_choices()
         ];
 
-        $choises = [
+        $choices = [
             'all' => \K::$fw->TEXT_ALL_STAGES,
             'consistently' => \K::$fw->TEXT_CONSISTENTLY,
             'branching' => \K::$fw->TEXT_BRANCHING,
@@ -81,7 +85,7 @@ class Fieldtype_stages
             'title' => \K::$fw->TEXT_SHOW,
             'name' => 'display_type',
             'type' => 'dropdown',
-            'choices' => $choises,
+            'choices' => $choices,
             'params' => ['class' => 'form-control input-large'],
             'tooltip' => '
             <span form_display_rules="fields_configuration_display_type:consistently">' . \K::$fw->TEXT_FIELDTYPE_STAGES_SHOW_CONSISTENTLY_TIP . '</span>
@@ -120,13 +124,13 @@ class Fieldtype_stages
 
         //confirmation text
 
-        $field = db_find('app_fields', _post::int('id'));
+        $field = \K::model()->db_find('app_fields', \K::$fw->POST['id']);
         $field_cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         if ($field_cfg->get('use_global_list') > 0) {
-            $choices = global_lists::get_choices($field_cfg->get('use_global_list'), false);
+            $choices = \Models\Main\Global_lists::get_choices($field_cfg->get('use_global_list'), false);
         } else {
-            $choices = fields_choices::get_choices($field['id'], false);
+            $choices = \Models\Main\Fields_choices::get_choices($field['id'], false);
         }
 
         foreach ($choices as $choice_id => $choice_name) {
@@ -144,15 +148,24 @@ class Fieldtype_stages
         ];
 
         if (\Helpers\App::is_ext_installed()) {
-            $processes_chocies = [];
-            $processes_chocies[0] = '';
-            $processes_query = db_query(
+            $processes_choices = [];
+            $processes_choices[0] = '';
+            /*$processes_query = db_query(
                 "select id, name from app_ext_processes where entities_id='" . _post::int(
                     'entities_id'
                 ) . "' order by sort_order, name"
-            );
-            while ($processes = db_fetch_array($processes_query)) {
-                $processes_chocies[$processes['id']] = $processes['name'];
+            );*/
+
+            $processes_query = \K::model()->db_fetch('app_ext_processes', [
+                'entities_id = ?',
+                \K::$fw->POST['entities_id']
+            ], ['order' => 'sort_order,name'], 'id,name');
+
+            //while ($processes = db_fetch_array($processes_query)) {
+            foreach ($processes_query as $processes) {
+                $processes = $processes->cast();
+
+                $processes_choices[$processes['id']] = $processes['name'];
             }
 
             foreach ($choices as $choice_id => $choice_name) {
@@ -160,7 +173,7 @@ class Fieldtype_stages
                     'title' => $choice_name,
                     'name' => 'run_process_for_choice_' . $choice_id,
                     'type' => 'dropdown',
-                    'choices' => $processes_chocies,
+                    'choices' => $processes_choices,
                     'params' => ['class' => 'form-control input-large']
                 ];
             }
@@ -176,8 +189,6 @@ class Fieldtype_stages
 
     public function render($field, $obj, $params = [])
     {
-        global $app_module_path;
-
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $attributes = [
@@ -186,18 +197,18 @@ class Fieldtype_stages
                 ) . ' field_' . $field['id'] . ($field['is_required'] == 1 ? ' required' : '')
         ];
 
-        //use global lists if exsit
+        //use global lists if exist
         if ($cfg->get('use_global_list') > 0) {
-            $choices = global_lists::get_choices(
+            $choices = \Models\Main\Global_lists::get_choices(
                 $cfg->get('use_global_list'),
                 (($field['is_required'] == 0 or strlen($cfg->get('default_text')) > 0) ? true : false),
                 $cfg->get('default_text'),
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = global_lists::get_choices_default_id($cfg->get('use_global_list'));
+            $default_id = \Models\Main\Global_lists::get_choices_default_id($cfg->get('use_global_list'));
         } else {
-            $choices = fields_choices::get_choices(
+            $choices = \Models\Main\Fields_choices::get_choices(
                 $field['id'],
                 (($field['is_required'] == 0 or strlen($cfg->get('default_text')) > 0) ? true : false),
                 $cfg->get('default_text'),
@@ -205,38 +216,36 @@ class Fieldtype_stages
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = fields_choices::get_default_id($field['id']);
+            $default_id = \Models\Main\Fields_choices::get_default_id($field['id']);
         }
 
         $value = ($obj['field_' . $field['id']] > 0 ? $obj['field_' . $field['id']] : ($params['form'] == 'comment' ? '' : $default_id));
 
         if (($cfg->get('click_action') == 'change_value_next_step' or $cfg->get(
                     'hide_in_form'
-                ) == 1) and $app_module_path == 'items/form') {
-            return input_hidden_tag(
+                ) == 1) and \K::$fw->app_module_path == 'items/form') {
+            return \Helpers\Html::input_hidden_tag(
                     'fields[' . $field['id'] . ']',
                     $value
                 ) . (isset($choices[$value]) ? '<p class="form-control-static">' . $choices[$value] . '</p>' : '');
         } else {
-            return select_tag('fields[' . $field['id'] . ']', $choices, $value, $attributes);
+            return \Helpers\Html::select_tag('fields[' . $field['id'] . ']', $choices, $value, $attributes);
         }
     }
 
     public function process($options)
     {
-        global $app_changed_fields, $app_choices_cache, $app_global_choices_cache;
-
         if (!$options['is_new_item']) {
             $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
             if ($options['value'] > 0 and $options['value'] != $options['current_field_value'] and $cfg->get(
                     'notify_when_changed'
                 ) == 1) {
-                $app_changed_fields[] = [
+                \K::$fw->app_changed_fields[] = [
                     'name' => $options['field']['name'],
                     'value' => ($cfg->get(
                         'use_global_list'
-                    ) > 0 ? $app_global_choices_cache[$options['value']]['name'] : $app_choices_cache[$options['value']]['name']),
+                    ) > 0 ? \K::$fw->app_global_choices_cache[$options['value']]['name'] : \K::$fw->app_choices_cache[$options['value']]['name']),
                     'fields_id' => $options['field']['id'],
                     'fields_value' => $options['value'],
                 ];
@@ -252,9 +261,9 @@ class Fieldtype_stages
 
         //render global list value
         if ($cfg->get('use_global_list') > 0) {
-            return global_lists::render_value($options['value']);
+            return \Models\Main\Global_lists::render_value($options['value']);
         } else {
-            return fields_choices::render_value($options['value']);
+            return \Models\Main\Fields_choices::render_value($options['value']);
         }
     }
 

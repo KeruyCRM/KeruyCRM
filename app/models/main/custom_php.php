@@ -22,21 +22,21 @@ class Custom_php
         $code_query = \K::model()->db_fetch(
             'app_custom_php',
             [
-                'is_folder = 0 and is_active = 1' . ($exclude_code_id ? ' and id != ?' : ''),
-                ($exclude_code_id ? $exclude_code_id : '')
-            ],
+                'is_folder = 0 and is_active = 1' . ($exclude_code_id ? ' and id != :id' : '')
+            ]+($exclude_code_id ? ['::id' => $exclude_code_id] : []),
             [],
-            'code',//FIX
-            [\K::$fw->TTL_APP, 'app_custom_php']
+            'code'//FIX
         );
 
         //while ($code = db_fetch($code_query)) {
         foreach ($code_query as $code) {
-            if (strlen($code->code)) {
+            $code = $code->cast();
+
+            if (strlen($code['code'])) {
                 try {
-                    eval($code->code);
+                    eval($code['code']);
                 } catch (\Error $e) {
-                    //skip code with erros
+                    //skip code with errors
                 }
             }
         }
@@ -49,7 +49,10 @@ class Custom_php
         );*/
         $code_query = \K::model()->db_fetch(
             'app_custom_php',
-            ['parent_id = ?', $parent_id],
+            [
+                'parent_id = ?',
+                $parent_id
+            ],
             ['order' => 'sort_order, name']
         );
 

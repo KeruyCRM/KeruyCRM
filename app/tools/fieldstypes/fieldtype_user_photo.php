@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -66,12 +70,10 @@ class Fieldtype_user_photo
 
     public function process($options)
     {
-        global $alerts;
+        //$field_id = $options['field']['id'];
 
-        $field_id = $options['field']['id'];
-
-        if (isset($_POST['delete_user_photo']) and $_POST['delete_user_photo'] == 1) {
-            $file = str_replace(['..', '/', '\/'], '', $_POST['user_photo']);
+        if (isset(\K::$fw->POST['delete_user_photo']) and \K::$fw->POST['delete_user_photo'] == 1) {
+            $file = str_replace(['..', '/', '\/'], '', \K::$fw->POST['user_photo']);
 
             if (is_file(\K::$fw->DIR_FS_USERS . $file)) {
                 unlink(\K::$fw->DIR_FS_USERS . $file);
@@ -80,8 +82,8 @@ class Fieldtype_user_photo
             return '';
         }
 
-        if (isset($_POST['user_photo'])) {
-            return str_replace(['..', '/', '\/'], '', $_POST['user_photo']);
+        if (isset(\K::$fw->POST['user_photo'])) {
+            return str_replace(['..', '/', '\/'], '', \K::$fw->POST['user_photo']);
         } else {
             return '';
         }
@@ -90,7 +92,7 @@ class Fieldtype_user_photo
     public function output($options)
     {
         if (strlen($options['value']) > 0) {
-            $file = attachments::parse_filename($options['value']);
+            $file = \Tools\Attachments::parse_filename($options['value']);
 
             $filename = $file['file'];
 
@@ -103,21 +105,21 @@ class Fieldtype_user_photo
             } elseif (isset($options['is_export'])) {
                 return $file['name'];
             } elseif (isset($options['is_listing'])) {
-                return image_tag(\K::$fw->DIR_WS_USERS . $file['file_sha1'], ['width' => 50]);
+                return \Helpers\Html::image_tag(\K::$fw->DIR_WS_USERS . $file['file_sha1'], ['width' => 50]);
             } else {
                 return '
         		<div class="attachments-gallery">
         			<ul>
         				<li>
-        					<div class="gallery-image"><a class="fancybox" href="' . url_for(
-                        'items/info&path=' . $options['path'],
-                        '&action=preview_user_photo&file=' . urlencode(base64_encode($filename))
-                    ) . '">' . image_tag(\K::$fw->DIR_WS_USERS . $file['file_sha1']) . '</a></div>
-        					<div class="gallery-download-link">' . link_to(
+        					<div class="gallery-image"><a class="fancybox" href="' . \Helpers\Urls::url_for(
+                        'main/items/info/preview_user_photo',
+                        '&path=' . $options['path'] . '&file=' . urlencode(base64_encode($filename))
+                    ) . '">' . \Helpers\Html::image_tag(\K::$fw->DIR_WS_USERS . $file['file_sha1']) . '</a></div>
+        					<div class="gallery-download-link">' . \Helpers\Urls::link_to(
                         '<i class="fa fa-download"></i> ' . \K::$fw->TEXT_DOWNLOAD,
-                        url_for(
-                            'items/info&path=' . $options['path'],
-                            '&action=download_user_photo&file=' . urlencode(base64_encode($filename))
+                        \Helpers\Urls::url_for(
+                            'main/items/info/download_user_photo',
+                            '&path=' . $options['path'] . '&file=' . urlencode(base64_encode($filename))
                         )
                     ) . '</div>
         				</li>
@@ -130,7 +132,7 @@ class Fieldtype_user_photo
             </script>';
             }
         } else {
-            return '<img  src="images/no_photo.png" class="user-profile-photo">';
+            return '<img  src="' . \K::$fw->DOMAIN . 'images/no_photo.png" class="user-profile-photo">';
         }
     }
 

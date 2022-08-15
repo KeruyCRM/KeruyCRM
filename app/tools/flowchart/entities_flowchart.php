@@ -389,7 +389,7 @@ class Entities_flowchart
     {
         //$fields_query = db_query("select * from app_fields");
 
-        $fields_query = \K::model()->db_fetch_all('app_fields');
+        $fields_query = \K::model()->db_fetch('app_fields');
 
         //while ($fields = db_fetch_array($fields_query)) {
         foreach ($fields_query as $fields) {

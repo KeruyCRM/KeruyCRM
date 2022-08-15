@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -65,7 +69,7 @@ class Fieldtype_time
         }
 
         if ($cfg->get('sum_in_comments') == 1 and $params['form'] != 'comment') {
-            return '<p class="form-control-static">' . $value . '</p>' . input_hidden_tag(
+            return '<p class="form-control-static">' . $value . '</p>' . \Helpers\Html::input_hidden_tag(
                     'fields[' . $field['id'] . ']',
                     $value
                 );
@@ -79,12 +83,12 @@ class Fieldtype_time
 
             $html = '
       <div class="input-group input-small date timepicker-field-' . $field['id'] . '" >' .
-                input_tag('fields[' . $field['id'] . ']', $value, $attributes) .
+                \Helpers\Html::input_tag('fields[' . $field['id'] . ']', $value, $attributes) .
                 '<span class="input-group-btn">
           <button class="btn btn-default date-set" type="button"><i class="fa fa-calendar"></i></button>
         </span>
       </div>
-    	' . fields_types::custom_error_handler($field['id']) . '              	
+    	' . \Models\Main\Fields_types::custom_error_handler($field['id']) . '              	
     			
     	<script>    		
 	    	$(".timepicker-field-' . $field['id'] . '").datetimepicker({
@@ -105,26 +109,24 @@ class Fieldtype_time
             $html = '
                     <div class="fieldtype-time-input">        
                         <div class="input-group input-small">						    
-                        ' . input_tag(
+                        ' . \Helpers\Html::input_tag(
                     'fields[' . $field['id'] . ']_hours',
                     $hours,
                     ['class' => 'form-control field_hm_' . $field['id'], 'placeholder' => '00', 'maxlength' => 3]
                 ) . '
                             <span class="input-group-addon" style="padding-left:0; padding-right: 0">:</span>
-                        ' . input_tag(
+                        ' . \Helpers\Html::input_tag(
                     'fields[' . $field['id'] . ']_minutes',
                     $minutes,
                     ['class' => 'form-control field_hm_' . $field['id'], 'placeholder' => '00', 'maxlength' => 2]
                 ) . '                        
                         </div>    																		
-                        ' . input_hidden_tag(
+                        ' . \Helpers\Html::input_hidden_tag(
                     'fields[' . $field['id'] . ']',
                     $value,
                     ['class' => 'field_' . $field['id'] . ' ' . ($field['is_required'] == 1 ? ' required' : '')]
                 ) . '    
-                    </div>        
-                                
-    					
+                    </div>
     			<script>
     				$(".field_hm_' . $field['id'] . '").keyup(function(){
                                     var length = 0;
@@ -152,7 +154,7 @@ class Fieldtype_time
 
     public function process($options)
     {
-        $value = db_prepare_input($options['value']);
+        $value = \K::model()->db_prepare_input($options['value']);
 
         if (strlen($value)) {
             $value = explode(':', $value);
@@ -168,8 +170,7 @@ class Fieldtype_time
         } else {
             return 0;
         }
-
-        return db_prepare_input($options['value']);
+        //return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
@@ -183,18 +184,22 @@ class Fieldtype_time
         } else {
             return '';
         }
-
-        return $options['value'];
+        //return $options['value'];
     }
 
     public static function get_fields_sum_in_comments($entity_id, $item_id, $field_id)
     {
-        $history_query = db_query(
-            "select sum(fields_value+0) as total from app_comments_history where fields_id='" . $field_id . "' and comments_id in (select id from app_comments where entities_id='" . db_input(
-                $entity_id
-            ) . "' and items_id='" . db_input($item_id) . "')"
+        $history = \K::model()->db_query_exec_one(
+            "select sum(fields_value+0) as total from app_comments_history where fields_id = ? and comments_id in (select id from app_comments where entities_id = ? and items_id = ?)",
+            [
+                $field_id,
+                $entity_id,
+                $item_id
+            ],
+            'app_comments_history,app_comments'
         );
-        $history = db_fetch_array($history_query);
+
+        //$history = db_fetch_array($history_query);
 
         return $history['total'];
     }

@@ -13,21 +13,19 @@ class Related_records
 
     public function __construct($entities_id, $items_id)
     {
-        global $app_user;
-
         $this->entities_id = $entities_id;
         $this->items_id = $items_id;
-        $this->current_entities_access_schema = users::get_entities_access_schema(
+        $this->current_entities_access_schema = \Models\Main\Users\Users::get_entities_access_schema(
             $this->entities_id,
-            $app_user['group_id']
+            \K::$fw->app_user['group_id']
         );
     }
 
     public function set_related_field($fields_id)
     {
-        $field = db_find('app_fields', $fields_id);
+        $field = \K::model()->db_find('app_fields', $fields_id);
         $this->field = $field;
-        $this->cfg = new fields_types_cfg($field['configuration']);
+        $this->cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
     }
 
     public function render_as_single_list($as_single_list = true)
@@ -366,11 +364,11 @@ class Related_records
     public static function get_related_items_table_name($entities_id, $related_entities_id)
     {
         if ($entities_id > $related_entities_id) {
-            $table_name = 'app_related_items_' . $related_entities_id . '_' . $entities_id;
-            $key_name = $related_entities_id . '_' . $entities_id;
+            $table_name = 'app_related_items_' . (int)$related_entities_id . '_' . (int)$entities_id;
+            $key_name = (int)$related_entities_id . '_' . (int)$entities_id;
         } else {
-            $table_name = 'app_related_items_' . $entities_id . '_' . $related_entities_id;
-            $key_name = $entities_id . '_' . $related_entities_id;
+            $table_name = 'app_related_items_' . (int)$entities_id . '_' . (int)$related_entities_id;
+            $key_name = (int)$entities_id . '_' . (int)$related_entities_id;
         }
 
         $suffix = '';
@@ -426,21 +424,31 @@ class Related_records
         if (count($related_items) > 0) {
             $reports_info = self::get_report_info($this->field);
 
-            $listing_sql_query = " and e.id in (" . implode(',', $related_items) . ")";
+            $listing_sql_query = " and e.id in (" . \K::model()->quoteToString($related_items, \PDO::PARAM_INT) . ")";
 
-            $listing_sql_query = reports::add_filters_query($reports_info['id'], $listing_sql_query, 'e');
+            $listing_sql_query = \Models\Main\Reports\Reports::add_filters_query(
+                $reports_info['id'],
+                $listing_sql_query,
+                'e'
+            );
 
             //check view assigned only access
-            $listing_sql_query = items::add_access_query($this->cfg->get('entity_id'), $listing_sql_query);
+            $listing_sql_query = \Models\Main\Items\Items::add_access_query(
+                $this->cfg->get('entity_id'),
+                $listing_sql_query
+            );
 
             //include access to parent records
-            $listing_sql_query .= items::add_access_query_for_parent_entities($this->cfg->get('entity_id'));
+            $listing_sql_query .= \Models\Main\Items\Items::add_access_query_for_parent_entities(
+                $this->cfg->get('entity_id')
+            );
 
-            $listing_sql = "select count(e.id) as total from app_entity_" . $this->cfg->get(
+            //TODO Add cache
+            $listing_sql = "select count(e.id) as total from app_entity_" . (int)$this->cfg->get(
                     'entity_id'
-                ) . " e where e.id>0 " . $listing_sql_query;
-            $check_query = db_query($listing_sql);
-            $check = db_fetch_array($check_query);
+                ) . " e where e.id > 0 " . $listing_sql_query;
+
+            $check = \K::model()->db_query_exec_one($listing_sql);
 
             return $check['total'];
         } else {
@@ -450,8 +458,6 @@ class Related_records
 
     public function render_list_in_listing($options)
     {
-        global $sql_query_having;
-
         $related_items = $this->get_related_items();
 
         if (count($related_items) > 0) {
@@ -459,50 +465,65 @@ class Related_records
 
             $listing_sql_query_having = '';
 
-            $listing_sql_query = " and e.id in (" . implode(',', $related_items) . ")";
+            $listing_sql_query = " and e.id in (" . \K::model()->quoteToString($related_items, \PDO::PARAM_INT) . ")";
 
-            $listing_sql_query = reports::add_filters_query($reports_info['id'], $listing_sql_query, 'e');
+            $listing_sql_query = \Models\Main\Reports\Reports::add_filters_query(
+                $reports_info['id'],
+                $listing_sql_query,
+                'e'
+            );
 
             //prepare having query for formula fields
-            if (isset($sql_query_having[$this->cfg->get('entity_id')])) {
-                $listing_sql_query_having = reports::prepare_filters_having_query(
-                    $sql_query_having[$this->cfg->get('entity_id')]
+            if (isset(\K::$fw->sql_query_having[$this->cfg->get('entity_id')])) {
+                $listing_sql_query_having = \Models\Main\Reports\Reports::prepare_filters_having_query(
+                    \K::$fw->sql_query_having[$this->cfg->get('entity_id')]
                 );
             }
 
             //check view assigned only access
-            $listing_sql_query = items::add_access_query($this->cfg->get('entity_id'), $listing_sql_query);
+            $listing_sql_query = \Models\Main\Items\Items::add_access_query(
+                $this->cfg->get('entity_id'),
+                $listing_sql_query
+            );
 
             //include access to parent records
-            $listing_sql_query .= items::add_access_query_for_parent_entities($this->cfg->get('entity_id'));
+            $listing_sql_query .= \Models\Main\Items\Items::add_access_query_for_parent_entities(
+                $this->cfg->get('entity_id')
+            );
 
             $listing_sql_query .= $listing_sql_query_having;
 
-            $listing_sql = "select e.* " . fieldtype_formula::prepare_query_select(
+            $listing_sql = "select e.* " . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                     $this->cfg->get('entity_id'),
                     ''
-                ) . " from app_entity_" . $this->cfg->get('entity_id') . " e where e.id>0 " . $listing_sql_query;
+                ) . " from app_entity_" . (int)$this->cfg->get('entity_id') . " e where e.id > 0 " . $listing_sql_query;
 
             $export_list = [];
 
             $html = '<ul class="related-items-list">';
-            $items_query = db_query($listing_sql);
-            while ($items = db_fetch_array($items_query)) {
+            //TODO Add cache
+            $items_query = \K::model()->db_query_exec($listing_sql);
+            //while ($items = db_fetch_array($items_query)) {
+            foreach ($items_query as $items) {
                 if (strlen($this->cfg->get('heading_template'))) {
-                    $text_pattern = new fieldtype_text_pattern();
+                    $text_pattern = new \Tools\FieldsTypes\Fieldtype_text_pattern();
                     $item_name = $text_pattern->output_singe_text(
                         $this->cfg->get('heading_template'),
                         $this->cfg->get('entity_id'),
                         $items
                     );
                 } else {
-                    $item_name = items::get_heading_field($this->cfg->get('entity_id'), $items['id'], $items);
+                    $item_name = \Models\Main\Items\Items::get_heading_field(
+                        $this->cfg->get('entity_id'),
+                        $items['id'],
+                        $items
+                    );
                 }
 
                 $export_list[] = str_replace('&nbsp;', ' ', $item_name);
 
-                $html .= '<li><a href="' . url_for(
-                        'items/info',
+                $html .= '<li><a href="' . \Helpers\Urls::url_for(
+                        'main/items/info',
                         'path=' . $this->cfg->get('entity_id') . '-' . $items['id']
                     ) . '">' . $item_name . '</a></li>';
             }

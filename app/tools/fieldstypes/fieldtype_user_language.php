@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -19,6 +23,7 @@ class Fieldtype_user_language
         $selected = (strlen(
             $obj['field_' . $field['id']]
         ) > 0 ? $obj['field_' . $field['id']] : \K::$fw->CFG_APP_LANGUAGE);
+
         return \Helpers\Html::select_tag(
             'fields[' . $field['id'] . ']',
             \Helpers\App::app_get_languages_choices(),

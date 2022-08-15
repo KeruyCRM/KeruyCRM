@@ -11,16 +11,15 @@ class GlobalVars extends \Prefab
         $this->vars = [];
 
         $vars_query = \K::model()->db_fetch(
-            'app_global_vars', ['is_folder = ?', 0],
-            [],
-            null,
-            [\K::$fw->TTL_APP, 'app_global_vars']
+            'app_global_vars', ['is_folder = 0']
         );
 
         //while ($vars = db_fetch($vars_query)) {
         foreach ($vars_query as $vars) {
-            \K::$fw->{'VAR_' . $vars->name} = $vars->value;
-            $this->vars['VAR_' . $vars->name] = $vars->value;
+            $vars = $vars->cast();
+
+            \K::$fw->{'VAR_' . $vars['name']} = $vars['value'];
+            $this->vars['VAR_' . $vars['name']] = $vars['value'];
         }
     }
 

@@ -7,7 +7,7 @@ class Entities
     public static function get_cache()
     {
         $cache = [];
-        $entities_query = \K::model()->db_fetch_all('app_entities', null, [\K::$fw->TTL_APP, 'app_entities']);
+        $entities_query = \K::model()->db_fetch('app_entities');
 
         //while ($entities = db_fetch_array($entities_query)) {
         foreach ($entities_query as $entities) {
@@ -252,7 +252,7 @@ class Entities
     {
         $cache = [];
         //$entities_query = db_query("select * from app_entities");
-        $entities_query = \K::model()->db_fetch_all('app_entities');
+        $entities_query = \K::model()->db_fetch('app_entities', [], [], 'id,name');
 
         //while ($entities = db_fetch_array($entities_query)) {
         foreach ($entities_query as $entities) {

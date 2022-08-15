@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -48,11 +52,11 @@ class Fieldtype_user_email
             return $options['value'];
         } elseif (\K::$fw->CFG_PUBLIC_REGISTRATION_USER_ACTIVATION == 'email' and \K::$fw->CFG_USE_PUBLIC_REGISTRATION == 1 and $options['item']['is_email_verified'] == 0) {
             $html = '';
-            $access_rules = new access_rules($options['field']['entities_id'], $options['item']);
-            if (users::has_access('update', $access_rules->get_access_schema())) {
-                $html = link_to_modalbox(
+            $access_rules = new \Models\Main\Access_rules($options['field']['entities_id'], $options['item']);
+            if (\Models\Main\Users\Users::has_access('update', $access_rules->get_access_schema())) {
+                $html = \Helpers\Urls::link_to_modalbox(
                     '<i id="user_email_verify_' . $options['item']['id'] . '" class="fa fa-refresh" aria-hidden="true"></i>',
-                    url_for('items/verify_email', 'path=1-' . $options['item']['id']),
+                    \Helpers\Urls::url_for('main/items/verify_email', 'path=1-' . $options['item']['id']),
                     ['title' => \K::$fw->TEXT_EMAIL_VERIFICATION_EMAIL_SUBJECT]
                 );
             }

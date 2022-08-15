@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -16,18 +20,21 @@ class Fieldtype_parent_item_id
 
     public function output($options)
     {
-        global $app_entities_cache;
-
         if (isset($options['is_comments_listing'])) {
             $entities_id = $options['field']['entities_id'];
-            $parent_entities_id = $app_entities_cache[$entities_id]['parent_id'];
+            $parent_entities_id = \K::$fw->app_entities_cache[$entities_id]['parent_id'];
             $parent_item_id = $options['value'];
 
-            if (users::has_users_access_to_entity($parent_entities_id) and !isset($options['is_export'])) {
-                return '<a href="' . url_for(
-                        'items/info',
+            if (\Models\Main\Users\Users::has_users_access_to_entity(
+                    $parent_entities_id
+                ) and !isset($options['is_export'])) {
+                return '<a href="' . \Helpers\Urls::url_for(
+                        'main/items/info',
                         'path=' . $parent_entities_id . '-' . $parent_item_id
-                    ) . '">' . items::get_heading_field($parent_entities_id, $parent_item_id) . '</a>';
+                    ) . '">' . \Models\Main\Items\Items::get_heading_field(
+                        $parent_entities_id,
+                        $parent_item_id
+                    ) . '</a>';
             } else {
                 return $options['path_info']['parent_name'];
             }
@@ -38,9 +45,9 @@ class Fieldtype_parent_item_id
             $parent_path = explode('-', $parent_path_array[count($parent_path_array) - 1]);
             $parent_entities_id = $parent_path[0];
 
-            if (users::has_users_access_to_entity($parent_entities_id)) {
-                return '<a href="' . url_for(
-                        'items/info',
+            if (\Models\Main\Users\Users::has_users_access_to_entity($parent_entities_id)) {
+                return '<a href="' . \Helpers\Urls::url_for(
+                        'main/items/info',
                         'path=' . $options['path_info']['parent_path']
                     ) . '">' . $options['path_info']['parent_name'] . '</a>';
             } else {

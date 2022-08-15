@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -14,12 +18,14 @@ class Fieldtype_todo_list
     public function get_configuration()
     {
         $cfg = [];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
             'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_WIDTH,
             'name' => 'width',
@@ -53,6 +59,7 @@ class Fieldtype_todo_list
             'type' => 'input',
             'params' => ['class' => 'form-control input-large']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_FOR_UNCHECK,
             'name' => 'text_unckeck',
@@ -71,14 +78,14 @@ class Fieldtype_todo_list
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = fields_types::parse_configuration($field['configuration']);
+        $cfg = \Models\Main\Fields_types::parse_configuration($field['configuration']);
 
         $attributes = [
             'rows' => '3',
             'class' => 'form-control ' . $cfg['width'] . ($field['is_heading'] == 1 ? ' autofocus' : '') . ' fieldtype_todo_list field_' . $field['id'] . ($field['is_required'] == 1 ? ' required noSpace' : '')
         ];
 
-        return textarea_tag(
+        return \Helpers\Html::textarea_tag(
             'fields[' . $field['id'] . ']',
             str_replace(['&lt;', '&gt;'], ['<', '>'], $obj['field_' . $field['id']]),
             $attributes
@@ -92,8 +99,6 @@ class Fieldtype_todo_list
 
     public function output($options)
     {
-        global $app_user;
-
         $html_listing = '';
         if (strlen($options['value'])) {
             foreach (preg_split('/\r\n|\r|\n/', $options['value']) as $key => $value) {
@@ -112,14 +117,14 @@ class Fieldtype_todo_list
         } else {
             $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
-            //get default filed acess cfg
-            $fields_access_schema = users::get_fields_access_schema(
+            //get default filed access cfg
+            $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema(
                 $options['field']['entities_id'],
-                $app_user['group_id']
+                \K::$fw->app_user['group_id']
             );
 
             //get field access rules
-            $access_rules = new access_rules($options['field']['entities_id'], $options['item']);
+            $access_rules = new \Models\Main\Access_rules($options['field']['entities_id'], $options['item']);
             $fields_access_schema += $access_rules->get_fields_view_only_access();
 
             $hide_checkboxes = (isset($fields_access_schema[$options['field']['id']]) and $cfg->get(
@@ -142,7 +147,7 @@ class Fieldtype_todo_list
 
                         $html .= '
   							<tr>
-  								<td>' . input_checkbox_tag(
+  								<td>' . \Helpers\Html::input_checkbox_tag(
                                 'todo_list_' . $options['field']['id'] . '_' . $key,
                                 $key,
                                 ['class' => 'todo-list-item-' . $options['field']['id'], 'checked' => $is_checked]
@@ -168,7 +173,10 @@ class Fieldtype_todo_list
   								description = (is_checked==1 ? \'' . addslashes(
                                     $cfg->get('text_check')
                                 ) . '\':\'' . addslashes($cfg->get('text_unckeck')) . '\')+" "+checked_text;  								
-  								open_dialog(\'' . url_for('items/comments_form', 'path=' . $options['path']) . '&description=\'+encodeURIComponent(description));  								
+  								open_dialog(\'' . \Helpers\Urls::url_for(
+                                    'main/items/comments_form',
+                                    'path=' . $options['path']
+                                ) . '&description=\'+encodeURIComponent(description));  								
   								';
                             break;
                     }
@@ -198,7 +206,10 @@ class Fieldtype_todo_list
   								
   								$.ajax({
   									method:"POST",
-  									url:"' . url_for('items/todo_list', 'action=update&path=' . $options['path']) . '",
+  									url:"' . \Helpers\Urls::url_for(
+                            'main/items/todo_list/update',
+                            'path=' . $options['path']
+                        ) . '",
   									data:{field_id:' . $options['field']['id'] . ',list_id:list_id,is_checked:is_checked}
   								}).done(function(data){
   									' . $js_done . '	

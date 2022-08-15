@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -16,8 +20,8 @@ class Fieldtype_text_pattern_static
         $cfg = [];
 
         $cfg[] = [
-            'title' => \K::$fw->TEXT_PATTERN . fields::get_available_fields_helper(
-                    $_POST['entities_id'],
+            'title' => \K::$fw->TEXT_PATTERN . \Models\Main\Fields::get_available_fields_helper(
+                    \K::$fw->POST['entities_id'],
                     'fields_configuration_pattern'
                 ),
             'name' => 'pattern',
@@ -82,6 +86,7 @@ class Fieldtype_text_pattern_static
             $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
             if (!$item_info) {
+                //TODO Add cache
                 $item_info = \K::model()->db_query_exec_one(
                     "select e.* " . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                         $entities_id,
@@ -89,7 +94,7 @@ class Fieldtype_text_pattern_static
                     ) . fieldtype_related_records::prepare_query_select(
                         $entities_id,
                         ''
-                    ) . " from app_entity_" . $entities_id . " e where e.id = ?", [$items_id]
+                    ) . " from app_entity_" . (int)$entities_id . " e where e.id = ?", [$items_id]
                 );
                 //$item_info = db_fetch_array($item_info_query);
             }
@@ -121,8 +126,8 @@ class Fieldtype_text_pattern_static
                 );*/
 
                 \K::model()->db_update(
-                    'app_entity_' . $entities_id,
-                    ['field_' . $fields['id'] => $value],
+                    'app_entity_' . (int)$entities_id,
+                    ['field_' . (int)$fields['id'] => $value],
                     ['id = ?', $items_id]
                 );
             }

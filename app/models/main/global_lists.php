@@ -249,11 +249,7 @@ class Global_lists
         $list = [];
 
         //$choices_query = db_query("select * from app_global_lists_choices");
-        $choices_query = \K::model()->db_fetch_all(
-            'app_global_lists_choices',
-            null,
-            [\K::$fw->TTL_APP, 'app_global_lists_choices']
-        );
+        $choices_query = \K::model()->db_fetch('app_global_lists_choices');
 
         //while ($v = db_fetch_array($choices_query)) {
         foreach ($choices_query as $v) {

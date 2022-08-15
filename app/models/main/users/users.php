@@ -559,10 +559,8 @@ class Users
         );*/
 
         $access_info_query = \K::model()->db_fetch(
-            'app_entities_access', ['access_groups_id = ?', $access_groups_id],
-            [], [],
-            [\K::$fw->TTL_APP, 'app_entities_access']
-        );
+            'app_entities_access', ['access_groups_id = ?', $access_groups_id],[],'entities_id,access_schema'
+        );//FIX
 
         //while ($access_info = db_fetch_array($access_info_query)) {
         foreach ($access_info_query as $access_info) {

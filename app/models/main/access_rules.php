@@ -58,11 +58,7 @@ class Access_rules
         $cache = [];
         //$access_rules_fields_query = \K::model()->db_query_exec("select * from app_access_rules_fields");
 
-        $access_rules_fields_query = \K::model()->db_fetch_all(
-            'app_access_rules_fields',
-            null,
-            [\K::$fw->TTL_APP, 'app_access_rules_fields']
-        );
+        $access_rules_fields_query = \K::model()->db_fetch('app_access_rules_fields');
 
         //while ($access_rules_fields = db_fetch_array($access_rules_fields_query)) {
         foreach ($access_rules_fields_query as $access_rules_fields) {

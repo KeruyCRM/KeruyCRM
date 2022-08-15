@@ -367,7 +367,7 @@ class Items
                     $fields = \K::model()->db_fetch_one('app_fields', [
                         'is_heading = 1 and entities_id = ?',
                         $cfg['entity_id']
-                    ],[],'id');
+                    ], [], 'id');
 
                     if ($fields) {
                         $entity_heading_field_id = $fields['id'];
@@ -1217,19 +1217,17 @@ class Items
 
     public static function add_access_query_for_parent_entities($entities_id, $listing_sql_query = '')
     {
-        global $app_user, $app_entities_cache;
-
-        if ($app_user['group_id'] == 0) {
+        if (\K::$fw->app_user['group_id'] == 0) {
             return '';
         }
 
-        $entity_info = $app_entities_cache[$entities_id];
+        $entity_info = \K::$fw->app_entities_cache[$entities_id];
 
         if ($entity_info['parent_id'] > 0) {
-            $listing_sql_query = ' and e.parent_item_id in (select e.id from app_entity_' . $entity_info['parent_id'] . ' e where e.id>0 ' . items::add_access_query(
+            $listing_sql_query = ' and e.parent_item_id in (select e.id from app_entity_' . (int)$entity_info['parent_id'] . ' e where e.id > 0 ' . self::add_access_query(
                     $entity_info['parent_id'],
                     ''
-                ) . ' ' . items::add_access_query_for_parent_entities($entity_info['parent_id']) . ')';
+                ) . ' ' . self::add_access_query_for_parent_entities($entity_info['parent_id']) . ')';
         }
 
         return $listing_sql_query;
@@ -1277,10 +1275,6 @@ class Items
                 $access_schema
             ) and \K::$fw->app_user['group_id'] > 0) {
             $listing_sql_query .= self::add_access_query_for_user_parent_entities($current_entity_id);
-            /* echo '<pre>';
-              print_r($users_entities);
-              print_r($listing_sql_query);
-              exit(); */
         } elseif ((\Models\Main\Users\Users::has_access(
                     'view_assigned',
                     $access_schema
@@ -1356,30 +1350,30 @@ class Items
             //check users fields
             $sql_query_array = [];
             foreach ($users_fields as $id) {
-                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where  cv.items_id = e.id and cv.fields_id = '" . $id . "' and cv.value = '" . \K::$fw->app_user['id'] . "')>0";
+                $sql_query_array[] = "(select count(*) as total from app_entity_" . (int)$current_entity_id . "_values cv where  cv.items_id = e.id and cv.fields_id = " . (int)$id . " and cv.value = " . (int)\K::$fw->app_user['id'] . ") > 0";
             }
 
-            //check gouped users
+            //check grouped users
             foreach ($grouped_users_fields as $id) {
-                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id = e.id and cv.fields_id = '" . $id . "' and cv.value in (select id from app_fields_choices fc where fc.fields_id = '" . $id . "' and find_in_set(" . \K::$fw->app_user['id'] . ",fc.users)))>0";
+                $sql_query_array[] = "(select count(*) as total from app_entity_" . (int)$current_entity_id . "_values cv where cv.items_id = e.id and cv.fields_id = " . (int)$id . " and cv.value in (select id from app_fields_choices fc where fc.fields_id = " . (int)$id . " and find_in_set(" . (int)\K::$fw->app_user['id'] . ",fc.users))) > 0";
             }
 
-            //check gouped users with globallist
+            //check grouped users with globallist
             foreach ($grouped_global_users_fields as $list_id => $id) {
-                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id = e.id and cv.fields_id = '" . $id . "' and cv.value in (select id from app_global_lists_choices fc where fc.lists_id = '" . $list_id . "' and find_in_set(" . \K::$fw->app_user['id'] . ",fc.users)))>0";
+                $sql_query_array[] = "(select count(*) as total from app_entity_" . (int)$current_entity_id . "_values cv where cv.items_id = e.id and cv.fields_id = " . (int)$id . " and cv.value in (select id from app_global_lists_choices fc where fc.lists_id = " . (int)$list_id . " and find_in_set(" . (int)\K::$fw->app_user['id'] . ",fc.users))) > 0";
             }
 
             //check access group fields
             foreach ($access_group_fields as $id) {
-                $sql_query_array[] = "(select count(*) as total from app_entity_" . $current_entity_id . "_values cv where cv.items_id = e.id and cv.fields_id = '" . $id . "' and cv.value = '" . \K::$fw->app_user['group_id'] . "')>0";
+                $sql_query_array[] = "(select count(*) as total from app_entity_" . (int)$current_entity_id . "_values cv where cv.items_id = e.id and cv.fields_id = " . (int)$id . " and cv.value = " . (int)\K::$fw->app_user['group_id'] . ") > 0";
             }
 
             //check created by
-            $sql_query_array[] = "e.created_by = '" . \K::$fw->app_user['id'] . "'";
+            $sql_query_array[] = "e.created_by = " . (int)\K::$fw->app_user['id'];
 
             //check user entity
             if ($current_entity_id == 1) {
-                $sql_query_array[] = "e.id = '" . \K::$fw->app_user['id'] . "'";
+                $sql_query_array[] = "e.id = " . (int)\K::$fw->app_user['id'];
             }
 
             $listing_sql_query .= " and (" . implode(' or ', $sql_query_array) . ") ";
@@ -1605,54 +1599,70 @@ class Items
         return $subject;
     }
 
-    static function get_paretn_users_list($entities_id, $parent_entity_item_id)
+    public static function get_parent_users_list($entities_id, $parent_entity_item_id)
     {
-        global $app_entities_cache, $app_fields_cache;
-
         $has_parent_users = false;
         $parent_users_list = [];
 
-        $parent_entity_id = $app_entities_cache[$entities_id]['parent_id'];
+        $parent_entity_id = \K::$fw->app_entities_cache[$entities_id]['parent_id'];
 
         if ($parent_entity_id == 0 or $parent_entity_item_id == 0) {
             return false;
         }
 
-        $path_array = items::get_path_array($parent_entity_id, $parent_entity_item_id);
+        $path_array = self::get_path_array($parent_entity_id, $parent_entity_item_id);
 
         foreach ($path_array as $path_info) {
             $parent_users_fields = [];
-            $parent_fields_query = db_query(
+            /*$parent_fields_query = db_query(
                 "select f.* from app_fields f where f.type in ('fieldtype_users','fieldtype_users_ajax','fieldtype_user_roles','fieldtype_users_approve','fieldtype_access_group','fieldtype_grouped_users') and  f.entities_id='" . db_input(
                     $path_info['entities_id']
                 ) . "'"
+            );*/
+
+            $typeIn = \K::model()->quoteToString(
+                [
+                    'fieldtype_users',
+                    'fieldtype_users_ajax',
+                    'fieldtype_user_roles',
+                    'fieldtype_users_approve',
+                    'fieldtype_access_group',
+                    'fieldtype_grouped_users'
+                ]
             );
-            while ($parent_field = db_fetch_array($parent_fields_query)) {
+
+            $parent_fields_query = \K::model()->db_fetch('app_fields', [
+                'type in (' . $typeIn . ') and entities_id = ?',
+                $path_info['entities_id']
+            ],[],'id');
+
+            //while ($parent_field = db_fetch_array($parent_fields_query)) {
+            foreach ($parent_fields_query as $parent_field){
+                $parent_field = $parent_field->cast();
+
                 $has_parent_users = true;
 
                 $parent_users_fields[] = $parent_field['id'];
             }
 
             if ($has_parent_users) {
-                $parent_item_info = db_find('app_entity_' . $path_info['entities_id'], $path_info['items_id']);
+                $parent_item_info = \K::model()->db_find('app_entity_' . (int)$path_info['entities_id'], $path_info['items_id']);
 
                 foreach ($parent_users_fields as $id) {
                     if (isset($parent_item_info['field_' . $id]) and strlen($parent_item_info['field_' . $id])) {
-                        $field = $app_fields_cache[$path_info['entities_id']][$id];
-                        $cfg = new fields_types_cfg($field['configuration']);
-
-                        //echo $field['type'] . '<br>';
+                        $field = \K::$fw->app_fields_cache[$path_info['entities_id']][$id];
+                        $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
                         switch ($field['type']) {
                             case 'fieldtype_grouped_users':
                                 $parent_users_list = array_merge(
-                                    fieldtype_grouped_users::get_send_to($parent_item_info['field_' . $id], $cfg),
+                                    \Tools\FieldsTypes\Fieldtype_grouped_users::get_send_to($parent_item_info['field_' . $id], $cfg),
                                     $parent_users_list
                                 );
                                 break;
                             case 'fieldtype_access_group':
                                 $parent_users_list = array_merge(
-                                    fieldtype_access_group::get_send_to($parent_item_info['field_' . $id]),
+                                    \Tools\FieldsTypes\Fieldtype_access_group::get_send_to($parent_item_info['field_' . $id]),
                                     $parent_users_list
                                 );
                                 break;
@@ -1678,7 +1688,7 @@ class Items
         return false;
     }
 
-    static function update_by_id($entity_id, $item_id, $data)
+    public static function update_by_id($entity_id, $item_id, $data)
     {
         global $app_entities_cache, $app_fields_cache;
 
@@ -1757,7 +1767,7 @@ class Items
         return true;
     }
 
-    static function insert($entity_id, $data)
+    public static function insert($entity_id, $data)
     {
         global $app_entities_cache, $app_fields_cache;
 

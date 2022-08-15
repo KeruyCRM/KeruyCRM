@@ -39,6 +39,7 @@ class Num2str extends \Prefab
                         'id = ?',
                         $filed_id
                     ]);
+
                     if ($field) {
                         $value = $item['field_' . $field['id']] ?? '';
 

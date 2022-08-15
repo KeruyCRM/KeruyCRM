@@ -254,4 +254,17 @@ class Fieldtype_input_encrypted
 
         return $listing_sql_query_select;
     }
+
+    public static function prepare_query_select_mapper($entities_id, $listing_sql_query_select = [])
+    {
+        foreach (\K::$fw->app_fields_cache[$entities_id] as $field) {
+            if (in_array($field['type'], ['fieldtype_input_encrypted', 'fieldtype_textarea_encrypted']
+                ) and \K::model()->db_has_encryption_key()) {
+                $listing_sql_query_select['field_' . (int)$field['id']] = 'AES_DECRYPT(field_' . (int)$field['id'] . "," . \K::model(
+                    )->quote(\K::$fw->DB_ENCRYPTION_KEY) . ')';
+            }
+        }
+
+        return $listing_sql_query_select;
+    }
 }

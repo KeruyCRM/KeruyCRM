@@ -1676,7 +1676,7 @@ return [
     'FIELDTYPE_INPUT_ENCRYPTED_TOOLTIP' => 'Введене значення зберігається в базі в зашифрованому вигляді. Дані шифруються за допомогою спеціального ключа.',
     'ENCRYPTION_KEY' => 'Ключ шифрування',
     'ENCRYPTION_KEY_INFO' => 'Щоб додати ключ шифрування відкрийте <code>config/server.php</code> файл і <br>
-вставте наступний рядок в кінці файлу: <code>\'DB_ENCRYPTION_KEY\',\'my_key\',</code><br>
+вставте наступний рядок в кінці файлу: <code>\'DB_ENCRYPTION_KEY\' => \'my_key\',</code><br>
 Замість <code>my_key</code> введіть ваш ключ.<br>
 <b>Увага:</b> не можна змінювати ключ для існуючих даних. Це призведе до втрати даних.',
     'FIELDTYPE_TEXTAREA_ENCRYPTED_TITLE' => 'Зашифроване поле для тексту',

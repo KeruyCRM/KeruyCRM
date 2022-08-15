@@ -107,8 +107,13 @@ class Access_groups
 
     public static function get_default_group_id()
     {
-        $group_info_query = db_query("select id from app_access_groups where is_default=1");
-        if ($group_info = db_fetch_array($group_info_query)) {
+        //$group_info_query = db_query("select id from app_access_groups where is_default=1");
+
+        $group_info = \K::model()->db_fetch_one('app_access_groups', [
+            'is_default = 1'
+        ], [], 'id');
+
+        if ($group_info) {
             return $group_info['id'];
         } else {
             return false;
@@ -165,10 +170,9 @@ class Access_groups
 
         $groups_query = \K::model()->db_fetch(
             'app_access_groups',
-            '',
+            [],
             ['order' => 'sort_order,name'],
-            'id,name',
-            [\K::$fw->TTL_APP, 'app_access_groups']
+            'id,name'
         );
 
         foreach ($groups_query as $v) {

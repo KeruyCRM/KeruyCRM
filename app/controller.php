@@ -318,14 +318,17 @@ class Controller
 
     private function _setCfgFromDB()
     {
-        $cfg = \K::model()->db_fetch_all(
+        $cfg = \K::model()->db_fetch(
             'app_configuration',
-            'configuration_name,configuration_value',
-            [\K::$fw->TTL_APP, 'app_configuration']
+            [],
+            [],
+            'configuration_name,configuration_value'
         );
 
         foreach ($cfg as $v) {
-            \K::$fw->{$v->configuration_name} = $v->configuration_value;
+            $v = $v->cast();
+
+            \K::$fw->{$v['configuration_name']} = $v['configuration_value'];
         }
     }
 

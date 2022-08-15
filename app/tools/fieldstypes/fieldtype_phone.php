@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -50,10 +54,11 @@ class Fieldtype_phone
             'title' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE,
             'name' => 'is_unique',
             'type' => 'dropdown',
-            'choices' => fields_types::get_is_unique_choices(_POST('entities_id')),
+            'choices' => \Models\Main\Fields_types::get_is_unique_choices(\K::$fw->POST['entities_id']),
             'tooltip_icon' => \K::$fw->TEXT_IS_UNIQUE_FIELD_VALUE_TIP,
             'params' => ['class' => 'form-control input-large']
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_ERROR_MESSAGE,
             'name' => 'unique_error_msg',
@@ -157,7 +162,7 @@ END";
                 ($cfg->get('is_unique') > 0 ? ' is-unique' : ''),
         ];
 
-        $attributes = fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
+        $attributes = \Models\Main\Fields_types::prepare_uniquer_error_msg_param($attributes, $cfg);
 
         $script = '';
 
@@ -171,17 +176,21 @@ END";
       ';
         }
 
-        return input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes) . $script;
+        return \Helpers\Html::input_tag(
+                'fields[' . $field['id'] . ']',
+                $obj['field_' . $field['id']],
+                $attributes
+            ) . $script;
     }
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
     {
-        //return non-formated value if export
+        //return non-formatted value if export
         if (isset($options['is_export'])) {
             return $options['value'];
         }
@@ -195,36 +204,50 @@ END";
         }
 
         if (strlen($cfg->get('telephony_module'))) {
-            $module_info_query = db_query(
+            /*$module_info_query = db_query(
                 "select * from app_ext_modules where id='" . $cfg->get(
                     'telephony_module'
                 ) . "' and type='telephony' and is_active=1"
-            );
-            if ($module_info = db_fetch_array($module_info_query)) {
+            );*/
+
+            $module_info = \K::model()->db_fetch_one('app_ext_modules', [
+                'id = ? and type = ? and is_active = 1',
+                $cfg->get('telephony_module'),
+                'telephony'
+            ]);
+
+            if ($module_info) {
                 modules::include_module($module_info, 'telephony');
 
-                $module = new $module_info['module'];
+                $module = new $module_info['module']();
                 $phone_number = $module->prepare_url($module_info['id'], $phone_number, $options);
             }
         }
 
         if (strlen($cfg->get('sms_module'))) {
-            $module_info_query = db_query(
+            /*$module_info_query = db_query(
                 "select * from app_ext_modules where id='" . $cfg->get(
                     'sms_module'
                 ) . "' and type='sms'  and is_active=1"
-            );
-            if ($module_info = db_fetch_array($module_info_query)) {
-                $phone_number .= '&nbsp;&nbsp;<a title="' . \K::$fw->TEXT_EXT_SMS . '" href="javascript: open_dialog(\'' . url_for(
-                        'items/send_sms',
+            );*/
+
+            $module_info = \K::model()->db_fetch_one('app_ext_modules', [
+                'id = ? and type = ? and is_active = 1',
+                $cfg->get('sms_module'),
+                'sms'
+            ]);
+
+            if ($module_info) {
+                $phone_number .= '&nbsp;&nbsp;<a title="' . \K::$fw->TEXT_EXT_SMS . '" href="javascript: open_dialog(\'' . \Helpers\Urls::url_for(
+                        'main/items/send_sms',
                         'path=' . $options['path'] . '&module_id=' . $module_info['id'] . '&field_id=' . $options['field']['id'] . '&item_id=' . $options['item']['id']
                     ) . '\')"><i class="fa fa-commenting-o" aria-hidden="true"></i></a>';
             }
         }
 
         if ($cfg->get('show_history')) {
-            $phone_number .= '&nbsp;&nbsp;<a title="' . \K::$fw->TEXT_EXT_HISTORY . '" href="javascript: open_dialog(\'' . url_for(
-                    'items/call_history',
+            $phone_number .= '&nbsp;&nbsp;<a title="' . \K::$fw->TEXT_EXT_HISTORY . '" href="javascript: open_dialog(\'' . \Helpers\Urls::url_for(
+                    'main/items/call_history',
                     'path=' . $options['path'] . '&phone=' . preg_replace('/\D/', '', $options['value'])
                 ) . '\')"><i class="fa fa-history" aria-hidden="true"></i></a>';
         }

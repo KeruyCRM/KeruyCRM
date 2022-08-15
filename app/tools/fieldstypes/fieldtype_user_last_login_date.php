@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -16,16 +20,14 @@ class Fieldtype_user_last_login_date
 
     public function output($options)
     {
-        global $app_user;
-
         if (strlen($options['value']) > 0 and $options['value'] != 0) {
-            if ($app_user['group_id'] == 0) {
-                return '<a href="' . url_for(
-                        'tools/users_login_log',
+            if (\K::$fw->app_user['group_id'] == 0) {
+                return '<a href="' . \Helpers\Urls::url_for(
+                        'main/tools/users_login_log',
                         'users_id=' . $options['item']['id']
-                    ) . '" target="_new">' . format_date_time($options['value']) . '</a>';
+                    ) . '" target="_new">' . \Helpers\App::format_date_time($options['value']) . '</a>';
             } else {
-                return format_date_time($options['value']);
+                return \Helpers\App::format_date_time($options['value']);
             }
         } else {
             return '';

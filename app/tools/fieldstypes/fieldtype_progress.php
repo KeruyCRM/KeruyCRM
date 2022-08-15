@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -14,6 +18,7 @@ class Fieldtype_progress
     public function get_configuration()
     {
         $cfg = [];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_STEP,
             'name' => 'step',
@@ -27,6 +32,7 @@ class Fieldtype_progress
             'name' => 'display_progress_bar',
             'type' => 'checkbox'
         ];
+
         $cfg[\K::$fw->TEXT_PROGRESS_BAR][] = [
             'title' => \K::$fw->TEXT_MIN_WIDTH,
             'tooltip_icon' => \K::$fw->TEXT_ENTER_VALUES_IN_PIXELS_OR_LEAVE_BLANK,
@@ -34,6 +40,7 @@ class Fieldtype_progress
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[\K::$fw->TEXT_PROGRESS_BAR][] = [
             'title' => \K::$fw->TEXT_COLOR,
             'name' => 'bar_color',
@@ -61,7 +68,7 @@ class Fieldtype_progress
 
         $choices = $choices + self::get_choices($cfg);
 
-        return select_tag('fields[' . $field['id'] . ']', $choices, $value, $attributes);
+        return \Helpers\Html::select_tag('fields[' . $field['id'] . ']', $choices, $value, $attributes);
     }
 
     public static function get_choices($cfg)
@@ -89,7 +96,7 @@ class Fieldtype_progress
                 return $options['value'] . '%';
             } elseif ($cfg->get('display_progress_bar') == 1) {
                 $min_width = (int)$cfg->get('bar_min_width');
-                $html = '
+                return '
 	    			<div class="progress" style="' . ($min_width > 0 ? 'min-width: ' . $min_width . 'px' : '') . '">	
 	    				<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="' . $options['value'] . '" aria-valuemin="0" aria-valuemax="100" 
 	    							style="width: ' . $options['value'] . '%; ' . (strlen(
@@ -101,8 +108,6 @@ class Fieldtype_progress
 							</div>
 	    			</div>
     				';
-
-                return $html;
             } else {
                 return $options['value'] . '%';
             }

@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -69,7 +73,7 @@ class Fieldtype_tags
         ];
 
         //cfg global list if exist
-        if (count($choices = global_lists::get_lists_choices()) > 0) {
+        if (count($choices = \Models\Main\Global_lists::get_lists_choices()) > 0) {
             $cfg[] = [
                 'title' => \K::$fw->TEXT_USE_GLOBAL_LIST,
                 'name' => 'use_global_list',
@@ -85,8 +89,6 @@ class Fieldtype_tags
 
     public function render($field, $obj, $params = [])
     {
-        global $app_module_path, $app_layout;
-
         $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
         $add_empty = ($field['is_required'] == 1 ? false : true);
@@ -107,18 +109,18 @@ class Fieldtype_tags
             $field_name = 'fields[' . $field['id'] . ']';
         }
 
-        //use global lists if exsit
+        //use global lists if exist
         if ($cfg->get('use_global_list') > 0) {
-            $choices = global_lists::get_choices(
+            $choices = \Models\Main\Global_lists::get_choices(
                 $cfg->get('use_global_list'),
                 $add_empty,
                 '',
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = global_lists::get_choices_default_id($cfg->get('use_global_list'));
+            $default_id = \Models\Main\Global_lists::get_choices_default_id($cfg->get('use_global_list'));
         } else {
-            $choices = fields_choices::get_choices(
+            $choices = \Models\Main\Fields_choices::get_choices(
                 $field['id'],
                 $add_empty,
                 '',
@@ -126,20 +128,23 @@ class Fieldtype_tags
                 $obj['field_' . $field['id']],
                 true
             );
-            $default_id = fields_choices::get_default_id($field['id']);
+            $default_id = \Models\Main\Fields_choices::get_default_id($field['id']);
         }
 
         $value = ($obj['field_' . $field['id']] > 0 ? $obj['field_' . $field['id']] : ($params['form'] == 'comment' ? '' : $default_id));
 
         $html = '
-        <div>' . select_tag($field_name, $choices, $value, $attributes) . '</div>' . fields_types::custom_error_handler(
+        <div>' . \Helpers\Html::select_tag(
+                $field_name,
+                $choices,
+                $value,
+                $attributes
+            ) . '</div>' . \Models\Main\Fields_types::custom_error_handler(
                 $field['id']
             );
 
-        //echo $app_module_path;
-
         $tags_flag = (in_array(
-            $app_module_path,
+            \K::$fw->app_module_path,
             [
                 'items/form',
                 'ext/public/form',
@@ -153,15 +158,15 @@ class Fieldtype_tags
         $html .= '
     	<script>	
     	$(function(){
-                let is_form_row_' . $field['id'] . ' = $("#fields_' . $field['id'] . '").parents(".forms-rows").size();
+            let is_form_row_' . $field['id'] . ' = $("#fields_' . $field['id'] . '").parents(".forms-rows").size();
                     
 	    	$("#fields_' . $field['id'] . '").select2({
 		      tags: ' . $tags_flag . ',
 		      width: (is_form_row_' . $field['id'] . '==0 ? "' . self::get_select2_width_by_class($cfg->get('width')) . '":"100%"),		      
-		      ' . (in_array($app_layout, ['public_layout.php']) ? '' : 'dropdownParent: $("#ajax-modal"),') . ' 
+		      ' . (in_array(\K::$fw->app_layout, ['public_layout.php']) ? '' : 'dropdownParent: $("#ajax-modal"),') . ' 
 		      ' . ($cfg->get('auto_create_tag') == '1' ? "tokenSeparators: [',', ' ']," : '') . '
 		      "language":{
-		        "noResults" : function () { return "' . addslashes(TEXT_NO_RESULTS_FOUND) . '"; },		    				    				
+		        "noResults" : function () { return "' . addslashes(\K::$fw->TEXT_NO_RESULTS_FOUND) . '"; },		    				    				
 		      },
 		      createTag: function (params) {			            		                
 				    return {
@@ -179,53 +184,64 @@ class Fieldtype_tags
 
     public function process($options)
     {
-        global $process_options;
-
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $values_id = [];
 
         $values_list = (is_array($options['value']) ? $options['value'] : [0 => $options['value']]);
 
-        //print_r($values_list);
-        //exit();
+        $forceCommit = \K::model()->forceCommit();
 
         foreach ($values_list as $value) {
             if (substr($value, 0, 1) == '#') {
                 $value = substr($value, 1);
 
                 if (strlen($value)) {
-                    $value = db_prepare_input(trim($value));
+                    $value = \K::model()->db_prepare_input(trim($value));
 
                     if ($cfg->get('use_global_list') > 0) {
-                        $check_query = db_query(
+                        /*$check_query = db_query(
                             "select id from app_global_lists_choices where lists_id='" . $cfg->get(
                                 'use_global_list'
                             ) . "' and name='" . $value . "'"
-                        );
-                        if (!$check = db_fetch_array($check_query)) {
+                        );*/
+
+                        $check = \K::model()->db_fetch_one('app_global_lists_choices', [
+                            'lists_id = ? and name= ?',
+                            $cfg->get('use_global_list'),
+                            $value
+                        ], [], 'id');
+
+                        if (!$check) {
                             $sql_data = [
                                 'lists_id' => $cfg->get('use_global_list'),
                                 'name' => $value,
                             ];
 
-                            db_perform('app_global_lists_choices', $sql_data);
-                            $choices_id = db_insert_id();
+                            $mapper = \K::model()->db_perform('app_global_lists_choices', $sql_data);
+                            $choices_id = \K::model()->db_insert_id($mapper);
 
                             $values_id[] = $choices_id;
                         }
                     } else {
-                        $check_query = db_query(
+                        /*$check_query = db_query(
                             "select id from app_fields_choices where fields_id='" . $options['field']['id'] . "' and name='" . $value . "'"
-                        );
-                        if (!$check = db_fetch_array($check_query)) {
+                        );*/
+
+                        $check = \K::model()->db_fetch_one('app_fields_choices', [
+                            'fields_id = ? and name = ?',
+                            $options['field']['id'],
+                            $value
+                        ], [], 'id');
+
+                        if (!$check) {
                             $sql_data = [
                                 'fields_id' => $options['field']['id'],
                                 'name' => $value,
                             ];
 
-                            db_perform('app_fields_choices', $sql_data);
-                            $choices_id = db_insert_id();
+                            $mapper = \K::model()->db_perform('app_fields_choices', $sql_data);
+                            $choices_id = \K::model()->db_insert_id($mapper);
 
                             $values_id[] = $choices_id;
                         }
@@ -236,8 +252,12 @@ class Fieldtype_tags
             }
         }
 
+        if ($forceCommit) {
+            \K::model()->commit();
+        }
+
         //update value in process option to handle $choices_values->prepare($process_options); in items.php
-        $process_options['value'] = $values_id;
+        \K::$fw->process_options['value'] = $values_id;
 
         return implode(',', $values_id);
     }
@@ -250,9 +270,9 @@ class Fieldtype_tags
 
         //render global list value
         if ($cfg->get('use_global_list') > 0) {
-            return global_lists::render_value($options['value'], $is_export);
+            return \Models\Main\Global_lists::render_value($options['value'], $is_export);
         } else {
-            return fields_choices::render_value($options['value'], $is_export);
+            return \Models\Main\Fields_choices::render_value($options['value'], $is_export);
         }
     }
 
@@ -263,7 +283,7 @@ class Fieldtype_tags
 
     public static function get_select2_width_by_class($class)
     {
-        if (is_mobile()) {
+        if (\Helpers\App::is_mobile()) {
             return '100%';
         }
 

@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -23,9 +27,9 @@ class Fieldtype_user_skin
                 $obj['field_' . $field['id']] = 'default';
             }
 
-            return select_tag(
+            return \Helpers\Html::select_tag(
                 'fields[' . $field['id'] . ']',
-                app_get_skins_choices(false),
+                \Helpers\App::app_get_skins_choices(false),
                 $obj['field_' . $field['id']],
                 ['class' => 'form-control input-medium']
             );

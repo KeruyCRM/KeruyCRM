@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -28,7 +32,7 @@ class Fieldtype_mysql_query
             'name' => 'entity_id',
             'tooltip_icon' => \K::$fw->TEXT_FIELDTYPE_MYSQL_QUERY_SELECT_ENTITY_TOOLTIP,
             'type' => 'dropdown',
-            'choices' => entities::get_choices(),
+            'choices' => \Models\Main\Entities::get_choices(),
             'params' => ['class' => 'form-control input-xlarge']
         ];
 
@@ -87,7 +91,7 @@ class Fieldtype_mysql_query
 
     public function render($field, $obj, $params = [])
     {
-        return '<p class="form-control-static">' . $obj['field_' . $field['id']] . '</p>' . input_hidden_tag(
+        return '<p class="form-control-static">' . $obj['field_' . $field['id']] . '</p>' . \Helpers\Html::input_hidden_tag(
                 'fields[' . $field['id'] . ']',
                 $obj['field_' . $field['id']]
             );
@@ -105,19 +109,17 @@ class Fieldtype_mysql_query
 
     public function reports_query($options)
     {
-        global $sql_query_having, $app_fields_cache;
-
         $cfg = new \Models\Main\Fields_types_cfg(
-            $app_fields_cache[$options['entities_id']][$options['filters']['fields_id']]['configuration']
+            \K::$fw->app_fields_cache[$options['entities_id']][$options['filters']['fields_id']]['configuration']
         );
 
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = reports::prepare_numeric_sql_filters($filters, '');
+        $sql = \Models\Main\Reports\Reports::prepare_numeric_sql_filters($filters, '');
 
         if (count($sql) > 0 and $cfg->get('dynamic_query') == 1) {
-            $sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
+            \K::$fw->sql_query_having[$options['entities_id']][] = implode(' and ', $sql);
         } elseif (count($sql) > 0) {
             $sql_query[] = implode(' and ', $sql);
         }
@@ -129,10 +131,7 @@ class Fieldtype_mysql_query
     {
         $cache = [];
         $fields_query = \K::model()->db_fetch(
-            'app_fields', ['type in (?)', 'fieldtype_mysql_query'],
-            [],
-            null,
-            [\K::$fw->TTL_APP, 'app_fields']
+            'app_fields', ['type in (?)', 'fieldtype_mysql_query']
         );
         //while ($fields = db_fetch_array($fields_query)) {
         foreach ($fields_query as $fields) {
@@ -146,14 +145,12 @@ class Fieldtype_mysql_query
 
     public static function prepare_query_select($entities_id, $listing_sql_query_select, $prefix = 'e')
     {
-        global $app_mysql_query_fields_cache, $fieldtype_mysql_query_force;
-
-        if (isset($app_mysql_query_fields_cache[$entities_id])) {
-            foreach ($app_mysql_query_fields_cache[$entities_id] as $fields) {
+        if (isset(\K::$fw->app_mysql_query_fields_cache[$entities_id])) {
+            foreach (\K::$fw->app_mysql_query_fields_cache[$entities_id] as $fields) {
                 $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
-                //skip query if not dinamic
-                if ($cfg->get('dynamic_query') != 1 and $fieldtype_mysql_query_force != true) {
+                //skip query if not dynamic
+                if ($cfg->get('dynamic_query') != 1 and \K::$fw->fieldtype_mysql_query_force != true) {
                     continue;
                 }
 
@@ -171,24 +168,22 @@ class Fieldtype_mysql_query
 
     public static function prepare_query($fields, $prefix = 'e', $single_select = false)
     {
-        //global $app_not_formula_fields_cache, $fieldtype_mysql_query_force, $app_fields_cache, $app_formula_fields_cache, $app_user;
-
         $cfg = new \Models\Main\Fields_types_cfg($fields['configuration']);
 
-        //skip query if not dinamic
+        //skip query if not dynamic
         if ($cfg->get('dynamic_query') != 1 and \K::$fw->fieldtype_mysql_query_force != true) {
-            return $prefix . '.field_' . $fields['id'];
+            return $prefix . '.field_' . (int)$fields['id'];
         }
 
-        //single select to include direclty in formula
+        //single select to include directly in formula
         if ($single_select) {
-            $mysql_query = "(select " . $cfg->get('select_query') . " from app_entity_" . $cfg->get(
+            $mysql_query = "(select " . $cfg->get('select_query') . " from app_entity_" . (int)$cfg->get(
                     'entity_id'
                 ) . " msq where " . $cfg->get('where_query') . " limit 1)";
         } else {
-            $mysql_query = "IFNULL((select " . $cfg->get('select_query') . " from app_entity_" . $cfg->get(
+            $mysql_query = "IFNULL((select " . $cfg->get('select_query') . " from app_entity_" . (int)$cfg->get(
                     'entity_id'
-                ) . " msq where " . $cfg->get('where_query') . " limit 1),0) as field_" . $fields['id'];
+                ) . " msq where " . $cfg->get('where_query') . " limit 1),0) as field_" . (int)$fields['id'];
         }
 
         //prepare formulas
@@ -223,7 +218,11 @@ class Fieldtype_mysql_query
                 $fields_type,
                 ['fieldtype_input_numeric', 'fieldtype_input_numeric_comments', 'fieldtype_js_formula']
             )) {
-                $mysql_query = str_replace('[' . $fields_id . ']', '(msq.field_' . $fields_id . '+0)', $mysql_query);
+                $mysql_query = str_replace(
+                    '[' . $fields_id . ']',
+                    '(msq.field_' . (int)$fields_id . '+0)',
+                    $mysql_query
+                );
             } elseif (strstr(
                     $mysql_query,
                     '[' . $fields_id . ']'
@@ -277,7 +276,7 @@ class Fieldtype_mysql_query
                     $mysql_query
                 );
             } else {
-                $mysql_query = str_replace('[' . $fields_id . ']', 'msq.field_' . $fields_id, $mysql_query);
+                $mysql_query = str_replace('[' . $fields_id . ']', 'msq.field_' . (int)$fields_id, $mysql_query);
             }
         }
 
@@ -296,24 +295,22 @@ class Fieldtype_mysql_query
                 100,
                 'msq'
             );
-            //echo $mysql_query;
-            //exit();
         }
 
         //prepare fields for current entity
         foreach (\K::$fw->app_not_formula_fields_cache[$fields['entities_id']] as $fields_id) {
-            $fields_type = isset(\K::$fw->app_fields_cache[$fields['entities_id']][$fields_id]['type']) ? \K::$fw->app_fields_cache[$fields['entities_id']][$fields_id]['type'] : '';
+            $fields_type = \K::$fw->app_fields_cache[$fields['entities_id']][$fields_id]['type'] ?? '';
             if (in_array(
                 $fields_type,
                 ['fieldtype_input_numeric', 'fieldtype_input_numeric_comments', 'fieldtype_js_formula']
             )) {
                 $mysql_query = str_replace(
                     '[' . $fields_id . ']',
-                    '(' . $prefix . '.field_' . $fields_id . '+0)',
+                    '(' . $prefix . '.field_' . (int)$fields_id . '+0)',
                     $mysql_query
                 );
             } else {
-                $mysql_query = str_replace('[' . $fields_id . ']', $prefix . '.field_' . $fields_id, $mysql_query);
+                $mysql_query = str_replace('[' . $fields_id . ']', $prefix . '.field_' . (int)$fields_id, $mysql_query);
             }
         }
 
@@ -341,7 +338,7 @@ class Fieldtype_mysql_query
                     'select e.* ' . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                         $entities_id,
                         ''
-                    ) . ' from app_entity_' . $entities_id . ' e where e.id = ?',
+                    ) . ' from app_entity_' . (int)$entities_id . ' e where e.id = ?',
                     $items_id
                 );
                 //$item_info = $item_info_query[0] ?? '';
@@ -356,8 +353,8 @@ class Fieldtype_mysql_query
                     ) . "'"
                 );*/
 
-                \K::model()->db_update('app_entity_' . $entities_id, [
-                    'field_' . $fields_id => $item_info['field_' . $fields_id]
+                \K::model()->db_update('app_entity_' . (int)$entities_id, [
+                    'field_' . (int)$fields_id => $item_info['field_' . (int)$fields_id]
                 ], ['id = ?', $items_id]);
             }
 

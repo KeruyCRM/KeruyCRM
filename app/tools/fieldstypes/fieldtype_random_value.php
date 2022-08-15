@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -75,7 +79,7 @@ class Fieldtype_random_value
 
     public function render($field, $obj, $params = [])
     {
-        return '<p class="form-control-static">' . $obj['field_' . $field['id']] . '</p>' . input_hidden_tag(
+        return '<p class="form-control-static">' . $obj['field_' . $field['id']] . '</p>' . \Helpers\Html::input_hidden_tag(
                 'fields[' . $field['id'] . ']',
                 $obj['field_' . $field['id']]
             );
@@ -87,19 +91,21 @@ class Fieldtype_random_value
             do {
                 $value = $this->render_random_value($options);
 
-                $check_query = db_query(
+                /*$check = db_query(
                     "select id from app_entity_" . $options['field']['entities_id'] . " where field_" . $options['field']['id'] . "='" . db_input(
                         $value
                     ) . "'"
-                );
-            } while ($check = db_fetch_array($check_query));
+                );*/
 
-            //echo $value;
-            //exit();
+                $check = \K::model()->db_fetch_one('app_entity_' . (int)$options['field']['entities_id'], [
+                    'field_' . (int)$options['field']['id'] . ' = ?',
+                    $value
+                ], [], null, [], 0);
+            } while ($check);
 
             return $value;
         } else {
-            return db_prepare_input($options['value']);
+            return \K::model()->db_prepare_input($options['value']);
         }
     }
 
@@ -120,26 +126,26 @@ class Fieldtype_random_value
         $end_row = (strlen($cfg->get('end_row')) ? $cfg->get('end_row') : '');
 
         $value = '';
+        try {
+            if ($split_value > 1) {
+                $value_array = [];
+                for ($j = 0; $j < $split_value; $j++) {
+                    $value_array[$j] = '';
 
-        if ($split_value > 1) {
-            $value_array = [];
-            for ($j = 0; $j < $split_value; $j++) {
-                $value_array[$j] = '';
+                    for ($i = 0; $i < floor($value_length / $split_value); $i++) {
+                        $value_array[$j] .= $characters[random_int(0, strlen($characters) - 1)];
+                    }
+                }
 
-                for ($i = 0; $i < floor($value_length / $split_value); $i++) {
-                    $value_array[$j] .= $characters[rand(0, strlen($characters) - 1)];
+                $value = implode($split_value_char, $value_array);
+            } else {
+                for ($i = 0; $i < $value_length; $i++) {
+                    $value .= $characters[random_int(0, strlen($characters) - 1)];
                 }
             }
-
-            $value = implode($split_value_char, $value_array);
-        } else {
-            for ($i = 0; $i < $value_length; $i++) {
-                $value .= $characters[rand(0, strlen($characters) - 1)];
-            }
+        } catch (\Exception $e) {
         }
 
-        $value = $start_row . $value . $end_row;
-
-        return $value;
+        return $start_row . $value . $end_row;
     }
 }

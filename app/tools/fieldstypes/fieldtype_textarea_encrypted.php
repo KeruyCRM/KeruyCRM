@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -15,17 +19,16 @@ class Fieldtype_textarea_encrypted
     {
         $cfg = [];
 
-        //$encryption_key = (defined('DB_ENCRYPTION_KEY') ? DB_ENCRYPTION_KEY : '');
-        \K::fw()->exists('DB_ENCRYPTION_KEY', $encryption_key);
+        //\K::fw()->exists('DB_ENCRYPTION_KEY', $encryption_key);
 
         $html = '
                 <div class="form-group">
         	        <label class="col-md-3 control-label" >' . \K::$fw->TEXT_ENCRYPTION_KEY . '</label>
-            	    <div class="col-md-9">' . input_tag(
+            	    <div class="col-md-9">' . \Helpers\Html::input_tag(
                 'encryption_key',
-                $encryption_key,
+                \K::$fw->DB_ENCRYPTION_KEY,
                 ['class' => 'form-control input-large required', 'readonly' => 'readonly']
-            ) . tooltip_text(\K::$fw->TEXT_ENCRYPTION_KEY_INFO) . '
+            ) . \Helpers\App::tooltip_text(\K::$fw->TEXT_ENCRYPTION_KEY_INFO) . '
         	        </div>
     	        </div>
             ';
@@ -65,16 +68,16 @@ class Fieldtype_textarea_encrypted
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = fields_types::parse_configuration($field['configuration']);
+        $cfg = \Models\Main\Fields_types::parse_configuration($field['configuration']);
 
         $attributes = [
             'rows' => '3',
             'class' => 'form-control ' . $cfg['width'] . ($field['is_heading'] == 1 ? ' autofocus' : '') . ' fieldtype_textarea field_' . $field['id'] . ($field['is_required'] == 1 ? ' required noSpace' : '')
         ];
 
-        $value = fieldtype_input_encrypted::decrypt_value($obj['field_' . $field['id']]);
+        $value = \Tools\FieldsTypes\Fieldtype_input_encrypted::decrypt_value($obj['field_' . $field['id']]);
 
-        return textarea_tag(
+        return \Helpers\Html::textarea_tag(
             'fields[' . $field['id'] . ']',
             str_replace(['&lt;', '&gt;'], ['<', '>'], $value),
             $attributes
@@ -83,21 +86,26 @@ class Fieldtype_textarea_encrypted
 
     public function process($options)
     {
-        global $alerts;
-
-        if (!db_has_encryption_key()) {
-            $alerts->add(sprintf(\K::$fw->TEXT_ENCRYPTION_KEY_ERROR, $options['field']['name']), 'error');
+        if (!\K::model()->db_has_encryption_key()) {
+            \K::flash()->addMessage(sprintf(\K::$fw->TEXT_ENCRYPTION_KEY_ERROR, $options['field']['name']), 'error');
             return '';
         }
 
         $value = str_replace(['<', '>'], ['&lt;', '&gt;'], $options['value']);
-        $value_query = db_query(
+        /*$value_query = db_query(
             "select AES_ENCRYPT('" . db_input(trim($value)) . "','" . db_input(
                 \K::$fw->DB_ENCRYPTION_KEY
             ) . "') as text",
             false
         );
-        $value = db_fetch_array($value_query);
+        $value = db_fetch_array($value_query);*/
+
+        $value = \K::model()->db_query_exec_one(
+            'select AES_ENCRYPT(?,?) as text',
+            [trim($value), \K::$fw->DB_ENCRYPTION_KEY],
+            '',
+            false
+        );
 
         return $value['text'];
     }
@@ -109,7 +117,7 @@ class Fieldtype_textarea_encrypted
                 $options['value']
             ));
         } else {
-            return auto_link_text(nl2br($options['value']));
+            return \Helpers\Urls::auto_link_text(nl2br($options['value']));
         }
     }
 }

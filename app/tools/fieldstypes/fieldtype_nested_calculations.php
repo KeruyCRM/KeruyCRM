@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -32,6 +36,7 @@ class Fieldtype_nested_calculations
             'top_level' => \K::$fw->TEXT_ONLY_AT_THE_TOP_LEVEL,
             'all_tree' => \K::$fw->TEXT_ALL_OVER_TREE_BRANCH,
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_PERFORM_CALCULATION,
             'name' => 'calc_type',
@@ -40,12 +45,24 @@ class Fieldtype_nested_calculations
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        $choices = [];
-        $fields_query = fields::get_query(
-            _POST('entities_id'),
-            " and f.type in ('fieldtype_input_numeric', 'fieldtype_input_numeric_comments', 'fieldtype_js_formula', 'fieldtype_mysql_query', 'fieldtype_php_code')"
+        $typeIn = \K::model()->quoteToString(
+            [
+                'fieldtype_input_numeric',
+                'fieldtype_input_numeric_comments',
+                'fieldtype_js_formula',
+                'fieldtype_mysql_query',
+                'fieldtype_php_code'
+            ]
         );
-        while ($fields = db_fetch_array($fields_query)) {
+
+        $choices = [];
+        $fields_query = \Models\Main\Fields::get_query(
+            \K::$fw->POST['entities_id'],
+            " and f.type in (" . $typeIn . ")"
+        );
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
             $choices[$fields['id']] = $fields['name'];
         }
 
@@ -65,12 +82,14 @@ class Fieldtype_nested_calculations
             'params' => ['class' => 'form-control input-small input-masked', 'data-mask' => '9/~/~'],
             'default' => \K::$fw->CFG_APP_NUMBER_FORMAT
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_PREFIX,
             'name' => 'prefix',
             'type' => 'input',
             'params' => ['class' => 'form-control input-small']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_SUFFIX,
             'name' => 'suffix',
@@ -105,10 +124,8 @@ class Fieldtype_nested_calculations
             $value = $options['value'];
         }
 
-        //add prefix and sufix
-        $value = (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
-
-        return $value;
+        //add prefix and suffix
+        return (strlen($value) ? $cfg->get('prefix') . $value . $cfg->get('suffix') : '');
     }
 
     public static function update_items_fields($entities_id, $item_id, $parent_id)
@@ -146,8 +163,8 @@ class Fieldtype_nested_calculations
                             );*/
 
                             \K::model()->db_update(
-                                'app_entity_' . $entities_id,
-                                ['field_' . $update_field_id => $sum],
+                                'app_entity_' . (int)$entities_id,
+                                ['field_' . (int)$update_field_id => $sum],
                                 [
                                     'id = ?',
                                     $item_id
@@ -165,8 +182,8 @@ class Fieldtype_nested_calculations
                                 );*/
 
                                 \K::model()->db_update(
-                                    'app_entity_' . $entities_id,
-                                    ['field_' . $update_field_id => $sum],
+                                    'app_entity_' . (int)$entities_id,
+                                    ['field_' . (int)$update_field_id => $sum],
                                     [
                                         'id = ?',
                                         $update_item_id
@@ -185,8 +202,8 @@ class Fieldtype_nested_calculations
                             );*/
 
                             \K::model()->db_update(
-                                'app_entity_' . $entities_id,
-                                ['field_' . $update_field_id => $sum],
+                                'app_entity_' . (int)$entities_id,
+                                ['field_' . (int)$update_field_id => $sum],
                                 [
                                     'id = ?',
                                     $item_id
@@ -204,8 +221,8 @@ class Fieldtype_nested_calculations
                                 );*/
 
                                 \K::model()->db_update(
-                                    'app_entity_' . $entities_id,
-                                    ['field_' . $update_field_id => $sum],
+                                    'app_entity_' . (int)$entities_id,
+                                    ['field_' . (int)$update_field_id => $sum],
                                     [
                                         'id = ?',
                                         $update_item_id
@@ -230,10 +247,10 @@ class Fieldtype_nested_calculations
             "select id, field_{$calc_field_id} from app_entity_{$entities_id} where parent_id={$item_id}"
         );*/
 
-        $items_query = \K::model()->db_fetch('app_entity_' . $entities_id, [
+        $items_query = \K::model()->db_fetch('app_entity_' . (int)$entities_id, [
             'parent_id = ?',
             $item_id
-        ], [], 'id,field_' . $calc_field_id);
+        ], [], 'id,field_' . (int)$calc_field_id);
 
         //while ($items = db_fetch_array($items_query)) {
         foreach ($items_query as $items) {
@@ -251,8 +268,17 @@ class Fieldtype_nested_calculations
 
     public static function calc_count($entities_id, $item_id, $count = 0)
     {
-        $items_query = db_query("select id from app_entity_{$entities_id} where parent_id={$item_id}");
-        while ($items = db_fetch_array($items_query)) {
+        //$items_query = db_query("select id from app_entity_{$entities_id} where parent_id={$item_id}");
+
+        $items_query = \K::model()->db_fetch('app_entity_' . (int)$entities_id, [
+            'parent_id = ?',
+            $item_id
+        ], [], 'id');
+
+        //while ($items = db_fetch_array($items_query)) {
+        foreach ($items_query as $items) {
+            $items = $items->cast();
+
             $count = $count + 1;
 
             $count = self::calc_count($entities_id, $items['id'], $count);

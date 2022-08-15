@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -14,6 +18,7 @@ class Fieldtype_textarea_wysiwyg
     public function get_configuration()
     {
         $cfg = [];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_TOOLBAR,
             'name' => 'toolbar',
@@ -21,12 +26,14 @@ class Fieldtype_textarea_wysiwyg
             'choices' => ['' => \K::$fw->TEXT_DEFAULT, 'small' => \K::$fw->TEXT_IN_ONE_LINE],
             'params' => ['class' => 'form-control input-medium']
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_ALLOW_SEARCH,
             'name' => 'allow_search',
             'type' => 'checkbox',
             'tooltip_icon' => \K::$fw->TEXT_ALLOW_SEARCH_TIP
         ];
+
         $cfg[] = [
             'title' => \K::$fw->TEXT_HIDE_FIELD_IF_EMPTY,
             'name' => 'hide_field_if_empty',
@@ -46,12 +53,12 @@ class Fieldtype_textarea_wysiwyg
             'toolbar' => $cfg->get('toolbar'),
         ];
 
-        return textarea_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
+        return \Helpers\Html::textarea_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
     }
 
     public function process($options)
     {
-        return db_prepare_html_input($options['value']);
+        return \K::model()->db_prepare_html_input($options['value']);
     }
 
     public function output($options)
@@ -61,7 +68,7 @@ class Fieldtype_textarea_wysiwyg
                 ['<', '>'],
                 $options['value']) : $options['value']);
         } else {
-            return auto_link_text($options['value']);
+            return \Helpers\Urls::auto_link_text($options['value']);
         }
     }
 }

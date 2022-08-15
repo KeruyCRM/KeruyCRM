@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -18,10 +22,14 @@ class Fieldtype_process_button
         if (\Helpers\App::is_ext_installed()) {
             $choices = [];
             $choices[''] = '';
-            $processes_query = db_query(
-                "select p.*, e.name as entities_name from app_ext_processes p, app_entities e where e.id=p.entities_id and e.id='" . $params['entities_id'] . "' order by p.sort_order, e.name, p.name"
+            $processes_query = \K::model()->db_query_exec(
+                "select p.*, e.name as entities_name from app_ext_processes p, app_entities e where e.id = p.entities_id and e.id = ? order by p.sort_order, e.name, p.name",
+                $params['entities_id'],
+                'app_ext_processes,app_entities'
             );
-            while ($processes = db_fetch_array($processes_query)) {
+
+            //while ($processes = db_fetch_array($processes_query)) {
+            foreach ($processes_query as $processes) {
                 $choices[$processes['id']] = (($processes['name'] == $processes['button_title'] or strlen(
                         $processes['button_title']
                     ) == 0) ? $processes['name'] : $processes['name'] . ' (' . $processes['button_title'] . ')');
@@ -66,7 +74,7 @@ class Fieldtype_process_button
                 'form_group' => ['form_display_rules' => 'fields_configuration_display_as:dropdown']
             ];
         } else {
-            $cfg[] = ['html' => app_alert_warning(\K::$fw->TEXT_EXTENSION_REQUIRED), 'type' => 'html'];
+            $cfg[] = ['html' => \Helpers\App::app_alert_warning(\K::$fw->TEXT_EXTENSION_REQUIRED), 'type' => 'html'];
         }
 
         return $cfg;
@@ -84,8 +92,6 @@ class Fieldtype_process_button
 
     public function output($options)
     {
-        global $buttons_css_holder;
-
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         $html = '';
@@ -106,15 +112,15 @@ class Fieldtype_process_button
                     ) or $buttons['allow_comments'] == 1 or $buttons['preview_prcess_actions'] == 1 or $processes->has_enter_manually_fields(
                         $buttons['id']
                     )) ? true : false);
-                $params = (!$is_dialog ? '&action=run' : '') . ((isset($options['reports_id']) and isset($_POST['page'])) ? '&gotopage[' . $options['reports_id'] . ']=' . $_POST['page'] : '');
+                $params = (!$is_dialog ? '&action=run' : '') . ((isset($options['reports_id']) and isset(\K::$fw->POST['page'])) ? '&gotopage[' . $options['reports_id'] . ']=' . \K::$fw->POST['page'] : '');
                 $css = (!$is_dialog ? ' prevent-double-click' : '');
 
-                $rdirect_to = ((isset($options['redirect_to']) and strlen(
+                $redirect_to = ((isset($options['redirect_to']) and strlen(
                         $options['redirect_to']
                     )) ? $options['redirect_to'] : 'items');
 
                 if (!isset($options['reports_id'])) {
-                    $rdirect_to = 'items_info';
+                    $redirect_to = 'items_info';
                 }
 
                 $path = $options['path'];
@@ -123,28 +129,31 @@ class Fieldtype_process_button
                     $path .= '-' . $options['item']['id'];
                 }
 
-                if ($rdirect_to == 'parent_item_info_page') {
-                    $path_info = items::parse_path($path);
-                    $rdirect_to = 'item_info_page' . $path_info['parent_entity_id'] . '-' . $path_info['parent_entity_item_id'];
+                if ($redirect_to == 'parent_item_info_page') {
+                    $path_info = \Models\Main\Items\Items::parse_path($path);
+                    $redirect_to = 'item_info_page' . $path_info['parent_entity_id'] . '-' . $path_info['parent_entity_item_id'];
                 }
 
                 //buttons list
                 if (!$check_buttons_filters) {
                     if ($processes->button_has_warnign_text($buttons)) {
-                        $buttons_links[] = button_tag(
+                        $buttons_links[] = \Helpers\Html::button_tag(
                             $buttons['button_title'],
-                            url_for('items/processes_warning', 'id=' . $buttons['id'] . '&path=' . $path),
+                            \Helpers\Urls::url_for(
+                                'main/items/processes_warning',
+                                'id=' . $buttons['id'] . '&path=' . $path
+                            ),
                             true,
                             ['class' => 'btn btn-primary btn-sm btn-process-' . $buttons['id'] . $css],
                             $buttons['button_icon']
                         );
                     }
                 } else {
-                    $buttons_links[] = button_tag(
+                    $buttons_links[] = \Helpers\Html::button_tag(
                         $buttons['button_title'],
-                        url_for(
-                            'items/processes',
-                            'id=' . $buttons['id'] . '&path=' . $path . '&redirect_to=' . $rdirect_to . $params
+                        \Helpers\Urls::url_for(
+                            'main/items/processes',
+                            'id=' . $buttons['id'] . '&path=' . $path . '&redirect_to=' . $redirect_to . $params
                         ),
                         $is_dialog,
                         ['class' => 'btn btn-primary btn-sm btn-process-' . $buttons['id'] . $css],
@@ -160,34 +169,34 @@ class Fieldtype_process_button
                 //check buttons filters
                 if (!$check_buttons_filters) {
                     if ($processes->button_has_warnign_text($buttons)) {
-                        $buttons_urls[] = '<a ' . $url_color . ' onclick="open_dialog(\'' . url_for(
-                                'items/processes_warning',
+                        $buttons_urls[] = '<a ' . $url_color . ' onclick="open_dialog(\'' . \Helpers\Urls::url_for(
+                                'main/items/processes_warning',
                                 'id=' . $buttons['id'] . '&path=' . $path
-                            ) . '\')" class="link-to-modalbox">' . app_render_icon(
+                            ) . '\')" class="link-to-modalbox">' . \Helpers\App::app_render_icon(
                                 $buttons['button_icon']
                             ) . ' ' . $buttons['button_title'] . '</a>';
                     }
                 } //prepare buttons
                 elseif ($is_dialog) {
-                    $buttons_urls[] = '<a ' . $url_color . ' onclick="open_dialog(\'' . url_for(
-                            'items/processes',
-                            'id=' . $buttons['id'] . '&path=' . $path . '&redirect_to=' . $rdirect_to . $params
-                        ) . '\')" class="link-to-modalbox">' . app_render_icon(
+                    $buttons_urls[] = '<a ' . $url_color . ' onclick="open_dialog(\'' . \Helpers\Urls::url_for(
+                            'main/items/processes',
+                            'id=' . $buttons['id'] . '&path=' . $path . '&redirect_to=' . $redirect_to . $params
+                        ) . '\')" class="link-to-modalbox">' . \Helpers\App::app_render_icon(
                             $buttons['button_icon']
                         ) . ' ' . $buttons['button_title'] . '</a>';
                 } else {
-                    $buttons_urls[] = '<a ' . $url_color . ' href="' . url_for(
-                            'items/processes',
-                            'id=' . $buttons['id'] . '&path=' . $path . '&redirect_to=' . $rdirect_to . $params
-                        ) . '" class="link-to-modalbox">' . app_render_icon(
+                    $buttons_urls[] = '<a ' . $url_color . ' href="' . \Helpers\Urls::url_for(
+                            'main/items/processes',
+                            'id=' . $buttons['id'] . '&path=' . $path . '&redirect_to=' . $redirect_to . $params
+                        ) . '" class="link-to-modalbox">' . \Helpers\App::app_render_icon(
                             $buttons['button_icon']
                         ) . ' ' . $buttons['button_title'] . '</a>';
                 }
 
-                //button csss
-                if (!isset($buttons_css_holder[$buttons['id']])) {
-                    $buttons_css_holder[$buttons['id']] = $processes->prepare_button_css($buttons);
-                    $buttons_css .= $buttons_css_holder[$buttons['id']];
+                //button css
+                if (!isset(\K::$fw->buttons_css_holder[$buttons['id']])) {
+                    \K::$fw->buttons_css_holder[$buttons['id']] = $processes->prepare_button_css($buttons);
+                    $buttons_css .= \K::$fw->buttons_css_holder[$buttons['id']];
                 }
             }
 
@@ -209,7 +218,9 @@ class Fieldtype_process_button
                         $html = '
                             <div class="btn-group btn-group-sm ">
                                     <button class="btn btn-primary btn-process-0 dropdown-toggle btn-process-button-dropdown" type="button" data-toggle="dropdown" data-boundary="window" aria-expanded="false">
-                                    ' . (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : \K::$fw->TEXT_ACTION) . ' <i class="fa fa-angle-down"></i>
+                                    ' . (strlen($cfg->get('button_title')) ? $cfg->get(
+                                'button_title'
+                            ) : \K::$fw->TEXT_ACTION) . ' <i class="fa fa-angle-down"></i>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
                                         <li>
@@ -220,11 +231,11 @@ class Fieldtype_process_button
                             ';
                     }
 
-                    if (strlen($cfg->get('button_color')) and !isset($buttons_css_holder[0])) {
-                        $buttons_css_holder[0] = $processes->prepare_button_css(
+                    if (strlen($cfg->get('button_color')) and !isset(\K::$fw->buttons_css_holder[0])) {
+                        \K::$fw->buttons_css_holder[0] = $processes->prepare_button_css(
                             ['id' => 0, 'button_color' => $cfg->get('button_color')]
                         );
-                        $buttons_css .= $buttons_css_holder[0];
+                        $buttons_css .= \K::$fw->buttons_css_holder[0];
                     }
                     break;
             }

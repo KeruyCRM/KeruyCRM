@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -48,14 +52,14 @@ class Fieldtype_textarea
 
     public function render($field, $obj, $params = [])
     {
-        $cfg = fields_types::parse_configuration($field['configuration']);
+        $cfg = \Models\Main\Fields_types::parse_configuration($field['configuration']);
 
         $attributes = [
             'rows' => '3',
             'class' => 'form-control ' . $cfg['width'] . ($field['is_heading'] == 1 ? ' autofocus' : '') . ' fieldtype_textarea field_' . $field['id'] . ($field['is_required'] == 1 ? ' required noSpace' : '')
         ];
 
-        return textarea_tag(
+        return \Helpers\Html::textarea_tag(
             'fields[' . $field['id'] . ']',
             str_replace(['&lt;', '&gt;'], ['<', '>'], $obj['field_' . $field['id']]),
             $attributes
@@ -74,7 +78,7 @@ class Fieldtype_textarea
                 $options['value']
             ));
         } else {
-            return auto_link_text(nl2br($options['value']));
+            return \Helpers\Urls::auto_link_text(nl2br($options['value']));
         }
     }
 }

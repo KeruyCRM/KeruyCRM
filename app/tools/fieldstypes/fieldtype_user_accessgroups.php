@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -16,18 +20,17 @@ class Fieldtype_user_accessgroups
 
     public function render($field, $obj, $params = [])
     {
-        global $app_user, $app_module_path;
-
         if (!isset($obj['multiple_access_groups'])) {
             $obj['multiple_access_groups'] = '';
         }
+
         if (!isset($obj['id'])) {
             $obj['id'] = 0;
         }
 
         if (strlen($obj['multiple_access_groups'])) {
             $value = $obj['multiple_access_groups'];
-        } elseif (($default_group_id = access_groups::get_default_group_id()) > 0 and strlen(
+        } elseif (($default_group_id = \Models\Main\Access_groups::get_default_group_id()) > 0 and strlen(
                 $obj['field_' . $field['id']]
             ) == 0) {
             $value = $default_group_id;
@@ -35,30 +38,41 @@ class Fieldtype_user_accessgroups
             $value = $obj['field_' . $field['id']];
         }
 
-        if ($app_module_path == 'users/registration') {
+        if (\K::$fw->app_module_path == 'users/registration') {
             $choices = [];
             $choices[''] = \K::$fw->TEXT_SELECT_SOME_VALUES;
-            $groups_query = db_fetch_all(
+            /*$groups_query = db_fetch_all(
                 'app_access_groups',
                 (strlen(
                     \K::$fw->CFG_PUBLIC_REGISTRATION_USER_GROUP
                 ) ? 'id in (' . \K::$fw->CFG_PUBLIC_REGISTRATION_USER_GROUP . ')' : ''),
                 'sort_order, name'
+            );*/
+
+            $groups_query = \K::model()->db_fetch(
+                'app_access_groups',
+                (strlen(
+                    \K::$fw->CFG_PUBLIC_REGISTRATION_USER_GROUP
+                ) ? ['id in (' . \K::$fw->CFG_PUBLIC_REGISTRATION_USER_GROUP . ')'] : []),
+                ['order' => 'sort_order, name'],
+                'id,name'
             );
-            while ($v = db_fetch_array($groups_query)) {
+
+            //while ($v = db_fetch_array($groups_query)) {
+            foreach ($groups_query as $v) {
+                $v = $v->cast();
+
                 $choices[$v['id']] = $v['name'];
             }
-        } else {
-            if (!$choices = self::get_choices_by_rules()) {
-                $include_administrator = ($app_user['group_id'] > 0 ? false : true);
-                $choices = access_groups::get_choices($include_administrator);
-            }
+        } elseif (!$choices = self::get_choices_by_rules()) {
+            $include_administrator = (\K::$fw->app_user['group_id'] > 0 ? false : true);
+            $choices = \Models\Main\Access_groups::get_choices($include_administrator);
         }
 
-        if ($obj['id'] == $app_user['id'] and $obj['id'] > 0) {
-            return '<p class="form-control-static">' . access_groups::get_name_by_id(
-                    $app_user['group_id']
-                ) . '</p>' . input_hidden_tag(
+        if ($obj['id'] == \K::$fw->app_user['id'] and $obj['id'] > 0) {
+            return '<p class="form-control-static">' . \Models\Main\Access_groups::get_name_by_id(
+                    \K::$fw->app_user['group_id']
+                ) . '</p>' . \Helpers\Html::input_hidden_tag(
                     'fields[' . $field['id'] . ']',
                     $value,
                     ['class' => 'field_' . $field['id']]
@@ -66,17 +80,17 @@ class Fieldtype_user_accessgroups
         }
 
         if (\K::$fw->CFG_ENABLE_MULTIPLE_ACCESS_GROUPS or strlen($obj['multiple_access_groups'])) {
-            if ($app_module_path == 'users/registration') {
+            if (\K::$fw->app_module_path == 'users/registration') {
                 if (\K::$fw->CFG_USE_PUBLIC_REGISTRATION_MULTIPLE_USER_GROUPS) {
                     unset($choices['']);
-                    return select_checkboxes_tag(
+                    return \Helpers\Html::select_checkboxes_tag(
                             'fields[' . $field['id'] . ']',
                             $choices,
                             $value,
                             ['class' => 'required field_' . $field['id']]
-                        ) . fields_types::custom_error_handler($field['id']);
+                        ) . \Models\Main\Fields_types::custom_error_handler($field['id']);
                 } else {
-                    return select_tag(
+                    return \Helpers\Html::select_tag(
                         'fields[' . $field['id'] . ']',
                         $choices,
                         $value,
@@ -84,7 +98,7 @@ class Fieldtype_user_accessgroups
                     );
                 }
             } else {
-                return select_tag(
+                return \Helpers\Html::select_tag(
                         'fields[' . $field['id'] . '][]',
                         $choices,
                         $value,
@@ -92,10 +106,10 @@ class Fieldtype_user_accessgroups
                             'class' => 'form-control input-large chosen-select required field_' . $field['id'],
                             'multiple' => 'multiple'
                         ]
-                    ) . fields_types::custom_error_handler($field['id']);
+                    ) . \Models\Main\Fields_types::custom_error_handler($field['id']);
             }
         } else {
-            return select_tag(
+            return \Helpers\Html::select_tag(
                 'fields[' . $field['id'] . ']',
                 $choices,
                 $value,
@@ -106,26 +120,24 @@ class Fieldtype_user_accessgroups
 
     public function process($options)
     {
-        global $app_module_path, $app_user;
-
         //check allowed group
-        if ($app_user['group_id'] > 0) {
+        if (\K::$fw->app_user['group_id'] > 0) {
             //get allowed groups
             if (!$choices = self::get_choices_by_rules()) {
-                $include_administrator = ($app_user['group_id'] > 0 ? false : true);
-                $choices = access_groups::get_choices($include_administrator);
+                $include_administrator = (\K::$fw->app_user['group_id'] > 0 ? false : true);
+                $choices = \Models\Main\Access_groups::get_choices($include_administrator);
             }
 
             if (is_array($options['value'])) {
                 foreach ($options['value'] as $k => $id) {
                     if (!isset($choices[$id])) {
                         unset($options['value'][$k]);
-                        unset($_POST['fields'][6][$k]);
+                        unset(\K::$fw->POST['fields'][6][$k]);
                     }
                 }
 
                 if (!count($options['value'])) {
-                    $options['value'] = $app_user['group_id'];
+                    $options['value'] = \K::$fw->app_user['group_id'];
                 }
             } else {
                 $values = explode(',', $options['value']);
@@ -136,18 +148,15 @@ class Fieldtype_user_accessgroups
                 }
 
                 if (!count($values)) {
-                    $options['value'] = $app_user['group_id'];
+                    $options['value'] = \K::$fw->app_user['group_id'];
                 } else {
                     $options['value'] = implode(',', $values);
                 }
             }
         }
 
-        //print_rr($options['value']);        
-        //exit();
-
         if (is_array($options['value'])) {
-            if ($app_module_path == 'ext/processes/fields') {
+            if (\K::$fw->app_module_path == 'ext/processes/fields') {
                 return implode(',', $options['value']);
             } else {
                 return $options['value'][0];
@@ -212,7 +221,7 @@ class Fieldtype_user_accessgroups
         if (isset($options['item']['multiple_access_groups']) and strlen($options['item']['multiple_access_groups'])) {
             $output = [];
             foreach (explode(',', $options['item']['multiple_access_groups']) as $id) {
-                $output[] = access_groups::get_name_by_id($id);
+                $output[] = \Models\Main\Access_groups::get_name_by_id($id);
             }
 
             if (isset($options['is_export'])) {
@@ -221,7 +230,7 @@ class Fieldtype_user_accessgroups
                 return implode('<br>', $output);
             }
         } else {
-            return access_groups::get_name_by_id($options['value']);
+            return \Models\Main\Access_groups::get_name_by_id($options['value']);
         }
     }
 
@@ -230,11 +239,13 @@ class Fieldtype_user_accessgroups
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = [];
-
         if (strlen($filters['filters_values']) > 0) {
             $sql_query_extra = [];
-            foreach (explode(',', $filters['filters_values']) as $id) {
+            $exp = explode(',', $filters['filters_values']);
+
+            foreach ($exp as $id) {
+                $id = (int)$id;
+
                 $sql_query_extra[] = "find_in_set({$id},multiple_access_groups)";
             }
 
@@ -256,31 +267,44 @@ class Fieldtype_user_accessgroups
 
     public static function get_choices_by_rules()
     {
-        global $app_user;
-
-        if ($app_user['group_id'] == 0) {
+        if (\K::$fw->app_user['group_id'] == 0) {
             return false;
         }
 
-        $rules_query = db_query(
-            "select * from app_records_visibility_rules where entities_id='1' and find_in_set(" . $app_user['group_id'] . ",users_groups)"
-        );
-        if ($rules = db_fetch_array($rules_query)) {
-            $reports_query = db_query(
+        /*$rules_query = db_query(
+            "select * from app_records_visibility_rules where entities_id='1' and find_in_set(" . \K::$fw->app_user['group_id'] . ",users_groups)"
+        );*/
+
+        $rules = \K::model()->db_fetch_one('app_records_visibility_rules', [
+            'entities_id = 1 and find_in_set(:find_in_set,users_groups)',
+            ':find_in_set' => [\K::$fw->app_user['group_id'] => \PDO::PARAM_INT]
+        ], [], 'id');
+
+        if ($rules) {
+            /*$reports_query = db_query(
                 "select * from app_reports where entities_id=1 and reports_type='records_visibility" . db_input(
                     $rules['id']
                 ) . "'"
-            );
-            if ($reports_query = db_fetch_array($reports_query)) {
-                $filters_query = db_query(
-                    "select rf.*, f.name, f.type from app_reports_filters rf left join app_fields f on rf.fields_id=f.id where rf.fields_id=6 and rf.reports_id='" . db_input(
-                        $reports_query['id']
-                    ) . "' and length(filters_values)>0 order by rf.id"
+            );*/
+
+            $reports_query = \K::model()->db_fetch_one('app_reports', [
+                'entities_id = 1 and reports_type = ?',
+                'records_visibility' . $rules['id']
+            ], [], 'id');
+
+            if ($reports_query) {
+                $filters_query = \K::model()->db_query_exec(
+                    "select rf.*, f.name, f.type from app_reports_filters rf left join app_fields f on rf.fields_id = f.id where rf.fields_id = 6 and rf.reports_id = ? and length(filters_values) > 0 order by rf.id",
+                    $reports_query['id'],
+                    'app_reports_filters,app_fields'
                 );
-                if (db_num_rows($filters_query)) {
+
+                if (count($filters_query)) {
                     $include = [];
                     $exclude = [];
-                    while ($filters = db_fetch_array($filters_query)) {
+
+                    //while ($filters = db_fetch_array($filters_query)) {
+                    foreach ($filters_query as $filters) {
                         if ($filters['filters_condition'] == 'include') {
                             $include = array_merge($include, explode(',', $filters['filters_values']));
                         } else {
@@ -290,19 +314,28 @@ class Fieldtype_user_accessgroups
 
                     $choices = [];
                     $choices[''] = \K::$fw->TEXT_SELECT_SOME_VALUES;
-                    $groups_query = db_query(
+
+                    /*$groups_query = db_query(
                         "select id,name from app_access_groups where id>0 " . (count(
                             $include
                         ) ? " and id in (" . implode(',', $include) . ")" : "") . (count(
                             $exclude
                         ) ? " and id not in (" . implode(',', $exclude) . ")" : "") . " order by sort_order, name",
                         false
-                    );
-                    while ($groups = db_fetch_array($groups_query)) {
+                    );*/
+
+                    $groups_query = \K::model()->db_fetch('app_access_groups', [
+                        'id > 0'
+                        . (count($include) ? " and id in (" . implode(',', $include) . ")" : '')
+                        . (count($exclude) ? " and id not in (" . implode(',', $exclude) . ")" : '')
+                    ], ['order' => 'sort_order,name'], 'id,name');
+
+                    //while ($groups = db_fetch_array($groups_query)) {
+                    foreach ($groups_query as $groups) {
+                        $groups = $groups->cast();
+
                         $choices[$groups['id']] = $groups['name'];
                     }
-
-                    //print_rr($choices);
 
                     return $choices;
                 }

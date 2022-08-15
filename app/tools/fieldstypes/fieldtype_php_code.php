@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -16,8 +20,8 @@ class Fieldtype_php_code
         $cfg = [];
 
         $cfg[\K::$fw->TEXT_PHP_CODE][] = [
-            'title' => '<div style="text-align:left; margin-bottom: 5px;">' . fields::get_available_fields_helper(
-                    $_POST['entities_id'],
+            'title' => '<div style="text-align:left; margin-bottom: 5px;">' . \Models\Main\Fields::get_available_fields_helper(
+                    \K::$fw->POST['entities_id'],
                     'fields_configuration_php_code'
                 ) . '</div>',
             'name' => 'php_code',
@@ -84,8 +88,8 @@ class Fieldtype_php_code
                     ) . "' where id='" . db_input($items_id) . "'"
                 );*/
                 \K::model()->db_update(
-                    'app_entity_' . $entities_id,
-                    ['field_' . $field_id => $output_value],
+                    'app_entity_' . (int)$entities_id,
+                    ['field_' . (int)$field_id => $output_value],
                     ['id = ?', $items_id]
                 );
             }
@@ -109,7 +113,7 @@ class Fieldtype_php_code
                 "select e.* " . fieldtype_formula::prepare_query_select(
                     $entities_id,
                     ''
-                ) . " from app_entity_" . $entities_id . " e where e.id = ?",
+                ) . " from app_entity_" . (int)$entities_id . " e where e.id = ?",
                 $items_id
             );
             //$item_info = db_fetch_array($item_info_query);
@@ -126,7 +130,7 @@ class Fieldtype_php_code
                 );*/
 
                 $parent_item = \K::model()->db_fetch_one(
-                    'app_entity_' . \K::$fw->app_entities_cache[$entities_id]['parent_id'], [
+                    'app_entity_' . (int)\K::$fw->app_entities_cache[$entities_id]['parent_id'], [
                         'id = ?',
                         $item_info['parent_item_id']
                     ]
@@ -186,7 +190,7 @@ class Fieldtype_php_code
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = reports::prepare_numeric_sql_filters($filters, $options['prefix']);
+        $sql = \Models\Main\Reports\Reports::prepare_numeric_sql_filters($filters, $options['prefix']);
 
         if (count($sql) > 0) {
             $sql_query[] = implode(' and ', $sql);

@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -13,7 +17,7 @@ class Fieldtype_related_records
 
     public function get_configuration($params = [])
     {
-        $entity_info = db_find('app_entities', $params['entities_id']);
+        $entity_info = \K::model()->db_find('app_entities', $params['entities_id']);
 
         $cfg = [];
 
@@ -22,17 +26,10 @@ class Fieldtype_related_records
             'name' => 'entity_id',
             'tooltip' => \K::$fw->TEXT_FIELDTYPE_RELATED_RECORDS_SELECT_ENTITY_TOOLTIP . ' ' . $entity_info['name'],
             'type' => 'dropdown',
-            'choices' => entities::get_choices(),
+            'choices' => \Models\Main\Entities::get_choices(),
             'params' => ['class' => 'form-control input-medium'],
             'onChange' => 'fields_types_ajax_configuration(\'fields_for_search_box\',this.value)'
         ];
-
-        /*
-          $cfg[\K::$keruy->TEXT_SETTINGS][] = array('title'=>tooltip_icon(TEXT_ROWS_PER_PAGE_IF_NOT_SET) . \K::$keruy->TEXT_ROWS_PER_PAGE,
-          'name'=>'rows_per_page',
-          'type'=>'input',
-          'params'=>array('class'=>'form-control input-xsmall'));
-         */
 
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \Helpers\App::tooltip_icon(
@@ -47,6 +44,7 @@ class Fieldtype_related_records
             'name' => 'is_collapsed',
             'type' => 'checkbox'
         ];
+
         $cfg[\K::$fw->TEXT_SETTINGS][] = [
             'title' => \K::$fw->TEXT_DISPLAY_SEARCH_BAR,
             'name' => 'display_search_bar',
@@ -79,18 +77,8 @@ class Fieldtype_related_records
             'params' => ['class' => 'form-control input-medium']
         ];
 
-        /*
-          $cfg[\K::$keruy->TEXT_SETTINGS][] = array(
-          'title'=>tooltip_icon(TEXT_ENTER_TEXT_PATTERN_INFO) . \K::$keruy->TEXT_HEADING_PATTER_IN_LINSING,
-          'tooltip' => \K::$keruy->TEXT_HEADING_TEMPLATE_INFO,
-          'name'=>'heading_template',
-          'type'=>'textarea',
-          'params'=>array('class'=>'form-control input-xlare textarea-small'));
-         */
-
         $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'fields_in_listing', 'type' => 'hidden'];
         $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'fields_in_popup', 'type' => 'hidden'];
-
         $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'create_related_comment', 'type' => 'hidden'];
         $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'create_related_comment_text', 'type' => 'hidden'];
         $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'delete_related_comment', 'type' => 'hidden'];
@@ -100,7 +88,6 @@ class Fieldtype_related_records
         $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'delete_related_comment_to', 'type' => 'hidden'];
         $cfg[\K::$fw->TEXT_SETTINGS][] = ['name' => 'delete_related_comment_to_text', 'type' => 'hidden'];
 
-        //TEXT_FIELDS
         $cfg[\K::$fw->TEXT_LINK_RECORD][] = [
             'name' => 'fields_for_search_box',
             'type' => 'ajax',
@@ -121,12 +108,20 @@ class Fieldtype_related_records
                 //search by fields
                 $choices = [];
 
-                $fields_query = db_query(
-                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (" . fields_types::get_types_for_search_list(
-                    ) . ") and  f.entities_id='" . $entities_id . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
+                $fields_query = \K::model()->db_query_exec(
+                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (" . \Models\Main\Fields_types::get_types_for_search_list(
+                    ) . ") and  f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
+                    $entities_id,
+                    'app_fields,app_forms_tabs'
                 );
-                while ($fields = db_fetch_array($fields_query)) {
-                    $choices[$fields['id']] = fields_types::get_option($fields['type'], 'name', $fields['name']);
+
+                //while ($fields = db_fetch_array($fields_query)) {
+                foreach ($fields_query as $fields) {
+                    $choices[$fields['id']] = \Models\Main\Fields_types::get_option(
+                        $fields['type'],
+                        'name',
+                        $fields['name']
+                    );
                 }
 
                 $cfg[] = [
@@ -138,9 +133,9 @@ class Fieldtype_related_records
                     'params' => ['class' => 'form-control chosen-select input-xlarge', 'multiple' => 'multiple']
                 ];
 
-                //dorpdown template
+                //dropdown template
                 $cfg[] = [
-                    'title' => \K::$fw->TEXT_HEADING_TEMPLATE . fields::get_available_fields_helper(
+                    'title' => \K::$fw->TEXT_HEADING_TEMPLATE . \Models\Main\Fields::get_available_fields_helper(
                             $entities_id,
                             'fields_configuration_heading_template'
                         ),
@@ -169,18 +164,16 @@ class Fieldtype_related_records
 
     public function output($options)
     {
-        global $current_path_array, $current_entity_id, $current_item_id, $current_path, $app_user;
-
-        //output count of related items 
+        //output count of related items
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
         if ($cfg->get('display_in_listing') == 'list') {
-            $related_records = new related_records($options['field']['entities_id'], $options['item']['id']);
+            $related_records = new \Tools\Related_records($options['field']['entities_id'], $options['item']['id']);
             $related_records->set_related_field($options['field']['id']);
 
             return $related_records->render_list_in_listing($options);
         } else {
-            $related_records = new related_records($options['field']['entities_id'], $options['item']['id']);
+            $related_records = new \Tools\Related_records($options['field']['entities_id'], $options['item']['id']);
             $related_records->set_related_field($options['field']['id']);
 
             return $related_records->count_related_items();
@@ -192,14 +185,12 @@ class Fieldtype_related_records
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
 
-        $sql = [];
-
         if (strlen($filters['filters_values']) > 0) {
-            $field = db_find('app_fields', $filters['fields_id']);
+            $field = \K::model()->db_find('app_fields', $filters['fields_id']);
 
             $cfg = new \Models\Main\Fields_types_cfg($field['configuration']);
 
-            $table_info = related_records::get_related_items_table_name(
+            $table_info = \Tools\Related_records::get_related_items_table_name(
                 $options['entities_id'],
                 $cfg->get('entity_id')
             );
@@ -209,21 +200,23 @@ class Fieldtype_related_records
                 $where_sql = '';
 
                 if (strlen($table_info['suffix']) > 0) {
-                    $where_sql = " or ri.entity_" . $options['entities_id'] . $table_info['suffix'] . "_items_id=e.id ";
+                    $where_sql = " or ri.entity_" . (int)$options['entities_id'] . $table_info['suffix'] . "_items_id = e.id ";
                 }
 
-                $search_sql = " and ri.entity_" . $cfg->get('entity_id') . "_items_id in 
-	      		(select rie.id from app_entity_" . $cfg->get('entity_id') . " rie where " . (fields::get_heading_id(
+                $search_sql = " and ri.entity_" . (int)$cfg->get('entity_id') . "_items_id in 
+	      		(select rie.id from app_entity_" . (int)$cfg->get(
+                        'entity_id'
+                    ) . " rie where " . (\Models\Main\Fields::get_heading_id(
                         $cfg->get('entity_id')
-                    ) ? "rie.field_" . fields::get_heading_id($cfg->get('entity_id')) . " like '%" . db_input(
-                            $filters['filters_values']
-                        ) . "%'" : "rie.id='" . db_input($filters['filters_values']) . "'") . ")";
+                    ) ? "rie.field_" . (int)\Models\Main\Fields::get_heading_id(
+                            $cfg->get('entity_id')
+                        ) . " like " . \K::model()->quote(
+                            '%' . $filters['filters_values'] . '%'
+                        ) : "rie.id = " . (int)$filters['filters_values']) . ")";
 
-                $sql = "(select count(*) as total from " . $table_info['table_name'] . " ri where (ri.entity_" . $options['entities_id'] . "_items_id=e.id {$where_sql}) {$search_sql})";
+                $sql = "(select count(*) as total from " . $table_info['table_name'] . " ri where (ri.entity_" . (int)$options['entities_id'] . "_items_id = e.id {$where_sql}) {$search_sql})";
 
-                //echo $sql;
-
-                $sql_query[] = $sql . ">0";
+                $sql_query[] = $sql . " > 0";
             } else {
                 $filters_values = (strlen($filters['filters_values']) ? explode(
                     ',',
@@ -235,22 +228,19 @@ class Fieldtype_related_records
                 $where_sql = '';
 
                 if (strlen($table_info['suffix']) > 0) {
-                    $where_sql = " or ri.entity_" . $options['entities_id'] . $table_info['suffix'] . "_items_id=e.id ";
+                    $where_sql = " or ri.entity_" . (int)$options['entities_id'] . $table_info['suffix'] . "_items_id = e.id ";
                 }
 
-                //add filtes by items
+                //add filters by items
                 $where_items_sql = '';
                 if (count($filters_values) > 0) {
-                    $where_items_sql = " and ri.entity_" . $cfg->get('entity_id') . "_items_id in (" . implode(
-                            ',',
-                            $filters_values
-                        ) . ")";
+                    $where_items_sql = " and ri.entity_" . (int)$cfg->get('entity_id') . "_items_id in (" . \K::model(
+                        )->quoteToString($filters_values, \PDO::PARAM_INT) . ")";
                 }
 
-                $sql = "(select count(*) as total from " . $table_info['table_name'] . " ri where (ri.entity_" . $options['entities_id'] . "_items_id=e.id {$where_sql}) {$where_items_sql})";
+                $sql = "(select count(*) as total from " . $table_info['table_name'] . " ri where (ri.entity_" . (int)$options['entities_id'] . "_items_id = e.id {$where_sql}) {$where_items_sql})";
 
-                $sql_query[] = ($filters_condition == 'include' ? $sql . ">0" : $sql . "=0");
-                //print_rr($sql_query);
+                $sql_query[] = ($filters_condition == 'include' ? $sql . " > 0" : $sql . " = 0");
             }
         }
 
@@ -266,8 +256,11 @@ class Fieldtype_related_records
         $fields_query = \K::model()->db_query_exec(
             "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in ('fieldtype_related_records') and " . (strlen(
                 $reports_info['fields_in_listing']
-            ) ? "find_in_set(f.id,'" . $reports_info['fields_in_listing'] . "')" : "f.listing_status = 1") . " and f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
-            [$entities_id]
+            ) ? "find_in_set(f.id," . \K::model()->quote(
+                    $reports_info['fields_in_listing']
+                ) . ")" : "f.listing_status = 1") . " and f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
+            $entities_id,
+            'app_fields,app_forms_tabs'
         );
         //while ($field = db_fetch_array($fields_query)) {
         foreach ($fields_query as $field) {
@@ -282,10 +275,10 @@ class Fieldtype_related_records
             $where_sql = '';
 
             if (strlen($table_info['suffix']) > 0) {
-                $where_sql = " or ri.entity_" . $entities_id . $table_info['suffix'] . "_items_id = e.id ";
+                $where_sql = " or ri.entity_" . (int)$entities_id . $table_info['suffix'] . "_items_id = e.id ";
             }
 
-            $listing_sql_query_select .= ", (select count(*) as total from " . $table_info['table_name'] . " ri where ri.entity_" . $entities_id . "_items_id = e.id {$where_sql}) as field_" . $field['id'];
+            $listing_sql_query_select .= ", (select count(*) as total from " . $table_info['table_name'] . " ri where ri.entity_" . (int)$entities_id . "_items_id = e.id {$where_sql}) as field_" . (int)$field['id'];
         }
 
         return $listing_sql_query_select;

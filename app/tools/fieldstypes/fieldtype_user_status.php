@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -16,26 +20,24 @@ class Fieldtype_user_status
 
     public function render($field, $obj, $params = [])
     {
-        global $app_user;
-
         $value = $obj['field_' . $field['id']];
         if (strlen($value) == 0) {
             $value = 1;
         }
 
-        if (isset($obj['id']) and $obj['id'] == $app_user['id'] and $obj['id'] > 0) {
-            return '<p class="form-control-static">' . \K::$fw->TEXT_ACTIVE . '</p>' . input_hidden_tag(
+        if (isset($obj['id']) and $obj['id'] == \K::$fw->app_user['id'] and $obj['id'] > 0) {
+            return '<p class="form-control-static">' . \K::$fw->TEXT_ACTIVE . '</p>' . \Helpers\Html::input_hidden_tag(
                     'fields[' . $field['id'] . ']',
                     $value
                 );
         }
 
-        return select_tag(
+        return \Helpers\Html::select_tag(
                 'fields[' . $field['id'] . ']',
                 ['1' => \K::$fw->TEXT_ACTIVE, '0' => \K::$fw->TEXT_INACTIVE],
                 $value,
                 ['class' => 'form-control input-medium']
-            ) . tooltip_text(\K::$fw->TEXT_FIELDTYPE_USER_STATUS_TOOLTIP);
+            ) . \Helpers\App::tooltip_text(\K::$fw->TEXT_FIELDTYPE_USER_STATUS_TOOLTIP);
     }
 
     public function process($options)
@@ -68,8 +70,6 @@ class Fieldtype_user_status
     {
         $filters = $options['filters'];
         $sql_query = $options['sql_query'];
-
-        $sql = [];
 
         if (strlen($filters['filters_values']) > 0) {
             $sql_query[] = "(e.field_5 " . ($filters['filters_condition'] == 'include' ? 'in' : 'not in') . " (" . $filters['filters_values'] . "))";

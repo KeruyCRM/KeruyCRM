@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -80,12 +84,12 @@ class Fieldtype_video
                 ) . ' fieldtype_video field_' . $field['id'] . ($field['is_required'] == 1 ? ' required noSpace' : '')
         ];
 
-        return input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
+        return \Helpers\Html::input_tag('fields[' . $field['id'] . ']', $obj['field_' . $field['id']], $attributes);
     }
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
@@ -96,12 +100,12 @@ class Fieldtype_video
 
         $cfg = new \Models\Main\Fields_types_cfg($options['field']['configuration']);
 
-        //return vidoe url
+        //return video url
         if (isset($options['is_export']) or isset($options['is_email'])) {
             return $options['value'];
         }
 
-        //render vido button
+        //render video button
         if (isset($options['is_listing']) or $cfg->get('hide_video_player') == 1) {
             $path = $options['path'];
 
@@ -110,16 +114,15 @@ class Fieldtype_video
             }
 
             $button_title = (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : \K::$fw->TEXT_VIEW);
-            $url = url_for('items/videopopup', 'path=' . $path . '&field_id=' . $options['field']['id']);
-            $html = link_to_modalbox($button_title, $url, ['class' => 'btn btn-default']);
-
-            return $html;
+            $url = \Helpers\Urls::url_for(
+                'main/items/videopopup',
+                'path=' . $path . '&field_id=' . $options['field']['id']
+            );
+            return \Helpers\Urls::link_to_modalbox($button_title, $url, ['class' => 'btn btn-default']);
         }
 
         //render video
-        $html = self::render_video($options['value'], $cfg);
-
-        return $html;
+        return self::render_video($options['value'], $cfg);
     }
 
     public static function render_video($url, $cfg)
@@ -158,7 +161,7 @@ class Fieldtype_video
                 $html = '<video ' . $video_css . ' controls><source src="' . $url . '" type="video/webm">' . \K::$fw->TEXT_VIDEO_TAG_NOT_SUPPORTED . '</video>';
                 break;
             default:
-                $html = '<a href="' . $url . '" target="_blank">' . app_crop_str($url) . '</a>';
+                $html = '<a href="' . $url . '" target="_blank">' . \Helpers\App::app_crop_str($url) . '</a>';
                 break;
         }
 

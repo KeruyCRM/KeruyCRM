@@ -1,4 +1,8 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
 namespace Tools\FieldsTypes;
 
@@ -30,7 +34,7 @@ class Fieldtype_user_username
 
     public function render($field, $obj, $params = [])
     {
-        return input_tag(
+        return \Helpers\Html::input_tag(
             'fields[' . $field['id'] . ']',
             $obj['field_' . $field['id']],
             ['class' => 'form-control input-medium required noSpace', 'autocomplete' => 'off']
@@ -39,7 +43,7 @@ class Fieldtype_user_username
 
     public function process($options)
     {
-        return db_prepare_input($options['value']);
+        return \K::model()->db_prepare_input($options['value']);
     }
 
     public function output($options)
