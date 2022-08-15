@@ -32,7 +32,7 @@ echo button_tag(
             <?php
             echo link_to_modalbox(
                 TEXT_EDIT_FIELDS,
-                url_for('entities/fields_mulitple_edit', 'entities_id=' . $_GET['entities_id'])
+                url_for('entities/fields_multiple_edit', 'entities_id=' . $_GET['entities_id'])
             ) ?>
         </li>
     </ul>

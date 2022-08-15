@@ -4,7 +4,7 @@ echo ajax_modal_template_header(TEXT_EDIT_FIELDS) ?>
 <?php
 echo form_tag(
     'form-copy-to',
-    url_for('entities/fields', 'action=mulitple_edit&entities_id=' . $_GET['entities_id']),
+    url_for('entities/fields', 'action=multiple_edit&entities_id=' . $_GET['entities_id']),
     ['class' => 'form-horizontal']
 ) ?>
 <?php

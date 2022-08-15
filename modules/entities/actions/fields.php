@@ -290,7 +290,7 @@ switch ($app_module_action) {
 
         exit();
         break;
-    case 'mulitple_edit':
+    case 'multiple_edit':
         if (strlen($_POST['selected_fields'])) {
             $fields_query = db_query(
                 "select * from app_fields where entities_id='" . $_GET['entities_id'] . "' and id in (" . $_POST['selected_fields'] . ")"
