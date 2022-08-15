@@ -1510,7 +1510,7 @@ class items
         return $subject;
     }
 
-    static function get_paretn_users_list($entities_id, $parent_entity_item_id)
+    static function get_parent_users_list($entities_id, $parent_entity_item_id)
     {
         global $app_entities_cache, $app_fields_cache;
 

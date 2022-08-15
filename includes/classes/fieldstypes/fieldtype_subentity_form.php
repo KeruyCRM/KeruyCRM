@@ -322,7 +322,7 @@ class fieldtype_subentity_form
 
     function render($field, $obj, $params = [])
     {
-        global $app_subentity_form_items;
+        global $app_subentity_form_items, $app_subentity_form_items_deleted;//FIX global
 
         //print_rr($app_subentity_form_items);
 

@@ -62,7 +62,7 @@ switch ($app_module_action) {
         if (isset($_GET['parent_entity_item_id']) and $_GET['parent_entity_item_id'] > 0 and $cfg->get(
                 'disable_dependency'
             ) != 1) {
-            if ($parent_users_list = items::get_paretn_users_list(
+            if ($parent_users_list = items::get_parent_users_list(
                 $field['entities_id'],
                 $_GET['parent_entity_item_id']
             )) {

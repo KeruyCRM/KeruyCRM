@@ -132,7 +132,7 @@ class fieldtype_image
                                 ) . '&field=' . $options['field']['id']
                             ),
                             ['target' => '_blank']
-                        ) . (!$use_file_storage ? ' <small>(' . $file['size'] . ')</small>' : '');
+                        ) . ' <small>(' . $file['size'] . ')</small>';
                 }
             } elseif (isset($options['is_export'])) {
                 return $file['name'];

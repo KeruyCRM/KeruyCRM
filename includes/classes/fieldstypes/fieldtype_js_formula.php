@@ -74,7 +74,7 @@ class fieldtype_js_formula
         $formula = $js_formula = $cfg->get('formula');
 
         $js_funciton_name = 'form_handle_js_formula_' . $field['id'] . '()';
-        $js_funciton_name_delay = 'setTimeout(function (){ ' . $js_funciton_name . '; ' . $this->inlucde_extra_js_fieldtypes(
+        $js_funciton_name_delay = 'setTimeout(function (){ ' . $js_funciton_name . '; ' . $this->include_extra_js_fieldtypes(
                 $field
             ) . '},10);';
 
@@ -317,7 +317,7 @@ class fieldtype_js_formula
         return $sql_query;
     }
 
-    function inlucde_extra_js_fieldtypes($current_field)
+    function include_extra_js_fieldtypes($current_field)
     {
         $html = '';
         $fields_query = db_query(

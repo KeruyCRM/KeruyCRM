@@ -601,8 +601,8 @@ class fieldtype_entity_multilevel
 
     static function render_heading_template($item, $entity_info, $field_entity_info, $cfg, $get_html = true)
     {
+        global $app_users_cache;
         $html = '';
-        $text = '';
 
         $field_heading_id = fields::get_heading_id($entity_info['id']);
 

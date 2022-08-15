@@ -181,7 +181,7 @@ class fieldtype_users_approve
         if (isset($params['parent_entity_item_id']) and $params['parent_entity_item_id'] > 0 and $cfg->get(
                 'disable_dependency'
             ) != 1) {
-            if ($parent_users_list = items::get_paretn_users_list($entities_id, $params['parent_entity_item_id'])) {
+            if ($parent_users_list = items::get_parent_users_list($entities_id, $params['parent_entity_item_id'])) {
                 $has_parent_users = true;
             }
         }

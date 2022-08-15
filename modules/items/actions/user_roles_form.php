@@ -9,7 +9,7 @@ $fields_id = _get::int('fields_id');
 
 
 switch ($app_module_action) {
-    case 'user_rolese_hold_change':
+    case 'user_roles_hold_change':
         $user_roles_dropdown_change_holder[$fields_id][_post::int('user_id')] = _post::int('role_id');
         break;
 }
