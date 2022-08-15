@@ -55,14 +55,12 @@ class Access_groups
 
     public static function get_access_view_choices()
     {
-        $choices = [
+        return [
             '' => \K::$fw->TEXT_NO,
             'view' => \K::$fw->TEXT_VIEW_ACCESS,
             'view_assigned' => \K::$fw->TEXT_VIEW_ASSIGNED_ACCESS,
             'action_with_assigned' => \K::$fw->TEXT_VIEW_ALL_ACTION_WIDTH_ASSIGNED_ACCESS,
         ];
-
-        return $choices;
     }
 
     public static function get_access_choices()
