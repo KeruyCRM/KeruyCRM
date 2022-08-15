@@ -120,7 +120,7 @@ echo form_tag(
                             $choices,
                             $access_schema,
                             [
-                                'id' => 'access_shcema_' . $v['id'],
+                                'id' => 'access_schema_' . $v['id'],
                                 'class' => 'form-control input-xlarge chosen-select access-schema-settings',
                                 'data-entity-id' => $v['id'],
                                 'multiple' => 'multiple'
@@ -159,8 +159,8 @@ echo '<a class="btn btn-default" href="' . url_for(
 <script>
     function check_access_schema(access, entity_id) {
         if (access == '') {
-            $('#access_shcema_' + entity_id).val('');
-            $('#access_shcema_' + entity_id).trigger("chosen:updated");
+            $('#access_schema_' + entity_id).val('');
+            $('#access_schema_' + entity_id).trigger("chosen:updated");
 
             $('#comments_access_' + entity_id).val('');
 

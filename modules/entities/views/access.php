@@ -64,7 +64,7 @@ echo form_tag('cfg', url_for('entities/access', 'action=set_access&entities_id='
                 access_groups::get_access_choices(),
                 $access_schema,
                 [
-                    'id' => 'access_shcema_' . $v['id'],
+                    'id' => 'access_schema_' . $v['id'],
                     'class' => 'form-control input-xlarge chosen-select',
                     'multiple' => 'multiple'
                 ]
@@ -84,8 +84,8 @@ if ($count > 0) echo submit_tag(TEXT_BUTTON_SAVE) ?>
 <script>
     function check_access_schema(access, group_id) {
         if (access == '') {
-            $('#access_shcema_' + group_id).val('');
-            $('#access_shcema_' + group_id).trigger("chosen:updated");
+            $('#access_schema_' + group_id).val('');
+            $('#access_schema_' + group_id).trigger("chosen:updated");
 
         }
     }
