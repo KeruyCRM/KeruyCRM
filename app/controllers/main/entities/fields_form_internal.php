@@ -18,11 +18,7 @@ class Fields_form_internal extends \Controller
 
     public function index()
     {
-        if (isset(\K::$fw->GET['id'])) {
-            \K::$fw->obj = \K::model()->db_find('app_fields', \K::$fw->GET['id']);
-        } else {
-            \K::$fw->obj = \K::model()->db_show_columns('app_fields');
-        }
+        \K::$fw->obj = \K::model()->db_find('app_fields', \K::$fw->GET['id']);
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'fields_form_internal.php';
 

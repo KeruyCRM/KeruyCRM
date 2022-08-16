@@ -18,11 +18,9 @@ class Menu_form extends \Controller
 
     public function index()
     {
-        if (isset(\K::$fw->GET['id'])) {
-            $obj = \K::model()->db_find('app_entities_menu', \K::$fw->GET['id']);
-        } else {
-            $obj = \K::model()->db_show_columns('app_entities_menu');
+        $obj = \K::model()->db_find('app_entities_menu', \K::$fw->GET['id']);
 
+        if (!isset(\K::$fw->GET['id'])) {
             $obj['parent_id'] = (\K::$fw->GET['parent_id'] ?? 0);
         }
 

@@ -31,14 +31,8 @@ class Parent_filters_form extends \Controller
         ]);
 
         if ($reports_info) {
-            if (isset(\K::$fw->GET['id'])) {
-                $obj = \K::model()->db_find('app_reports_filters', \K::$fw->GET['id']);
-            } else {
-                $obj = \K::model()->db_show_columns('app_reports_filters');
-            }
-
             \K::$fw->reports_info = $reports_info;
-            \K::$fw->obj = $obj;
+            \K::$fw->obj = \K::model()->db_find('app_reports_filters', \K::$fw->GET['id']);
 
             \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'parent_filters_form.php';
 

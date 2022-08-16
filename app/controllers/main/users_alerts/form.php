@@ -18,13 +18,7 @@ class Form extends \Controller
 
     public function index()
     {
-        if (isset(\K::$fw->GET['id'])) {
-            $obj = \K::model()->db_find('app_users_alerts', \K::$fw->GET['id']);
-        } else {
-            $obj = \K::model()->db_show_columns('app_users_alerts');
-        }
-
-        \K::$fw->obj = $obj;
+        \K::$fw->obj = \K::model()->db_find('app_users_alerts', \K::$fw->GET['id']);
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'form.php';
 

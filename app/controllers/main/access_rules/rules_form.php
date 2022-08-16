@@ -14,19 +14,12 @@ class Rules_form extends \Controller
         \K::security()->checkCsrfToken();
 
         \Controllers\Main\Access_rules\_Module::top();
-
-        if (isset(\K::$fw->GET['id'])) {
-            $obj = \K::model()->db_find('app_access_rules', \K::$fw->GET['id']);
-        } else {
-            //TODO check double use code in db_find and db_show_columns
-            $obj = \K::model()->db_show_columns('app_access_rules');
-        }
-
-        \K::$fw->obj = $obj;
     }
 
     public function index()
     {
+        \K::$fw->obj = \K::model()->db_find('app_access_rules', \K::$fw->GET['id']);
+
         $fields_id = \K::$fw->GET['fields_id'];
 
         $field_info = \K::model()->db_find('app_fields', $fields_id);

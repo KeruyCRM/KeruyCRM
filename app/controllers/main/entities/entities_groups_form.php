@@ -18,10 +18,9 @@ class Entities_groups_form extends \Controller
 
     public function index()
     {
-        if (isset(\K::$fw->GET['id'])) {
-            $obj = \K::model()->db_find('app_entities_groups', \K::$fw->GET['id']);
-        } else {
-            $obj = \K::model()->db_show_columns('app_entities_groups');
+        $obj = \K::model()->db_find('app_entities_groups', \K::$fw->GET['id']);
+
+        if (!isset(\K::$fw->GET['id'])) {
             $obj['sort_order'] = 0;
         }
 
