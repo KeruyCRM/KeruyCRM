@@ -192,9 +192,7 @@ class Model extends \Prefab
         if ($info_query) {
             return $info_query->cast();
         } else {
-            $schema = $mapper->schema();
-            $keys = array_keys($schema);
-            return array_fill_keys($keys, '');
+            return $this->db_show_columns($table);
         }
     }
 
@@ -376,14 +374,11 @@ class Model extends \Prefab
 
     public function db_show_columns($table)
     {
-        $info = [];
-        $columns_query = $this->db->schema($table);
+        $mapper = $this->mapper($table);
 
-        foreach ($columns_query as $columns => $value) {
-            $info[$columns] = '';
-        }
-
-        return $info;
+        $schema = $mapper->schema();
+        $keys = array_keys($schema);
+        return array_fill_keys($keys, '');
     }
 
     public function db_has_encryption_key()
@@ -398,7 +393,6 @@ class Model extends \Prefab
         }
 
         if ($ttl == 'auto') {
-            //TODO add rand time
             return [\K::$fw->TTL_QUERY, $table];
         }
 
