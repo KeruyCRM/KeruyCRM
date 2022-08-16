@@ -179,7 +179,7 @@ class Comments_form extends \Controller
     public function delete()
     {
         if (\K::$fw->VERB == 'POST') {
-            if (isset(\K::$fw->GET['id'])) {
+            if (isset(\K::$fw->GET['id']) and isset(\K::$fw->GET['entities_id'])) {
                 $msg = \Models\Main\Comments_forms_tabs::check_before_delete(\K::$fw->GET['id']);
 
                 if (strlen($msg) > 0) {
