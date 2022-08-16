@@ -49,100 +49,153 @@ class Comments_form extends \Controller
 
     public function set_fields()
     {
-        if (isset($_POST['fields_in_comments'])) {
-            $sort_order = 0;
-            foreach (explode(',', $_POST['fields_in_comments']) as $v) {
-                $sql_data = [
-                    'comments_status' => 1,
-                    'comments_forms_tabs_id' => 0,
-                    'comments_sort_order' => $sort_order
-                ];
-                db_perform('app_fields', $sql_data, 'update', "id='" . db_input(str_replace('fields_', '', $v)) . "'");
-                $sort_order++;
-            }
-        }
+        if (\K::$fw->VERB == 'POST' and isset(\K::$fw->GET['entities_id'])) {
+            \K::model()->begin();
 
-        $tabs_query = db_fetch_all(
-            'app_comments_forms_tabs',
-            "entities_id='" . db_input($_GET['entities_id']) . "' order by  sort_order, name"
-        );
-        while ($tabs = db_fetch_array($tabs_query)) {
-            if (isset($_POST['forms_tabs_' . $tabs['id']])) {
-                echo $_POST['forms_tabs_' . $tabs['id']];
+            if (isset(\K::$fw->POST['fields_in_comments'])) {
                 $sort_order = 0;
-                foreach (explode(',', $_POST['forms_tabs_' . $tabs['id']]) as $v) {
-                    db_perform(
-                        'app_fields',
-                        [
-                            'comments_forms_tabs_id' => $tabs['id'],
-                            'comments_status' => 1,
-                            'comments_sort_order' => $sort_order
-                        ],
-                        'update',
-                        "id='" . db_input(str_replace('fields_', '', $v)) . "'"
+                $exp = explode(',', \K::$fw->POST['fields_in_comments']);
+
+                foreach ($exp as $v) {
+                    $sql_data = [
+                        'comments_status' => 1,
+                        'comments_forms_tabs_id' => 0,
+                        'comments_sort_order' => $sort_order
+                    ];
+
+                    \K::model()->db_update('app_fields', $sql_data, [
+                            'id = ?',
+                            str_replace('fields_', '', $v)
+                        ]
                     );
                     $sort_order++;
                 }
             }
-        }
 
-        if (isset($_POST['available_fields'])) {
-            foreach (explode(',', $_POST['available_fields']) as $v) {
-                $sql_data = ['comments_status' => 0, 'comments_sort_order' => 0, 'comments_forms_tabs_id' => 0];
-                db_perform('app_fields', $sql_data, 'update', "id='" . db_input(str_replace('fields_', '', $v)) . "'");
+            $tabs_query = \K::model()->db_fetch('app_comments_forms_tabs', [
+                'entities_id = ?',
+                \K::$fw->GET['entities_id']
+            ], ['order' => 'sort_order,name']
+            );
+
+            //while ($tabs = db_fetch_array($tabs_query)) {
+            foreach ($tabs_query as $tabs) {
+                $tabs = $tabs->cast();
+
+                if (isset(\K::$fw->POST['forms_tabs_' . $tabs['id']])) {
+                    //echo \K::$fw->POST['forms_tabs_' . $tabs['id']];//LOST?
+                    $sort_order = 0;
+                    $exp = explode(',', \K::$fw->POST['forms_tabs_' . $tabs['id']]);
+
+                    foreach ($exp as $v) {
+                        $sql_data = [
+                            'comments_forms_tabs_id' => $tabs['id'],
+                            'comments_status' => 1,
+                            'comments_sort_order' => $sort_order
+                        ];
+
+                        \K::model()->db_update('app_fields', $sql_data, [
+                                'id = ?',
+                                str_replace('fields_', '', $v)
+                            ]
+                        );
+                        $sort_order++;
+                    }
+                }
             }
+
+            if (isset(\K::$fw->POST['available_fields'])) {
+                $sql_data = [
+                    'comments_status' => 0,
+                    'comments_sort_order' => 0,
+                    'comments_forms_tabs_id' => 0
+                ];
+                $exp = explode(',', \K::$fw->POST['available_fields']);
+
+                foreach ($exp as $v) {
+                    \K::model()->db_update('app_fields', $sql_data, [
+                            'id = ?',
+                            str_replace('fields_', '', $v)
+                        ]
+                    );
+                }
+            }
+
+            \K::model()->commit();
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 
     public function sort_tabs()
     {
-        if (isset($_POST['forms_tabs_ol'])) {
+        if (isset(\K::$fw->POST['forms_tabs_ol'])) {
             $sort_order = 0;
-            foreach (explode(',', str_replace('forms_tabs_', '', $_POST['forms_tabs_ol'])) as $v) {
-                db_perform(
+            $exp = explode(',', str_replace('forms_tabs_', '', \K::$fw->POST['forms_tabs_ol']));
+
+            \K::model()->begin();
+
+            foreach ($exp as $v) {
+                \K::model()->db_update(
                     'app_comments_forms_tabs',
                     ['sort_order' => $sort_order],
-                    'update',
-                    "id='" . db_input($v) . "'"
+                    ['id = ?', $v]
                 );
                 $sort_order++;
             }
+
+            \K::model()->commit();
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 
     public function save_tab()
     {
-        $sql_data = [
-            'name' => $_POST['name'],
-            'entities_id' => $_POST['entities_id'],
-            'sort_order' => (forms_tabs::get_last_sort_number($_POST['entities_id']) + 1),
-        ];
+        if (isset(\K::$fw->POST['entities_id']) and isset(\K::$fw->POST['name'])) {
+            $sql_data = [
+                'name' => \K::$fw->POST['name'],
+                'entities_id' => \K::$fw->POST['entities_id'],
+                'sort_order' => (\Models\Main\Forms_tabs::get_last_sort_number(\K::$fw->POST['entities_id']) + 1),
+            ];
 
-        if (isset($_GET['id'])) {
-            db_perform('app_comments_forms_tabs', $sql_data, 'update', "id='" . db_input($_GET['id']) . "'");
+            /*if (isset($_GET['id'])) {
+                db_perform('app_comments_forms_tabs', $sql_data, 'update', "id='" . db_input($_GET['id']) . "'");
+            } else {
+                db_perform('app_comments_forms_tabs', $sql_data);
+            }*/
+
+            \K::model()->db_perform('app_comments_forms_tabs', $sql_data, [
+                'id = ?',
+                \K::$fw->GET['id']
+            ]);
+
+            \Helpers\Urls::redirect_to('main/entities/comments_form', 'entities_id=' . \K::$fw->POST['entities_id']);
         } else {
-            db_perform('app_comments_forms_tabs', $sql_data);
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
-
-        redirect_to('entities/comments_form', 'entities_id=' . $_POST['entities_id']);
     }
 
     public function delete()
     {
-        if (isset($_GET['id'])) {
-            $msg = comments_forms_tabs::check_before_delete($_GET['id']);
+        if (\K::$fw->VERB == 'POST') {
+            if (isset(\K::$fw->GET['id'])) {
+                $msg = \Models\Main\Comments_forms_tabs::check_before_delete(\K::$fw->GET['id']);
 
-            if (strlen($msg) > 0) {
-                $alerts->add($msg, 'error');
-            } else {
-                $name = comments_forms_tabs::get_name_by_id($_GET['id']);
+                if (strlen($msg) > 0) {
+                    \K::flash()->addMessage($msg, 'error');
+                } else {
+                    $name = \Models\Main\Comments_forms_tabs::get_name_by_id(\K::$fw->GET['id']);
 
-                db_delete_row('app_comments_forms_tabs', $_GET['id']);
+                    \K::model()->db_delete_row('app_comments_forms_tabs', \K::$fw->GET['id']);
 
-                $alerts->add(sprintf(TEXT_WARN_DELETE_SUCCESS, $name), 'success');
+                    \K::flash()->addMessage(sprintf(\K::$fw->TEXT_WARN_DELETE_SUCCESS, $name), 'success');
+                }
+
+                \Helpers\Urls::redirect_to('main/entities/comments_form', 'entities_id=' . \K::$fw->GET['entities_id']);
             }
-
-            redirect_to('entities/comments_form', 'entities_id=' . $_GET['entities_id']);
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 }

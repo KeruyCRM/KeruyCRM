@@ -42,13 +42,18 @@ class Forms_tabs
 
     public static function get_last_sort_number($entities_id)
     {
-        $v = db_fetch_array(
+        /*$v = db_fetch_array(
             db_query(
                 "select max(sort_order) as max_sort_order from app_forms_tabs where entities_id = '" . db_input(
                     $entities_id
                 ) . "'"
             )
-        );
+        );*/
+
+        $v = \K::model()->db_fetch_one('app_forms_tabs', [
+            'entities_id = ?',
+            $entities_id
+        ], [], null, ['max_sort_order' => 'max(sort_order)'],0);
 
         return $v['max_sort_order'];
     }
