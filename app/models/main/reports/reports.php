@@ -1150,10 +1150,13 @@ class Reports
 
         $html = '';
 
+        $exp = explode(',', $filters_values);
+
         switch ($field_info['type']) {
             case 'fieldtype_user_accessgroups':
                 $list = [];
-                foreach (explode(',', $filters_values) as $id) {
+
+                foreach ($exp as $id) {
                     if (strlen($name = \Models\Main\Access_groups::get_name_by_id($id))) {
                         $list[] = $name;
                     }
@@ -1168,7 +1171,8 @@ class Reports
                 $entity_info = \K::model()->db_find('app_entities', $field_info['entities_id']);
 
                 $output = [];
-                foreach (explode(',', $filters_values) as $item_id) {
+
+                foreach ($exp as $item_id) {
                     /*$items_info_sql = "select e.* from app_entity_" . $entity_info['parent_id'] . " e where e.id='" . db_input(
                             $item_id
                         ) . "'";
@@ -1214,13 +1218,14 @@ class Reports
                 }
 
                 $output = [];
-                foreach (explode(',', $filters_values) as $item_id) {
+
+                foreach ($exp as $item_id) {
                     /*$items_info_sql = "select e.* from app_entity_" . $cfg['entity_id'] . " e where e.id='" . db_input(
                             $item_id
                         ) . "'";
                     $items_query = db_query($items_info_sql);*/
 
-                    $item = \K::model()->db_fetch_one('app_entity_' . $cfg['entity_id'], [
+                    $item = \K::model()->db_fetch_one('app_entity_' . (int)$cfg['entity_id'], [
                         'id = ?',
                         $item_id
                     ]);
@@ -1252,7 +1257,8 @@ class Reports
             case 'fieldtype_access_group':
 
                 $list = [];
-                foreach (explode(',', $filters_values) as $id) {
+
+                foreach ($exp as $id) {
                     if ($id == 'current_user_group_id') {
                         $list[] = \K::$fw->TEXT_CURRENT_USER_GROUP;
                     } else {
@@ -1277,7 +1283,8 @@ class Reports
                 $cfg = new \Models\Main\Fields_types_cfg($field_info['configuration']);
 
                 $list = [];
-                foreach (explode(',', $filters_values) as $id) {
+
+                foreach ($exp as $id) {
                     if ($cfg->get('use_global_list') > 0) {
                         if (isset(\K::$fw->app_global_choices_cache[$id])) {
                             $list[] = \K::$fw->app_global_choices_cache[$id]['name'];
@@ -1292,7 +1299,8 @@ class Reports
                 break;
             case 'fieldtype_progress':
                 $list = [];
-                foreach (explode(',', $filters_values) as $v) {
+
+                foreach ($exp as $v) {
                     $list[] = $v . '%';
                 }
                 $html = implode($separator, $list);
@@ -1310,9 +1318,7 @@ class Reports
                 $values = explode(',', $filters_values);
 
                 if (strlen($values[0]) > 0) {
-                    if (in_array($filters_condition, ['empty_value', 'not_empty_value', 'filter_by_overdue'])) {
-                        $html = '';
-                    } else {
+                    if (!in_array($filters_condition, ['empty_value', 'not_empty_value', 'filter_by_overdue'])) {
                         switch ($filters_condition) {
                             case 'filter_by_days':
                                 $html = \K::$fw->TEXT_FILTER_BY_DAYS;
@@ -1361,7 +1367,8 @@ class Reports
             case 'fieldtype_users':
             case 'fieldtype_users_ajax':
                 $list = [];
-                foreach (explode(',', $filters_values) as $id) {
+
+                foreach ($exp as $id) {
                     if (isset(\K::$fw->app_users_cache[$id])) {
                         $list[] = \K::$fw->app_users_cache[$id]['name'];
                     }
