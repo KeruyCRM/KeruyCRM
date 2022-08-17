@@ -3,53 +3,37 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-require(component_path('entities/navigation')) ?>
+<?= \K::view()->render(\Helpers\Urls::components_path('main/entities/navigation')); ?>
 
-<h3 class="page-title"><?php
-    echo TEXT_NAV_FIELDS_ACCESS ?></h3>
+<h3 class="page-title"><?= \K::$fw->TEXT_NAV_FIELDS_ACCESS ?></h3>
 
-<?php
-echo form_tag('cfg', url_for('entities/fields_access', 'action=set_access&entities_id=' . $_GET['entities_id'])) ?>
-<?php
-echo input_hidden_tag('ui_accordion_active', 0) ?>
-<?php
-$fields_list = [];
-$fields_query = db_query(
-    "select f.*, t.name as tab_name,if(f.type in ('fieldtype_id','fieldtype_date_added','fieldtype_created_by','fieldtype_date_updated'),-1,t.sort_order) as tab_sort_order from app_fields f, app_forms_tabs t where f.type not in ('fieldtype_action') and f.entities_id='" . db_input(
-        $_GET['entities_id']
-    ) . "' and f.forms_tabs_id=t.id order by tab_sort_order, t.name, f.sort_order, f.name"
-);
-while ($v = db_fetch_array($fields_query)) {
-    $fields_list[$v['id']] = [
-        'name' => fields_types::get_option($v['type'], 'name', $v['name']),
-        'type' => $v['type']
-    ];
-}
-?>
-
+<?= \Helpers\Html::form_tag(
+    'cfg',
+    \Helpers\Urls::url_for('main/entities/fields_access/set_access', 'entities_id=' . \K::$fw->GET['entities_id'])
+) ?>
+<?= \Helpers\Html::input_hidden_tag('ui_accordion_active', 0) ?>
 
 <div id="accordion">
-    <h3><?php
-        echo TEXT_ADMINISTRATOR ?></h3>
+    <h3><?= \K::$fw->TEXT_ADMINISTRATOR ?></h3>
     <div>
-        <?php
-        echo TEXT_ADMINISTRATOR_FULL_ACCESS ?>
+        <?= \K::$fw->TEXT_ADMINISTRATOR_FULL_ACCESS ?>
     </div>
     <?php
-
-    $access_choices_default = ['yes' => TEXT_YES, 'view' => TEXT_VIEW_ONLY, 'hide' => TEXT_HIDE];
-    $access_choices_internal = ['yes' => TEXT_YES, 'hide' => TEXT_HIDE];
-
     $count = 0;
-    $groups_query = db_fetch_all('app_access_groups', '', 'sort_order, name');
-    while ($groups = db_fetch_array($groups_query)) {
-        $entities_access_schema = users::get_entities_access_schema($_GET['entities_id'], $groups['id']);
+
+    //while ($groups = db_fetch_array($groups_query)) {
+    foreach (\K::$fw->groups_query as $groups) {
+        $groups = $groups->cast();
+
+        $entities_access_schema = \Models\Main\Users\Users::get_entities_access_schema(
+            \K::$fw->GET['entities_id'],
+            $groups['id']
+        );
 
         if (!in_array('view', $entities_access_schema) and !in_array(
                 'view_assigned',
                 $entities_access_schema
-            ) and $_GET['entities_id'] != 1) {
+            ) and \K::$fw->GET['entities_id'] != 1) {
             continue;
         }
 
@@ -59,10 +43,10 @@ while ($v = db_fetch_array($fields_query)) {
       <div class="table-scrollable">
       <table class="table table-striped table-bordered table-hover">
         <tr>
-          <th>' . TEXT_FIELDS . '</th>
-          <th>' . TEXT_ACCESS . ': ' . select_tag(
+          <th>' . \K::$fw->TEXT_FIELDS . '</th>
+          <th>' . \K::$fw->TEXT_ACCESS . ': ' . \Helpers\Html::select_tag(
                 'access_' . $groups['id'],
-                array_merge(['' => ''], $access_choices_default),
+                array_merge(['' => ''], \K::$fw->access_choices_default),
                 '',
                 [
                     'class' => 'form-control input-medium ',
@@ -72,21 +56,20 @@ while ($v = db_fetch_array($fields_query)) {
         </tr>
       ';
 
-        $access_schema = users::get_fields_access_schema($_GET['entities_id'], $groups['id']);
+        $access_schema = \Models\Main\Users\Users::get_fields_access_schema(\K::$fw->GET['entities_id'], $groups['id']);
 
-
-        foreach ($fields_list as $id => $field) {
-            $value = (isset($access_schema[$id]) ? $access_schema[$id] : 'yes');
+        foreach (\K::$fw->fields_list as $id => $field) {
+            $value = ($access_schema[$id] ?? 'yes');
 
             $access_choices = (in_array(
                 $field['type'],
                 ['fieldtype_id', 'fieldtype_date_added', 'fieldtype_date_updated', 'fieldtype_created_by']
-            ) ? $access_choices_internal : $access_choices_default);
+            ) ? \K::$fw->access_choices_internal : \K::$fw->access_choices_default);
 
             $html .= '
         <tr>
           <td>' . $field['name'] . '</td>
-          <td>' . select_tag(
+          <td>' . \Helpers\Html::select_tag(
                     'access[' . $groups['id'] . '][' . $id . ']',
                     $access_choices,
                     $value,
@@ -110,7 +93,7 @@ while ($v = db_fetch_array($fields_query)) {
 </div>
 <br>
 <?php
-if ($count > 0) echo submit_tag(TEXT_BUTTON_SAVE) ?>
+if ($count > 0) echo \Helpers\Html::submit_tag(\K::$fw->TEXT_BUTTON_SAVE) ?>
 
 </form>
 
@@ -118,15 +101,11 @@ if ($count > 0) echo submit_tag(TEXT_BUTTON_SAVE) ?>
     $(function () {
         $("#accordion").accordion({
             heightStyle: 'content',
-            active: <?php echo(isset($_GET["ui_accordion_active"]) ? $_GET["ui_accordion_active"] : "0") ?>,
+            active: <?=(\K::$fw->GET["ui_accordion_active"] ?? "0") ?>,
             activate: function (event, ui) {
                 active = $('#accordion').accordion('option', 'active');
                 $('#ui_accordion_active').val(active)
-
             }
         });
     });
 </script>
-
-
-

@@ -158,7 +158,7 @@ class Fieldtype_entity_multilevel
 
                 $choices = [];
 
-                $fields_query = \K::model()->db_query(
+                $fields_query = \K::model()->db_query_exec(
                     "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type in (" . \Models\Main\Fields_types::get_types_for_search_list(
                     ) . ") and  f.entities_id= ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",
                     $entities_id,
