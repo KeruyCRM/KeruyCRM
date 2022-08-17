@@ -178,18 +178,35 @@ class Fields_choices
     public static function sort_tree($fields_id, $tree, $parent_id = 0)
     {
         $sort_order = 0;
+        $forceCommit = \K::model()->forceCommit();
+
         foreach ($tree as $v) {
-            db_query(
+            /*db_query(
                 "update app_fields_choices set parent_id='" . $parent_id . "', sort_order='" . $sort_order . "' where id='" . db_input(
                     $v['id']
                 ) . "' and fields_id='" . db_input($fields_id) . "'"
-            );
+            );*/
+
+            $sql_data = [
+                'parent_id' => $parent_id,
+                'sort_order' => $sort_order
+            ];
+
+            \K::model()->db_update('app_fields_choices', $sql_data, [
+                'id = ? and fields_id = ?',
+                $v['id'],
+                $fields_id
+            ]);
 
             if (isset($v['children'])) {
                 self::sort_tree($fields_id, $v['children'], $v['id']);
             }
 
             $sort_order++;
+        }
+
+        if ($forceCommit) {
+            \K::model()->commit();
         }
     }
 
