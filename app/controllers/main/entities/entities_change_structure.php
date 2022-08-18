@@ -46,7 +46,9 @@ class Entities_change_structure extends \Controller
 
             $entities_tree = [];
             $entities_tree[] = $entities_id;
-            foreach (\Models\Main\Entities::get_tree($entities_id) as $v) {
+            $tree = \Models\Main\Entities::get_tree($entities_id);
+
+            foreach ($tree as $v) {
                 $entities_tree[] = $v['id'];
             }
 

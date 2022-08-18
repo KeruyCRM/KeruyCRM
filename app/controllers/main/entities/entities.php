@@ -124,7 +124,8 @@ class Entities extends \Controller
 
             \K::model()->begin();
 
-            foreach (explode(',', str_replace('group_', '', \K::$fw->POST['groups_list'])) as $v) {
+            $exp = explode(',', str_replace('group_', '', \K::$fw->POST['groups_list']));
+            foreach ($exp as $v) {
                 \K::model()->db_update('app_entities_groups', ['sort_order' => $sort_order], ['id = ?', $v]);
                 $sort_order++;
             }

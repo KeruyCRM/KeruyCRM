@@ -145,23 +145,33 @@ class Fields_choices
 
     public static function get_html_tree($fields_id, $parent_id = 0, $tree = '')
     {
-        $count_query = db_query(
+        /*$count_query = db_query(
             "select count(*) as total from app_fields_choices where fields_id = '" . db_input(
                 $fields_id
             ) . "' and parent_id='" . db_input($parent_id) . "' order by sort_order, name"
         );
-        $count = db_fetch_array($count_query);
 
-        if ($count['total'] > 0) {
+        $count = db_fetch_array($count_query);*/
+
+        $choices_query = \K::model()->db_fetch('app_fields_choices', [
+            'fields_id = ? and parent_id = ?',
+            $fields_id,
+            $parent_id
+        ], ['order' => 'sort_order,name'], 'id,name');
+
+        if (count($choices_query)) {
             $tree .= '<ol class="dd-list">';
 
-            $choices_query = db_query(
+            /*$choices_query = db_query(
                 "select * from app_fields_choices where fields_id = '" . db_input(
                     $fields_id
                 ) . "' and parent_id='" . db_input($parent_id) . "' order by sort_order, name"
-            );
+            );*/
 
-            while ($v = db_fetch_array($choices_query)) {
+            //while ($v = db_fetch_array($choices_query)) {
+            foreach ($choices_query as $v) {
+                $v = $v->cast();
+
                 $tree .= '<li class="dd-item" data-id="' . $v['id'] . '"><div class="dd-handle">' . $v['name'] . '</div>';
 
                 $tree = self::get_html_tree($fields_id, $v['id'], $tree);

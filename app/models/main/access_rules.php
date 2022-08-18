@@ -35,7 +35,7 @@ class Access_rules
                     );*/
 
                     $access_rules = \K::model()->db_fetch_one('app_access_rules', [
-                        'find_in_set( ? , users_groups) and find_in_set( ? , choices) and entities_id = ? and fields_id = ',
+                        'find_in_set( ? , users_groups) and find_in_set( ? , choices) and entities_id = ? and fields_id = ?',
                         \K::$fw->app_user['group_id'],
                         $value,
                         $entities_id,
