@@ -7,8 +7,6 @@ echo form_tag(
     url_for('entities/fields', 'action=import&entities_id=' . $_GET['entities_id']),
     ['class' => 'form-horizontal', 'enctype' => 'multipart/form-data']
 ) ?>
-<?php
-echo input_hidden_tag('selected_fields') ?>
 <div class="modal-body">
     <div id="modal-body-content">
 
