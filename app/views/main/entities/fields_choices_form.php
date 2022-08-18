@@ -3,7 +3,7 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXTHEADING_VALUE_INFO) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_HEADING_VALUE_INFO) ?>
 
 <?= \Helpers\Html::form_tag(
     'fields_form',
@@ -23,7 +23,7 @@ if (!defined('KERUY_CRM')) {
             \K::$fw->GET['fields_id']
         ) ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="is_active"><?= \K::$fw->TEXTIS_ACTIVE ?></label>
+            <label class="col-md-4 control-label" for="is_active"><?= \K::$fw->TEXT_IS_ACTIVE ?></label>
             <div class="col-md-8">
                 <div class="checkbox-list"><label class="checkbox-inline"><?= \Helpers\Html::input_checkbox_tag(
                             'is_active',
@@ -34,8 +34,8 @@ if (!defined('KERUY_CRM')) {
         </div>
         <div class="form-group">
             <label class="col-md-4 control-label" for="parent_id"><?= \Helpers\App::tooltip_icon(
-                    \K::$fw->TEXTCHOICES_PARENT_INFO
-                ) . \K::$fw->TEXTPARENT ?></label>
+                    \K::$fw->TEXT_CHOICES_PARENT_INFO
+                ) . \K::$fw->TEXT_PARENT ?></label>
             <div class="col-md-8">
                 <?= \Helpers\Html::select_tag(
                     'parent_id',
@@ -47,8 +47,8 @@ if (!defined('KERUY_CRM')) {
         </div>
         <div class="form-group">
             <label class="col-md-4 control-label" for="name"><?= \Helpers\App::tooltip_icon(
-                    \K::$fw->TEXTCHOICES_NAME_INFO
-                ) . \K::$fw->TEXTNAME ?></label>
+                    \K::$fw->TEXT_CHOICES_NAME_INFO
+                ) . \K::$fw->TEXT_NAME ?></label>
             <div class="col-md-8">
                 <?= \Helpers\Html::input_tag(
                     'name',
@@ -61,8 +61,8 @@ if (!defined('KERUY_CRM')) {
         if (\K::$fw->fields_info['type'] != 'fieldtype_autostatus'): ?>
             <div class="form-group">
                 <label class="col-md-4 control-label" for="is_default"><?= \Helpers\App::tooltip_icon(
-                        \K::$fw->TEXTCHOICES_IS_DEFAULT_INFO
-                    ) . \K::$fw->TEXTIS_DEFAULT ?></label>
+                        \K::$fw->TEXT_CHOICES_IS_DEFAULT_INFO
+                    ) . \K::$fw->TEXT_IS_DEFAULT ?></label>
                 <div class="col-md-8">
                     <div class="checkbox-list"><label class="checkbox-inline"><?= \Helpers\Html::input_checkbox_tag(
                                 'is_default',
@@ -77,8 +77,8 @@ if (!defined('KERUY_CRM')) {
 
         <div class="form-group">
             <label class="col-md-4 control-label" for="bg_color"><?= \Helpers\App::tooltip_icon(
-                    \K::$fw->TEXTCHOICES_BACKGROUND_COLOR_INFO
-                ) . \K::$fw->TEXTBACKGROUND_COLOR ?></label>
+                    \K::$fw->TEXT_CHOICES_BACKGROUND_COLOR_INFO
+                ) . \K::$fw->TEXT_BACKGROUND_COLOR ?></label>
             <div class="col-md-8">
                 <div class="input-group input-small color colorpicker-default"
                      data-color="<?= (strlen(\K::$fw->obj['bg_color']) > 0 ? \K::$fw->obj['bg_color'] : '#ff0000') ?>">
@@ -95,8 +95,8 @@ if (!defined('KERUY_CRM')) {
         </div>
         <div class="form-group">
             <label class="col-md-4 control-label" for="sort_order"><?= \Helpers\App::tooltip_icon(
-                    \K::$fw->TEXTCHOICES_SORT_ORDER_INFO
-                ) . \K::$fw->TEXTSORT_ORDER ?></label>
+                    \K::$fw->TEXT_CHOICES_SORT_ORDER_INFO
+                ) . \K::$fw->TEXT_SORT_ORDER ?></label>
             <div class="col-md-8">
                 <?= \Helpers\Html::input_tag(
                     'sort_order',
@@ -115,14 +115,14 @@ if (!defined('KERUY_CRM')) {
             }
         } else { ?>
             <div class="form-group">
-                <label class="col-md-4 control-label" for="sort_order"><?= \K::$fw->TEXTVALUE ?></label>
+                <label class="col-md-4 control-label" for="sort_order"><?= \K::$fw->TEXT_VALUE ?></label>
                 <div class="col-md-8">
                     <?= \Helpers\Html::input_tag(
                         'value',
                         \K::$fw->obj['value'],
                         ['class' => 'form-control input-small number']
                     ) ?>
-                    <?= \Helpers\App::tooltip_text(\K::$fw->TEXTCHOICES_VALUE_INFO) ?>
+                    <?= \Helpers\App::tooltip_text(\K::$fw->TEXT_CHOICES_VALUE_INFO) ?>
                 </div>
             </div>
             <?php
@@ -131,14 +131,14 @@ if (!defined('KERUY_CRM')) {
         if (\K::$fw->fields_info['type'] == 'fieldtype_grouped_users'): ?>
             <div class="form-group">
                 <label class="col-md-4 control-label" for="users"><?= \Helpers\App::tooltip_icon(
-                        \K::$fw->TEXTCHOICES_USERS_INFO
-                    ) . \K::$fw->TEXTUSERS_LIST ?></label>
+                        \K::$fw->TEXT_CHOICES_USERS_INFO
+                    ) . \K::$fw->TEXT_USERS_LIST ?></label>
                 <div class="col-md-8">
                     <?php
                     $attributes = [
                         'class' => 'form-control chosen-select required',
                         'multiple' => 'multiple',
-                        'data-placeholder' => \K::$fw->TEXTSELECT_SOME_VALUES
+                        'data-placeholder' => \K::$fw->TEXT_SELECT_SOME_VALUES
                     ];
 
                     echo \Helpers\Html::select_tag(
