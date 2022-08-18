@@ -3,65 +3,72 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_HEADING_VALUE_INFO) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXTHEADING_VALUE_INFO) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'fields_form',
-    url_for('entities/fields_choices', 'action=save' . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '')),
+    \Helpers\Urls::url_for(
+        'main/entities/fields_choices/save',
+        (isset(\K::$fw->GET['id']) ? '&id=' . \K::$fw->GET['id'] : '')
+    ),
     ['class' => 'form-horizontal', 'enctype' => 'multipart/form-data']
 ) ?>
 <div class="modal-body">
     <div class="form-body">
-
-        <?php
-        echo input_hidden_tag('entities_id', $_GET['entities_id']) . input_hidden_tag(
-                'fields_id',
-                $_GET['fields_id']
-            ) ?>
-
-
+        <?= \Helpers\Html::input_hidden_tag(
+            'entities_id',
+            \K::$fw->GET['entities_id']
+        ) . \Helpers\Html::input_hidden_tag(
+            'fields_id',
+            \K::$fw->GET['fields_id']
+        ) ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="is_active"><?php
-                echo TEXT_IS_ACTIVE ?></label>
+            <label class="col-md-4 control-label" for="is_active"><?= \K::$fw->TEXTIS_ACTIVE ?></label>
             <div class="col-md-8">
-                <div class="checkbox-list"><label class="checkbox-inline"><?php
-                        echo input_checkbox_tag('is_active', '1', ['checked' => $obj['is_active']]) ?></label></div>
+                <div class="checkbox-list"><label class="checkbox-inline"><?= \Helpers\Html::input_checkbox_tag(
+                            'is_active',
+                            '1',
+                            ['checked' => \K::$fw->obj['is_active']]
+                        ) ?></label></div>
             </div>
         </div>
-
         <div class="form-group">
-            <label class="col-md-4 control-label" for="parent_id"><?php
-                echo tooltip_icon(TEXT_CHOICES_PARENT_INFO) . TEXT_PARENT ?></label>
+            <label class="col-md-4 control-label" for="parent_id"><?= \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXTCHOICES_PARENT_INFO
+                ) . \K::$fw->TEXTPARENT ?></label>
             <div class="col-md-8">
-                <?php
-                echo select_tag(
+                <?= \Helpers\Html::select_tag(
                     'parent_id',
-                    fields_choices::get_choices($_GET['fields_id']),
-                    (isset($_GET['parent_id']) ? $_GET['parent_id'] : $obj['parent_id']),
+                    \Models\Main\Fields_choices::get_choices(\K::$fw->GET['fields_id']),
+                    (\K::$fw->GET['parent_id'] ?? \K::$fw->obj['parent_id']),
                     ['class' => 'form-control input-medium']
                 ) ?>
             </div>
         </div>
-
         <div class="form-group">
-            <label class="col-md-4 control-label" for="name"><?php
-                echo tooltip_icon(TEXT_CHOICES_NAME_INFO) . TEXT_NAME ?></label>
+            <label class="col-md-4 control-label" for="name"><?= \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXTCHOICES_NAME_INFO
+                ) . \K::$fw->TEXTNAME ?></label>
             <div class="col-md-8">
-                <?php
-                echo input_tag('name', $obj['name'], ['class' => 'form-control input-large required autofocus']) ?>
+                <?= \Helpers\Html::input_tag(
+                    'name',
+                    \K::$fw->obj['name'],
+                    ['class' => 'form-control input-large required autofocus']
+                ) ?>
             </div>
         </div>
-
         <?php
-        if ($fields_info['type'] != 'fieldtype_autostatus'): ?>
+        if (\K::$fw->fields_info['type'] != 'fieldtype_autostatus'): ?>
             <div class="form-group">
-                <label class="col-md-4 control-label" for="is_default"><?php
-                    echo tooltip_icon(TEXT_CHOICES_IS_DEFAULT_INFO) . TEXT_IS_DEFAULT ?></label>
+                <label class="col-md-4 control-label" for="is_default"><?= \Helpers\App::tooltip_icon(
+                        \K::$fw->TEXTCHOICES_IS_DEFAULT_INFO
+                    ) . \K::$fw->TEXTIS_DEFAULT ?></label>
                 <div class="col-md-8">
-                    <div class="checkbox-list"><label class="checkbox-inline"><?php
-                            echo input_checkbox_tag('is_default', '1', ['checked' => $obj['is_default']]) ?></label>
+                    <div class="checkbox-list"><label class="checkbox-inline"><?= \Helpers\Html::input_checkbox_tag(
+                                'is_default',
+                                '1',
+                                ['checked' => \K::$fw->obj['is_default']]
+                            ) ?></label>
                     </div>
                 </div>
             </div>
@@ -69,75 +76,86 @@ echo form_tag(
         endif ?>
 
         <div class="form-group">
-            <label class="col-md-4 control-label" for="bg_color"><?php
-                echo tooltip_icon(TEXT_CHOICES_BACKGROUND_COLOR_INFO) . TEXT_BACKGROUND_COLOR ?></label>
+            <label class="col-md-4 control-label" for="bg_color"><?= \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXTCHOICES_BACKGROUND_COLOR_INFO
+                ) . \K::$fw->TEXTBACKGROUND_COLOR ?></label>
             <div class="col-md-8">
-                <div class="input-group input-small color colorpicker-default" data-color="<?php
-                echo(strlen($obj['bg_color']) > 0 ? $obj['bg_color'] : '#ff0000') ?>">
-                    <?php
-                    echo input_tag('bg_color', $obj['bg_color'], ['class' => 'form-control input-small']) ?>
+                <div class="input-group input-small color colorpicker-default"
+                     data-color="<?= (strlen(\K::$fw->obj['bg_color']) > 0 ? \K::$fw->obj['bg_color'] : '#ff0000') ?>">
+                    <?= \Helpers\Html::input_tag(
+                        'bg_color',
+                        \K::$fw->obj['bg_color'],
+                        ['class' => 'form-control input-small']
+                    ) ?>
                     <span class="input-group-btn">
   				<button class="btn btn-default" type="button">&nbsp;</button>
   			</span>
                 </div>
             </div>
         </div>
-
         <div class="form-group">
-            <label class="col-md-4 control-label" for="sort_order"><?php
-                echo tooltip_icon(TEXT_CHOICES_SORT_ORDER_INFO) . TEXT_SORT_ORDER ?></label>
+            <label class="col-md-4 control-label" for="sort_order"><?= \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXTCHOICES_SORT_ORDER_INFO
+                ) . \K::$fw->TEXTSORT_ORDER ?></label>
             <div class="col-md-8">
-                <?php
-                echo input_tag('sort_order', $obj['sort_order'], ['class' => 'form-control input-small']) ?>
+                <?= \Helpers\Html::input_tag(
+                    'sort_order',
+                    \K::$fw->obj['sort_order'],
+                    ['class' => 'form-control input-small']
+                ) ?>
             </div>
         </div>
-
         <?php
-        if ($fields_info['type'] == 'fieldtype_image_map') {
-            $cfg = new settings($fields_info['configuration']);
+        if (\K::$fw->fields_info['type'] == 'fieldtype_image_map') {
+            $cfg = new \Tools\Settings(\K::$fw->fields_info['configuration']);
 
             if (!strlen($cfg->get('use_image_field'))) {
-                require(component_path('entities/choices_map_form'));
+                \K::view()->render(\Helpers\Urls::components_path('entities/choices_map_form'));
+                //require(component_path('entities/choices_map_form'));
             }
         } else { ?>
             <div class="form-group">
-                <label class="col-md-4 control-label" for="sort_order"><?php
-                    echo TEXT_VALUE ?></label>
+                <label class="col-md-4 control-label" for="sort_order"><?= \K::$fw->TEXTVALUE ?></label>
                 <div class="col-md-8">
-                    <?php
-                    echo input_tag('value', $obj['value'], ['class' => 'form-control input-small number']) ?>
-                    <?php
-                    echo tooltip_text(TEXT_CHOICES_VALUE_INFO) ?>
+                    <?= \Helpers\Html::input_tag(
+                        'value',
+                        \K::$fw->obj['value'],
+                        ['class' => 'form-control input-small number']
+                    ) ?>
+                    <?= \Helpers\App::tooltip_text(\K::$fw->TEXTCHOICES_VALUE_INFO) ?>
                 </div>
             </div>
-        <?php
+            <?php
         } ?>
-
         <?php
-        if ($fields_info['type'] == 'fieldtype_grouped_users'): ?>
+        if (\K::$fw->fields_info['type'] == 'fieldtype_grouped_users'): ?>
             <div class="form-group">
-                <label class="col-md-4 control-label" for="users"><?php
-                    echo tooltip_icon(TEXT_CHOICES_USERS_INFO) . TEXT_USERS_LIST ?></label>
+                <label class="col-md-4 control-label" for="users"><?= \Helpers\App::tooltip_icon(
+                        \K::$fw->TEXTCHOICES_USERS_INFO
+                    ) . \K::$fw->TEXTUSERS_LIST ?></label>
                 <div class="col-md-8">
                     <?php
                     $attributes = [
                         'class' => 'form-control chosen-select required',
                         'multiple' => 'multiple',
-                        'data-placeholder' => TEXT_SELECT_SOME_VALUES
+                        'data-placeholder' => \K::$fw->TEXTSELECT_SOME_VALUES
                     ];
 
-                    echo select_tag('users[]', users::get_choices(), explode(',', $obj['users']), $attributes);
+                    echo \Helpers\Html::select_tag(
+                        'users[]',
+                        \Models\Main\Users\Users::get_choices(),
+                        explode(',', \K::$fw->obj['users']),
+                        $attributes
+                    );
                     ?>
                 </div>
             </div>
         <?php
         endif ?>
-
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
@@ -150,4 +168,4 @@ echo ajax_modal_template_footer() ?>
             }
         });
     });
-</script>   
+</script>
