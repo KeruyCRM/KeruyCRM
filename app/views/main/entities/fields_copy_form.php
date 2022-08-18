@@ -3,47 +3,38 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_COPY_FIELDS) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_COPY_FIELDS) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'form-copy-to',
-    url_for('entities/fields', 'action=copy_selected&entities_id=' . $_GET['entities_id']),
+    \Helpers\Urls::url_for('main/entities/fields/copy_selected', 'entities_id=' . \K::$fw->GET['entities_id']),
     ['class' => 'form-horizontal']
 ) ?>
-<?php
-echo input_hidden_tag('selected_fields') ?>
+<?= \Helpers\Html::input_hidden_tag('selected_fields') ?>
 <div class="modal-body">
     <div id="modal-body-content">
-
         <div class="form-group">
-            <label class="col-md-4 control-label" for="type"><?php
-                echo TEXT_SELECT_ENTITY ?></label>
+            <label class="col-md-4 control-label" for="type"><?= \K::$fw->TEXT_SELECT_ENTITY ?></label>
             <div class="col-md-8">
-                <?php
-                echo select_tag(
+                <?= \Helpers\Html::select_tag(
                     'copy_to_entities_id',
-                    entities::get_choices(),
-                    $_GET['entities_id'],
+                    \Models\Main\Entities::get_choices(),
+                    \K::$fw->GET['entities_id'],
                     ['class' => 'form-control']
                 ) ?>
             </div>
         </div>
-
         <div id="entities_form_tabs"></div>
-
     </div>
 </div>
-<?php
-echo ajax_modal_template_footer(TEXT_COPY) ?>
+<?= \Helpers\App::ajax_modal_template_footer(\K::$fw->TEXT_COPY) ?>
 
 </form>
 
 <script>
     $(function () {
         if ($('.fields_checkbox:checked').length == 0) {
-            $('#modal-body-content').html('<?php echo TEXT_PLEASE_SELECT_FIELDS ?>')
+            $('#modal-body-content').html('<?= \K::$fw->TEXT_PLEASE_SELECT_FIELDS ?>')
             $('.btn-primary-modal-action').hide()
         } else {
             selected_fields_list = $('.fields_checkbox:checked').serialize().replace(/fields%5B%5D=/g, '').replace(/&/g, ',');
@@ -64,11 +55,9 @@ echo ajax_modal_template_footer(TEXT_COPY) ?>
         });
     })
 
-
     function get_entities_form_tabs() {
-        $('#entities_form_tabs').load('<?php echo url_for(
-            'entities/fields',
-            'action=get_entities_form_tabs'
+        $('#entities_form_tabs').load('<?= \Helpers\Urls::url_for(
+            'main/entities/fields/get_entities_form_tabs'
         ) ?>', {entities_id: $('#copy_to_entities_id').val()})
     }
 </script>
