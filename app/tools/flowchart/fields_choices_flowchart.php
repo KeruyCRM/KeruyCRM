@@ -1,17 +1,18 @@
 <?php
+/*
+ * KeruyCRM (c)
+ * https://keruy.com.ua
+ */
 
-class fields_choices_flowchart
+namespace Tools\Flowchart;
+
+class Fields_choices_flowchart
 {
     public $nodes;
-
     public $edges;
-
     public $height;
-
     public $height_step;
-
     public $y;
-
     public $y_step;
 
     function __construct()
@@ -28,32 +29,40 @@ class fields_choices_flowchart
 
     function prepare_data($fields_id)
     {
-        $tree = fields_choices::get_tree($fields_id);
+        $tree = \Models\Main\Fields_choices::get_tree($fields_id);
 
         $previous_id = 0;
 
         foreach ($tree as $v) {
             $filters_title = '';
-            $reports_type = 'fields_choices' . $v['id'];
-            $reports_info_query = db_query(
+            //$reports_type = 'fields_choices' . (int)$v['id'];
+            /*$reports_info_query = db_query(
                 "select * from app_reports where entities_id='" . db_input(
-                    $_GET['entities_id']
+                     \K::$fw->GET['entities_id']
                 ) . "' and reports_type='{$reports_type}'"
-            );
-            if ($reports_info = db_fetch_array($reports_info_query)) {
-                $filters_query = db_query(
-                    "select rf.*, f.name, f.type from app_reports_filters rf left join app_fields f on rf.fields_id=f.id where rf.reports_id='" . db_input(
-                        $reports_info['id']
-                    ) . "' order by rf.id"
+            );*/
+
+            $reports_info = \K::model()->db_fetch_one('app_reports', [
+                'entities_id = ? and reports_type = ?',
+                \K::$fw->GET['entities_id'],
+                'fields_choices' . (int)$v['id']
+            ], [], 'id');
+
+            if ($reports_info) {
+                $filters_query = \K::model()->db_query_exec(
+                    "select rf.*, f.name, f.type from app_reports_filters rf left join app_fields f on rf.fields_id = f.id where rf.reports_id = ? order by rf.id",
+                    $reports_info['id'],
+                    'app_reports_filters,app_fields'
                 );
-                while ($filters = db_fetch_array($filters_query)) {
-                    $filters_title .= fields_types::get_option(
+
+                foreach ($filters_query as $filters) {
+                    $filters_title .= \Models\Main\Fields_types::get_option(
                             $filters['type'],
                             'name',
                             $filters['name']
-                        ) . ": " . reports::get_condition_name_by_key(
+                        ) . ": " . \Models\Main\Reports\Reports::get_condition_name_by_key(
                             $filters['filters_condition']
-                        ) . ' ' . reports::render_filters_values(
+                        ) . ' ' . \Models\Main\Reports\Reports::render_filters_values(
                             $filters['fields_id'],
                             $filters['filters_values'],
                             ', ',
@@ -78,17 +87,16 @@ class fields_choices_flowchart
 
             //hande edges
             $this->edges[] = "{ data: { id: 'edge_{$id}_{$id}', source: 'choice_filter_{$id}', target: 'choice_{$id}',label: '" . addslashes(
-                    TEXT_YES
+                    \K::$fw->TEXT_YES
                 ) . "'} }";
 
             if ($previous_id > 0) {
                 $this->edges[] = "{ data: { id: 'edge_{$previous_id}_{$id}', source: 'choice_filter_{$previous_id}', target: 'choice_filter_{$id}',label: '" . addslashes(
-                        TEXT_NO
+                        \K::$fw->TEXT_NO
                     ) . "'} }";
             }
 
             $previous_id = $id;
         }
     }
-
 }

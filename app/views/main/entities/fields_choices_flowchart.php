@@ -3,48 +3,32 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-require(component_path('entities/navigation')) ?>
-<?php
+<?= \K::view()->render(\Helpers\Urls::components_path('main/entities/navigation')); ?>
 
-$flowchart = new fields_choices_flowchart;
-$flowchart->prepare_data(_get::int('fields_id'));
-
-$field_info = db_find('app_fields', _get::int('fields_id'));
-?>
-
-<h3 class="page-title"><?php
-    echo $field_info['name'] . ': ' . TEXT_FLOWCHART ?></h3>
+<h3 class="page-title"><?= \K::$fw->field_info['name'] . ': ' . \K::$fw->TEXT_FLOWCHART ?></h3>
 
 <div class="row">
     <div class="col-md-3">
-        <?php
-        echo '<a class="btn btn-default" href="' . url_for(
-                'entities/fields_choices',
-                'entities_id=' . $_GET['entities_id'] . '&fields_id=' . $_GET['fields_id']
-            ) . '">' . TEXT_BUTTON_BACK . '</a>' ?>
+        <?= '<a class="btn btn-default" href="' . \Helpers\Urls::url_for(
+            'main/entities/fields_choices',
+            'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . \K::$fw->GET['fields_id']
+        ) . '">' . \K::$fw->TEXT_BUTTON_BACK . '</a>' ?>
     </div>
     <div class="col-md-8" style="text-align: right;">
-        <span class="label" style="background-color: #eaac44"><?php
-            echo TEXT_FILTERS ?></span>
-        <span class="label" style="background-color: #68b857;"><?php
-            echo TEXT_FIELDS ?></span>
+        <span class="label" style="background-color: #eaac44"><?= \K::$fw->TEXT_FILTERS ?></span>
+        <span class="label" style="background-color: #68b857;"><?= \K::$fw->TEXT_FIELDS ?></span>
     </div>
 </div>
 <br>
-<div id="flowchart" class="flowchart" style="height: <?php
-echo $flowchart->height ?>px;"></div>
+<div id="flowchart" class="flowchart" style="height: <?= \K::$fw->flowchart->height ?>px;"></div>
 
 <script>
     $(function () {
-
         var cy = window.cy = cytoscape({
             container: document.getElementById('flowchart'),
-
             boxSelectionEnabled: false,
             autounselectify: true,
             wheelSensitivity: 0.1,
-
             style: [
                 {
                     selector: 'node.choice_filter',
@@ -98,16 +82,14 @@ echo $flowchart->height ?>px;"></div>
                     }
                 },
             ],
-
             elements: {
                 nodes: [
-                    <?php echo str_replace('<br>', '\n', implode(",\n", $flowchart->nodes)) ?>
+                    <?= str_replace('<br>', '\n', implode(",\n", \K::$fw->flowchart->nodes)) ?>
                 ],
                 edges: [
-                    <?php echo implode(",\n", $flowchart->edges) ?>
+                    <?= implode(",\n", \K::$fw->flowchart->edges) ?>
                 ]
             },
-
             layout: {
                 name: 'preset',
                 padding: 25
@@ -117,15 +99,14 @@ echo $flowchart->height ?>px;"></div>
         cy.$('node').on('click', function (e) {
             var node = e.target;
             if (node.id().indexOf('choice_filter_') != -1) {
-                window.open('<?php echo url_for(
-                    'entities/fields_choices_filters',
-                    'entities_id=' . _get::int('entities_id') . '&fields_id=' . _get::int('fields_id')
+                window.open('<?= \Helpers\Urls::url_for(
+                    'main/entities/fields_choices_filters',
+                    'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . \K::$fw->GET['fields_id']
                 ) ?>&choices_id=' + node.id().replace('choice_filter_', ''), '_blank');
                 return true;
             }
         });
     })
-
 </script>
 
-<script src="js/cytoscape.js-master/dist/cytoscape.min.js"></script>
+<script src="<?= \K::$fw->DOMAIN ?>js/cytoscape.js-master/dist/cytoscape.min.js"></script>

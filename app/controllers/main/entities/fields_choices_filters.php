@@ -67,7 +67,7 @@ class Fields_choices_filters extends \Controller
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'fields_choices_filters.php';
 
-        \K::$fw->filters_query = \K::model()->db_query(
+        \K::$fw->filters_query = \K::model()->db_query_exec(
             "select rf.*, f.name, f.type from app_reports_filters rf left join app_fields f on rf.fields_id = f.id where rf.reports_id = ? order by rf.id",
             \K::$fw->reports_info['id'],
             'app_reports_filters,app_fields'
