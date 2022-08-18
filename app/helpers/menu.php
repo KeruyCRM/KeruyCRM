@@ -119,7 +119,10 @@ class Menu
         $where_sql = '';
 
         if (count($custom_entities_menu) > 0) {
-            $where_sql = " and e.id not in (" . implode(',', $custom_entities_menu) . ")";
+            $where_sql = " and e.id not in (" . \K::model()->quoteToString(
+                    $custom_entities_menu,
+                    \PDO::PARAM_INT
+                ) . ")";
         }
 
         if (\K::$fw->app_user['group_id'] == 0) {

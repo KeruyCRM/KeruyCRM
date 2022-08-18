@@ -337,6 +337,10 @@ class Model extends \Prefab
         }
 
         foreach ($data as $columns => $value) {
+            if (is_null($value)) {
+                $value = '';
+            }
+
             $mapper->{$columns} = $value;
         }
 
