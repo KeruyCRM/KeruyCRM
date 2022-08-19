@@ -3,63 +3,51 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-require(component_path('entities/navigation')) ?>
+<?= \K::view()->render(\Helpers\Urls::components_path('main/entities/navigation')); ?>
 
-<h3 class="page-title"><?php
-    echo TEXT_FIELD_SETTINGS . ': ' . $fields_info['name'] ?></h3>
+<h3 class="page-title"><?= \K::$fw->TEXT_FIELD_SETTINGS . ': ' . \K::$fw->fields_info['name'] ?></h3>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'fields_form',
-    url_for(
-        'entities/fields_settings',
-        'action=save&fields_id=' . $_GET['fields_id'] . '&entities_id=' . $_GET['entities_id']
+    \Helpers\Urls::url_for(
+        'main/entities/fields_settings/save',
+        'fields_id=' . \K::$fw->GET['fields_id'] . '&entities_id=' . \K::$fw->GET['entities_id']
     )
 ) ?>
 
 <?php
-//defautl field configuration
-$cfg = fields_types::parse_configuration($fields_info['configuration']);
-
-$exclude_cfg_keys = [];
-
-//get field configuraiton by type
-switch ($fields_info['type']) {
+//get field configuration by type
+switch (\K::$fw->fields_info['type']) {
     case 'fieldtype_related_records':
-        $exclude_cfg_keys = ['fields_in_listing', 'fields_in_popup'];
+        \K::$fw->exclude_cfg_keys = ['fields_in_listing', 'fields_in_popup'];
 
-        require(component_path('entities/fieldtype_related_records_settings'));
+        //require(component_path('entities/fieldtype_related_records_settings'));
+        \K::view()->render(\Helpers\Urls::components_path('main/entities/fieldtype_related_records_settings'));
         break;
 
     case 'fieldtype_entity':
-        $exclude_cfg_keys = ['fields_in_popup'];
+        \K::$fw->exclude_cfg_keys = ['fields_in_popup'];
 
-        require(component_path('entities/fieldtype_entity_settings'));
+        //require(component_path('entities/fieldtype_entity_settings'));
+        \K::view()->render(\Helpers\Urls::components_path('main/entities/fieldtype_entity_settings'));
         break;
 }
 
 //prepare other configuration if exist
-foreach ($cfg as $k => $v) {
-    if (!in_array($k, $exclude_cfg_keys)) {
+foreach (\K::$fw->cfg as $k => $v) {
+    if (!in_array($k, \K::$fw->exclude_cfg_keys)) {
         if (is_array($v)) {
             foreach ($v as $vv) {
-                echo input_hidden_tag('fields_configuration[' . $k . '][]', $vv);
+                echo \Helpers\Html::input_hidden_tag('fields_configuration[' . $k . '][]', $vv);
             }
         } else {
-            echo input_hidden_tag('fields_configuration[' . $k . ']', $v);
+            echo \Helpers\Html::input_hidden_tag('fields_configuration[' . $k . ']', $v);
         }
     }
 }
 ?>
 
 <br>
-<?php
-echo submit_tag(TEXT_BUTTON_SAVE) ?>
+<?= \Helpers\Html::submit_tag(\K::$fw->TEXT_BUTTON_SAVE) ?>
 
 </form>
-
-
-
-
-

@@ -87,20 +87,25 @@ class Related_records
 
     public static function get_report_info($field_info)
     {
-        global $app_heading_fields_id_cache;
-
-        $cfg = new fields_types_cfg($field_info['configuration']);
+        $cfg = new \Models\Main\Fields_types_cfg($field_info['configuration']);
 
         $entity_id = $cfg->get('entity_id');
-        $reports_type = 'related_items_' . $field_info['id'];
+        $reports_type = 'related_items_' . (int)$field_info['id'];
 
-        $reports_info_query = db_query(
+        /*$reports_info_query = db_query(
             "select * from app_reports where entities_id='" . db_input(
                 $entity_id
             ) . "' and reports_type='" . $reports_type . "'"
-        );
-        if (!$reports_info = db_fetch_array($reports_info_query)) {
-            $fields_in_listing = (isset($app_heading_fields_id_cache[$entity_id]) ? $app_heading_fields_id_cache[$entity_id] : '');
+        );*/
+
+        $reports_info = \K::model()->db_fetch_one('app_reports', [
+            'entities_id = ? and reports_type = ?',
+            $entity_id,
+            $reports_type
+        ]);
+
+        if (!$reports_info) {
+            $fields_in_listing = (\K::$fw->app_heading_fields_id_cache[$entity_id] ?? '');
 
             if (strlen($cfg->get('fields_in_listing')) > 0) {
                 $fields_in_listing .= (strlen($fields_in_listing) ? ',' : '') . $cfg->get('fields_in_listing');
@@ -118,13 +123,19 @@ class Related_records
                 'parent_item_id' => 0,
             ];
 
-            db_perform('app_reports', $sql_data);
+            $forceCommit = \K::model()->forceCommit();
 
-            $reports_id = db_insert_id();
+            $mapper = \K::model()->db_perform('app_reports', $sql_data);
 
-            reports::auto_create_parent_reports($reports_id);
+            $reports_id = \K::model()->db_insert_id($mapper);
 
-            $reports_info = db_find('app_reports', $reports_id);
+            \Models\Main\Reports\Reports::auto_create_parent_reports($reports_id);
+
+            if ($forceCommit) {
+                \K::model()->commit();
+            }
+
+            $reports_info = \K::model()->db_find('app_reports', $reports_id);
         }
 
         return $reports_info;
@@ -644,10 +655,13 @@ class Related_records
 
                     $table = $schema->createTable($table_info['table_name']);
 
-                    $table->addColumn('entity_' . (int)$entities_id . '_items_id')->type('INT(11) UNSIGNED', true)->nullable(
-                        false
-                    )->index();
-                    $table->addColumn('entity_' . (int)$related_entities_id . $table_info['suffix'] . '_items_id')->type(
+                    $table->addColumn('entity_' . (int)$entities_id . '_items_id')->type(
+                        'INT(11) UNSIGNED',
+                        true
+                    )->nullable(false)->index();
+                    $table->addColumn(
+                        'entity_' . (int)$related_entities_id . $table_info['suffix'] . '_items_id'
+                    )->type(
                         'INT(11) UNSIGNED',
                         true
                     )->nullable(false)->index();
