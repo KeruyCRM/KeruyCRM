@@ -6,7 +6,7 @@ class Forms_tabs
 {
     public static function get_name_by_id($id)
     {
-        $obj = db_find('app_forms_tabs', $id);
+        $obj = \K::model()->db_find('app_forms_tabs', $id);
 
         return $obj['name'];
     }
@@ -15,8 +15,8 @@ class Forms_tabs
     {
         $msg = '';
 
-        if (db_count('app_fields', $forms_tabs_id, 'forms_tabs_id') > 0) {
-            $msg = sprintf(TEXT_WARN_DELETE_FROM_TAB, forms_tabs::get_name_by_id($forms_tabs_id));
+        if (\K::model()->db_count('app_fields', $forms_tabs_id, 'forms_tabs_id', 0) > 0) {
+            $msg = sprintf(\K::model()->TEXT_WARN_DELETE_FROM_TAB, forms_tabs::get_name_by_id($forms_tabs_id));
         }
 
         return $msg;
@@ -53,7 +53,7 @@ class Forms_tabs
         $v = \K::model()->db_fetch_one('app_forms_tabs', [
             'entities_id = ?',
             $entities_id
-        ], [], null, ['max_sort_order' => 'max(sort_order)'],0);
+        ], [], null, ['max_sort_order' => 'max(sort_order)'], 0);
 
         return $v['max_sort_order'];
     }
