@@ -60,10 +60,17 @@ class Forms_tabs
 
     public static function is_reserved($tabs_id)
     {
-        $tab_query = db_query(
+        /*$tab_query = db_query(
             "select * from app_fields where forms_tabs_id='" . db_input($tabs_id) . "' and type='fieldtype_id'"
-        );
-        if ($tab = db_fetch_array($tab_query)) {
+        );*/
+
+        $tab = \K::model()->db_fetch_one('app_fields', [
+            'forms_tabs_id = ? and type = ?',
+            $tabs_id,
+            'fieldtype_id'
+        ], [], ['id']);
+
+        if ($tab) {
             return true;
         } else {
             return false;
