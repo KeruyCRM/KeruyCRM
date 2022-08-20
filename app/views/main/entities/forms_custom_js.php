@@ -3,72 +3,54 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header('JavaScript') ?>
+<?= \Helpers\App::ajax_modal_template_header('JavaScript') ?>
 
-<?php
-$cfg = new entities_cfg($_GET['entities_id']); ?>
-
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'fields_form',
-    url_for('entities/forms', 'action=save_javascript&entities_id=' . $_GET['entities_id']),
+    \Helpers\Urls::url_for('main/entities/forms/save_javascript', 'entities_id=' . \K::$fw->GET['entities_id']),
     ['class' => 'form-horizontal', 'enctype' => 'multipart/form-data']
 ) ?>
 <div class="modal-body ajax-modal-width-790">
     <div class="form-body">
-
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#javascript_in_form" data-toggle="tab"><?php
-                    echo TEXT_JAVASCRIPT_IN_FORM ?></a></li>
-            <li><a href="#onSubmit" data-toggle="tab" id="onSubmitTab"><?php
-                    echo 'onSubmit' ?></a></li>
+            <li class="active"><a href="#javascript_in_form"
+                                  data-toggle="tab"><?= \K::$fw->TEXT_JAVASCRIPT_IN_FORM ?></a></li>
+            <li><a href="#onSubmit" data-toggle="tab" id="onSubmitTab"><?= 'onSubmit' ?></a></li>
         </ul>
-
         <div class="tab-content">
-
             <div class="tab-pane fade active in" id="javascript_in_form">
-                <p><?php
-                    echo TEXT_JAVASCRIPT_IN_FORM_INFO ?></p>
+                <p><?= \K::$fw->TEXT_JAVASCRIPT_IN_FORM_INFO ?></p>
                 <div class="form-group">
                     <div class="col-md-12">
-                        <?php
-                        echo textarea_tag(
+                        <?= \Helpers\Html::textarea_tag(
                             'javascript_in_from',
-                            $cfg->get('javascript_in_from'),
+                            \K::$fw->cfg->get('javascript_in_from'),
                             ['class' => 'form-control']
                         ) ?>
                     </div>
                 </div>
             </div>
-
             <div class="tab-pane fade " id="onSubmit">
-                <p><?php
-                    echo TEXT_JAVASCRIPT_ONSUBMIT_FORM_INFO ?></p>
+                <p><?= \K::$fw->TEXT_JAVASCRIPT_ONSUBMIT_FORM_INFO ?></p>
                 <div class="form-group">
                     <div class="col-md-12">
-                        <?php
-                        echo textarea_tag(
+                        <?= \Helpers\Html::textarea_tag(
                             'javascript_onsubmit',
-                            $cfg->get('javascript_onsubmit'),
+                            \K::$fw->cfg->get('javascript_onsubmit'),
                             ['class' => 'form-control']
                         ) ?>
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
-<?php
-echo app_include_codemirror(['javascript']) ?>
+<?= \Helpers\App::app_include_codemirror(['javascript']) ?>
 
 <script>
     $('#ajax-modal').on('shown.bs.modal', function () {
@@ -78,7 +60,6 @@ echo app_include_codemirror(['javascript']) ?>
             matchBrackets: true,
             lineWrapping: true,
         });
-
     });
 
     $('#onSubmitTab').click(function () {
@@ -94,6 +75,4 @@ echo app_include_codemirror(['javascript']) ?>
             $(this).addClass('active-codemirror')
         }
     })
-
 </script>
-   

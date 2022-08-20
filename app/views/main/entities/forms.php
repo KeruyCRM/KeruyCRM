@@ -107,7 +107,7 @@ if (!defined('KERUY_CRM')) {
 ';
                             $fields_query = \K::model()->db_query_exec(
                                 "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserverd_types_list(
-                                ) . ") and f.entities_id = ? and f.forms_tabs_id=t.id and f.forms_tabs_id = ? and length(forms_rows_position) = 0 order by t.sort_order, t.name, f.sort_order, f.name",
+                                ) . ") and f.entities_id = ? and f.forms_tabs_id = t.id and f.forms_tabs_id = ? and length(forms_rows_position) = 0 order by t.sort_order, t.name, f.sort_order, f.name",
                                 [
                                     \K::$fw->GET['entities_id'],
                                     $tabs['id']
@@ -333,8 +333,8 @@ if (!defined('KERUY_CRM')) {
                 $.ajax({
                     type: "POST",
                     url: '<?= \Helpers\Urls::url_for(
-                        'entities/forms_rows',
-                        'action=sort_rows&entities_id=' . \K::$fw->GET['entities_id']
+                        'main/entities/forms_rows/sort_rows',
+                        'entities_id=' . \K::$fw->GET['entities_id']
                     )?>',
                     data: data
                 });
