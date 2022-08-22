@@ -77,7 +77,7 @@ class Forms_rows extends \Controller
                     'entities_id = ? and forms_tabs_id = ?',
                     \K::$fw->GET['entities_id'],
                     \K::$fw->GET['forms_tabs_id']
-                ], [], 'total', ['total' => '(max(sort_order)+1)']);
+                ], [], null, ['total' => '(max(sort_order)+1)'], 0);
 
                 $sort_order = $check['total'];
 
