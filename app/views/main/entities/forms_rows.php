@@ -3,61 +3,35 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_ROW) ?>
 
-if (isset($_GET['id'])) {
-    $obj = db_find('app_forms_rows', $_GET['id']);
-} else {
-    $obj = db_show_columns('app_forms_rows');
-
-    $obj['columns'] = 2;
-    $obj['column1_width'] = 6;
-    $obj['column2_width'] = 6;
-    $obj['field_name_new_row'] = 1;
-}
-
-?>
-
-<?php
-echo ajax_modal_template_header(TEXT_ROW) ?>
-
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'fields_form',
-    url_for(
-        'entities/forms_rows',
-        'action=save' . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '') . '&entities_id=' . _GET(
-            'entities_id'
-        ) . '&forms_tabs_id=' . _GET('forms_tabs_id')
+    \Helpers\Urls::url_for(
+        'main/entities/forms_rows/save',
+        (isset(\K::$fw->GET['id']) ? '&id=' . \K::$fw->GET['id'] : '') . '&entities_id=' . \K::$fw->GET['entities_id'] . '&forms_tabs_id=' . \K::$fw->GET['forms_tabs_id']
     ),
     ['class' => 'form-horizontal']
 ) ?>
 <div class="modal-body">
     <div class="form-body ajax-modal-width-790">
-
         <div class="form-group">
-            <label class="col-md-3 control-label" for="columns"><?php
-                echo TEXT_COUNT_OF_COLUMNS ?></label>
+            <label class="col-md-3 control-label" for="columns"><?= \K::$fw->TEXT_COUNT_OF_COLUMNS ?></label>
             <div class="col-md-9">
-                <?php
-                echo select_tag(
+                <?= \Helpers\Html::select_tag(
                     'columns',
                     ['1' => 1, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6],
-                    $obj['columns'],
+                    \K::$fw->obj['columns'],
                     ['class' => 'form-control input-small']
                 ) ?>
             </div>
         </div>
-
         <?php
         for ($i = 1; $i <= 6; $i++) { ?>
-            <div class="form-group form-group-column-<?php
-            echo $i ?>">
-                <label class="col-md-3 control-label" for="columns"><?php
-                    echo TEXT_COLUMN_WIDTH . " {$i}:" ?></label>
+            <div class="form-group form-group-column-<?= $i ?>">
+                <label class="col-md-3 control-label" for="columns"><?= \K::$fw->TEXT_COLUMN_WIDTH . " {$i}:" ?></label>
                 <div class="col-md-9">
-                    <?php
-                    echo select_tag(
+                    <?= \Helpers\Html::select_tag(
                         'column' . $i . '_width',
                         [
                             '1' => '1/12',
@@ -73,70 +47,60 @@ echo form_tag(
                             '11' => '11/12',
                             '12' => '12/12'
                         ],
-                        $obj['column' . $i . '_width'],
+                        \K::$fw->obj['column' . $i . '_width'],
                         ['class' => 'form-control input-small column-width', 'column_num' => $i]
                     ) ?>
                 </div>
             </div>
             <?php
         } ?>
-
         <div class="form-group">
-            <label class="col-md-3 control-label" for="field_name_new_row"><?php
-                echo TEXT_FIELD_NAME_IN_NEW_ROW ?></label>
+            <label class="col-md-3 control-label"
+                   for="field_name_new_row"><?= \K::$fw->TEXT_FIELD_NAME_IN_NEW_ROW ?></label>
             <div class="col-md-9">
-                <p class="form-control-static"><?php
-                    echo input_checkbox_tag('field_name_new_row', '1', ['checked' => $obj['field_name_new_row']]) ?></p>
+                <p class="form-control-static"><?= \Helpers\Html::input_checkbox_tag(
+                        'field_name_new_row',
+                        '1',
+                        ['checked' => \K::$fw->obj['field_name_new_row']]
+                    ) ?></p>
             </div>
         </div>
 
-        <h3 class="form-section"><?php
-            echo TEXT_PREVIEW ?></h3>
+        <h3 class="form-section"><?= \K::$fw->TEXT_PREVIEW ?></h3>
 
         <div class="row">
-            <div id="preview_column1" class="col-md-<?php
-            echo $obj['column1_width'] ?>">
+            <div id="preview_column1" class="col-md-<?= \K::$fw->obj['column1_width'] ?>">
                 <div class="well">1</div>
             </div>
-            <div id="preview_column2" class="col-md-<?php
-            echo $obj['column2_width'] ?>">
+            <div id="preview_column2" class="col-md-<?= \K::$fw->obj['column2_width'] ?>">
                 <div class="well">2</div>
             </div>
-            <div id="preview_column3" class="col-md-<?php
-            echo $obj['column3_width'] ?>">
+            <div id="preview_column3" class="col-md-<?= \K::$fw->obj['column3_width'] ?>">
                 <div class="well">3</div>
             </div>
-            <div id="preview_column4" class="col-md-<?php
-            echo $obj['column4_width'] ?>">
+            <div id="preview_column4" class="col-md-<?= \K::$fw->obj['column4_width'] ?>">
                 <div class="well">4</div>
             </div>
-            <div id="preview_column5" class="col-md-<?php
-            echo $obj['column5_width'] ?>">
+            <div id="preview_column5" class="col-md-<?= \K::$fw->obj['column5_width'] ?>">
                 <div class="well">5</div>
             </div>
-            <div id="preview_column6" class="col-md-<?php
-            echo $obj['column6_width'] ?>">
+            <div id="preview_column6" class="col-md-<?= \K::$fw->obj['column6_width'] ?>">
                 <div class="well">6</div>
             </div>
         </div>
 
-        <p><?php
-            echo TEXT_FORMS_ROWS_INFO ?></p>
+        <p><?= \K::$fw->TEXT_FORMS_ROWS_INFO ?></p>
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
 <script>
-
     $(function () {
-
         $('#fields_form').validate({
             ignore: '',
-
             submitHandler: function (form) {
                 app_prepare_modal_action_loading(form)
                 form.submit();
@@ -154,7 +118,6 @@ echo ajax_modal_template_footer() ?>
             width = $(this).val();
             $('#preview_column' + column_num).removeClass("col-md-12 col-md-11 col-md-10 col-md-9 col-md-8 col-md-7 col-md-6 col-md-5 col-md-4 col-md-3 col-md-2 col-md-1").addClass('col-md-' + width)
         })
-
     });
 
     function count_columns_change(auto_widht) {
@@ -208,4 +171,4 @@ echo ajax_modal_template_footer() ?>
                 break;
         }
     }
-</script>	
+</script>
