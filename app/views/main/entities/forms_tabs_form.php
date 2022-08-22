@@ -3,44 +3,41 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header((isset($_GET['id']) ? TEXT_HEADING_EDIT_FORM_TAB : TEXT_HEADING_NEW_FORM_TAB)) ?>
+<?= \Helpers\App::ajax_modal_template_header(
+    (isset(\K::$fw->GET['id']) ? \K::$fw->TEXT_HEADING_EDIT_FORM_TAB : \K::$fw->TEXT_HEADING_NEW_FORM_TAB)
+) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'forms_form',
-    url_for('entities/forms', 'action=save_tab' . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '')),
+    \Helpers\Urls::url_for(
+        'main/entities/forms/save_tab',
+        (isset(\K::$fw->GET['id']) ? '&id=' . \K::$fw->GET['id'] : '')
+    ),
     ['class' => 'form-horizontal']
 ) ?>
 <div class="modal-body">
     <div class="form-body">
-
-        <?php
-        echo input_hidden_tag('entities_id', $_GET['entities_id']) ?>
-
+        <?= \Helpers\Html::input_hidden_tag('entities_id', \K::$fw->GET['entities_id']) ?>
         <div class="form-group">
-            <label class="col-md-3 control-label" for="name"><?php
-                echo TEXT_NAME ?></label>
+            <label class="col-md-3 control-label" for="name"><?= \K::$fw->TEXT_NAME ?></label>
             <div class="col-md-9">
-                <?php
-                echo input_tag('name', $obj['name'], ['class' => 'form-control input-large required']) ?>
+                <?= \Helpers\Html::input_tag(
+                    'name',
+                    \K::$fw->obj['name'],
+                    ['class' => 'form-control input-large required']
+                ) ?>
             </div>
         </div>
-
         <div class="form-group">
-            <label class="col-md-3 control-label" for="name"><?php
-                echo TEXT_DESCRIPTION ?></label>
+            <label class="col-md-3 control-label" for="name"><?= \K::$fw->TEXT_DESCRIPTION ?></label>
             <div class="col-md-9">
-                <?php
-                echo textarea_tag('description', $obj['description'], ['class' => 'editor']) ?>
+                <?= \Helpers\Html::textarea_tag('description', \K::$fw->obj['description'], ['class' => 'editor']) ?>
             </div>
         </div>
-
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
@@ -53,7 +50,4 @@ echo ajax_modal_template_footer() ?>
             }
         });
     });
-
-</script>   
-    
- 
+</script>
