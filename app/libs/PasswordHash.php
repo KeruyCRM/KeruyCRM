@@ -51,7 +51,6 @@ class PasswordHash extends \Prefab
 
     function get_random_bytes($count)
     {
-        //TODO refactor function to random_bytes
         $output = '';
 
         /*

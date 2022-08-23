@@ -33,4 +33,5 @@
     'CFG_TOKEN_LENGTH' => 32,
     'CFG_SESSION_CHECK_IP' => false,
     'CFG_SESSION_CHECK_BROWSER' => true,
+    'CFG_COOKIE_TIME_REMEMBER_ME' => 60 * 60 * 24 * 30 //1 month in sec
 ]);

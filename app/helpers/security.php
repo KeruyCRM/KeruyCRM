@@ -130,4 +130,67 @@ class Security extends \Prefab
         $decrypt = ((0x00FFFFFF & $n) << 8) + (((0xFF000000 & $n) >> 24) & 0x000000FF);
         return $decrypt ^ crc32($key);
     }
+
+    public function password_hash($password)
+    {
+        return password_hash($password, PASSWORD_DEFAULT);
+    }
+
+    public function password_verify($password, $hash, $user_id)
+    {
+        $rehash = false;
+
+        if ($this->isPasswordHash($hash)) {
+            $hasher = new \Libs\PasswordHash(11, false);
+            $verify = $hasher->CheckPassword($password, $hash);
+
+            if ($verify) {
+                $rehash = true;
+            }
+        } else {
+            $verify = password_verify($password, $hash);
+
+            if ($verify and $this->password_needs_rehash($hash)) {
+                $rehash = true;
+            }
+        }
+
+        if ($verify and $rehash) {
+            \K::model()->db_update('app_entity_1', ['password' => $this->password_hash($password)], [
+                'id = ?',
+                $user_id
+            ]);
+        }
+
+        return $verify;
+    }
+
+    private function password_needs_rehash($hash)
+    {
+        return password_needs_rehash($hash, PASSWORD_DEFAULT);
+    }
+
+    private function isPasswordHash($hash)
+    {
+        $id = substr($hash, 0, 3);
+        return $id == '$P$';
+    }
+
+    public function getCookieHash($expires, $username, $password_hash)
+    {
+        return $expires . $this->_DELIMITER . hash_hmac(
+                'sha256',
+                $username . $this->_DELIMITER . $expires,
+                $password_hash
+            );
+    }
+
+    public function isRememberMe($hash, $username, $passwordHash)
+    {
+        $expires = rtrim(substr($hash, 0, -64), $this->_DELIMITER);
+
+        $passwordHashedGen = $this->getCookieHash($expires, $username, $passwordHash);
+
+        return hash_equals($hash, $passwordHashedGen);
+    }
 }

@@ -320,9 +320,7 @@ class Install
             $insert_query2,
             [
                 ':time' => time(),
-                ':user_password' => \Libs\PasswordHash::instance(11, false)->HashPassword(
-                    $this->f3->POST['user_password']
-                ),
+                ':user_password' => \K::security()->password_hash($this->f3->POST['user_password']),
                 ':fields7' => $this->f3->POST['fields'][7],
                 ':fields8' => $this->f3->POST['fields'][8],
                 ':fields9' => $this->f3->POST['fields'][9],

@@ -55,14 +55,14 @@ class Change_password extends \Controller
             }
 
             if (!$error) {
-                $hasher = new \Libs\PasswordHash(11, false);
+                //$hasher = new \Libs\PasswordHash(11, false);
 
                 /*$sql_data = [];
                 $sql_data['password'] = $hasher->HashPassword($password);
 
                 db_perform('app_entity_1', $sql_data, 'update', "id='" . db_input(\K::$fw->app_logged_users_id) . "'");*/
 
-                \K::model()->db_perform('app_entity_1', ['password' => $hasher->HashPassword($password)], [
+                \K::model()->db_perform('app_entity_1', ['password' => \K::security()->password_hash($password)], [
                     'id = ?',
                     \K::$fw->app_logged_users_id
                 ]);

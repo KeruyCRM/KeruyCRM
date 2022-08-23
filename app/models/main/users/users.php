@@ -559,7 +559,10 @@ class Users
         );*/
 
         $access_info_query = \K::model()->db_fetch(
-            'app_entities_access', ['access_groups_id = ?', $access_groups_id],[],'entities_id,access_schema'
+            'app_entities_access',
+            ['access_groups_id = ?', $access_groups_id],
+            [],
+            'entities_id,access_schema'
         );//FIX
 
         //while ($access_info = db_fetch_array($access_info_query)) {
@@ -872,10 +875,8 @@ class Users
         }
     }
 
-    public static function login($username, $password, $remember_me, $password_hashed = null, $redirect_to = null)
+    public static function login($username, $password, $remember_me, $hash = null, $redirect_to = null)
     {
-        //global $alerts, $_GET;
-
         /*$user_query = db_query(
             "select * from app_entity_1 where field_12='" . db_input(
                 $username
@@ -885,16 +886,16 @@ class Users
         $user = \K::model()->db_fetch_one(
             'app_entity_1',
             [
-                'field_12 = :field_12' . (isset($password_hashed) ? ' and password = :password' : ''),
+                'field_12 = :field_12',
                 ':field_12' => $username
-            ] + (isset($password_hashed) ? [':password' => $password_hashed] : [])
+            ]
         );
 
         if ($user) {
             if ($user['field_5'] == 1) {
-                $hasher = new \Libs\PasswordHash(11, false);
+                //$hasher = new \Libs\PasswordHash(11, false);
 
-                if (isset($password_hashed)) {
+                if (isset($hash) and \K::security()->isRememberMe($hash, $username, $user['password'])) {
                     \K::app_session_register('app_logged_users_id', $user['id']);
 
                     \Models\Main\Users\Users_login_log::success($username, $user['id']);
@@ -905,7 +906,8 @@ class Users
                     } else {
                         \Helpers\Urls::redirect_to('main/dashboard');
                     }
-                } elseif ($hasher->CheckPassword($password, $user['password'])) {
+                    //} elseif ($hasher->CheckPassword($password, $user['password'])) {
+                } elseif (\K::security()->password_verify($password, $user['password'], $user['id'])) {
                     \K::app_session_register('app_logged_users_id', $user['id']);
 
                     //login log
@@ -914,10 +916,25 @@ class Users
                     }
 
                     if ($remember_me == 1) {
-                        \K::cookieSet('app_remember_me', 1, 60 * 60 * 24 * 30);
-                        \K::cookieSet('app_stay_logged', 1, 60 * 60 * 24 * 30);
-                        \K::cookieSet('app_remember_user', base64_encode($user['field_12']), 60 * 60 * 24 * 30);
-                        \K::cookieSet('app_remember_pass', base64_encode($user['password']), 60 * 60 * 24 * 30);
+                        $expires = time() + \K::$fw->CFG_COOKIE_TIME_REMEMBER_ME;
+                        $app_remember_pass = \K::security()->getCookieHash(
+                            $expires,
+                            $user['field_12'],
+                            $user['password']
+                        );
+
+                        \K::cookieSet('app_remember_me', 1, \K::$fw->CFG_COOKIE_TIME_REMEMBER_ME);
+                        \K::cookieSet('app_stay_logged', 1, \K::$fw->CFG_COOKIE_TIME_REMEMBER_ME);
+                        \K::cookieSet(
+                            'app_remember_user',
+                            base64_encode($user['field_12']),
+                            \K::$fw->CFG_COOKIE_TIME_REMEMBER_ME
+                        );
+                        \K::cookieSet(
+                            'app_remember_pass',
+                            base64_encode($app_remember_pass),
+                            \K::$fw->CFG_COOKIE_TIME_REMEMBER_ME
+                        );
                     } else {
                         \K::cookieClear('app_remember_me');
                         \K::cookieClear('app_stay_logged');
