@@ -1,6 +1,6 @@
 /**
-Core script to handle the entire theme and core functions
-**/
+ Core script to handle the entire theme and core functions
+ **/
 var App = function () {
 
     // IE mode
@@ -45,14 +45,14 @@ var App = function () {
             isRTL = true;
         }
 
-        isIE8 = !! navigator.userAgent.match(/MSIE 8.0/);
-        isIE9 = !! navigator.userAgent.match(/MSIE 9.0/);
-        isIE10 = !! navigator.userAgent.match(/MSIE 10.0/);
+        isIE8 = !!navigator.userAgent.match(/MSIE 8.0/);
+        isIE9 = !!navigator.userAgent.match(/MSIE 9.0/);
+        isIE10 = !!navigator.userAgent.match(/MSIE 10.0/);
 
         if (isIE10) {
             jQuery('html').addClass('ie10'); // detect IE10 version
         }
-        
+
         if (isIE10 || isIE9 || isIE8) {
             jQuery('html').addClass('ie'); // detect IE10 version
         }
@@ -210,7 +210,7 @@ var App = function () {
             e.preventDefault();
         });
 
-       // handle ajax links
+        // handle ajax links
         jQuery('.page-sidebar').on('click', ' li > a.ajaxify', function (e) {
             e.preventDefault();
             App.scrollTop();
@@ -296,9 +296,9 @@ var App = function () {
     }
 
     // Handles the sidebar menu hover effect for fixed sidebar.
-    
+
     var handleFixedSidebarHoverable = function () {
-        
+
         if ($('body').hasClass('page-sidebar-fixed') === false) {
             return;
         }
@@ -344,10 +344,10 @@ var App = function () {
                 });
             }
         });
-       
-        
+
+
     }
-    
+
 
     // Handles sidebar toggler to close/hide the sidebar.
     var handleSidebarToggler = function () {
@@ -368,21 +368,18 @@ var App = function () {
                 //$.cookie('sidebar_closed', '0');
                 e.stopPropagation();
                 runResponsiveHandlers();
-                                                
-                if (body.hasClass("page-sidebar-closed")) 
-                {	       
-                	
-	                $.cookie('sidebar_closed', '1');	                  
-	                set_user_cfg('sidebar-status','page-sidebar-closed');
-	              } 
-	              else 
-	              {	         	              	
-	                $.cookie('sidebar_closed', '0');	                  
-	                set_user_cfg('sidebar-status','')
-	              }
-                
+
+                if (body.hasClass("page-sidebar-closed")) {
+
+                    $.cookie('sidebar_closed', '1', {path: '/'});
+                    set_user_cfg('sidebar-status', 'page-sidebar-closed');
+                } else {
+                    $.cookie('sidebar_closed', '0', {path: '/'});
+                    set_user_cfg('sidebar-status', '')
+                }
+
                 jQuery(window).resize();
-                
+
                 return;
             }
 
@@ -391,70 +388,61 @@ var App = function () {
                 if (body.hasClass('page-sidebar-fixed')) {
                     sidebar.css('width', '');
                 }
-                $.cookie('sidebar_closed', '0');
-                
-                set_user_cfg('sidebar-status','');
-            } 
-            else 
-            {
+                $.cookie('sidebar_closed', '0', {path: '/'});
+
+                set_user_cfg('sidebar-status', '');
+            } else {
                 body.addClass("page-sidebar-closed");
-                $.cookie('sidebar_closed', '1');
-                
-                set_user_cfg('sidebar-status','page-sidebar-closed')
+                $.cookie('sidebar_closed', '1', {path: '/'});
+
+                set_user_cfg('sidebar-status', 'page-sidebar-closed')
             }
             handleSidebarAndContentHeight(); //fix content & sidebar height
             runResponsiveHandlers();
-            
+
             jQuery(window).resize();
-                        
-        });        
+
+        });
     }
 
-    var handleQuickSearch = function() {
+    var handleQuickSearch = function () {
 
         // handle search for header search input on enter press
         $('.search-form-header').on('keypress', 'input.form-control', function (e) {
             if (e.which == 13) {
-            	if($('.search-form-header')[0].checkValidity())
-            	{
-                $('.search-form-header').submit();   
-                return false;
-            	}
+                if ($('.search-form-header')[0].checkValidity()) {
+                    $('.search-form-header').submit();
+                    return false;
+                }
             }
         });
 
         // handle search for header search input on icon click
         $('.search-form-header').on('click', '.icon-search', function (e) {
-        	if($('.search-form-header')[0].checkValidity())
-        	{
-        		$('.search-form-header').submit();  
-        		return false;
-        	}
-        	else
-        	{        		
-        		$('.search-form-header').find(':submit').click();
-        	}
+            if ($('.search-form-header')[0].checkValidity()) {
+                $('.search-form-header').submit();
+                return false;
+            } else {
+                $('.search-form-header').find(':submit').click();
+            }
         });
 
         // handle search for sidebar search input on enter press
         $('.search-form-sidebar').on('keypress', 'input.form-control', function (e) {
-            if (e.which == 13) 
-            {
-            	if($('.search-form-sidebar')[0].checkValidity())
-            	{	
-                $('.search-form-sidebar').submit();
-                return false;
-            	}
+            if (e.which == 13) {
+                if ($('.search-form-sidebar')[0].checkValidity()) {
+                    $('.search-form-sidebar').submit();
+                    return false;
+                }
             }
         });
 
         // handle search for sidebar search input on icon click
         $('.search-form-sidebar').on('click', '.icon-search', function (e) {
-        	if($('.search-form-sidebar')[0].checkValidity())
-        	{
-            $('.search-form-sidebar').submit();
-            return false;
-        	} 
+            if ($('.search-form-sidebar')[0].checkValidity()) {
+                $('.search-form-sidebar').submit();
+                return false;
+            }
         });
     }
 
@@ -483,37 +471,36 @@ var App = function () {
             }, 1000);
         });
 
-                    
-        $('.portlet > .portlet-title').click(function(e){
-                                                
-            if(!$(e.target).hasClass('portlet-title') && !$(e.target).hasClass('caption') && !$(e.target).hasClass("collapse") && !$(e.target).hasClass("expand"))
-            {
+
+        $('.portlet > .portlet-title').click(function (e) {
+
+            if (!$(e.target).hasClass('portlet-title') && !$(e.target).hasClass('caption') && !$(e.target).hasClass("collapse") && !$(e.target).hasClass("expand")) {
                 return true
             }
-                            
+
             e.preventDefault();
-            
+
             var el = jQuery(this).closest(".portlet").children(".portlet-body");
-                                    
-            let obj = $('.tools a.collapse',this).length ? $('.tools a.collapse',this) : $('.tools a.expand',this)                        
-                        
+
+            let obj = $('.tools a.collapse', this).length ? $('.tools a.collapse', this) : $('.tools a.expand', this)
+
             if (obj.hasClass("collapse")) {
                 obj.removeClass("collapse").addClass("expand");
-                el.slideUp(200);   
-                
-                url = url_for('dashboard/portlets','action=set_status&status=1')
-                $.ajax({ type: "POST",url: url,data:{name: el.attr('data_portlet_id')}})
-                
+                el.slideUp(200);
+
+                url = url_for('main/dashboard/portlets/set_status', 'status=1')
+                $.ajax({type: "POST", url: url, data: {name: el.attr('data_portlet_id')}})
+
             } else {
                 obj.removeClass("expand").addClass("collapse");
                 el.slideDown(200);
-                
-                url = url_for('dashboard/portlets','action=set_status&status=0')
-                $.ajax({ type: "POST",url: url,data:{name: el.attr('data_portlet_id')}})
-                
+
+                url = url_for('main/dashboard/portlets/set_status', 'status=0')
+                $.ajax({type: "POST", url: url, data: {name: el.attr('data_portlet_id')}})
+
             }
         });
-                                
+
     }
 
     // Handles custom checkboxes & radios using jQuery Uniform plugin
@@ -557,10 +544,10 @@ var App = function () {
         //activate tab if tab id provided in the URL
         if (location.hash) {
             var tabid = location.hash.substr(1);
-            $('a[href="#' + tabid + '"]').parents('.tab-pane:hidden').each(function(){
+            $('a[href="#' + tabid + '"]').parents('.tab-pane:hidden').each(function () {
                 var tabid = $(this).attr("id");
-                $('a[href="#' + tabid + '"]').click();    
-            });            
+                $('a[href="#' + tabid + '"]').click();
+            });
             $('a[href="#' + tabid + '"]').click();
         }
     }
@@ -569,17 +556,17 @@ var App = function () {
     var handleModals = function () {
         // fix stackable modal issue: when 2 or more modals opened, closing one of modal will remove .modal-open class. 
         $('body').on('hide.bs.modal', function () {
-           if ($('.modal:visible').size() > 1 && $('html').hasClass('modal-open') == false) {
-              $('html').addClass('modal-open');
-           } else if ($('.modal:visible').size() <= 1) {
-              $('html').removeClass('modal-open');
-           }
+            if ($('.modal:visible').size() > 1 && $('html').hasClass('modal-open') == false) {
+                $('html').addClass('modal-open');
+            } else if ($('.modal:visible').size() <= 1) {
+                $('html').removeClass('modal-open');
+            }
         });
-            
+
         $('body').on('show.bs.modal', '.modal', function () {
             if ($(this).hasClass("modal-scroll")) {
                 $('body').addClass("modal-open-noscroll");
-            } 
+            }
         });
 
         $('body').on('hide.bs.modal', '.modal', function () {
@@ -589,7 +576,7 @@ var App = function () {
 
     // Handles Bootstrap Tooltips.
     var handleTooltips = function () {
-       jQuery('.tooltips').tooltip();
+        jQuery('.tooltips').tooltip();
     }
 
     // Handles Bootstrap Dropdowns
@@ -599,7 +586,7 @@ var App = function () {
           hoverable dropdowns - data-hover="dropdown"  
         */
         if (App.isTouchDevice()) {
-            $('[data-hover="dropdown"]').each(function(){
+            $('[data-hover="dropdown"]').each(function () {
                 $(this).parent().off("hover");
                 $(this).off("hover");
             });
@@ -619,7 +606,7 @@ var App = function () {
 
     // Handle Closable Alerts
     var handleAlerts = function () {
-        $('body').on('click', '[data-close="alert"]', function(e){
+        $('body').on('click', '[data-close="alert"]', function (e) {
             $(this).parent('.alert').hide();
             e.preventDefault();
         });
@@ -653,8 +640,8 @@ var App = function () {
             }
             $(this).slimScroll({
                 size: '7px',
-                color: ($(this).attr("data-handle-color")  ? $(this).attr("data-handle-color") : '#a1b2bd'),
-                railColor: ($(this).attr("data-rail-color")  ? $(this).attr("data-rail-color") : '#333'),
+                color: ($(this).attr("data-handle-color") ? $(this).attr("data-handle-color") : '#a1b2bd'),
+                railColor: ($(this).attr("data-rail-color") ? $(this).attr("data-rail-color") : '#333'),
                 position: isRTL ? 'left' : 'right',
                 height: height,
                 alwaysVisible: ($(this).attr("data-always-visible") == "1" ? true : false),
@@ -683,12 +670,12 @@ var App = function () {
                 }
             });
         }
-        
+
         //ajax popup open
         $(".fancybox-ajax").fancybox({
             type: "ajax",
-            beforeLoad : function() { 
-                this.href = this.href+'&windowWidth=' + $(window).width()+'&windowHeight=' + $(window).height();
+            beforeLoad: function () {
+                this.href = this.href + '&windowWidth=' + $(window).width() + '&windowHeight=' + $(window).height();
             }
         });
     }
@@ -722,7 +709,7 @@ var App = function () {
     }
 
     // Handle Select2 Dropdowns
-    var handleSelect2 = function() {
+    var handleSelect2 = function () {
         if (jQuery().select2) {
             $('.select2me').select2({
                 placeholder: "Select",
@@ -743,19 +730,14 @@ var App = function () {
         //$('.sidebar-option', panel).val("default");
         //$('.header-option', panel).val("fixed");
         //$('.footer-option', panel).val("default");
-        
-        if ( $('.sidebar-pos-option').attr("disabled") === false) {
+
+        if ($('.sidebar-pos-option').attr("disabled") === false) {
             $('.sidebar-pos-option', panel).val(App.isRTL() ? 'right' : 'left');
         }
-        
+
         //handle theme layout
         var resetLayout = function () {
-            $("body").
-            removeClass("page-boxed").
-            removeClass("page-footer-fixed").
-            removeClass("page-sidebar-fixed").
-            removeClass("page-header-fixed").
-            removeClass("page-sidebar-reversed");
+            $("body").removeClass("page-boxed").removeClass("page-footer-fixed").removeClass("page-sidebar-fixed").removeClass("page-header-fixed").removeClass("page-sidebar-reversed");
 
             $('.header > .header-inner').removeClass("container");
 
@@ -784,10 +766,8 @@ var App = function () {
             var footerOption = $('.footer-option', panel).val();
             var sidebarPosOption = $('.sidebar-pos-option', panel).val();
             var scaleOption = $('.scale-option', panel).val();
-            
 
 
-            
             if (sidebarOption == "fixed" && headerOption == "default") {
                 alert('Default Header with Fixed Sidebar option is not supported. Proceed with Fixed Header with Fixed Sidebar.');
                 $('.header-option', panel).val("fixed");
@@ -795,7 +775,7 @@ var App = function () {
                 sidebarOption = 'fixed';
                 headerOption = 'fixed';
             }
-            
+
 
             resetLayout(); // reset layout to default state
 
@@ -845,14 +825,13 @@ var App = function () {
             } else {
                 $("body").removeClass("page-footer-fixed");
             }
-                        
+
             if (scaleOption === 'reduced') {
                 $("body").addClass("page-scale-reduced");
             } else {
                 $("body").removeClass("page-scale-reduced");
             }
-            
-            
+
 
             //sidebar position
             if (App.isRTL()) {
@@ -877,13 +856,13 @@ var App = function () {
         // handle theme colors
         var setColor = function (color) {
             var color_ = (App.isRTL() ? color + '-rtl' : color);
-            $('#style_color').attr("href", sf_public_path+"/template/css/themes/" + color_ + ".css");
+            $('#style_color').attr("href", sf_public_path + "/template/css/themes/" + color_ + ".css");
             $.cookie('style_color', color);
         }
 
         $('.toggler', panel).click(function () {
             $(this).toggleClass("open");
-            $('.theme-panel > .theme-options').toggle();            
+            $('.theme-panel > .theme-options').toggle();
         });
 
         $('.theme-colors > ul > li', panel).click(function () {
@@ -1105,5 +1084,4 @@ var App = function () {
         }
 
     };
-
 }();
