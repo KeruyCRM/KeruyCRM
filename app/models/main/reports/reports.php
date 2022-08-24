@@ -1464,7 +1464,7 @@ class Reports
         $reports_list = self::get_parent_reports($reports_id, $reports_list);
 
         foreach ($reports_list as $report_id) {
-            $count_filters += db_count('app_reports_filters', $report_id, 'reports_id');
+            $count_filters += \K::model()->db_count('app_reports_filters', $report_id, 'reports_id');
         }
 
         return $count_filters;
@@ -1473,12 +1473,19 @@ class Reports
     public static function count_filters_by_reports_type($entities_id, $reports_type)
     {
         $count_filters = 0;
-        $reports_info_query = db_query(
+        /*$reports_info_query = db_query(
             "select * from app_reports where entities_id='" . db_input(
                 $entities_id
             ) . "' and reports_type='" . $reports_type . "'"
-        );
-        if ($reports_info = db_fetch_array($reports_info_query)) {
+        );*/
+
+        $reports_info = \K::model()->db_fetch_one('app_reports', [
+            'entities_id = ? and reports_type = ?',
+            $entities_id,
+            $reports_type
+        ], [], 'id');
+
+        if ($reports_info) {
             $count_filters = self::count_filters_by_reports_id($reports_info['id']);
         }
 
