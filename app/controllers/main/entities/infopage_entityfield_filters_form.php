@@ -18,27 +18,36 @@ class Infopage_entityfield_filters_form extends \Controller
 
     public function index()
     {
-        $fields_id = _get::int('fields_id');
+        /*$fields_id = \K::$fw->GET['fields_id'];
+
         $reports_info_query = db_query(
             "select * from app_reports where id='" . db_input(
-                $_GET['reports_id']
+                \K::$fw->GET['reports_id']
             ) . "' and reports_type='field" . $fields_id . "_entity_item_info_page'"
-        );
-        if (!$reports_info = db_fetch_array($reports_info_query)) {
-            echo TEXT_REPORT_NOT_FOUND;
-            exit();
-        }
+        );*/
 
-        $obj = [];
+        \K::$fw->reports_info = \K::model()->db_fetch_one('app_reports', [
+            'id = ? and reports_type = ?',
+            \K::$fw->GET['reports_id'],
+            'field' . (int)\K::$fw->GET['fields_id'] . '_entity_item_info_page'
+        ]);
 
-        if (isset($_GET['id'])) {
-            $obj = db_find('app_reports_filters', $_GET['id']);
+        if (!\K::$fw->reports_info) {
+            echo \K::$fw->TEXT_REPORT_NOT_FOUND;
         } else {
-            $obj = db_show_columns('app_reports_filters');
+            /*$obj = [];
+
+            if (isset(\K::$fw->GET['id'])) {
+                $obj = db_find('app_reports_filters', \K::$fw->GET['id']);
+            } else {
+                $obj = db_show_columns('app_reports_filters');
+            }*/
+
+            \K::$fw->obj = \K::model()->db_find('app_reports_filters', \K::$fw->GET['id']);
+
+            \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'infopage_entityfield_filters_form.php';
+
+            echo \K::view()->render(\K::$fw->subTemplate);
         }
-
-        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'infopage_entityfield_filters_form.php';
-
-        echo \K::view()->render(\K::$fw->subTemplate);
     }
 }
