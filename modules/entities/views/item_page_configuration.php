@@ -1,4 +1,5 @@
 <?php
+
 require(component_path('entities/navigation')) ?>
 
 <h3 class="page-title"><?php
@@ -98,7 +99,9 @@ echo form_tag(
             ) . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
         );
         while ($fields = db_fetch_array($fields_query)) {
-            $choices[$fields['tab_name']][$fields['id']] = $fields['name'];
+            $choices[$fields['tab_name']][$fields['id']] = (strlen(
+                $fields['name']
+            ) ? $fields['name'] : fields_types::get_title($fields['type']));
         }
         ?>
         <div class="form-group">
