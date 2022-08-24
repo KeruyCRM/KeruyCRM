@@ -51,7 +51,7 @@ class Account extends \Controller
 
             if (\K::fw()->exists('POST.fields.12')) {
                 if (\K::$fw->CFG_ALLOW_CHANGE_USERNAME == 1) {
-                    if (strlen($_POST['fields'][12]) == 0) {
+                    if (strlen(\K::$fw->POST['fields'][12]) == 0) {
                         $msg[] = \K::$fw->TEXT_ERROR_USERNAME_EMPTY;
                     }
                 }
@@ -65,7 +65,7 @@ class Account extends \Controller
                     ) > 0 and \K::$fw->CFG_ALLOW_REGISTRATION_WITH_THE_SAME_EMAIL == 0) {
                     /*$check_query = db_query(
                         "select count(*) as total from app_entity_1 where field_9='" . db_input(
-                            $_POST['fields'][9]
+                            \K::$fw->POST['fields'][9]
                         ) . "'  and id!='" . db_input(\K::$fw->app_logged_users_id) . "'"
                     );
                     $check = db_fetch_array($check_query);*/
@@ -81,11 +81,11 @@ class Account extends \Controller
                 }
             }
 
-            if (\K::$fw->CFG_ALLOW_CHANGE_USERNAME == 1 and isset($_POST['fields'][12])) {
-                if (strlen($_POST['fields'][12]) > 0) {
+            if (\K::$fw->CFG_ALLOW_CHANGE_USERNAME == 1 and isset(\K::$fw->POST['fields'][12])) {
+                if (strlen(\K::$fw->POST['fields'][12]) > 0) {
                     /*$check_query = db_query(
                         "select count(*) as total from app_entity_1 where field_12='" . db_input(
-                            $_POST['fields'][12]
+                            \K::$fw->POST['fields'][12]
                         ) . "'  and id!='" . db_input(\K::$fw->app_logged_users_id) . "'"
                     );
                     $check = db_fetch_array($check_query);*/
@@ -109,7 +109,7 @@ class Account extends \Controller
                 \Helpers\Urls::redirect_to('main/users/account');
             }
 
-            $fields_values_cache = '';//FIX? but check
+            $fields_values_cache = '';
             if (\K::fw()->exists('POST.fields')) {
                 $fields_values_cache = \Models\Main\Items\Items::get_fields_values_cache(
                     \K::$fw->POST['fields'],
@@ -130,7 +130,7 @@ class Account extends \Controller
             );
             $item_info = db_fetch_array($item_info_query);*/
 
-            $item_info = \K::model()->db_fetch_one('app_entity_' . \K::$fw->current_entity_id, [
+            $item_info = \K::model()->db_fetch_one('app_entity_' . (int)\K::$fw->current_entity_id, [
                 'id = ?',
                 \K::$fw->app_user['id']
             ]);
@@ -188,7 +188,7 @@ class Account extends \Controller
                     'current_field_value' => $current_field_value,
                 ];
 
-                $sql_data['field_' . $field['id']] = \Models\Main\Fields_types::process($process_options);
+                $sql_data['field_' . (int)$field['id']] = \Models\Main\Fields_types::process($process_options);
 
                 //prepare choices values for fields with multiple values
                 $choices_values->prepare($process_options);
@@ -198,7 +198,7 @@ class Account extends \Controller
 
             if (count($sql_data)) {
                 \K::model()->db_perform(
-                    'app_entity_' . \K::$fw->current_entity_id,
+                    'app_entity_' . (int)\K::$fw->current_entity_id,
                     $sql_data,
                     ['id = ?', \K::$fw->app_logged_users_id]
                 );

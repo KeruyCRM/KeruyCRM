@@ -156,10 +156,14 @@ class Security extends \Prefab
         }
 
         if ($verify and $rehash) {
-            \K::model()->db_update('app_entity_1', ['password' => $this->password_hash($password)], [
+            $password_hash = $this->password_hash($password);
+
+            \K::model()->db_update('app_entity_1', ['password' => $password_hash], [
                 'id = ?',
                 $user_id
             ]);
+
+            $this->rehashRememberMe($password_hash);
         }
 
         return $verify;
@@ -192,5 +196,33 @@ class Security extends \Prefab
         $passwordHashedGen = $this->getCookieHash($expires, $username, $passwordHash);
 
         return hash_equals($hash, $passwordHashedGen);
+    }
+
+    public function rehashRememberMe($password_hash){
+        if (\K::cookieExists('app_remember_me') and \K::cookieExists('app_stay_logged') and \K::cookieExists(
+                'app_remember_user'
+            )) {
+            $user = base64_decode(\K::cookieGet('app_remember_user'));
+
+            $expires = time() + \K::$fw->CFG_COOKIE_TIME_REMEMBER_ME;
+            $app_remember_pass = \K::security()->getCookieHash(
+                $expires,
+                $user,
+                $password_hash
+            );
+
+            \K::cookieSet('app_remember_me', 1, \K::$fw->CFG_COOKIE_TIME_REMEMBER_ME);
+            \K::cookieSet('app_stay_logged', 1, \K::$fw->CFG_COOKIE_TIME_REMEMBER_ME);
+            \K::cookieSet(
+                'app_remember_user',
+                base64_encode($user),
+                \K::$fw->CFG_COOKIE_TIME_REMEMBER_ME
+            );
+            \K::cookieSet(
+                'app_remember_pass',
+                base64_encode($app_remember_pass),
+                \K::$fw->CFG_COOKIE_TIME_REMEMBER_ME
+            );
+        }
     }
 }

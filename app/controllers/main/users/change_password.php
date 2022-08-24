@@ -62,10 +62,14 @@ class Change_password extends \Controller
 
                 db_perform('app_entity_1', $sql_data, 'update', "id='" . db_input(\K::$fw->app_logged_users_id) . "'");*/
 
-                \K::model()->db_perform('app_entity_1', ['password' => \K::security()->password_hash($password)], [
+                $password_hash = \K::security()->password_hash($password);
+
+                \K::model()->db_perform('app_entity_1', ['password' => $password_hash], [
                     'id = ?',
                     \K::$fw->app_logged_users_id
                 ]);
+
+                \K::security()->rehashRememberMe($password_hash);
 
                 \K::flash()->addMessage(\K::$fw->TEXT_PASSWORD_UPDATED, 'success');
             }
