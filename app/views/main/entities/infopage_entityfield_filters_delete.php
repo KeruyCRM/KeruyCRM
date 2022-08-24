@@ -3,24 +3,20 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_HEADING_DELETE) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_HEADING_DELETE) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'login',
-    url_for(
-        'entities/infopage_entityfield_filters',
-        'action=delete&id=' . $_GET['id'] . '&reports_id=' . $_GET['reports_id'] . '&entities_id=' . $_GET['entities_id'] . '&related_entities_id=' . $_GET['related_entities_id'] . '&fields_id=' . $_GET['fields_id']
+    \Helpers\Urls::url_for(
+        'main/entities/infopage_entityfield_filters/delete',
+        'id=' . \K::$fw->GET['id'] . '&reports_id=' . \K::$fw->GET['reports_id'] . '&entities_id=' . \K::$fw->GET['entities_id'] . '&related_entities_id=' . \K::$fw->GET['related_entities_id'] . '&fields_id=' . \K::$fw->GET['fields_id']
     )
 ) ?>
 
 <div class="modal-body">
-    <?php
-    echo TEXT_ARE_YOU_SURE ?>
+    <?= \K::$fw->TEXT_ARE_YOU_SURE ?>
 </div>
 
-<?php
-echo ajax_modal_template_footer(TEXT_BUTTON_DELETE) ?>
+<?= \Helpers\App::ajax_modal_template_footer(\K::$fw->TEXT_BUTTON_DELETE) ?>
 
-</form>  
+</form>
