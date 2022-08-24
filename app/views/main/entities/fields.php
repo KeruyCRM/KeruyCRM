@@ -67,7 +67,7 @@ if (!defined('KERUY_CRM')) {
         <tbody>
         <?php
         if (count(\K::$fw->fields_query) == 0) {
-            echo '<tr><td colspan="9">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</td></tr>';
+            echo '<tr><td colspan="10">' . \K::$fw->TEXT_NO_RECORDS_FOUND . '</td></tr>';
         }
 
         //while ($v = db_fetch_array($fields_query)):

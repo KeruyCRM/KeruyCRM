@@ -104,7 +104,7 @@ if (!defined('KERUY_CRM')) {
                     <div class="btn-group">
                         <button type="button" type="button" class="btn btn-default"
                                 onClick="location.href='<?= \Helpers\Urls::url_for(
-                                    'entities/entities_configuration',
+                                    'main/entities/entities_configuration',
                                     'entities_id=' . $v['id']
                                 ) ?>'"><?= $v['name'] ?></button>
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
