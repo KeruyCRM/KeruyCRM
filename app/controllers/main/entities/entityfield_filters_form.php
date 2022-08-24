@@ -32,13 +32,12 @@ class Entityfield_filters_form extends \Controller
 
         if (!\K::$fw->reports_info) {
             echo \K::$fw->TEXT_REPORT_NOT_FOUND;
-            return;
+        } else {
+            \K::$fw->obj = \K::$fw->db_find('app_reports_filters', \K::$fw->GET['id']);
+
+            \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'entityfield_filters_form.php';
+
+            echo \K::view()->render(\K::$fw->subTemplate);
         }
-
-        \K::$fw->obj = \K::$fw->db_find('app_reports_filters', \K::$fw->GET['id']);
-
-        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'entityfield_filters_form.php';
-
-        echo \K::view()->render(\K::$fw->subTemplate);
     }
 }

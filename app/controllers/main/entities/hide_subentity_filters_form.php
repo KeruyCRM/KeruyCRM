@@ -31,21 +31,21 @@ class Hide_subentity_filters_form extends \Controller
         ]);
 
         if (!\K::$fw->reports_info) {
-            return \K::$fw->TEXT_REPORT_NOT_FOUND;
-        }
-
-        /*$obj = [];
-
-        if (isset(\K::$fw->GET['id'])) {
-            $obj = db_find('app_reports_filters', \K::$fw->GET['id']);
+            echo \K::$fw->TEXT_REPORT_NOT_FOUND;
         } else {
-            $obj = db_show_columns('app_reports_filters');
-        }*/
+            /*$obj = [];
 
-        \K::$fw->obj = \K::model()->db_find('app_reports_filters', \K::$fw->GET['id']);
+            if (isset(\K::$fw->GET['id'])) {
+                $obj = db_find('app_reports_filters', \K::$fw->GET['id']);
+            } else {
+                $obj = db_show_columns('app_reports_filters');
+            }*/
 
-        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'hide_subentity_filters_form.php';
+            \K::$fw->obj = \K::model()->db_find('app_reports_filters', \K::$fw->GET['id']);
 
-        echo \K::view()->render(\K::$fw->subTemplate);
+            \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'hide_subentity_filters_form.php';
+
+            echo \K::view()->render(\K::$fw->subTemplate);
+        }
     }
 }
