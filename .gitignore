@@ -6,3 +6,4 @@ cache
 /uploads/users/
 /backups/*.zip
 /backups/*.sql
+.idea
