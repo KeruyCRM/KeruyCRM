@@ -362,19 +362,30 @@ class Listing_highlight
                 break;
             case 'choices':
                 if ($cfg->get('use_global_list') > 0) {
-                    $html = global_lists::render_value($value);
+                    $html = \Models\Main\Global_lists::render_value($value);
                 } else {
-                    $html = fields_choices::render_value($value);
+                    $html = \Models\Main\Fields_choices::render_value($value);
                 }
                 break;
             case 'entities':
                 if (strlen($value)) {
-                    $items_info_sql = "select e.* from app_entity_" . $cfg->get(
+                    /*$items_info_sql = "select e.* from app_entity_" . $cfg->get(
                             'entity_id'
                         ) . " e where e.id in (" . db_input_in($value) . ")";
-                    $items_query = db_query($items_info_sql);
-                    while ($item = db_fetch_array($items_query)) {
-                        $html .= items::get_heading_field($cfg->get('entity_id'), $item['id']) . '<br>';
+                    $items_query = db_query($items_info_sql);*/
+
+                    $items_query = \K::model()->db_fetch('app_entity_' . (int)$cfg->get('entity_id'), [
+                        'id in (' . $value . ')'
+                    ],[],'id');
+
+                    //while ($item = db_fetch_array($items_query)) {
+                    foreach ($items_query as $item) {
+                        $item = $item->cast();
+
+                        $html .= \Models\Main\Items\Items::get_heading_field(
+                                $cfg->get('entity_id'),
+                                $item['id']
+                            ) . '<br>';
                     }
                 }
                 break;

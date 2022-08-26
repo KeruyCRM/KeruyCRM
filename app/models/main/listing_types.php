@@ -36,11 +36,20 @@ class Listing_types
     //autocreate listing types if not exist	
     static function prepare_types($entities_id)
     {
+        $forceCommit = \K::model()->forceCommit();
+
         foreach (self::get_types() as $type) {
-            $check_query = db_query(
+            /*$check_query = db_query(
                 "select * from app_listing_types where entities_id='" . $entities_id . "' and type='" . $type . "'"
-            );
-            if (!$check = db_fetch_array($check_query)) {
+            );*/
+
+            $check = \K::model()->db_fetch_one('app_listing_types', [
+                'entities_id = ? and type = ?',
+                $entities_id,
+                $type
+            ], [], 'id');
+
+            if (!$check) {
                 $sql_data = [
                     'entities_id' => $entities_id,
                     'type' => $type,
@@ -48,8 +57,12 @@ class Listing_types
                     'is_active' => $type == 'table' ? 1 : 0,
                 ];
 
-                db_perform('app_listing_types', $sql_data);
+                \K::model()->db_perform('app_listing_types', $sql_data);
             }
+        }
+
+        if ($forceCommit) {
+            \K::model()->commit();
         }
     }
 
@@ -119,7 +132,7 @@ class Listing_types
         $info = \K::model()->db_fetch_one('app_listing_sections', [
             'listing_types_id = ?',
             $listing_types_id
-        ], [], null, ['max_sort_order' => 'max(sort_order)'],0);
+        ], [], null, ['max_sort_order' => 'max(sort_order)'], 0);
 
         return $info['max_sort_order'] + 1;
     }
