@@ -18,14 +18,6 @@ class Listing_sections_sort extends \Controller
 
     public function index()
     {
-        $obj = \K::model()->db_find('app_listing_sections', \K::$fw->GET['id']);
-
-        if (!isset(\K::$fw->GET['id'])) {
-            $obj['sort_order'] = \Models\Main\Listing_types::get_sections_next_order(\K::$fw->GET['listing_types_id']);
-        }
-
-        \K::$fw->obj = $obj;
-
         /*$filters_query = db_query(
             "select * from app_listing_sections where listing_types_id='" . db_input(
                 _get::int('listing_types_id')
