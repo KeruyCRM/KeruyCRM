@@ -15,18 +15,39 @@ class Listing_sections extends \Controller
 
         \Controllers\Main\Entities\_Module::top();
 
-        $listing_types_id = _get::int('listing_types_id');
+        if (!\K::$fw->GET['entities_id']) {
+            \Helpers\Urls::redirect_to('main/entities');//FIX
+        }
 
-        $listing_types_query = db_query(
-            "select * from app_listing_types where id='" . _get::int('listing_types_id') . "'"
-        );
-        if (!$listing_types = db_fetch_array($listing_types_query)) {
-            redirect_to('entities/listing_types', 'entities_id=' . _get::int('entities_id'));
+        /*$listing_types_query = db_query(
+            "select * from app_listing_types where id='" . \K::$fw->GET['listing_types_id'] . "'"
+        );*/
+
+        \K::$fw->listing_types = \K::model()->db_fetch_one('app_listing_types', [
+            'id = ?',
+            \K::$fw->GET['listing_types_id']
+        ]);
+
+        if (!\K::$fw->listing_types) {
+            \Helpers\Urls::redirect_to('main/entities/listing_types', 'entities_id=' . \K::$fw->GET['entities_id']);
         }
     }
 
     public function index()
     {
+        \K::$fw->align_choices = \Models\Main\Listing_types::get_sections_align_choices();
+
+        /*$filters_query = db_query(
+            "select * from app_listing_sections where listing_types_id='" . db_input(
+                \K::$fw->listing_types['id']
+            ) . "' order by sort_order, name"
+        );*/
+
+        \K::$fw->filters_query = \K::model()->db_fetch('app_listing_sections', [
+            'listing_types_id = ?',
+            \K::$fw->listing_types['id']
+        ], ['order' => 'sort_order,name']);
+
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'listing_sections.php';
 
         echo \K::view()->render(\K::$fw->app_layout);
@@ -34,58 +55,86 @@ class Listing_sections extends \Controller
 
     public function save()
     {
-        $sql_data = [
-            'listing_types_id' => $listing_types['id'],
-            'name' => $_POST['name'],
-            'fields' => (isset($_POST['fields']) ? implode(',', $_POST['fields']) : ''),
-            'display_field_names' => (isset($_POST['display_field_names']) ? 1 : 0),
-            'sort_order' => $_POST['sort_order'],
-            'text_align' => $_POST['text_align'],
-            'display_as' => $_POST['display_as'],
-            'width' => (isset($_POST['width']) ? $_POST['width'] : ''),
-        ];
+        if (\K::$fw->VERB == 'POST') {
+            $sql_data = [
+                'listing_types_id' => \K::$fw->listing_types['id'],
+                'name' => \K::$fw->POST['name'],
+                'fields' => (isset(\K::$fw->POST['fields']) ? implode(',', \K::$fw->POST['fields']) : ''),
+                'display_field_names' => (isset(\K::$fw->POST['display_field_names']) ? 1 : 0),
+                'sort_order' => \K::$fw->POST['sort_order'],
+                'text_align' => \K::$fw->POST['text_align'],
+                'display_as' => \K::$fw->POST['display_as'],
+                'width' => (\K::$fw->POST['width'] ?? ''),
+            ];
 
-        if (isset($_GET['id'])) {
-            db_perform('app_listing_sections', $sql_data, 'update', "id='" . db_input($_GET['id']) . "'");
+            /*if (isset(\K::$fw->GET['id'])) {
+                db_perform('app_listing_sections', $sql_data, 'update', "id='" . db_input(\K::$fw->GET['id']) . "'");
+            } else {
+                db_perform('app_listing_sections', $sql_data);
+            }*/
+
+            \K::model()->db_perform('app_listing_sections', $sql_data, [
+                'id = ?',
+                \K::$fw->GET['id']
+            ]);
+
+            \Helpers\Urls::redirect_to(
+                'main/entities/listing_sections',
+                'listing_types_id=' . \K::$fw->listing_types['id'] . '&entities_id=' . \K::$fw->GET['entities_id']
+            );
         } else {
-            db_perform('app_listing_sections', $sql_data);
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
-
-        redirect_to(
-            'entities/listing_sections',
-            'listing_types_id=' . $listing_types['id'] . '&entities_id=' . $_GET['entities_id']
-        );
     }
 
     public function delete()
     {
-        if (isset($_GET['id'])) {
-            db_delete_row('app_listing_sections', _get::int('id'));
+        if (\K::$fw->VERB == 'POST' and isset(\K::$fw->GET['id'])) {
+            \K::model()->db_delete_row('app_listing_sections', \K::$fw->GET['id']);
 
-            redirect_to(
-                'entities/listing_sections',
-                'listing_types_id=' . $listing_types['id'] . '&entities_id=' . $_GET['entities_id']
+            \Helpers\Urls::redirect_to(
+                'main/entities/listing_sections',
+                'listing_types_id=' . \K::$fw->listing_types['id'] . '&entities_id=' . \K::$fw->GET['entities_id']
             );
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 
     public function sort()
     {
-        $choices_sorted = $_POST['choices_sorted'];
+        if (\K::$fw->VERB == 'POST') {
+            $choices_sorted = \K::$fw->POST['choices_sorted'];
 
-        if (strlen($choices_sorted) > 0) {
-            $choices_sorted = json_decode(stripslashes($choices_sorted), true);
+            if (strlen($choices_sorted) > 0) {
+                $choices_sorted = json_decode(stripslashes($choices_sorted), true);
 
-            $sort_order = 1;
-            foreach ($choices_sorted as $v) {
-                db_query("update app_listing_sections set sort_order={$sort_order} where id={$v['id']}");
-                $sort_order++;
+                $sort_order = 1;
+
+                \K::model()->begin();
+
+                foreach ($choices_sorted as $v) {
+                    $sql_data = ['sort_order' => $sort_order];
+
+                    //db_query("update app_listing_sections set sort_order={$sort_order} where id={$v['id']}");
+
+                    \K::model()->db_update('app_listing_sections', $sql_data, [
+                        'id = ?',
+                        $v['id']
+                    ]);
+
+                    $sort_order++;
+                }
+
+                \K::model()->commit();
             }
-        }
 
-        redirect_to(
-            'entities/listing_sections',
-            'listing_types_id=' . $listing_types['id'] . '&entities_id=' . $_GET['entities_id']
-        );
+            \Helpers\Urls::redirect_to(
+                'main/entities/listing_sections',
+                'listing_types_id=' . \K::$fw->listing_types['id'] . '&entities_id=' . \K::$fw->GET['entities_id']
+            );
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 }
