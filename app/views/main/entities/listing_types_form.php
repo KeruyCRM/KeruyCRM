@@ -3,77 +3,73 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_INFO) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_INFO) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'entities_form',
-    url_for(
-        'entities/listing_types',
-        'action=save' . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '') . '&entities_id=' . $_GET['entities_id']
+    \Helpers\Urls::url_for(
+        'main/entities/listing_types/save',
+        (isset(\K::$fw->GET['id']) ? '&id=' . \K::$fw->GET['id'] : '') . '&entities_id=' . \K::$fw->GET['entities_id']
     ),
     ['class' => 'form-horizontal']
 ) ?>
 <div class="modal-body">
     <div class="form-body ajax-modal-width-790">
-
         <?php
-        if ($obj['type'] == 'table') {
-            echo input_hidden_tag('is_active', 1);
+        if (\K::$fw->obj['type'] == 'table') {
+            echo \Helpers\Html::input_hidden_tag('is_active', 1);
         } else {
             ?>
             <div class="form-group" id="is-heading-container">
-                <label class="col-md-3 control-label" for="is_active"><?php
-                    echo TEXT_IS_ACTIVE ?></label>
+                <label class="col-md-3 control-label" for="is_active"><?= \K::$fw->TEXT_IS_ACTIVE ?></label>
                 <div class="col-md-9">
-                    <div class="checkbox-list"><label class="checkbox-inline"><?php
-                            echo input_checkbox_tag('is_active', '1', ['checked' => $obj['is_active']]) ?></label></div>
+                    <div class="checkbox-list"><label class="checkbox-inline"><?= \Helpers\Html::input_checkbox_tag(
+                                'is_active',
+                                '1',
+                                ['checked' => \K::$fw->obj['is_active']]
+                            ) ?></label></div>
                 </div>
             </div>
-        <?php
+            <?php
         } ?>
-
         <?php
-        if ($obj['type'] != 'mobile'): ?>
+        if (\K::$fw->obj['type'] != 'mobile'): ?>
             <div class="form-group" id="is-heading-container">
-                <label class="col-md-3 control-label" for="is_default"><?php
-                    echo TEXT_IS_DEFAULT ?></label>
+                <label class="col-md-3 control-label" for="is_default"><?= \K::$fw->TEXT_IS_DEFAULT ?></label>
                 <div class="col-md-9">
-                    <div class="checkbox-list"><label class="checkbox-inline"><?php
-                            echo input_checkbox_tag('is_default', '1', ['checked' => $obj['is_default']]) ?></label>
+                    <div class="checkbox-list"><label class="checkbox-inline"><?= \Helpers\Html::input_checkbox_tag(
+                                'is_default',
+                                '1',
+                                ['checked' => \K::$fw->obj['is_default']]
+                            ) ?></label>
                     </div>
                 </div>
             </div>
         <?php
         endif ?>
-
         <?php
-        if ($obj['type'] == 'grid'): ?>
-
+        if (\K::$fw->obj['type'] == 'grid'): ?>
             <div class="form-group">
-                <label class="col-md-3 control-label" for="sort_order"><?php
-                    echo TEXT_WIDTH ?> (px)</label>
+                <label class="col-md-3 control-label" for="sort_order"><?= \K::$fw->TEXT_WIDTH ?> (px)</label>
                 <div class="col-md-9">
-                    <?php
-                    echo input_tag('width', $obj['width'], ['class' => 'form-control input-small']) ?>
-                    <?php
-                    echo tooltip_text(TEXT_GRID_WIDTH_INFO) ?>
+                    <?= \Helpers\Html::input_tag('width', \K::$fw->obj['width'], ['class' => 'form-control input-small']
+                    ) ?>
+                    <?= \Helpers\App::tooltip_text(\K::$fw->TEXT_GRID_WIDTH_INFO) ?>
                 </div>
             </div>
 
         <?php
         endif ?>
-
-
         <?php
-        if ($obj['type'] == 'tree_table') {
-            $settings = new settings($obj['settings']);
+        if (\K::$fw->obj['type'] == 'tree_table') {
+            $settings = new \Tools\Settings(\K::$fw->obj['settings']);
 
             $fields_choices = [];
-            $fields_query = fields::get_query(_GET('entities_id'));
-            while ($v = db_fetch_array($fields_query)) {
-                $fields_choices[$v['id']] = fields_types::get_option(
+            $fields_query = \Models\Main\Fields::get_query(\K::$fw->GET['entities_id']);
+
+            //while ($v = db_fetch_array($fields_query)) {
+            foreach ($fields_query as $v) {
+                $fields_choices[$v['id']] = \Models\Main\Fields_types::get_option(
                         $v['type'],
                         'name',
                         $v['name']
@@ -87,11 +83,11 @@ echo form_tag(
 
             ?>
             <div class="form-group">
-                <label class="col-md-3 control-label"><?php
-                    echo tooltip_icon(TEXT_SORT_ITEMS_IN_LIST) . TEXT_FIELDS_IN_LISTING ?></label>
+                <label class="col-md-3 control-label"><?= \Helpers\App::tooltip_icon(
+                        \K::$fw->TEXT_SORT_ITEMS_IN_LIST
+                    ) . \K::$fw->TEXT_FIELDS_IN_LISTING ?></label>
                 <div class="col-md-9">
-                    <?php
-                    echo select_tag(
+                    <?= \Helpers\Html::select_tag(
                         'settings[fields_in_listing][]',
                         $fields_choices,
                         $settings->get('fields_in_listing'),
@@ -103,74 +99,65 @@ echo form_tag(
                     ) ?>
                 </div>
             </div>
-
             <script>
                 $("#settings_fields_in_listing").on("change", function (e) {
                     $("#settings_fields_in_listing-error").hide();
                 });
             </script>
-
             <div class="form-group">
-                <label class="col-md-3 control-label"><?php
-                    echo tooltip_icon(
-                            TEXT_HEADING_WIDTH_BASED_CONTENT_INFO
-                        ) . TEXT_HEADING_WIDTH_BASED_CONTENT ?></label>
+                <label class="col-md-3 control-label"><?= \Helpers\App::tooltip_icon(
+                        \K::$fw->TEXT_HEADING_WIDTH_BASED_CONTENT_INFO
+                    ) . \K::$fw->TEXT_HEADING_WIDTH_BASED_CONTENT ?></label>
                 <div class="col-md-9">
-                    <?php
-                    echo select_tag(
+                    <?= \Helpers\Html::select_tag(
                         'settings[heading_width_based_content]',
-                        ['1' => TEXT_YES, '0' => TEXT_NO],
+                        ['1' => \K::$fw->TEXT_YES, '0' => \K::$fw->TEXT_NO],
                         (int)$settings->get('heading_width_based_content'),
                         ['class' => 'form-control input-small']
                     ) ?>
                 </div>
             </div>
-
             <div class="form-group">
-                <label class="col-md-3 control-label"><?php
-                    echo TEXT_CHANGE_COL_WIDTH_IN_LISTING ?></label>
+                <label class="col-md-3 control-label"><?= \K::$fw->TEXT_CHANGE_COL_WIDTH_IN_LISTING ?></label>
                 <div class="col-md-9">
-                    <?php
-                    echo select_tag(
+                    <?= \Helpers\Html::select_tag(
                         'settings[change_col_width_in_listing]',
-                        ['1' => TEXT_YES, '0' => TEXT_NO],
+                        ['1' => \K::$fw->TEXT_YES, '0' => \K::$fw->TEXT_NO],
                         (int)$settings->get('change_col_width_in_listing'),
                         ['class' => 'form-control input-small']
                     ) ?>
                 </div>
             </div>
-
             <div class="form-group">
-                <label class="col-md-3 control-label"><?php
-                    echo tooltip_icon(TEXT_EDITABLE_FIELDS_IN_LISTING_INFO) . TEXT_EDITABLE_FIELDS_IN_LISTING ?></label>
+                <label class="col-md-3 control-label"><?= \Helpers\App::tooltip_icon(
+                        \K::$fw->TEXT_EDITABLE_FIELDS_IN_LISTING_INFO
+                    ) . \K::$fw->TEXT_EDITABLE_FIELDS_IN_LISTING ?></label>
                 <div class="col-md-9">
-                    <?php
-                    echo select_tag(
+                    <?= \Helpers\Html::select_tag(
                         'settings[editable_fields_in_listing]',
-                        ['1' => TEXT_YES, '0' => TEXT_NO],
+                        ['1' => \K::$fw->TEXT_YES, '0' => \K::$fw->TEXT_NO],
                         (int)$settings->get('editable_fields_in_listing'),
                         ['class' => 'form-control input-small']
                     ) ?>
                 </div>
             </div>
-
-            <h3 class="form-section"><?php
-                echo TEXT_NAV_ITEM_PAGE_CONFIG ?></h3>
+            <h3 class="form-section"><?= \K::$fw->TEXT_NAV_ITEM_PAGE_CONFIG ?></h3>
 
             <div class="form-group">
-                <label class="col-md-3 control-label"><?php
-                    echo TEXT_DISPLAY_NESTED_RECORDS ?></label>
+                <label class="col-md-3 control-label"><?= \K::$fw->TEXT_DISPLAY_NESTED_RECORDS ?></label>
                 <div class="col-md-9">
-                    <?php
-                    echo select_tag(
+                    <?= \Helpers\Html::select_tag(
                         'settings[display_nested_records]',
-                        ['' => '', 'left_column' => TEXT_LEFT_COLUMN, 'right_column' => TEXT_RIGHT_COLUMN],
+                        [
+                            '' => '',
+                            'left_column' => \K::$fw->TEXT_LEFT_COLUMN,
+                            'right_column' => \K::$fw->TEXT_RIGHT_COLUMN
+                        ],
                         $settings->get('display_nested_records'),
                         ['class' => 'form-control input-medium']
                     ) ?>
                 </div>
             </div>
-
         <?php
         $chosen_order = is_array($settings->get('fields_in_listing_info')) ? implode(
             ',',
@@ -178,11 +165,11 @@ echo form_tag(
         ) : '';
         ?>
             <div class="form-group">
-                <label class="col-md-3 control-label"><?php
-                    echo tooltip_icon(TEXT_SORT_ITEMS_IN_LIST) . TEXT_FIELDS_IN_LISTING ?></label>
+                <label class="col-md-3 control-label"><?= \Helpers\App::tooltip_icon(
+                        \K::$fw->TEXT_SORT_ITEMS_IN_LIST
+                    ) . \K::$fw->TEXT_FIELDS_IN_LISTING ?></label>
                 <div class="col-md-9">
-                    <?php
-                    echo select_tag(
+                    <?= \Helpers\Html::select_tag(
                         'settings[fields_in_listing_info][]',
                         $fields_choices,
                         $settings->get('fields_in_listing_info'),
@@ -194,16 +181,12 @@ echo form_tag(
                     ) ?>
                 </div>
             </div>
-
-
-        <?php
+            <?php
         } ?>
-
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
@@ -217,7 +200,4 @@ echo ajax_modal_template_footer() ?>
             }
         });
     });
-
-</script>   
-
-
+</script>
