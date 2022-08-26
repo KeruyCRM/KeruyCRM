@@ -331,16 +331,20 @@ class Listing_highlight
     public static function get_fields_choices($entity_id)
     {
         $choices = [];
-        $fields_query = db_query(
-            "select f.*, t.name as tab_name, if(f.type in ('fieldtype_id','fieldtype_date_added','fieldtype_date_updated','fieldtype_created_by'),-1,t.sort_order) as tab_sort_order from app_fields f, app_forms_tabs t where f.type in ('" . implode(
-                "','",
-                self::get_fields_allowed_types()
-            ) . "')  and f.entities_id='" . db_input(
-                $entity_id
-            ) . "' and f.forms_tabs_id=t.id order by tab_sort_order, t.name, f.sort_order, f.name"
+        $typeIn = \K::model()->quoteToString(
+            ['fieldtype_id', 'fieldtype_date_added', 'fieldtype_date_updated', 'fieldtype_created_by']
         );
-        while ($v = db_fetch_array($fields_query)) {
-            $choices[$v['id']] = fields_types::get_option($v['type'], 'name', $v['name']);
+        $allowedTypes = \K::model()->quoteToString(self::get_fields_allowed_types());
+
+        $fields_query = \K::model()->db_query_exec(
+            "select f.*, t.name as tab_name, if(f.type in (" . $typeIn . "),-1,t.sort_order) as tab_sort_order from app_fields f, app_forms_tabs t where f.type in (" . $allowedTypes . ") and f.entities_id = ? and f.forms_tabs_id = t.id order by tab_sort_order, t.name, f.sort_order, f.name",
+            $entity_id,
+            'app_fields,app_forms_tabs'
+        );
+
+        //while ($v = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $v) {
+            $choices[$v['id']] = \Models\Main\Fields_types::get_option($v['type'], 'name', $v['name']);
         }
 
         return $choices;

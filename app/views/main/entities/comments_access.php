@@ -53,7 +53,7 @@ if (!defined('KERUY_CRM')) {
 
             echo '
       <tr>
-        <td>' . $v['name'] . '</td>
+        <td>' . $v['name'] . /*vertical-align: middle;*/'</td>
         <td>' . \Helpers\Html::select_tag(
                     'access[' . $v['id'] . ']',
                     \Models\Main\Comments::get_access_choices(),
