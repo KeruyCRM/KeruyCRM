@@ -119,7 +119,7 @@ class Listing_types
         $info = \K::model()->db_fetch_one('app_listing_sections', [
             'listing_types_id = ?',
             $listing_types_id
-        ], [], null, ['max_sort_order' => 'max(sort_order)']);
+        ], [], null, ['max_sort_order' => 'max(sort_order)'],0);
 
         return $info['max_sort_order'] + 1;
     }

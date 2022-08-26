@@ -3,41 +3,48 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_SORT_VALUES) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_SORT_VALUES) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'choices_form',
-    url_for(
-        'entities/listing_sections',
-        'action=sort&entities_id=' . $_GET['entities_id'] . '&listing_types_id=' . $_GET['listing_types_id']
+    \Helpers\Urls::url_for(
+        'main/entities/listing_sections/sort',
+        'entities_id=' . \K::$fw->GET['entities_id'] . '&listing_types_id=' . \K::$fw->GET['listing_types_id']
     ),
     ['class' => 'form-horizontal']
 ) ?>
 <div class="modal-body">
     <div class="form-body">
-
         <div class="dd" id="choices_sort">
             <ol class="dd-list">
                 <?php
-                $filters_query = db_query(
-                    "select * from app_listing_sections where listing_types_id='" . db_input(
-                        _get::int('listing_types_id')
-                    ) . "' order by sort_order, name"
-                );
-                while ($v = db_fetch_array($filters_query)) {
+                //while ($v = db_fetch_array($filters_query)) {
+                foreach (\K::$fw->filters_query as $v) {
+                    $v = $v->cast();
+
                     $title = '';
 
                     if (strlen($v['name'])) {
                         $title = $v['name'];
                     } elseif (strlen($v['fields'])) {
                         $choices = [];
-                        $fields_query = db_query(
+                        /*$fields_query = db_query(
                             "select * from app_fields where id in (" . $v['fields'] . ") order by field(id," . $v['fields'] . ")"
-                        );
-                        while ($fields = db_fetch_array($fields_query)) {
-                            $choices[] = fields_types::get_option($fields['type'], 'name', $fields['name']);
+                        );*/
+
+                        $fields_query = \K::model()->db_fetch('app_fields', [
+                            'id in (' . $v['fields'] . ')'
+                        ], ['order' => 'field(id,' . $v['fields'] . ')'], 'type,name');
+
+                        //while ($fields = db_fetch_array($fields_query)) {
+                        foreach ($fields_query as $fields) {
+                            $fields = $fields->cast();
+
+                            $choices[] = \Models\Main\Fields_types::get_option(
+                                $fields['type'],
+                                'name',
+                                $fields['name']
+                            );
                         }
 
                         $title = implode(', ', $choices);
@@ -48,13 +55,11 @@ echo form_tag(
                 ?>
             </ol>
         </div>
-
     </div>
 </div>
-<?php
-echo input_hidden_tag('choices_sorted') ?>
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\Html::input_hidden_tag('choices_sorted') ?>
+
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
@@ -74,5 +79,4 @@ echo ajax_modal_template_footer() ?>
             }
         })
     })
-
 </script>
