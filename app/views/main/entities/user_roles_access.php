@@ -3,26 +3,20 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-require(component_path('entities/navigation')) ?>
+<?= \K::view()->render(\Helpers\Urls::components_path('main/entities/navigation')); ?>
 
-<h3 class="page-title"><?php
-    echo $field_info['name'] . ' <i class="fa fa-angle-right"></i> <a href="' . url_for(
-            'entities/user_roles',
-            'entities_id=' . _get::int('entities_id') . '&fields_id=' . _get::int('fields_id')
-        ) . '">' . TEXT_USER_ROLES . '</a> <i class="fa fa-angle-right"></i> ' . $user_roles_info['name'] . ' <i class="fa fa-angle-right"></i> ' . TEXT_NAV_ENTITY_ACCESS ?></h3>
+<h3 class="page-title"><?= \K::$fw->field_info['name'] . ' <i class="fa fa-angle-right"></i> <a href="' . url_for(
+        'entities/user_roles',
+        'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . \K::$fw->GET['fields_id']
+    ) . '">' . \K::$fw->TEXT_USER_ROLES . '</a> <i class="fa fa-angle-right"></i> ' . \K::$fw->user_roles_info['name'] . ' <i class="fa fa-angle-right"></i> ' . \K::$fw->TEXT_NAV_ENTITY_ACCESS ?></h3>
 
-<p><?php
-    echo TEXT_USER_ROLES_ACCESS_INFO ?></p>
+<p><?= \K::$fw->TEXT_USER_ROLES_ACCESS_INFO ?></p>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'pivot_access_form',
-    url_for(
-        'entities/user_roles_access',
-        'action=save&role_id=' . _get::int('role_id') . '&entities_id=' . _get::int(
-            'entities_id'
-        ) . '&fields_id=' . _get::int('fields_id')
+    \Helpers\Urls::url_for(
+        'main/entities/user_roles_access/save',
+        'role_id=' . \K::$fw->GET['role_id'] . '&entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . \K::$fw->GET['fields_id']
     )
 ) ?>
 <div class="table-scrollable" style="overflow-x:visible;overflow-y:visible; ">
@@ -30,38 +24,42 @@ echo form_tag(
         <thead>
         <tr>
             <th></th>
-            <th width="100%"><?php
-                echo TEXT_ENTITY ?></th>
-            <th><?php
-                echo TEXT_VIEW_ACCESS ?></th>
-            <th><?php
-                echo TEXT_ACCESS ?></th>
+            <th width="100%"><?= \K::$fw->TEXT_ENTITY ?></th>
+            <th><?= \K::$fw->TEXT_VIEW_ACCESS ?></th>
+            <th><?= \K::$fw->TEXT_ACCESS ?></th>
         </tr>
         </thead>
         <tbody>
         <?php
-        foreach (entities::get_tree(_get::int('entities_id')) as $v):
+        foreach (\Models\Main\Entities::get_tree(\K::$fw->GET['entities_id']) as $v):
 
             $checked = false;
 
             $access_schema = [];
             $comments_schema = '';
 
-            $acess_info_query = db_query(
+            /*$access_info_query = db_query(
                 "select access_schema, comments_access from app_user_roles_access where entities_id='" . $v['id'] . "' and user_roles_id='" . db_input(
-                    _get::int('role_id')
-                ) . "' and fields_id='" . _get::int('fields_id') . "'"
-            );
-            if ($acess_info = db_fetch_array($acess_info_query)) {
+                    \K::$fw->GET['role_id']
+                ) . "' and fields_id='" . \K::$fw->GET['fields_id'] . "'"
+            );*/
+
+            $access_info = \K::model()->db_fetch_one('app_user_roles_access', [
+                'entities_id = ? and user_roles_id = ? and fields_id = ?',
+                $v['id'],
+                \K::$fw->GET['role_id'],
+                \K::$fw->GET['fields_id']
+            ]);
+
+            if ($access_info) {
                 $checked = true;
 
-                $access_schema = explode(',', $acess_info['access_schema']);
+                $access_schema = explode(',', $access_info['access_schema']);
 
-                $comments_schema = str_replace(',', '_', $acess_info['comments_access']);
+                $comments_schema = str_replace(',', '_', $access_info['comments_access']);
             }
 
-
-            $entity_cfg = new entities_cfg($v['id']);
+            $entity_cfg = new \Models\Main\Entities_cfg($v['id']);
 
             ?>
             <tr>
@@ -73,22 +71,19 @@ echo form_tag(
                         $params['checked'] = 'checked';
                     }
 
-                    echo input_checkbox_tag('entities[' . $v['id'] . ']', $v['id'], $params) ?></td>
+                    echo \Helpers\Html::input_checkbox_tag('entities[' . $v['id'] . ']', $v['id'], $params) ?></td>
                 <td style="white-space: nowrap">
-                    <?php
-                    echo '<label for="entities_' . $v['id'] . '">' . str_repeat(
-                            '&nbsp;<i class="fa fa-minus" aria-hidden="true"></i>&nbsp;',
-                            $v['level']
-                        ) . ' ' . $v['name'] . '</label>' ?>
+                    <?= '<label for="entities_' . $v['id'] . '">' . str_repeat(
+                        '&nbsp;<i class="fa fa-minus" aria-hidden="true"></i>&nbsp;',
+                        $v['level']
+                    ) . ' ' . $v['name'] . '</label>' ?>
                 </td>
                 <td>
-                    <div class="access-configuration-block<?php
-                    echo $v['id'] ?> hidden">
-                        <?php
-                        echo select_tag(
+                    <div class="access-configuration-block<?= $v['id'] ?> hidden">
+                        <?= \Helpers\Html::select_tag(
                             'access[' . $v['id'] . '][]',
-                            access_groups::get_access_view_choices(),
-                            access_groups::get_access_view_value($access_schema),
+                            \Models\Main\Access_groups::get_access_view_choices(),
+                            \Models\Main\Access_groups::get_access_view_value($access_schema),
                             [
                                 'id' => 'access_' . $v['id'],
                                 'class' => 'form-control input-large access-schema-settings',
@@ -97,15 +92,11 @@ echo form_tag(
                             ]
                         );
 
-                        echo '<div style="padding-top: 5px; text-align: right;">' . button_tag(
-                                TEXT_NAV_FIELDS_ACCESS,
-                                url_for(
-                                    'entities/user_roles_fields_access',
-                                    'role_id=' . _get::int(
-                                        'role_id'
-                                    ) . '&role_entities_id=' . $v['id'] . '&entities_id=' . _get::int(
-                                        'entities_id'
-                                    ) . '&fields_id=' . _get::int('fields_id')
+                        echo '<div style="padding-top: 5px; text-align: right;">' . \Helpers\Html::button_tag(
+                                \K::$fw->TEXT_NAV_FIELDS_ACCESS,
+                                \Helpers\Urls::url_for(
+                                    'main/entities/user_roles_fields_access',
+                                    'role_id=' . \K::$fw->GET['role_id'] . '&role_entities_id=' . $v['id'] . '&entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . \K::$fw->GET['fields_id']
                                 ),
                                 true,
                                 ['class' => 'btn btn-default btn-sm']
@@ -117,10 +108,10 @@ echo form_tag(
                     <div class="access-configuration-block<?php
                     echo $v['id'] ?> hidden">
                         <?php
-                        $choices = access_groups::get_access_choices();
+                        $choices = \Models\Main\Access_groups::get_access_choices();
                         unset($choices['reports']);
 
-                        echo select_tag(
+                        echo \Helpers\Html::select_tag(
                             'access[' . $v['id'] . '][]',
                             $choices,
                             $access_schema,
@@ -133,9 +124,9 @@ echo form_tag(
                         );
 
                         if ($entity_cfg->get('use_comments')) {
-                            echo '<div style="padding-top: 5px; "><ul class="list-inline"><li>' . TEXT_COMMENTS . ':</li><li>' . select_tag(
+                            echo '<div style="padding-top: 5px; "><ul class="list-inline"><li>' . \K::$fw->TEXT_COMMENTS . ':</li><li>' . \Helpers\Html::select_tag(
                                     'comments_access[' . $v['id'] . ']',
-                                    comments::get_access_choices(),
+                                    \Models\Main\Comments::get_access_choices(),
                                     $comments_schema,
                                     [
                                         'class' => 'form-control input-medium access-schema-settings',
@@ -146,29 +137,26 @@ echo form_tag(
                         ?>
                     </div>
                 </td>
-
             </tr>
         <?php
         endforeach ?>
         </tbody>
     </table>
 </div>
+
 </form>
 
-<?php
-echo '<a class="btn btn-default" href="' . url_for(
-        'entities/user_roles',
-        'entities_id=' . _get::int('entities_id') . '&fields_id=' . _get::int('fields_id')
-    ) . '">' . TEXT_BUTTON_BACK . '</a>' ?>
+<?= '<a class="btn btn-default" href="' . \Helpers\Urls::url_for(
+    'main/entities/user_roles',
+    'entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . \K::$fw->GET['fields_id']
+) . '">' . \K::$fw->TEXT_BUTTON_BACK . '</a>' ?>
 
 <script>
     function check_access_schema(access, entity_id) {
         if (access == '') {
             $('#access_schema_' + entity_id).val('');
             $('#access_schema_' + entity_id).trigger("chosen:updated");
-
             $('#comments_access_' + entity_id).val('');
-
         }
     }
 
@@ -184,7 +172,6 @@ echo '<a class="btn btn-default" href="' . url_for(
     }
 
     $(function () {
-
         $('.access-schema-settings').change(function () {
             check_access_schema_flag();
             form = $('#pivot_access_form');
@@ -192,6 +179,5 @@ echo '<a class="btn btn-default" href="' . url_for(
         })
 
         check_access_schema_flag();
-
     })
-</script> 
+</script>
