@@ -3,46 +3,46 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_HEADING_VALUE_INFO) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_HEADING_VALUE_INFO) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'fields_form',
-    url_for(
-        'entities/user_roles',
-        'action=save&fields_id=' . _get::int('fields_id') . '&entities_id=' . _get::int(
-            'entities_id'
-        ) . (isset($_GET['id']) ? '&id=' . $_GET['id'] : '')
+    \Helpers\Urls::url_for(
+        'main/entities/user_roles/save',
+        'fields_id=' . \K::$fw->GET['fields_id'] . '&entities_id=' . \K::$fw->GET['entities_id'] . (isset(\K::$fw->GET['id']) ? '&id=' . \K::$fw->GET['id'] : '')
     ),
     ['class' => 'form-horizontal', 'enctype' => 'multipart/form-data']
 ) ?>
 <div class="modal-body">
     <div class="form-body">
-
         <div class="form-group">
-            <label class="col-md-4 control-label" for="name"><?php
-                echo tooltip_icon(TEXT_CHOICES_NAME_INFO) . TEXT_NAME ?></label>
+            <label class="col-md-4 control-label" for="name"><?= \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXT_CHOICES_NAME_INFO
+                ) . \K::$fw->TEXT_NAME ?></label>
             <div class="col-md-8">
-                <?php
-                echo input_tag('name', $obj['name'], ['class' => 'form-control input-large required autofocus']) ?>
+                <?= \Helpers\Html::input_tag(
+                    'name',
+                    \K::$fw->obj['name'],
+                    ['class' => 'form-control input-large required autofocus']
+                ) ?>
             </div>
         </div>
-
         <div class="form-group">
-            <label class="col-md-4 control-label" for="sort_order"><?php
-                echo tooltip_icon(TEXT_CHOICES_SORT_ORDER_INFO) . TEXT_SORT_ORDER ?></label>
+            <label class="col-md-4 control-label" for="sort_order"><?= \Helpers\App::tooltip_icon(
+                    \K::$fw->TEXT_CHOICES_SORT_ORDER_INFO
+                ) . \K::$fw->TEXT_SORT_ORDER ?></label>
             <div class="col-md-8">
-                <?php
-                echo input_tag('sort_order', $obj['sort_order'], ['class' => 'form-control input-small']) ?>
+                <?= \Helpers\Html::input_tag(
+                    'sort_order',
+                    \K::$fw->obj['sort_order'],
+                    ['class' => 'form-control input-small']
+                ) ?>
             </div>
         </div>
-
     </div>
 </div>
 
-<?php
-echo ajax_modal_template_footer() ?>
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
 </form>
 
@@ -55,4 +55,4 @@ echo ajax_modal_template_footer() ?>
             }
         });
     });
-</script>   
+</script>
