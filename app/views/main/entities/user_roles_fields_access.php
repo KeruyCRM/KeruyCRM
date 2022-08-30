@@ -3,85 +3,45 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
+<?= \Helpers\App::ajax_modal_template_header(
+    \K::$fw->user_roles_info['name'] . ' / ' . \K::$fw->entity_info['name']
+); ?>
 
-$entity_info = db_find('app_entities', _get::int('role_entities_id'));
-
-$user_roles_info = db_find('app_user_roles', _get::int('role_id'));
-
-echo ajax_modal_template_header($user_roles_info['name'] . ' / ' . $entity_info['name']);
-?>
-
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'cfg',
-    url_for(
-        'entities/user_roles_access',
-        'action=set_fields_access&role_id=' . _get::int('role_id') . '&role_entities_id=' . _get::int(
-            'role_entities_id'
-        ) . '&entities_id=' . _get::int('entities_id') . '&fields_id=' . _get::int('fields_id')
+    \Helpers\Urls::url_for(
+        'main/entities/user_roles_access/set_fields_access',
+        'role_id=' . \K::$fw->GET['role_id'] . '&role_entities_id=' . \K::$fw->GET['role_entities_id'] . '&entities_id=' . \K::$fw->GET['entities_id'] . '&fields_id=' . \K::$fw->GET['fields_id']
     )
 ) ?>
 
 <div class="modal-body">
     <div class="form-body ajax-modal-width-790">
-
         <?php
-        $access_choices_default = ['yes' => TEXT_YES, 'view' => TEXT_VIEW_ONLY, 'hide' => TEXT_HIDE];
-        $access_choices_internal = ['yes' => TEXT_YES, 'hide' => TEXT_HIDE];
-
-        $fields_list = [];
-        $fields_query = db_query(
-            "select f.*, t.name as tab_name,if(f.type in ('fieldtype_id','fieldtype_date_added','fieldtype_created_by'),-1,t.sort_order) as tab_sort_order from app_fields f, app_forms_tabs t where f.type not in ('fieldtype_action','fieldtype_parent_item_id') and f.entities_id='" . db_input(
-                _get::int('role_entities_id')
-            ) . "' and f.forms_tabs_id=t.id order by tab_sort_order, t.name, f.sort_order, f.name"
-        );
-        while ($v = db_fetch_array($fields_query)) {
-            $fields_list[$v['id']] = [
-                'name' => fields_types::get_option($v['type'], 'name', $v['name']),
-                'type' => $v['type']
-            ];
-        }
-
         $html = '
       <div class="table-scrollable">
       <table class="table table-striped table-bordered table-hover">
         <tr>
-          <th>' . TEXT_FIELDS . '</th>
-          <th>' . TEXT_ACCESS . ': ' . select_tag(
+          <th>' . \K::$fw->TEXT_FIELDS . '</th>
+          <th>' . \K::$fw->TEXT_ACCESS . ': ' . \Helpers\Html::select_tag(
                 'access_0',
-                array_merge(['' => ''], $access_choices_default),
+                array_merge(['' => ''], \K::$fw->access_choices_default),
                 '',
                 ['class' => 'form-control input-medium ', 'onChange' => 'set_access_to_all_fields(this.value,0)']
             ) . '</th>
         </tr>
       ';
 
-        $access_schema = [];
-        $access_schema_info_query = db_query(
-            "select * from app_user_roles_access where user_roles_id='" . _get::int(
-                'role_id'
-            ) . "' and entities_id='" . _get::int('role_entities_id') . "' and fields_id='" . _get::int(
-                'fields_id'
-            ) . "'"
-        );
-        if ($access_schema_info = db_fetch_array($access_schema_info_query)) {
-            if (strlen($access_schema_info['fields_access'])) {
-                $access_schema = json_decode($access_schema_info['fields_access'], true);
-            }
-        }
-
-
-        foreach ($fields_list as $id => $field) {
-            $value = (isset($access_schema[$id]) ? $access_schema[$id] : 'yes');
+        foreach (\K::$fw->fields_list as $id => $field) {
+            $value = (\K::$fw->access_schema[$id] ?? 'yes');
 
             $access_choices = (in_array($field['type'], ['fieldtype_id', 'fieldtype_date_added', 'fieldtype_created_by']
-            ) ? $access_choices_internal : $access_choices_default);
+            ) ? \K::$fw->access_choices_internal : \K::$fw->access_choices_default);
 
             $html .= '
         <tr>
           <td>' . $field['name'] . '</td>
-          <td>' . select_tag(
+          <td>' . \Helpers\Html::select_tag(
                     'access[' . $id . ']',
                     $access_choices,
                     $value,
@@ -98,8 +58,6 @@ echo form_tag(
     </div>
 </div>
 
+<?= \Helpers\App::ajax_modal_template_footer() ?>
 
-<?php
-echo ajax_modal_template_footer() ?>
-
-</form>	
+</form>
