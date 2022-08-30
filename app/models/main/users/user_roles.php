@@ -124,8 +124,14 @@ class User_roles
 
     public static function get_name_by_id($id)
     {
-        $info_query = db_query("select * from app_user_roles where id='" . (int)$id . "'");
-        if ($info = db_fetch_array($info_query)) {
+        //$info_query = db_query("select * from app_user_roles where id='" . (int)$id . "'");
+
+        $info = \K::model()->db_fetch_one('app_user_roles', [
+            'id = ?',
+            $id
+        ], [], 'name');
+
+        if ($info) {
             return $info['name'];
         }
 

@@ -49,7 +49,7 @@ if (!defined('KERUY_CRM')) {
                 $v['id'],
                 \K::$fw->GET['role_id'],
                 \K::$fw->GET['fields_id']
-            ]);
+            ],[],'access_schema,comments_access');
 
             if ($access_info) {
                 $checked = true;
