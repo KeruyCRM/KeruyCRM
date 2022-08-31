@@ -3,49 +3,43 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_CHANGE_PARENT_ITEM) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_CHANGE_PARENT_ITEM) ?>
 
 <?php
-if (!isset($app_selected_items[$_GET['reports_id']])) {
-    $app_selected_items[$_GET['reports_id']] = [];
+if (!isset(\K::$fw->app_selected_items[\K::$fw->GET['reports_id']])) {
+    \K::$fw->app_selected_items[\K::$fw->GET['reports_id']] = [];
 }
 
-if (count($app_selected_items[$_GET['reports_id']]) == 0) {
+if (count(\K::$fw->app_selected_items[\K::$fw->GET['reports_id']]) == 0) {
     echo '
     <div class="modal-body">    
-      <div>' . TEXT_PLEASE_SELECT_ITEMS . '</div>
+      <div>' . \K::$fw->TEXT_PLEASE_SELECT_ITEMS . '</div>
     </div>    
-  ' . ajax_modal_template_footer('hide-save-button');
+  ' . \Helpers\App::ajax_modal_template_footer('hide-save-button');
 } else {
     ?>
 
-    <?php
-    echo form_tag(
-            'modal_form',
-            url_for('items/change_parent_selected', 'path=' . $app_path . '&action=change_parent')
-        ) . input_hidden_tag('reports_id', _GET('reports_id')) ?>
+    <?= \Helpers\Html::form_tag(
+        'modal_form',
+        \Helpers\Urls::url_for('main/items/change_parent_selected/change_parent', 'path=' . \K::$fw->app_path)
+    ) . \Helpers\Html::input_hidden_tag('reports_id', \K::$fw->GET['reports_id']) ?>
     <div class="modal-body ajax-modal-width-790">
-
         <div class="dd" id="choices_sort">
-            <?php
-            echo select_entities_tag(
+            <?= \Helpers\Html::select_entities_tag(
                 'parent_id',
                 [],
                 '',
                 [
-                    'entities_id' => $current_entity_id,
+                    'entities_id' => \K::$fw->current_entity_id,
                     'is_tree_view' => true,
-                    'parent_item_id' => $parent_entity_item_id
+                    'parent_item_id' => \K::$fw->parent_entity_item_id
                 ]
             ) ?>
         </div>
     </div>
 
-    <?php
-    $count_selected_text = sprintf(TEXT_SELECTED_RECORDS, count($app_selected_items[$_GET['reports_id']]));
-    echo ajax_modal_template_footer('', '', $count_selected_text);
-    ?>
+    <?= \Helpers\App::ajax_modal_template_footer('', '', \K::$fw->count_selected_text); ?>
+
     </form>
 
     <script>
@@ -53,6 +47,5 @@ if (count($app_selected_items[$_GET['reports_id']]) == 0) {
             $('#modal_form').validate({ignore: ''})
         })
     </script>
-
     <?php
 }
