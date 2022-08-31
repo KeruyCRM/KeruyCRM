@@ -4,7 +4,7 @@
  * https://keruy.com.ua
  */
 
-namespace Controllers\Main\Entities;
+namespace Controllers\Main\Items;
 
 class BLANK extends \Controller
 {
@@ -13,7 +13,7 @@ class BLANK extends \Controller
         parent::__construct();
         \K::security()->checkCsrfToken();
 
-        \Controllers\Main\Entities\_Module::top();
+        \Controllers\Main\Items\_Module::top();
     }
 
     public function index()
