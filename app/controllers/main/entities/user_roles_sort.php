@@ -31,6 +31,6 @@ class User_roles_sort extends \Controller
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'user_roles_sort.php';
 
-        echo \K::view()->render(\K::$fw->app_layout);
+        echo \K::view()->render(\K::$fw->subTemplate);
     }
 }
