@@ -486,7 +486,7 @@ class Items
                 //parent items breadcrumb
                 if ($item_info['parent_id'] > 0) {
                     $parents = array_reverse(
-                        Models\Main\Items\Tree_table::get_parents($entity_id, $item_info['parent_id'])
+                        \Models\Main\Items\Tree_table::get_parents($entity_id, $item_info['parent_id'])
                     );
 
                     foreach ($parents as $parent_item_id) {

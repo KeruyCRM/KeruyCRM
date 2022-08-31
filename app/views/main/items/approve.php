@@ -4,45 +4,49 @@ if (!defined('KERUY_CRM')) {
     exit;
 } ?>
 <?php
-$cfg = new fields_types_cfg($app_fields_cache[$current_entity_id][_get::int('fields_id')]['configuration']);
 
-if ($cfg->get('use_signature') == 1) {
-    $content = (strlen($cfg->get('signature_description')) ? '<p>' . $cfg->get('signature_description') . '</p>' : '');
-    $content .= '<iframe width="100%" height="400" scrolling="no" frameborder="no" src="' . url_for(
-            'items/signature',
-            'fields_id=' . _get::int('fields_id') . '&path=' . $app_path . '&redirect_to=' . $app_redirect_to
+if (\K::$fw->cfg->get('use_signature') == 1) {
+    $content = (strlen(\K::$fw->cfg->get('signature_description')) ? '<p>' . \K::$fw->cfg->get(
+            'signature_description'
+        ) . '</p>' : '');
+    $content .= '<iframe width="100%" height="400" scrolling="no" frameborder="no" src="' . \Helpers\Urls::url_for(
+            'main/items/signature',
+            'fields_id=' . \K::$fw->GET['fields_id'] . '&path=' . \K::$fw->app_path . '&redirect_to=' . \K::$fw->app_redirect_to
         ) . '"></iframe>';
 
-    $heading = (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : TEXT_APPROVE);
+    $heading = (strlen(\K::$fw->cfg->get('button_title')) ? \K::$fw->cfg->get('button_title') : \K::$fw->TEXT_APPROVE);
 
     $button_title = 'hide-save-button';
 } else {
-    $heading = $button_title = (strlen($cfg->get('button_title')) ? $cfg->get('button_title') : TEXT_APPROVE);
-    $content = (strlen($cfg->get('confirmation_text')) ? $cfg->get('confirmation_text') : TEXT_ARE_YOU_SURE);
+    $heading = $button_title = (strlen(\K::$fw->cfg->get('button_title')) ? \K::$fw->cfg->get(
+        'button_title'
+    ) : \K::$fw->TEXT_APPROVE);
+    $content = (strlen(\K::$fw->cfg->get('confirmation_text')) ? \K::$fw->cfg->get(
+        'confirmation_text'
+    ) : \K::$fw->TEXT_ARE_YOU_SURE);
 }
 
-echo ajax_modal_template_header($heading) ?>
+echo \Helpers\App::ajax_modal_template_header($heading) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'approve_form',
-    url_for('items/approve', 'action=approve&fields_id=' . _get::int('fields_id') . '&path=' . $app_path)
+    \Helpers\Urls::url_for(
+        'main/items/approve/approve',
+        'fields_id=' . \K::$fw->GET['fields_id'] . '&path=' . \K::$fw->app_path
+    )
 ) ?>
+<?= \Helpers\Html::input_hidden_tag('redirect_to', \K::$fw->app_redirect_to) ?>
 <?php
-echo input_hidden_tag('redirect_to', $app_redirect_to) ?>
-<?php
-if (isset($_GET['gotopage'])) echo input_hidden_tag(
-    'gotopage[' . key($_GET['gotopage']) . ']',
-    current($_GET['gotopage'])
+if (isset(\K::$fw->GET['gotopage'])) echo \Helpers\Html::input_hidden_tag(
+    'gotopage[' . key(\K::$fw->GET['gotopage']) . ']',
+    current(\K::$fw->GET['gotopage'])
 ) ?>
 
 <div class="modal-body">
-    <?php
-    echo $content ?>
+    <?= $content ?>
 </div>
 
-<?php
-echo ajax_modal_template_footer($button_title) ?>
+<?= \Helpers\App::ajax_modal_template_footer($button_title) ?>
 
 </form>
 
@@ -53,8 +57,4 @@ echo ajax_modal_template_footer($button_title) ?>
             return true;
         }
     });
-
-
-</script> 
-    
- 
+</script>

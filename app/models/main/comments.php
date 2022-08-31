@@ -117,7 +117,7 @@ class Comments
                         $descripttion) . '" onClick="location.href=\'' . url_for(
                         'items/info',
                         'path=' . $path
-                    ) . '\'" >' . (isset($app_users_cache[$item['created_by']]) ? $app_users_cache[$item['created_by']]['name'] : '') . '</sup>';;
+                    ) . '\'" >' . (isset(\K::$fw->app_users_cache[$item['created_by']]) ? \K::$fw->app_users_cache[$item['created_by']]['name'] : '') . '</sup>';;
             }
         }
 
@@ -146,28 +146,39 @@ class Comments
 
     public static function render_content_box($entity_id, $item_id, $user_id)
     {
-        global $current_path, $app_users_cache;
+        $user_info = \K::model()->db_find('app_entity_1', $user_id);
 
-        $user_info = db_find('app_entity_1', $user_id);
-
-        $fields_access_schema = users::get_fields_access_schema($entity_id, $user_info['field_6']);
-        $choices_cache = fields_choices::get_cache();
+        $fields_access_schema = \Models\Main\Users\Users::get_fields_access_schema($entity_id, $user_info['field_6']);
+        //$choices_cache = fields_choices::get_cache();//Not used
 
         $count = 0;
         $html = '<table width="100%">';
-        $limit = (int)CFG_EMAIL_AMOUNT_PREVIOUS_COMMENTS;
-        $listing_sql = "select * from app_comments where entities_id='" . db_input(
+        $limit = (int)\K::$fw->CFG_EMAIL_AMOUNT_PREVIOUS_COMMENTS;
+
+        /*$listing_sql = "select * from app_comments where entities_id='" . db_input(
                 $entity_id
             ) . "' and items_id='" . db_input($item_id) . "' order by id desc limit " . ($limit + 1);
-        $items_query = db_query($listing_sql);
-        while ($item = db_fetch_array($items_query)) {
+        $items_query = db_query($listing_sql);*/
+
+        $items_query = \K::model()->db_fetch('app_comments', [
+            'entities_id = ? and items_id = ?',
+            $entity_id,
+            $item_id
+        ], ['order' => 'id desc', 'limit' => $limit + 1]);
+
+        //while ($item = db_fetch_array($items_query)) {
+        foreach ($items_query as $item) {
+            $item = $item->cast();
+
             $html_fields = '';
-            $comments_fields_query = db_query(
-                "select f.*,ch.fields_value from app_comments_history ch, app_fields f where comments_id='" . db_input(
-                    $item['id']
-                ) . "' and f.id=ch.fields_id order by ch.id"
+            $comments_fields_query = \K::model()->db_query_exec(
+                "select f.*,ch.fields_value from app_comments_history ch, app_fields f where comments_id = ? and f.id = ch.fields_id order by ch.id",
+                $item['id'],
+                'app_comments_history,app_fields'
             );
-            while ($field = db_fetch_array($comments_fields_query)) {
+
+            //while ($field = db_fetch_array($comments_fields_query)) {
+            foreach ($comments_fields_query as $field) {
                 //check field access
                 if (isset($fields_access_schema[$field['id']])) {
                     if ($fields_access_schema[$field['id']] == 'hide') {
@@ -180,16 +191,16 @@ class Comments
                     'value' => $field['fields_value'],
                     'field' => $field,
                     'is_listing' => true,
-                    'path' => $current_path,
+                    'path' => \K::$fw->current_path,
                     'is_comments_listing' => true,
                 ];
 
                 $html_fields .= '                      
-            <tr><th style="text-align: left; font-family:Arial;font-size:13px; vertical-align: top">&bull;&nbsp;' . fields_types::get_option(
+            <tr><th style="text-align: left; font-family:Arial;font-size:13px; vertical-align: top">&bull;&nbsp;' . \Models\Main\Fields_types::get_option(
                         $field['type'],
                         'name',
                         $field['name']
-                    ) . ':&nbsp;</th><td style="font-family:Arial;font-size:13px;">' . fields_types::output(
+                    ) . ':&nbsp;</th><td style="font-family:Arial;font-size:13px;">' . \Models\Main\Fields_types::output(
                         $output_options
                     ) . '</td></tr>           
         ';
@@ -199,10 +210,10 @@ class Comments
                 $html_fields = '<table style="padding-top: 7px;">' . $html_fields . '</table>';
             }
 
-            $attachments = fields_types::output(
+            $attachments = \Models\Main\Fields_types::output(
                 [
                     'class' => 'fieldtype_attachments',
-                    'path' => $current_path,
+                    'path' => \K::$fw->current_path,
                     'value' => $item['attachments'],
                     'field' => ['entities_id' => $entity_id],
                     'item' => ['id' => $item_id]
@@ -212,21 +223,21 @@ class Comments
             if ($count == 1) {
                 $html .= '
           <tr>
-            <td colspan="2" style="padding-top: 10px;"><h4>' . TEXT_PREVIOUS_COMMENTS . '</h4></td>            
+            <td colspan="2" style="padding-top: 10px;"><h4>' . \K::$fw->TEXT_PREVIOUS_COMMENTS . '</h4></td>            
           </tr>
         ';
             }
 
             $html .= '
         <tr>
-          <td style="vertical-align:top;font-family:Arial;font-size:13px;color:black;padding:2px;border-bottom:1px dashed LightGray">' . auto_link_text(
+          <td style="vertical-align:top;font-family:Arial;font-size:13px;color:black;padding:2px;border-bottom:1px dashed LightGray">' . \Helpers\Urls::auto_link_text(
                     $item['description']
                 ) . $attachments . $html_fields . '</td>
           <td align="right" style="vertical-align:top;font-family:Arial;font-size:13px;color:black;padding:2px;border-bottom:1px dashed LightGray;white-space:nowrap;">' . date(
-                    CFG_APP_DATETIME_FORMAT,
+                    \K::$fw->CFG_APP_DATETIME_FORMAT,
                     $item['date_added']
-                ) . '<br>' . (isset($app_users_cache[$item['created_by']]) ? $app_users_cache[$item['created_by']]['name'] . '<br>' . render_user_photo(
-                        $app_users_cache[$item['created_by']]['photo']
+                ) . '<br>' . (isset(\K::$fw->app_users_cache[$item['created_by']]) ? \K::$fw->app_users_cache[$item['created_by']]['name'] . '<br>' . \Helpers\App::render_user_photo(
+                        \K::$fw->app_users_cache[$item['created_by']]['photo']
                     ) : '') . '</td>
         </tr>
       ';

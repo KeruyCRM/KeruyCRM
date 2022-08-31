@@ -15,112 +15,131 @@ class Approve extends \Controller
 
         \Controllers\Main\Items\_Module::top();
 
-        if (!isset($app_fields_cache[$current_entity_id][_get::int('fields_id')])) {
-            redirect_to('dashboard/page_not_found');
+        if (!isset(\K::$fw->app_fields_cache[\K::$fw->current_entity_id][\K::$fw->GET['fields_id']])) {
+            \Helpers\Urls::redirect_to('main/dashboard/page_not_found');
         }
 
-        $cfg = new fields_types_cfg($app_fields_cache[$current_entity_id][_get::int('fields_id')]['configuration']);
+        \K::$fw->cfg = new \Models\Main\Fields_types_cfg(
+            \K::$fw->app_fields_cache[\K::$fw->current_entity_id][\K::$fw->GET['fields_id']]['configuration']
+        );
     }
 
     public function index()
     {
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'approve.php';
 
-        echo \K::view()->render(\K::$fw->app_layout);
+        echo \K::view()->render(\K::$fw->subTemplate);
     }
 
     public function approve()
     {
-        $gotopage = '';
-        if (isset($_POST['gotopage'])) {
-            $gotopage = '&gotopage[' . key($_POST['gotopage']) . ']=' . current($_POST['gotopage']);
-        }
+        if (\K::$fw->VERB == 'POST') {
+            $gotopage = '';
+            if (isset(\K::$fw->POST['gotopage'])) {
+                $gotopage = '&gotopage[' . key(\K::$fw->POST['gotopage']) . ']=' . current(\K::$fw->POST['gotopage']);
+            }
 
-        if (!approved_items::is_approved_by_user(
-            $current_entity_id,
-            $current_item_id,
-            _get::int('fields_id'),
-            $app_user['id']
-        )) {
-//approve
-            $sql_data = [
-                'entities_id' => $current_entity_id,
-                'items_id' => $current_item_id,
-                'fields_id' => _get::int('fields_id'),
-                'users_id' => $app_user['id'],
-                'signature' => (isset($_POST['signature']) ? $_POST['signature'] : ''),
-                'date_added' => time(),
-            ];
-
-            db_perform('app_approved_items', $sql_data);
-
-//add comment
-            if ($cfg->get('add_comment') == 1) {
+            if (!\Models\Main\Items\Approved_items::is_approved_by_user(
+                \K::$fw->current_entity_id,
+                \K::$fw->current_item_id,
+                \K::$fw->GET['fields_id'],
+                \K::$fw->app_user['id']
+            )) {
+                //approve
                 $sql_data = [
-                    'description' => (strlen($cfg->get('comment_text')) ? $cfg->get('comment_text') : TEXT_APPROVED),
-                    'entities_id' => $current_entity_id,
-                    'items_id' => $current_item_id,
+                    'entities_id' => \K::$fw->current_entity_id,
+                    'items_id' => \K::$fw->current_item_id,
+                    'fields_id' => \K::$fw->GET['fields_id'],
+                    'users_id' => \K::$fw->app_user['id'],
+                    'signature' => (\K::$fw->POST['signature'] ?? ''),
                     'date_added' => time(),
-                    'created_by' => $app_user['id'],
                 ];
 
-                db_perform('app_comments', $sql_data);
+                \K::model()->db_perform('app_approved_items', $sql_data);
 
-                $comments_id = db_insert_id();
+                //add comment
+                if (\K::$fw->cfg->get('add_comment') == 1) {
+                    $sql_data = [
+                        'description' => (strlen(\K::$fw->cfg->get('comment_text')) ? \K::$fw->cfg->get(
+                            'comment_text'
+                        ) : \K::$fw->TEXT_APPROVED),
+                        'entities_id' => \K::$fw->current_entity_id,
+                        'items_id' => \K::$fw->current_item_id,
+                        'date_added' => time(),
+                        'created_by' => \K::$fw->app_user['id'],
+                    ];
 
-                //send notificaton
-                app_send_new_comment_notification($comments_id, $current_item_id, $current_entity_id);
+                    $mapper = \K::model()->db_perform('app_comments', $sql_data);
 
-                //track changes
-                if (is_ext_installed()) {
-                    $log = new track_changes($current_entity_id, $current_item_id);
-                    $log->log_comment($comments_id, []);
+                    $comments_id = \K::model()->db_insert_id($mapper);
+
+                    //send notification
+                    \Helpers\App::app_send_new_comment_notification(
+                        $comments_id,
+                        \K::$fw->current_item_id,
+                        \K::$fw->current_entity_id
+                    );
+
+                    //track changes
+                    if (\Helpers\App::is_ext_installed()) {
+                        $log = new track_changes(\K::$fw->current_entity_id, \K::$fw->current_item_id);
+                        $log->log_comment($comments_id, []);
+                    }
+                }
+
+                //run process
+                if (\K::$fw->cfg->get('run_process') > 0) {
+                    if (\Models\Main\Items\Approved_items::is_all_approved(
+                        \K::$fw->current_entity_id,
+                        \K::$fw->current_item_id,
+                        \K::$fw->GET['fields_id']
+                    )) {
+                        \Helpers\Urls::redirect_to(
+                            'main/items/processes/run',
+                            'id=' . \K::$fw->cfg->get(
+                                'run_process'
+                            ) . '&path=' . \K::$fw->app_path . '&redirect_to=' . \K::$fw->app_redirect_to . $gotopage
+                        );
+                    }
                 }
             }
 
-//run process
-            if ($cfg->get('run_process') > 0) {
-                if (approved_items::is_all_approved($current_entity_id, $current_item_id, _get::int('fields_id'))) {
-                    redirect_to(
-                        'items/processes',
-                        'action=run&id=' . $cfg->get(
-                            'run_process'
-                        ) . '&path=' . $app_path . '&redirect_to=' . $app_redirect_to . $gotopage
+            switch (\K::$fw->app_redirect_to) {
+                case 'dashboard':
+                    \Helpers\Urls::redirect_to('main/dashboard/', substr($gotopage, 1));
+                    break;
+                case 'items_info':
+                    \Helpers\Urls::redirect_to('main/items/info', 'path=' . \K::$fw->app_path);
+                    break;
+                case 'items':
+                    \Helpers\Urls::redirect_to(
+                        'main/items/items',
+                        'path=' . substr(\K::$fw->app_path, 0, -(strlen(\K::$fw->current_item_id) + 1)) . $gotopage
                     );
-                }
+                    break;
+                default:
+                    if (strstr(\K::$fw->app_redirect_to, 'kanban')) {
+                        \Helpers\Urls::redirect_to(
+                            'ext/kanban/view',
+                            'id=' . str_replace('kanban', '', \K::$fw->app_redirect_to) . '&path=' . \K::$fw->app_path
+                        );
+                    } elseif (strstr(\K::$fw->app_redirect_to, 'related_records_info_page_')) {
+                        \Helpers\Urls::redirect_to(
+                            'main/items/info',
+                            'path=' . str_replace('related_records_info_page_', '', \K::$fw->app_redirect_to)
+                        );
+                    } elseif (strstr(\K::$fw->app_redirect_to, 'report_')) {
+                        \Helpers\Urls::redirect_to(
+                            'main/reports/view',
+                            'reports_id=' . str_replace('report_', '', \K::$fw->app_redirect_to) . $gotopage
+                        );
+                    } else {
+                        \Helpers\Urls::redirect_to('main/items/items', 'path=' . \K::$fw->app_path . $gotopage);
+                    }
+                    break;
             }
-        }
-
-        switch ($app_redirect_to) {
-            case 'dashboard':
-                redirect_to('dashboard/', substr($gotopage, 1));
-                break;
-            case 'items_info':
-                redirect_to('items/info', 'path=' . $app_path);
-                break;
-            case 'items':
-                redirect_to('items/items', 'path=' . substr($app_path, 0, -(strlen($current_item_id) + 1)) . $gotopage);
-                break;
-            default:
-                if (strstr($app_redirect_to, 'kanban')) {
-                    redirect_to(
-                        'ext/kanban/view',
-                        'id=' . str_replace('kanban', '', $app_redirect_to) . '&path=' . $app_path
-                    );
-                } elseif (strstr($app_redirect_to, 'related_records_info_page_')) {
-                    redirect_to(
-                        'items/info',
-                        'path=' . str_replace('related_records_info_page_', '', $app_redirect_to)
-                    );
-                } elseif (strstr($app_redirect_to, 'report_')) {
-                    redirect_to(
-                        'reports/view',
-                        'reports_id=' . str_replace('report_', '', $app_redirect_to) . $gotopage
-                    );
-                } else {
-                    redirect_to('items/items', 'path=' . $app_path . $gotopage);
-                }
-                break;
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 }

@@ -695,11 +695,16 @@ class App
 
     public static function render_user_photo($filename)
     {
-        if (is_file(DIR_WS_USERS . $filename)) {
-            $photo = image_tag(url_for_file(DIR_WS_USERS . $filename), ['class' => 'user-photo-content', 'width' => 50]
+        if (is_file(\K::$fw->DIR_WS_USERS . $filename)) {
+            $photo = \Helpers\Html::image_tag(
+                \Helpers\Urls::url_for_file(\K::$fw->DIR_WS_USERS . $filename),
+                ['class' => 'user-photo-content', 'width' => 50]
             );
         } else {
-            $photo = image_tag(url_for_file('images/' . 'no_photo.png'), ['class' => 'user-photo-content']);
+            $photo = \Helpers\Html::image_tag(
+                \Helpers\Urls::url_for_file('images/' . 'no_photo.png'),
+                ['class' => 'user-photo-content']
+            );
         }
 
         return $photo;
@@ -755,40 +760,49 @@ class App
 
     public static function app_send_new_comment_notification($comments_id, $item_id, $entity_id)
     {
-        global $app_user, $app_users_cache;
+        $item = \K::model()->db_find('app_entity_' . (int)$entity_id, $item_id);
 
-        $item = db_find('app_entity_' . $entity_id, $item_id);
+        $send_to = \Models\Main\Items\Items::get_send_to($entity_id, $item_id, $item);
 
-        $send_to = items::get_send_to($entity_id, $item_id, $item);
+        $cfg = new \Models\Main\Entities_cfg($entity_id);
 
-        //print_r($send_to);
-        //exit();
-
-        $cfg = new entities_cfg($entity_id);
-
-        //check flag send notification to assinged flag
+        //check flag send notification to assigned flag
         if ($cfg->get('send_notification_to_assigned', 0) == 0) {
             //send to suers who made comments and not assigned to item
-            $comments_query = db_query(
+            /*$comments_query = db_query(
                 "select * from app_comments where entities_id='" . db_input($entity_id) . "' and items_id='" . db_input(
                     $item_id
                 ) . "'" . (count($send_to) ? " and created_by not in (" . implode(',', $send_to) . ")" : '')
-            );
-            while ($comments = db_fetch_array($comments_query)) {
-                if (!in_array($comments['created_by'], $send_to) and isset($app_users_cache[$comments['created_by']])) {
+            );*/
+
+            $comments_query = \K::model()->db_fetch('app_comments', [
+                'entities_id = ? and items_id = ? ' . (count($send_to) ? ' and created_by not in (' . \K::model(
+                    )->quoteToString($send_to, \PDO::PARAM_INT) . ')' : ''),
+                $entity_id,
+                $item_id
+            ]);
+
+            //while ($comments = db_fetch_array($comments_query)) {
+            foreach ($comments_query as $comments) {
+                $comments = $comments->cast();
+
+                if (!in_array(
+                        $comments['created_by'],
+                        $send_to
+                    ) and isset(\K::$fw->app_users_cache[$comments['created_by']])) {
                     //check if user has access to item    	
-                    if (users::has_access_to_entity(
+                    if (\Models\Main\Users\Users::has_access_to_entity(
                         $entity_id,
                         'view_assigned',
-                        $app_users_cache[$comments['created_by']]['group_id']
+                        \K::$fw->app_users_cache[$comments['created_by']]['group_id']
                     )) {
                         if (!in_array($comments['created_by'], $send_to)) {
                             continue;
                         }
-                    } elseif (users::has_access_to_entity(
+                    } elseif (\Models\Main\Users\Users::has_access_to_entity(
                         $entity_id,
                         'view',
-                        $app_users_cache[$comments['created_by']]['group_id']
+                        \K::$fw->app_users_cache[$comments['created_by']]['group_id']
                     )) {
                         $send_to[] = $comments['created_by'];
                     }
@@ -797,51 +811,48 @@ class App
         }
 
         //add item created user to notification
-        if (fieldtype_created_by::is_notification_enabled($entity_id)) {
+        if (\Tools\FieldsTypes\Fieldtype_created_by::is_notification_enabled($entity_id)) {
             $send_to[] = $item['created_by'];
         }
 
         $send_to = array_unique($send_to);
 
         //add current user to notification
-        if (CFG_EMAIL_COPY_SENDER == 1) {
-            $send_to[] = $app_user['id'];
-        } else {
-            if ($key = array_search($app_user['id'], $send_to)) {
-                unset($send_to[$key]);
-            }
+        if (\K::$fw->CFG_EMAIL_COPY_SENDER == 1) {
+            $send_to[] = \K::$fw->app_user['id'];
+        } elseif ($key = array_search(\K::$fw->app_user['id'], $send_to)) {
+            unset($send_to[$key]);
         }
 
         if (count($send_to) > 0) {
-            //$heading_field_id = fields::get_heading_id($entity_id);
-            //$item_name = ($heading_field_id>0 ? $item['field_' . $heading_field_id] : $item['id']);
-
-            $breadcrumb = items::get_breadcrumb_by_item_id($entity_id, $item['id']);
+            $breadcrumb = \Models\Main\Items\Items::get_breadcrumb_by_item_id($entity_id, $item['id']);
             $item_name = $breadcrumb['text'];
 
-            $cfg = entities::get_cfg($entity_id);
+            $cfg = \Models\Main\Entities::get_cfg($entity_id);
 
-            $path_info = items::get_path_info($entity_id, $item_id);
+            $path_info = \Models\Main\Items\Items::get_path_info($entity_id, $item_id);
 
             $subject = (strlen(
                 $cfg['email_subject_new_comment']
-            ) > 0 ? $cfg['email_subject_new_comment'] . ' ' . $item_name : TEXT_DEFAULT_EMAIL_SUBJECT_NEW_COMMENT . ' ' . $item_name);
-            $heading = users::use_email_pattern_style(
-                '<div><a href="' . url_for(
-                    'items/info',
-                    'path=' . $path_info['full_path'],
-                    true
+            ) > 0 ? $cfg['email_subject_new_comment'] . ' ' . $item_name : \K::$fw->TEXT_DEFAULT_EMAIL_SUBJECT_NEW_COMMENT . ' ' . $item_name);
+            $heading = \Models\Main\Users\Users::use_email_pattern_style(
+                '<div><a href="' . \Helpers\Urls::url_for(
+                    'main/items/info',
+                    'path=' . $path_info['full_path']
                 ) . '"><h3>' . $subject . '</h3></a></div>',
                 'email_heading_content'
             );
 
             foreach (array_unique($send_to) as $user_id) {
                 //check comments access and exclude users which don't have access to comments
-                if (isset($app_users_cache[$user_id]['group_id'])) {
-                    if ($app_users_cache[$user_id]['group_id'] > 0) {
-                        if (!users::has_comments_access(
+                if (isset(\K::$fw->app_users_cache[$user_id]['group_id'])) {
+                    if (\K::$fw->app_users_cache[$user_id]['group_id'] > 0) {
+                        if (!\Models\Main\Users\Users::has_comments_access(
                             'view',
-                            users::get_comments_access_schema($entity_id, $app_users_cache[$user_id]['group_id']),
+                            \Models\Main\Users\Users::get_comments_access_schema(
+                                $entity_id,
+                                \K::$fw->app_users_cache[$user_id]['group_id']
+                            ),
                             false
                         )) {
                             continue;
@@ -849,20 +860,28 @@ class App
                     }
                 }
 
-                $body = users::use_email_pattern(
+                $body = \Models\Main\Users\Users::use_email_pattern(
                     'single',
                     [
-                        'email_body_content' => comments::render_content_box($entity_id, $item_id, $user_id),
-                        'email_sidebar_content' => items::render_info_box($entity_id, $item_id, $user_id)
+                        'email_body_content' => \Models\Main\Comments::render_content_box(
+                            $entity_id,
+                            $item_id,
+                            $user_id
+                        ),
+                        'email_sidebar_content' => \Models\Main\Items\Items::render_info_box(
+                            $entity_id,
+                            $item_id,
+                            $user_id
+                        )
                     ]
                 );
 
-                if (users_cfg::get_value_by_users_id($user_id, 'disable_notification') != 1) {
-                    users::send_to([$user_id], $subject, $heading . $body);
+                if (\Models\Main\Users\Users_cfg::get_value_by_users_id($user_id, 'disable_notification') != 1) {
+                    \Models\Main\Users\Users::send_to([$user_id], $subject, $heading . $body);
                 }
 
                 //add users notification
-                users_notifications::add($subject, 'new_comment', $user_id, $entity_id, $item_id);
+                \Models\Main\Users\Users_notifications::add($subject, 'new_comment', $user_id, $entity_id, $item_id);
             }
         }
     }

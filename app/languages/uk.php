@@ -800,7 +800,7 @@ return [
     'UPDATE_SELECTED_TEMPLATE_INFO' => 'Позначені поля будуть оновлені для обраного шаблону',
     'MENU_CONFIGURATION_MENU' => 'Налаштування меню',
     'CONFIGURATION_MENU_EXPLAIN' => 'У вас є можливість налаштувати додаткові розділи головного меню.',
-    'ADD_NEW_MENU_ITEM' => 'Добавити розділ меню',
+    'ADD_NEW_MENU_ITEM' => 'Додати розділ меню',
     'SORT' => 'Сортувати',
     'SELECT_ENTITIES' => 'Выберіть сутності',
     'FIELDTYPE_INPUT_VPIC_TITLE' => 'vPIC',
