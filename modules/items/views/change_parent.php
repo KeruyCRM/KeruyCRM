@@ -23,6 +23,6 @@ echo ajax_modal_template_footer() ?>
 
 <script>
     $(function () {
-        $('#modal_form').validate({igonre: ''})
+        $('#modal_form').validate({ignore: ''})
     })
 </script>

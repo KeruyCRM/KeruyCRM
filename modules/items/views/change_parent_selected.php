@@ -45,7 +45,7 @@ if (count($app_selected_items[$_GET['reports_id']]) == 0) {
 
     <script>
         $(function () {
-            $('#modal_form').validate({igonre: ''})
+            $('#modal_form').validate({ignore: ''})
         })
     </script>
 
