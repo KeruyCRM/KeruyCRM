@@ -87,6 +87,11 @@ class Model extends \Prefab
         return new \DB\SQL\Schema($this->db);
     }
 
+    public function getTables()
+    {
+        return $this->schema()->getTables();
+    }
+
     public function count()
     {
         return $this->db->count();

@@ -443,37 +443,40 @@ class Items
         foreach ($path_array as $v) {
             $vv = explode('-', $v);
             $entity_id = $vv[0];
-            $item_id = (isset($vv[1]) ? $vv[1] : 0);
+            $item_id = ($vv[1] ?? 0);
 
-            $entity_info = db_find('app_entities', $entity_id);
-            $entity_cfg = entities::get_cfg($entity_id);
-            $heading_field_id = fields::get_heading_id($entity_id);
+            $entity_info = \K::model()->db_find('app_entities', $entity_id);
 
-            $entitiy_name = (strlen(
+            $entity_cfg = \Models\Main\Entities::get_cfg($entity_id);
+
+            $heading_field_id = \Models\Main\Fields::get_heading_id($entity_id);
+
+            $entity_name = (strlen(
                 $entity_cfg['listing_heading']
             ) > 0 ? $entity_cfg['listing_heading'] : $entity_info['name']);
 
             //check if user have access to entity
-            if (users::has_users_access_to_entity($entity_id)) {
+            if (\Models\Main\Users\Users::has_users_access_to_entity($entity_id)) {
                 $breadcrumb[] = [
-                    'url' => url_for('items/items', 'path=' . $path . $entity_id),
-                    'title' => $entitiy_name
+                    'url' => \Helpers\Urls::url_for('main/items/items', 'path=' . $path . $entity_id),
+                    'title' => $entity_name
                 ];
             } else {
-                $breadcrumb[] = ['title' => $entitiy_name];
+                $breadcrumb[] = ['title' => $entity_name];
             }
 
             if ($item_id > 0) {
                 $item_name = '';
 
-                $item_info_query = db_query(
-                    "select e.* " . fieldtype_formula::prepare_query_select(
+                $item_info = \K::model()->db_query_exec_one(
+                    "select e.* " . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                         $entity_id,
                         ''
-                    ) . " from app_entity_" . $entity_id . " e where e.id='" . $item_id . "'",
-                    false
+                    ) . " from app_entity_" . (int)$entity_id . " e where e.id = ?",
+                    $item_id
                 );
-                if ($item_info = db_fetch_array($item_info_query)) {
+
+                if ($item_info) {
                     $item_name = ($heading_field_id > 0 ? self::get_heading_field_value(
                         $heading_field_id,
                         $item_info
@@ -482,21 +485,24 @@ class Items
 
                 //parent items breadcrumb
                 if ($item_info['parent_id'] > 0) {
-                    $parents = array_reverse(tree_table::get_parents($entity_id, $item_info['parent_id']));
+                    $parents = array_reverse(
+                        Models\Main\Items\Tree_table::get_parents($entity_id, $item_info['parent_id'])
+                    );
 
                     foreach ($parents as $parent_item_id) {
-                        $item_info_query = db_query(
-                            "select e.* " . fieldtype_formula::prepare_query_select(
+                        $item_info = \K::model()->db_query_exec_one(
+                            "select e.* " . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                                 $entity_id,
                                 ''
-                            ) . " from app_entity_" . $entity_id . " e where e.id='" . $parent_item_id . "'",
-                            false
+                            ) . " from app_entity_" . (int)$entity_id . " e where e.id = ?",
+                            $parent_item_id
                         );
-                        $item_info = db_fetch_array($item_info_query);
+
+                        //$item_info = db_fetch_array($item_info_query);
 
                         $breadcrumb[] = [
-                            'url' => url_for(
-                                'items/info',
+                            'url' => \Helpers\Urls::url_for(
+                                'main/items/info',
                                 'path=' . $path . $entity_id . '-' . $parent_item_id
                             ),
                             'title' => self::get_heading_field($entity_id, $parent_item_id, $item_info)
@@ -505,9 +511,12 @@ class Items
                 }
 
                 //check if user have access to entity
-                if (users::has_users_access_to_entity($entity_id)) {
+                if (\Models\Main\Users\Users::has_users_access_to_entity($entity_id)) {
                     $breadcrumb[] = [
-                        'url' => url_for('items/info', 'path=' . $path . $entity_id . '-' . $item_id),
+                        'url' => \Helpers\Urls::url_for(
+                            'main/items/info',
+                            'path=' . $path . $entity_id . '-' . $item_id
+                        ),
                         'title' => $item_name
                     ];
                 } else {
@@ -1097,7 +1106,7 @@ class Items
                 $items = \K::$fw->items_holder[$entities_id][$items_id] = $current_item_info;
             } else {
                 //$items = db_query("select * from app_entity_" . $entities_id . " where id='" . $items_id . "'");
-                $items = \K::model()->db_fetch_one('app_entity_' . $entities_id, ['id = ?', $items_id]);
+                $items = \K::model()->db_fetch_one('app_entity_' . (int)$entities_id, ['id = ?', $items_id]);
                 \K::$fw->items_holder[$entities_id][$items_id] = $items;
             }
         } else {
@@ -1634,10 +1643,10 @@ class Items
             $parent_fields_query = \K::model()->db_fetch('app_fields', [
                 'type in (' . $typeIn . ') and entities_id = ?',
                 $path_info['entities_id']
-            ],[],'id');
+            ], [], 'id');
 
             //while ($parent_field = db_fetch_array($parent_fields_query)) {
-            foreach ($parent_fields_query as $parent_field){
+            foreach ($parent_fields_query as $parent_field) {
                 $parent_field = $parent_field->cast();
 
                 $has_parent_users = true;
@@ -1646,7 +1655,10 @@ class Items
             }
 
             if ($has_parent_users) {
-                $parent_item_info = \K::model()->db_find('app_entity_' . (int)$path_info['entities_id'], $path_info['items_id']);
+                $parent_item_info = \K::model()->db_find(
+                    'app_entity_' . (int)$path_info['entities_id'],
+                    $path_info['items_id']
+                );
 
                 foreach ($parent_users_fields as $id) {
                     if (isset($parent_item_info['field_' . $id]) and strlen($parent_item_info['field_' . $id])) {
@@ -1656,13 +1668,18 @@ class Items
                         switch ($field['type']) {
                             case 'fieldtype_grouped_users':
                                 $parent_users_list = array_merge(
-                                    \Tools\FieldsTypes\Fieldtype_grouped_users::get_send_to($parent_item_info['field_' . $id], $cfg),
+                                    \Tools\FieldsTypes\Fieldtype_grouped_users::get_send_to(
+                                        $parent_item_info['field_' . $id],
+                                        $cfg
+                                    ),
                                     $parent_users_list
                                 );
                                 break;
                             case 'fieldtype_access_group':
                                 $parent_users_list = array_merge(
-                                    \Tools\FieldsTypes\Fieldtype_access_group::get_send_to($parent_item_info['field_' . $id]),
+                                    \Tools\FieldsTypes\Fieldtype_access_group::get_send_to(
+                                        $parent_item_info['field_' . $id]
+                                    ),
                                     $parent_users_list
                                 );
                                 break;
