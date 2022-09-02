@@ -1042,33 +1042,66 @@ class Fields_types
 
     public static function recalculate_numeric_comments_sum($entity_id, $item_id)
     {
-        $fields_query = db_query(
+        /*$fields_query = db_query(
             "select f.* from app_fields f where f.type  in ('fieldtype_input_numeric_comments') and  f.entities_id='" . db_input(
                 $entity_id
             ) . "' and f.comments_status=1 order by f.comments_sort_order, f.name"
-        );
-        while ($fields = db_fetch_array($fields_query)) {
+        );*/
+
+        $fields_query = \K::model()->db_fetch('app_fields', [
+            'type = ? and entities_id = ? and comments_status = 1',
+            'fieldtype_input_numeric_comments',
+            $entity_id
+        ], ['order' => 'comments_sort_order,name'], 'id');
+
+        //while ($fields = db_fetch_array($fields_query)) {
+        foreach ($fields_query as $fields) {
+            $fields = $fields->cast();
+
             $total = 0;
 
-            $comments_query = db_query(
+            /*$comments_query = db_query(
                 "select * from app_comments where entities_id='" . db_input($entity_id) . "' and items_id='" . db_input(
                     $item_id
                 ) . "'"
-            );
-            while ($comments = db_fetch_array($comments_query)) {
-                $history_query = db_query(
+            );*/
+
+            $comments_query = \K::model()->db_fetch('app_comments', [
+                'entities_id = ? and items_id = ?',
+                $entity_id,
+                $item_id
+            ], [], 'id');
+
+            //while ($comments = db_fetch_array($comments_query)) {
+            foreach ($comments_query as $comments) {
+                $comments = $comments->cast();
+
+                /*$history_query = db_query(
                     "select * from app_comments_history where comments_id='" . db_input(
                         $comments['id']
                     ) . "' and fields_id='" . $fields['id'] . "'"
-                );
-                while ($history = db_fetch_array($history_query)) {
+                );*/
+
+                $history_query = \K::model()->db_fetch('app_comments_history', [
+                    'comments_id = ? and fields_id = ?',
+                    $comments['id'],
+                    $fields['id']
+                ], [], 'fields_value');
+
+                //while ($history = db_fetch_array($history_query)) {
+                foreach ($history_query as $history) {
+                    $history = $history->cast();
+
                     $total += $history['fields_value'];
                 }
             }
 
-            $sql_data = ['field_' . $fields['id'] => $total];
+            $sql_data = ['field_' . (int)$fields['id'] => $total];
 
-            db_perform('app_entity_' . $entity_id, $sql_data, 'update', "id='" . db_input($item_id) . "'");
+            \K::model()->db_perform('app_entity_' . (int)$entity_id, $sql_data, [
+                'id = ?',
+                $item_id
+            ]);
         }
     }
 

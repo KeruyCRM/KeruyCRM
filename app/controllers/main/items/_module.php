@@ -22,8 +22,8 @@ class _Module
             \Helpers\Urls::redirect_to('main/dashboard');
         }
 
-        $current_path_array = explode('/', $current_path);
-        $current_item_array = explode('-', $current_path_array[count($current_path_array) - 1]);
+        \K::$fw->current_path_array = explode('/', $current_path);
+        $current_item_array = explode('-', \K::$fw->current_path_array[count(\K::$fw->current_path_array) - 1]);
 
         \K::$fw->current_entity_id = (int)$current_item_array[0];
         \K::$fw->current_item_id = (isset($current_item_array[1]) ? (int)$current_item_array[1] : 0);
@@ -69,8 +69,8 @@ class _Module
             }
         }
 
-        if (count($current_path_array) > 1) {
-            $v = explode('-', $current_path_array[count($current_path_array) - 2]);
+        if (count(\K::$fw->current_path_array) > 1) {
+            $v = explode('-', \K::$fw->current_path_array[count(\K::$fw->current_path_array) - 2]);
             $parent_entity_id = (int)$v[0];
             $parent_entity_item_id = (int)$v[1];
 
@@ -103,7 +103,7 @@ class _Module
             $parent_entity_item_id = 0;
         }
 
-        \K::$fw->app_breadcrumb = \Models\Main\Items\Items::get_breadcrumb($current_path_array);
+        \K::$fw->app_breadcrumb = \Models\Main\Items\Items::get_breadcrumb(\K::$fw->current_path_array);
 
         /**
          * access configuration

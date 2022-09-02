@@ -1039,19 +1039,28 @@ class Items
         foreach ($path_array as $v) {
             $vv = explode('-', $v);
             $entity_id = $vv[0];
-            $item_id = (isset($vv[1]) ? $vv[1] : 0);
+            $item_id = ($vv[1] ?? 0);
 
             if ($item_id == 0 or $current_entity_id == $entity_id) {
                 break;
             }
 
-            $item_info = db_find('app_entity_' . $entity_id, $item_id);
+            $item_info = \K::model()->db_find('app_entity_' . (int)$entity_id, $item_id);
 
-            $fields_query = db_query(
+            /*$fields_query = db_query(
                 "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
                 ) . ") and  f.entities_id='" . db_input($entity_id) . "' order by f.sort_order, f.name"
-            );
-            while ($field = db_fetch_array($fields_query)) {
+            );*/
+
+            $fields_query = \K::model()->db_fetch('app_fields', [
+                'type not in (' . \Models\Main\Fields_types::get_reserverd_types_list() . ') and entities_id = ?',
+                $entity_id
+            ], ['order' => 'sort_order,name'], 'id');
+
+            //while ($field = db_fetch_array($fields_query)) {
+            foreach ($fields_query as $field) {
+                $field = $field->cast();
+
                 $fields_cache[$field['id']] = $item_info['field_' . $field['id']];
             }
         }
