@@ -3,22 +3,17 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header($heading) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->heading) ?>
 
-<?php
-echo form_tag('login', url_for('items/comments', 'action=delete&id=' . $_GET['id'] . '&path=' . $_GET['path'])) ?>
+<?= \Helpers\Html::form_tag(
+    'login',
+    \Helpers\Urls::url_for('main/items/comments/delete', 'id=' . \K::$fw->GET['id'] . '&path=' . \K::$fw->GET['path'])
+) ?>
 
 <div class="modal-body">
-    <?php
-    echo $content ?>
+    <?= \K::$fw->content ?>
 </div>
 
-<?php
-echo ajax_modal_template_footer($button_title) ?>
+<?= \Helpers\App::ajax_modal_template_footer(\K::$fw->button_title) ?>
 
-</form> 
-    
-    
-    
- 
+</form>
