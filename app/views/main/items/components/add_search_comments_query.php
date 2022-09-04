@@ -4,32 +4,34 @@ if (!defined('KERUY_CRM')) {
     exit;
 }
 
-if (app_parse_search_string($_POST['search_keywords'], $search_keywords)) {
-    if (isset($search_keywords) && (sizeof($search_keywords) > 0)) {
-        $listing_sql_query .= " and (";
-        for ($i = 0, $n = sizeof($search_keywords); $i < $n; $i++) {
-            switch ($search_keywords[$i]) {
+if (\Helpers\App::app_parse_search_string(\K::$fw->POST['search_keywords'], \K::$fw->search_keywords)) {
+    if (isset(\K::$fw->search_keywords) && (sizeof(\K::$fw->search_keywords) > 0)) {
+        \K::$fw->listing_sql_query .= ' and (';
+        for ($i = 0, $n = sizeof(\K::$fw->search_keywords); $i < $n; $i++) {
+            switch (\K::$fw->search_keywords[$i]) {
                 case '(':
                 case ')':
                 case 'and':
                 case 'or':
-                    $listing_sql_query .= " " . $search_keywords[$i] . " ";
+                    \K::$fw->listing_sql_query .= " " . \K::$fw->search_keywords[$i] . " ";
                     break;
                 default:
-                    $keyword = $search_keywords[$i];
-                    $listing_sql_query .= "description like '%" . db_input($keyword) . "%'";
+                    $keyword = \K::$fw->search_keywords[$i];
+                    \K::$fw->listing_sql_query .= 'description like ' . \K::model()->quote('%' . $keyword . '%');
                     break;
             }
         }
-        $listing_sql_query .= ")";
+        \K::$fw->listing_sql_query .= ")";
 
-        if (count($search_keywords) == 1 and is_numeric($search_keywords[0]) and $entity_cfg->get(
-                'display_comments_id'
-            ) == 1) {
-            $listing_sql_query .= " or id='" . db_input($search_keywords[0]) . "'";
+        if (count(\K::$fw->search_keywords) == 1 and is_numeric(
+                \K::$fw->search_keywords[0]
+            ) and \K::$fw->entity_cfg->get('display_comments_id') == 1) {
+            \K::$fw->listing_sql_query .= ' or id = ' . \K::model()->quote(
+                    \K::$fw->search_keywords[0],
+                    \PDO::PARAM_INT
+                );
         }
-        //echo $listing_sql_query;
     }
 } else {
-    echo '<div class="alert alert-danger">' . TEXT_ERROR_INVALID_KEYWORDS . '</div>';
-} 
+    echo '<div class="alert alert-danger">' . \K::$fw->TEXT_ERROR_INVALID_KEYWORDS . '</div>';
+}
