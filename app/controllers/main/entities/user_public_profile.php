@@ -38,7 +38,7 @@ class User_public_profile extends \Controller
         }
 
         $fields_query = \K::model()->db_query_exec_one(
-            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserverd_types_list(
+            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserved_types_list(
             ) . "," . \Models\Main\Fields_types::get_users_types_list(
             ) . ") and f.entities_id = ? and f.forms_tabs_id = t.id",
             \K::$fw->GET['entities_id'],
@@ -57,7 +57,7 @@ class User_public_profile extends \Controller
         ) == 0 ? '0' : \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS);
 
         \K::$fw->fields_query_in = \K::model()->db_query_exec(
-            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserverd_types_list(
+            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserved_types_list(
             ) . "," . \K::model()->quoteToString(
                 ['fieldtype_section', 'fieldtype_user_photo', 'fieldtype_user_skin', 'fieldtype_user_language']
             ) . ") and f.id in (" . $public_user_profile_fields . ") and f.entities_id = ? and f.forms_tabs_id = t.id order by field(f.id," . $public_user_profile_fields . ")",
@@ -66,7 +66,7 @@ class User_public_profile extends \Controller
         );
 
         \K::$fw->fields_query_notin = \K::model()->db_query_exec(
-            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserverd_types_list(
+            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserved_types_list(
             ) . "," . \K::model()->quoteToString(
                 ['fieldtype_section', 'fieldtype_user_photo', 'fieldtype_user_skin', 'fieldtype_user_language']
             ) . ") and f.id not in (" . $public_user_profile_fields . ") and f.entities_id = ? and f.forms_tabs_id = t.id order by t.sort_order, t.name, f.sort_order, f.name",

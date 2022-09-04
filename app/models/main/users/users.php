@@ -30,7 +30,7 @@ class Users
             and strlen(\K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS) > 0
             and $include_public_profile) {
             $fields_query = \K::model()->db_query_exec(
-                'select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (' . \Models\Main\Fields_types::get_reserverd_types_list(
+                'select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (' . \Models\Main\Fields_types::get_reserved_types_list(
                 ) . ') and f.id in (' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ') and  f.entities_id = 1 and f.forms_tabs_id = t.id order by field(f.id,' . \K::$fw->CFG_PUBLIC_USER_PROFILE_FIELDS . ')',
                 null,
                 'app_fields,app_forms_tabs'

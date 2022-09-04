@@ -153,7 +153,7 @@ class Fields
                 if ($entity_id == $entities_id) {
                     $where_sql = " and f.type not in ('fieldtype_action')";
                 } else {
-                    $where_sql = ' and f.type not in (' . \Models\Main\Fields_types::get_reserverd_types_list() . ')';
+                    $where_sql = ' and f.type not in (' . \Models\Main\Fields_types::get_reserved_types_list() . ')';
                 }
 
                 $fields_query = self::get_query($entity_id, $where_sql);
@@ -303,14 +303,14 @@ class Fields
         $html = '';
 
         /*$fields_query = \K::model()->db_query_exec(
-            "select f.id, f.type, f.required_message, f.configuration from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+            "select f.id, f.type, f.required_message, f.configuration from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
             ) . ") and  f.entities_id= :entities_id order by f.sort_order, f.name", [':entities_id' => $entities_id]
         );*/
 
         $fields_query = \K::model()->db_fetch(
             'app_fields',
             [
-                'type not in (' . \Models\Main\Fields_types::get_reserverd_types_list() . ') and entities_id = ?',
+                'type not in (' . \Models\Main\Fields_types::get_reserved_types_list() . ') and entities_id = ?',
                 $entities_id
             ],
             ['order' => 'sort_order,name'],
@@ -866,7 +866,7 @@ class Fields
         }
 
         $fields_query = \K::model()->db_query_exec(
-            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserverd_types_list(
+            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserved_types_list(
             ) . ") and f.entities_id = ? and f.forms_tabs_id = t.id {$where_sql} order by t.sort_order, t.name, f.sort_order, f.name",
             $entities_id,
             'app_fields,app_forms_tabs'
@@ -932,7 +932,7 @@ class Fields
 
             $fields_query = self::get_query(
                 $entities_info['parent_id'],
-                "and f.type not in (" . \Models\Main\Fields_types::get_reserverd_types_list() . ")"
+                "and f.type not in (" . \Models\Main\Fields_types::get_reserved_types_list() . ")"
             );
 
             //while ($v = db_fetch_array($fields_query)) {

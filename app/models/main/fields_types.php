@@ -204,7 +204,7 @@ class Fields_types
     public static function skip_import_field_types()
     {
         //skip reserved
-        $skip_fields = self::get_reserverd_types_list();
+        $skip_fields = self::get_reserved_types_list();
 
         //skip not allowed
         $skip_fields .= ",'fieldtype_nested_calculations','fieldtype_access_group','fieldtype_user_roles','fieldtype_users_approve','fieldtype_autostatus','fieldtype_google_map','fieldtype_mysql_query','fieldtype_formula','fieldtype_days_difference','fieldtype_hours_difference','fieldtype_users','fieldtype_input_numeric_comments','fieldtype_input_file','fieldtype_attachments','fieldtype_related_records','fieldtype_parent_value'";
@@ -227,7 +227,7 @@ class Fields_types
         //return "'" . implode("','", self::get_users_types()) . "'";
     }
 
-    public static function get_reserverd_types_list()
+    public static function get_reserved_types_list()
     {
         return \K::model()->quoteToString(self::get_reserved_types());
         //return "'" . implode("','", self::get_reserved_types()) . "'";
@@ -239,7 +239,7 @@ class Fields_types
         //return "'" . implode("','", self::get_attachments_types()) . "'";
     }
 
-    public static function get_reserverd_data_types_list()
+    public static function get_reserved_data_types_list()
     {
         return \K::model()->quoteToString(self::get_reserved_data_types());
         //return "'" . implode("','", self::get_reserved_data_types()) . "'";
@@ -247,11 +247,11 @@ class Fields_types
 
     public static function get_type_list_excluded_in_form()
     {
-        return \K::model()->quoteToString(self::get_types_excluded_in_form()) . ',' . self::get_reserverd_types_list();
+        return \K::model()->quoteToString(self::get_types_excluded_in_form()) . ',' . self::get_reserved_types_list();
         /*return "'" . implode(
                 "','",
                 self::get_types_excluded_in_form()
-            ) . "'," . self::get_reserverd_types_list();*/
+            ) . "'," . self::get_reserved_types_list();*/
     }
 
     public static function get_type_list_excluded_in_sorting()

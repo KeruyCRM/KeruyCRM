@@ -106,7 +106,7 @@ if (!defined('KERUY_CRM')) {
   <ul id="forms_tabs_' . $tabs['id'] . '" class="sortable" style="max-width: 950px;">
 ';
                             $fields_query = \K::model()->db_query_exec(
-                                "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserverd_types_list(
+                                "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserved_types_list(
                                 ) . ") and f.entities_id = ? and f.forms_tabs_id = t.id and f.forms_tabs_id = ? and length(forms_rows_position) = 0 order by t.sort_order, t.name, f.sort_order, f.name",
                                 [
                                     \K::$fw->GET['entities_id'],
@@ -173,7 +173,7 @@ if (!defined('KERUY_CRM')) {
                       <ul class="sortable" id="forms_rows_' . $tabs['id'] . '_' . $rows['id'] . '_' . $i . '">';
 
                                         $fields_query = \K::model()->db_query_exec(
-                                            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserverd_types_list(
+                                            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . \Models\Main\Fields_types::get_reserved_types_list(
                                             ) . ") and  f.entities_id = ? and f.forms_tabs_id = t.id and f.forms_tabs_id = ? and forms_rows_position = ? order by t.sort_order, t.name, f.sort_order, f.name",
                                             [
                                                 \K::$fw->GET['entities_id'],

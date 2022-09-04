@@ -1048,12 +1048,12 @@ class Items
             $item_info = \K::model()->db_find('app_entity_' . (int)$entity_id, $item_id);
 
             /*$fields_query = db_query(
-                "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                 ) . ") and  f.entities_id='" . db_input($entity_id) . "' order by f.sort_order, f.name"
             );*/
 
             $fields_query = \K::model()->db_fetch('app_fields', [
-                'type not in (' . \Models\Main\Fields_types::get_reserverd_types_list() . ') and entities_id = ?',
+                'type not in (' . \Models\Main\Fields_types::get_reserved_types_list() . ') and entities_id = ?',
                 $entity_id
             ], ['order' => 'sort_order,name'], 'id');
 

@@ -151,14 +151,14 @@ class Account extends \Controller
             $choices_values = new \Models\Main\Choices_values(\K::$fw->current_entity_id);
 
             /*$fields_query = db_query(
-                "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                 ) . "," . \K::model()->quoteToString($excluded_fields_types) . ") and  f.entities_id='" . db_input(
                     \K::$fw->current_entity_id
                 ) . "' order by f.sort_order, f.name"
             );*/
 
             $fields_query = \K::model()->db_fetch('app_fields', [
-                'type not in (' . \Models\Main\Fields_types::get_reserverd_types_list() . ',' . \K::model(
+                'type not in (' . \Models\Main\Fields_types::get_reserved_types_list() . ',' . \K::model(
                 )->quoteToString(
                     $excluded_fields_types
                 ) . ') and entities_id = ?',

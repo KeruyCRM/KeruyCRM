@@ -36,14 +36,14 @@ if (!defined('KERUY_CRM')) {
                 //build default tab
                 $html_default_tab = '';
                 /*$fields_query = db_query(
-                    "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                    "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                     ) . ',' . fields_types::get_users_types_list() . ") and  f.entities_id='" . db_input(
                         \K::$fw->current_entity_id
                     ) . "' and f.comments_status=1 and f.comments_forms_tabs_id=0 order by f.comments_sort_order, f.name"
                 );*/
 
                 $fields_query = \K::model()->db_fetch('app_fields', [
-                    'type not in (' . \Models\Main\Fields_types::get_reserverd_types_list(
+                    'type not in (' . \Models\Main\Fields_types::get_reserved_types_list(
                     ) . ',' . \Models\Main\Fields_types::get_users_types_list(
                     ) . ') and entities_id = ? and comments_status = 1 and comments_forms_tabs_id = 0',
                     \K::$fw->current_entity_id
@@ -111,14 +111,14 @@ if (!defined('KERUY_CRM')) {
 
                     $html = '';
                     /*$fields_query = db_query(
-                        "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                        "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                         ) . ',' . fields_types::get_users_types_list() . ") and  f.entities_id='" . db_input(
                             \K::$fw->current_entity_id
                         ) . "' and f.comments_status=1 and f.comments_forms_tabs_id='" . $tabs['id'] . "' order by f.comments_sort_order, f.name"
                     );*/
 
                     $fields_query = \K::model()->db_fetch('app_fields', [
-                        'type not in (' . \Models\Main\Fields_types::get_reserverd_types_list(
+                        'type not in (' . \Models\Main\Fields_types::get_reserved_types_list(
                         ) . ',' . \Models\Main\Fields_types::get_users_types_list(
                         ) . ') and f.entities_id = ? and comments_status = 1 and comments_forms_tabs_id = ?',
                         \K::$fw->current_entity_id,

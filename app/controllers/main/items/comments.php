@@ -129,14 +129,14 @@ class Comments extends \Controller
                     $updated_fields = [];
 
                     /*$fields_query = db_query(
-                        "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                        "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                         ) . ',' . fields_types::get_users_types_list() . ") and  f.entities_id='" . db_input(
                             \K::$fw->current_entity_id
                         ) . "' and f.comments_status = 1 order by f.comments_sort_order, f.name"
                     );*/
 
                     $fields_query = \K::model()->db_fetch('app_fields', [
-                        'type not in (' . \Models\Main\Fields_types::get_reserverd_types_list(
+                        'type not in (' . \Models\Main\Fields_types::get_reserved_types_list(
                         ) . ',' . \Models\Main\Fields_types::get_users_types_list(
                         ) . ') and entities_id = ? and comments_status = 1',
                         \K::$fw->current_entity_id
