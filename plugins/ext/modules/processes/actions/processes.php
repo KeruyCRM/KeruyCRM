@@ -225,7 +225,7 @@ switch ($app_module_action) {
 
         $choices = [];
         $fields_query = db_query(
-            "select f.*, if(f.type in (" . fields_types::get_reserverd_data_types_list(
+            "select f.*, if(f.type in (" . fields_types::get_reserved_data_types_list(
             ) . "),-1,t.sort_order) as tab_sort_order from app_fields f,  app_forms_tabs t where f.forms_tabs_id=t.id  and f.type in ('fieldtype_user_roles','fieldtype_users_approve','fieldtype_users','fieldtype_users_ajax','fieldtype_grouped_users','fieldtype_created_by') and f.entities_id='" . db_input(
                 $entities_id
             ) . "' order by tab_sort_order, t.name, f.sort_order, f.name"

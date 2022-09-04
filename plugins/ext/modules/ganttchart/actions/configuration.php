@@ -94,7 +94,7 @@ switch ($app_module_action) {
         $exclude_fiedls_types = "'fieldtype_action','fieldtype_related_records','fieldtype_section','fieldtype_mapbbcode','fieldtype_qrcode','fieldtype_barcode','fieldtype_image','fieldtype_image_ajax','fieldtype_attachments','fieldtype_textarea','fieldtype_textarea_wysiwyg','fieldtype_input_file'";
 
         $fields_query = db_query(
-            "select f.*, t.name as tab_name, if(f.type in (" . fields_types::get_reserverd_types_list(
+            "select f.*, t.name as tab_name, if(f.type in (" . fields_types::get_reserved_types_list(
             ) . "),-1,t.sort_order) as tab_sort_order from app_fields f, app_forms_tabs t where  f.entities_id='" . db_input(
                 $entities_id
             ) . "' and f.type not in ({$exclude_fiedls_types}) and f.forms_tabs_id=t.id order by tab_sort_order, t.name, f.sort_order, f.name"

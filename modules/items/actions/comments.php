@@ -80,7 +80,7 @@ switch ($app_module_action) {
                 $updated_fields = [];
 
                 $fields_query = db_query(
-                    "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                    "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                     ) . ',' . fields_types::get_users_types_list() . ") and  f.entities_id='" . db_input(
                         $current_entity_id
                     ) . "' and f.comments_status = 1 order by f.comments_sort_order, f.name"

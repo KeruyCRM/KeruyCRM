@@ -151,7 +151,7 @@ switch ($app_module_action) {
 
         $choices = [];
         $fields_query = db_query(
-            "select f.*, if(f.type in (" . fields_types::get_reserverd_data_types_list(
+            "select f.*, if(f.type in (" . fields_types::get_reserved_data_types_list(
             ) . "),-1,t.sort_order) as tab_sort_order from app_fields f,  app_forms_tabs t where f.forms_tabs_id=t.id  and f.type in ('fieldtype_stages','fieldtype_dropdown','fieldtype_autostatus','fieldtype_radioboxes','fieldtype_users','fieldtype_entity', 'fieldtype_entity_ajax','fieldtype_grouped_users','fieldtype_dropdown_multiple','fieldtype_checkboxes','fieldtype_created_by'" . ($entities_info['parent_id'] > 0 ? ",'fieldtype_parent_item_id'" : '') . ") and f.entities_id='" . db_input(
                 $entities_id
             ) . "' order by tab_sort_order, t.name, f.sort_order, f.name"

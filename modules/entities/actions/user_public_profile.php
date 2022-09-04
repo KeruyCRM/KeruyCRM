@@ -14,7 +14,7 @@ if (!$cfq = db_fetch_array($cfq_query)) {
 }
 
 $fields_query = db_query(
-    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserverd_types_list(
+    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserved_types_list(
     ) . "," . fields_types::get_users_types_list() . ") and f.entities_id='" . db_input(
         $_GET['entities_id']
     ) . "' and f.forms_tabs_id=t.id"

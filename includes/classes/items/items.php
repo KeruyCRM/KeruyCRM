@@ -987,7 +987,7 @@ class items
             $item_info = db_find('app_entity_' . $entity_id, $item_id);
 
             $fields_query = db_query(
-                "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                 ) . ") and  f.entities_id='" . db_input($entity_id) . "' order by f.sort_order, f.name"
             );
             while ($field = db_fetch_array($fields_query)) {

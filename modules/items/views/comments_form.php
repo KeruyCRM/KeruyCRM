@@ -57,7 +57,7 @@ echo form_tag(
 //build default tab   
             $html_default_tab = '';
             $fields_query = db_query(
-                "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                 ) . ',' . fields_types::get_users_types_list() . ") and  f.entities_id='" . db_input(
                     $current_entity_id
                 ) . "' and f.comments_status=1 and f.comments_forms_tabs_id=0 order by f.comments_sort_order, f.name"
@@ -91,13 +91,13 @@ echo form_tag(
 
 //build tabs heading 
             $html_tab[0] = '<li class="form_tab_0 active"><a data-toggle="tab" href="#form_tab_0">' . TEXT_GENERAL_INFO . '</a></li>';
-            $tabs_query = db_fetch_all(
+            /*$tabs_query = db_fetch_all(
                 'app_comments_forms_tabs',
                 "entities_id='" . db_input($current_entity_id) . "' order by  sort_order, name"
             );
             while ($tabs = db_fetch_array($tabs_query)) {
                 $html_tab[$tabs['id']] = '<li class="form_tab_' . $tabs['id'] . '"><a data-toggle="tab" href="#form_tab_' . $tabs['id'] . '">' . $tabs['name'] . '</a></li>';
-            }
+            }*/
 
 //build tabls content
             $tabs_query = db_fetch_all(
@@ -105,9 +105,11 @@ echo form_tag(
                 "entities_id='" . db_input($current_entity_id) . "' order by  sort_order, name"
             );
             while ($tabs = db_fetch_array($tabs_query)) {
+                $html_tab[$tabs['id']] = '<li class="form_tab_' . $tabs['id'] . '"><a data-toggle="tab" href="#form_tab_' . $tabs['id'] . '">' . $tabs['name'] . '</a></li>';
+
                 $html = '';
                 $fields_query = db_query(
-                    "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                    "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                     ) . ',' . fields_types::get_users_types_list() . ") and  f.entities_id='" . db_input(
                         $current_entity_id
                     ) . "' and f.comments_status=1 and f.comments_forms_tabs_id='" . $tabs['id'] . "' order by f.comments_sort_order, f.name"

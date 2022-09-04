@@ -248,7 +248,7 @@ class mail_fetcher
                 $choices_values = new choices_values($current_entity_id);
 
                 $fields_query = db_query(
-                    "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                    "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                     ) . ",'fieldtype_related_records','fieldtype_user_last_login_date','fieldtype_google_map') and  f.entities_id='" . db_input(
                         $current_entity_id
                     ) . "' order by f.sort_order, f.name"

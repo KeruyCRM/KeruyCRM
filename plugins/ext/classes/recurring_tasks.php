@@ -111,7 +111,7 @@ class recurring_tasks
             $choices_values = new choices_values($entities_id);
 
             $fields_query = db_query(
-                "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+                "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
                 ) . ") and  f.entities_id='" . db_input($entities_id) . "'"
             );
             while ($field = db_fetch_array($fields_query)) {

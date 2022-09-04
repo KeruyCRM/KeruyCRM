@@ -243,7 +243,7 @@ class fields
         $html = '';
 
         $fields_query = db_query(
-            "select f.id, f.type, f.required_message, f.configuration from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+            "select f.id, f.type, f.required_message, f.configuration from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
             ) . ") and  f.entities_id='" . db_input($entities_id) . "' order by f.sort_order, f.name"
         );
         while ($v = db_fetch_array($fields_query)) {
@@ -705,7 +705,7 @@ class fields
         }
 
         $fields_query = db_query(
-            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserverd_types_list(
+            "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserved_types_list(
             ) . ") and f.entities_id='" . $entities_id . "' and f.forms_tabs_id=t.id {$where_sql} order by t.sort_order, t.name, f.sort_order, f.name"
         );
 
@@ -770,7 +770,7 @@ class fields
 
             $fields_query = fields::get_query(
                 $entities_info['parent_id'],
-                "and f.type not in (" . fields_types::get_reserverd_types_list() . ")"
+                "and f.type not in (" . fields_types::get_reserved_types_list() . ")"
             );
 
             while ($v = db_fetch_array($fields_query)) {

@@ -86,7 +86,7 @@ require(component_path('entities/navigation')) ?>
   <ul id="forms_tabs_' . $tabs['id'] . '" class="sortable">
 ';
                                         $fields_query = db_query(
-                                            "select f.*, t.name as tab_name from app_fields f, app_comments_forms_tabs t where f.type not in (" . fields_types::get_reserverd_types_list(
+                                            "select f.*, t.name as tab_name from app_fields f, app_comments_forms_tabs t where f.type not in (" . fields_types::get_reserved_types_list(
                                             ) . ") and  f.entities_id='" . db_input(
                                                 $_GET['entities_id']
                                             ) . "' and f.comments_forms_tabs_id=t.id and f.comments_forms_tabs_id='" . db_input(

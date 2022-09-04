@@ -248,7 +248,7 @@ class mind_map_reports
 
         //prepare choices with default value
         $fields_query = db_query(
-            "select f.* from app_fields f where f.type not in (" . fields_types::get_reserverd_types_list(
+            "select f.* from app_fields f where f.type not in (" . fields_types::get_reserved_types_list(
             ) . ",'fieldtype_related_records') and  f.entities_id='" . db_input(
                 $this->entities_id
             ) . "' order by f.sort_order, f.name"

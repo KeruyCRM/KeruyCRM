@@ -24,7 +24,7 @@ class users
         if (defined('CFG_PUBLIC_USER_PROFILE_FIELDS') and $include_public_profile) {
             if (strlen(CFG_PUBLIC_USER_PROFILE_FIELDS) > 0) {
                 $fields_query = db_query(
-                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserverd_types_list(
+                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserved_types_list(
                     ) . ") and f.id in (" . CFG_PUBLIC_USER_PROFILE_FIELDS . ") and  f.entities_id='1' and f.forms_tabs_id=t.id order by  field(f.id," . CFG_PUBLIC_USER_PROFILE_FIELDS . ")"
                 );
                 while ($v = db_fetch_array($fields_query)) {

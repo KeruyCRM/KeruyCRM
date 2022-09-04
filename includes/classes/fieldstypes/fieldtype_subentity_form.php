@@ -249,7 +249,7 @@ class fieldtype_subentity_form
                 $choices = [];
 
                 $fields_query = db_query(
-                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserverd_types_list(
+                    "select f.*, t.name as tab_name from app_fields f, app_forms_tabs t where f.type not in (" . fields_types::get_reserved_types_list(
                     ) . "," . fields_types::get_type_list_excluded_in_form(
                     ) . "," . fields_types::get_attachments_types_list(
                     ) . ") and  f.entities_id='" . $entities_id . "' and f.forms_tabs_id=t.id order by t.sort_order, t.name, f.sort_order, f.name"
