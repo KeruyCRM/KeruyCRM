@@ -4,9 +4,28 @@ if (!defined('KERUY_CRM')) {
     exit;
 }
 
+$typeIn = \K::model()->quoteToString(
+    [
+        'fieldtype_entity',
+        'fieldtype_entity_ajax',
+        'fieldtype_entity_multilevel',
+        'fieldtype_dropdown',
+        'fieldtype_dropdown_multiple',
+        'fieldtype_checkboxes',
+        'fieldtype_radioboxes',
+        'fieldtype_user_accessgroups',
+        'fieldtype_grouped_users',
+        'fieldtype_boolean_checkbox',
+        'fieldtype_boolean',
+        'fieldtype_autostatus',
+        'fieldtype_stages'
+    ]
+);
+
 $form_fields_query = \K::model()->db_query_exec(
-    "select r.*, f.name, f.id as fields_id, f.type from app_forms_fields_rules r, app_fields f where r.is_active = 1 and f.type in ('fieldtype_entity','fieldtype_entity_ajax','fieldtype_entity_multilevel','fieldtype_dropdown','fieldtype_dropdown_multiple','fieldtype_checkboxes','fieldtype_radioboxes','fieldtype_user_accessgroups','fieldtype_grouped_users','fieldtype_boolean_checkbox','fieldtype_boolean','fieldtype_autostatus', 'fieldtype_stages') and r.fields_id = f.id and r.entities_id = ?",
-    \K::$fw->current_entity_id
+    "select r.*, f.name, f.id as fields_id, f.type from app_forms_fields_rules r, app_fields f where r.is_active = 1 and f.type in (" . $typeIn . ") and r.fields_id = f.id and r.entities_id = ?",
+    \K::$fw->current_entity_id,
+    'app_forms_fields_rules,app_fields'
 );
 
 if (count($form_fields_query) > 0) {

@@ -72,7 +72,7 @@ class _Module
         if (count(\K::$fw->current_path_array) > 1) {
             $v = explode('-', \K::$fw->current_path_array[count(\K::$fw->current_path_array) - 2]);
             $parent_entity_id = (int)$v[0];
-            $parent_entity_item_id = (int)$v[1];
+            \K::$fw->parent_entity_item_id = (int)$v[1];
 
             //check path to entity
             if (\K::$fw->current_item_id == 0) {
@@ -91,7 +91,7 @@ class _Module
                         $parent_entity_id,
                         ''
                     ) . ' ' . \Models\Main\Items\Items::add_access_query_for_parent_entities($parent_entity_id),
-                    $parent_entity_item_id
+                    \K::$fw->parent_entity_item_id
                 );
 
                 if (!$item_query) {
@@ -100,7 +100,7 @@ class _Module
             }
         } else {
             $parent_entity_id = 0;
-            $parent_entity_item_id = 0;
+            \K::$fw->parent_entity_item_id = 0;
         }
 
         \K::$fw->app_breadcrumb = \Models\Main\Items\Items::get_breadcrumb(\K::$fw->current_path_array);
@@ -112,14 +112,17 @@ class _Module
         $user_roles_info = false;
 
         //if parent select check roles access to current entity
-        if ($parent_entity_item_id > 0) {
+        if (\K::$fw->parent_entity_item_id > 0) {
             $user_roles_info = \Models\Main\Users\User_roles::get_access_by_role(
                 $parent_entity_id,
-                $parent_entity_item_id,
+                \K::$fw->parent_entity_item_id,
                 \K::$fw->current_entity_id
             );
         } elseif (\K::$fw->current_item_id) {
-            $user_roles_info = \Models\Main\Users\User_roles::get_access_by_role(\K::$fw->current_entity_id, \K::$fw->current_item_id);
+            $user_roles_info = \Models\Main\Users\User_roles::get_access_by_role(
+                \K::$fw->current_entity_id,
+                \K::$fw->current_item_id
+            );
         }
 
         //if there is roles then apply it to $app_users_access
@@ -165,7 +168,10 @@ class _Module
             if (\Models\Main\Users\Users::has_access(
                     'view_assigned'
                 ) and \K::$fw->app_user['group_id'] > 0 and \K::$fw->current_item_id > 0) {
-                if (!\Models\Main\Users\Users::has_access_to_assigned_item(\K::$fw->current_entity_id, \K::$fw->current_item_id)) {
+                if (!\Models\Main\Users\Users::has_access_to_assigned_item(
+                    \K::$fw->current_entity_id,
+                    \K::$fw->current_item_id
+                )) {
                     \Helpers\Urls::redirect_to('main/dashboard/access_forbidden');
                 }
             }
