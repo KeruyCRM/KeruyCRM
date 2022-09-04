@@ -3,27 +3,25 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header($heading) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->heading) ?>
 
-<?php
-echo form_tag('delete_item_form', url_for('items/', 'action=delete&id=' . $_GET['id'] . '&path=' . $_GET['path'])) ?>
+<?= \Helpers\Html::form_tag(
+    'delete_item_form',
+    \Helpers\Urls::url_for('main/items/items/delete', 'id=' . \K::$fw->GET['id'] . '&path=' . \K::$fw->GET['path'])
+) ?>
 
+<?= \Helpers\Html::input_hidden_tag('redirect_to', \K::$fw->app_redirect_to) ?>
 <?php
-echo input_hidden_tag('redirect_to', $app_redirect_to) ?>
-<?php
-if (isset($_GET['gotopage'])) echo input_hidden_tag(
-    'gotopage[' . key($_GET['gotopage']) . ']',
-    current($_GET['gotopage'])
+if (isset(\K::$fw->GET['gotopage'])) echo \Helpers\Html::input_hidden_tag(
+    'gotopage[' . key(\K::$fw->GET['gotopage']) . ']',
+    current(\K::$fw->GET['gotopage'])
 ) ?>
 
 <div class="modal-body">
-    <?php
-    echo $content ?>
+    <?= \K::$fw->content ?>
 </div>
 
-<?php
-echo ajax_modal_template_footer($button_title) ?>
+<?= \Helpers\App::ajax_modal_template_footer(\K::$fw->button_title) ?>
 
 </form>
 
@@ -37,6 +35,4 @@ echo ajax_modal_template_footer($button_title) ?>
             error.insertAfter(".single-checkbox");
         }
     });
-</script> 
-    
- 
+</script>
