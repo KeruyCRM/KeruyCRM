@@ -20,7 +20,7 @@ class image_map
 
     private $reports_info;
 
-    private $fiters_reports_id;
+    private $filters_reports_id;
 
     private $background;
 
@@ -32,7 +32,7 @@ class image_map
         $this->data = [];
         $this->path = false;
         $this->reports_id = false;
-        $this->fiters_reports_id = false;
+        $this->filters_reports_id = false;
         $this->scale = 'default';
         $this->fields_in_popup = [];
         $this->background = false;
@@ -54,9 +54,9 @@ class image_map
         $this->reports_info = db_fetch_array($reports_query);
     }
 
-    function set_fiters_reports_id($fiters_reports_id)
+    function set_filters_reports_id($filters_reports_id)
     {
-        $this->fiters_reports_id = $fiters_reports_id;
+        $this->filters_reports_id = $filters_reports_id;
     }
 
     function get_data()
@@ -265,7 +265,7 @@ class image_map
             $sql_query_having = [];
 
             //add filters query
-            $listing_sql_query = reports::add_filters_query($this->fiters_reports_id, $listing_sql_query);
+            $listing_sql_query = reports::add_filters_query($this->filters_reports_id, $listing_sql_query);
 
             //add filter by map
             $listing_sql_query .= " and e.field_" . $reports['fields_id'] . "=" . $this->map_id;

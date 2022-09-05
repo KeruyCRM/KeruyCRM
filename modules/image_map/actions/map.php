@@ -15,7 +15,7 @@ switch ($app_module_action) {
         }
 
         if (isset($_GET['fiters_reports_id'])) {
-            $image_map->set_fiters_reports_id(_get::int('fiters_reports_id'));
+            $image_map->set_filters_reports_id(_get::int('fiters_reports_id'));
         }
 
         $data = $image_map->get_data();
