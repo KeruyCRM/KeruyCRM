@@ -206,32 +206,75 @@ class Reports
 
     public static function delete_reports_by_item_id($entity_id, $item_id)
     {
-        $report_info_query = db_query(
+        /*$report_info_query = db_query(
             "select * from app_reports where parent_entity_id='" . $entity_id . "' and parent_item_id='" . $item_id . "'"
-        );
-        while ($report_info = db_fetch_array($report_info_query)) {
+        );*/
+
+        $report_info_query = \K::model()->db_fetch('app_reports', [
+            'parent_entity_id = ? and parent_item_id = ?',
+            $entity_id,
+            $item_id
+        ], [], 'id', [], 0);
+
+        $forceCommit = \K::model()->forceCommit();
+
+        //while ($report_info = db_fetch_array($report_info_query)) {
+        foreach ($report_info_query as $report_info) {
+            $report_info = $report_info->cast();
+
             self::delete_reports_by_id($report_info['id']);
+        }
+
+        if ($forceCommit) {
+            \K::model()->commit();
         }
     }
 
     public static function delete_reports_by_id($reports_id)
     {
-        $report_info_query = db_query("select * from app_reports where id='" . db_input($reports_id) . "'");
-        if ($report_info = db_fetch_array($report_info_query)) {
+        //$report_info_query = db_query("select * from app_reports where id='" . db_input($reports_id) . "'");
+
+        $report_info = \K::model()->db_fetch_one('app_reports', [
+            'id = ?',
+            $reports_id
+        ], [], 'id', [], 0);
+
+        $forceCommit = \K::model()->forceCommit();
+
+        if ($report_info) {
             //delete parent reports
             self::delete_parent_reports($report_info['id']);
 
-            db_query("delete from app_reports where id='" . db_input($report_info['id']) . "'");
-            db_query("delete from app_reports_filters where reports_id='" . db_input($report_info['id']) . "'");
+            //db_query("delete from app_reports where id='" . db_input($report_info['id']) . "'");
+            //db_query("delete from app_reports_filters where reports_id='" . db_input($report_info['id']) . "'");
+
+            \K::model()->db_delete_row('app_reports', $report_info['id']);
+            \K::model()->db_delete_row('app_reports_filters', $report_info['id'], 'reports_id');
 
             //delete users filters
-            $filters_query = db_query(
+            /*$filters_query = db_query(
                 "select * from app_users_filters where reports_id='" . db_input($report_info['id']) . "'"
-            );
-            while ($filters = db_fetch_array($filters_query)) {
-                db_query("delete from app_users_filters where id='" . db_input($filters['id']) . "'");
-                db_query("delete from app_user_filters_values where filters_id='" . db_input($filters['id']) . "'");
+            );*/
+
+            $filters_query = \K::model()->db_fetch('app_users_filters', [
+                'reports_id = ?',
+                $report_info['id']
+            ], [], 'id', [], 0);
+
+            // while ($filters = db_fetch_array($filters_query)) {
+            foreach ($filters_query as $filters) {
+                $filters = $filters->cast();
+
+                //db_query("delete from app_users_filters where id='" . db_input($filters['id']) . "'");
+                //db_query("delete from app_user_filters_values where filters_id='" . db_input($filters['id']) . "'");
+
+                \K::model()->db_delete_row('app_users_filters', $filters['id']);
+                \K::model()->db_delete_row('app_user_filters_values', $filters['id'], 'filters_id');
             }
+        }
+
+        if ($forceCommit) {
+            \K::model()->commit();
         }
     }
 
@@ -248,9 +291,18 @@ class Reports
         $parent_reports = self::get_parent_reports($reports_id);
 
         if (count($parent_reports) > 0) {
+            $forceCommit = \K::model()->forceCommit();
+
             foreach ($parent_reports as $id) {
-                db_query("delete from app_reports where id='" . db_input($id) . "'");
-                db_query("delete from app_reports_filters where reports_id='" . db_input($id) . "'");
+                //db_query("delete from app_reports where id='" . db_input($id) . "'");
+                //db_query("delete from app_reports_filters where reports_id='" . db_input($id) . "'");
+
+                \K::model()->db_delete_row('app_reports', $id);
+                \K::model()->db_delete_row('app_reports_filters', $id, 'reports_id');
+            }
+
+            if ($forceCommit) {
+                \K::model()->commit();
             }
         }
     }

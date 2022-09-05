@@ -1,38 +1,29 @@
 <?php
 
-class image_map
+namespace Tools\Maps;
+
+class Image_map
 {
     private $data;
-
     private $map_id;
-
     private $field_info;
-
     private $field_cfg;
-
     private $path;
-
     private $scale;
-
     private $fields_in_popup;
-
     private $reports_id;
-
     private $reports_info;
-
-    private $fiters_reports_id;
-
+    private $filters_reports_id;
     private $background;
-
     private $choices_in_legend;
 
-    function __construct($map_id)
+    public function __construct($map_id)
     {
         $this->map_id = $map_id;
         $this->data = [];
         $this->path = false;
         $this->reports_id = false;
-        $this->fiters_reports_id = false;
+        $this->filters_reports_id = false;
         $this->scale = 'default';
         $this->fields_in_popup = [];
         $this->background = false;
@@ -41,12 +32,12 @@ class image_map
         $this->choices_in_legend = [];
     }
 
-    function set_path($path)
+    public function set_path($path)
     {
         $this->path = $path;
     }
 
-    function set_reports_id($reports_id)
+    public function set_reports_id($reports_id)
     {
         $this->reports_id = $reports_id;
 
@@ -54,12 +45,12 @@ class image_map
         $this->reports_info = db_fetch_array($reports_query);
     }
 
-    function set_fiters_reports_id($fiters_reports_id)
+    public function set_filters_reports_id($filters_reports_id)
     {
-        $this->fiters_reports_id = $fiters_reports_id;
+        $this->filters_reports_id = $filters_reports_id;
     }
 
-    function get_data()
+    public function get_data()
     {
         $map_info_query = db_query("select * from app_fields_choices where id='" . $this->map_id . "'");
         if ($map_info = db_fetch_array($map_info_query)) {
@@ -77,7 +68,7 @@ class image_map
         return json_encode($this->data);
     }
 
-    function get_map($map_info)
+    public function get_map($map_info)
     {
         $this->field_info = db_find('app_fields', $map_info['fields_id']);
         $cfg = $this->field_cfg = new fields_types_cfg($this->field_info['configuration']);
@@ -120,7 +111,7 @@ class image_map
         ];
     }
 
-    function get_regions_labels($map_info)
+    public function get_regions_labels($map_info)
     {
         $this->data['data']['regions'] = null;
         $this->data['data']['labels'] = null;
@@ -174,7 +165,7 @@ class image_map
         }
     }
 
-    function get_fields_in_popup($items)
+    public function get_fields_in_popup($items)
     {
         $html = '';
 
@@ -182,7 +173,6 @@ class image_map
             $html .= '
 					<table class="cfm-params">
 						<tbody>';
-
 
             foreach ($this->fields_in_popup as $fields_id) {
                 $field_query = db_query("select * from app_fields where id='" . $fields_id . "'");
@@ -231,7 +221,7 @@ class image_map
         return $html;
     }
 
-    function get_markers()
+    public function get_markers()
     {
         global $sql_query_having;
 
@@ -265,14 +255,13 @@ class image_map
             $sql_query_having = [];
 
             //add filters query
-            $listing_sql_query = reports::add_filters_query($this->fiters_reports_id, $listing_sql_query);
+            $listing_sql_query = reports::add_filters_query($this->filters_reports_id, $listing_sql_query);
 
             //add filter by map
             $listing_sql_query .= " and e.field_" . $reports['fields_id'] . "=" . $this->map_id;
 
             //add access query
             $listing_sql_query = items::add_access_query($reports['entities_id'], $listing_sql_query);
-
 
             //prepare fields sum for formulas
             $sql_query_select = fieldtype_formula::prepare_query_select($reports['entities_id'], '');
@@ -351,7 +340,6 @@ class image_map
                 $this->data['data']['regions'] = $regions;
             }
 
-
             //prepare choices in legend for reports page
             if ($this->reports_id and $this->background) {
                 $this->choices_in_legend[$items['field_' . $this->background]] = $items['field_' . $this->background];
@@ -363,7 +351,7 @@ class image_map
         }
     }
 
-    function get_html($map_info)
+    public function get_html($map_info)
     {
         $legend = '';
         $maps = '';
@@ -455,7 +443,7 @@ class image_map
         ];
     }
 
-    static function save_markers()
+    public static function save_markers()
     {
         $map_id = _get::int('map_id');
 
@@ -493,7 +481,7 @@ class image_map
         }
     }
 
-    static function save_labels()
+    public static function save_labels()
     {
         $map_id = _get::int('map_id');
 
@@ -517,14 +505,20 @@ class image_map
         }
     }
 
-    static function delete_markers($entities_id, $items_id)
+    public static function delete_markers($entities_id, $items_id)
     {
-        db_query(
+        /*db_query(
             "delete from app_image_map_markers where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'"
-        );
+        );*/
+
+        \K::model()->db_delete('app_image_map_markers', [
+            'entities_id = ? and items_id = ?',
+            $entities_id,
+            $items_id
+        ]);
     }
 
-    static function render_markers_color($fields_id)
+    public static function render_markers_color($fields_id)
     {
         $css = '';
 
@@ -557,7 +551,7 @@ class image_map
         return $css;
     }
 
-    static function has_access($users_groups, $access = false)
+    public static function has_access($users_groups, $access = false)
     {
         global $app_user;
 
@@ -582,7 +576,7 @@ class image_map
         return false;
     }
 
-    static function render_cfm_selected_css()
+    public static function render_cfm_selected_css()
     {
         return '
 			<style>

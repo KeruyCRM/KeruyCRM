@@ -126,22 +126,46 @@ class Comments
 
     public static function delete_item_comments($entity_id, $item_id)
     {
-        $comments_query = db_query(
+        /*$comments_query = db_query(
             "select * from app_comments where entities_id='" . db_input($entity_id) . "' and items_id='" . db_input(
                 $item_id
             ) . "'"
-        );
-        while ($comments = db_fetch_array($comments_query)) {
-            db_query("delete from app_comments_history where comments_id = '" . db_input($comments['id']) . "'");
+        );*/
 
-            attachments::delete_comments_attachments($comments['id']);
+        $comments_query = \K::model()->db_fetch('app_comments', [
+            'entities_id = ? and items_id = ?',
+            $entity_id,
+            $item_id
+        ], [], 'id', [], 0);
+
+        $forceCommit = \K::model()->forceCommit();
+
+        //while ($comments = db_fetch_array($comments_query)) {
+        foreach ($comments_query as $comments) {
+            $comments = $comments->cast();
+
+            //db_query("delete from app_comments_history where comments_id = '" . db_input($comments['id']) . "'");
+
+            \K::model()->db_delete_row('app_comments_history', $comments['id'], 'comments_id');
+
+            \Tools\Attachments::delete_comments_attachments($comments['id']);
         }
 
-        db_query(
+        /*db_query(
             "delete from app_comments where entities_id='" . db_input($entity_id) . "' and items_id='" . db_input(
                 $item_id
             ) . "'"
-        );
+        );*/
+
+        \K::model()->db_delete('app_comments', [
+            'entities_id = ? and items_id = ?',
+            $entity_id,
+            $item_id
+        ]);
+
+        if ($forceCommit) {
+            \K::model()->commit();
+        }
     }
 
     public static function render_content_box($entity_id, $item_id, $user_id)

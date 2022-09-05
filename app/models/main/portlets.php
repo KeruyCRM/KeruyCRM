@@ -1,10 +1,12 @@
 <?php
 
-class portlets
+namespace Tools;
+
+class Portlets
 {
     public $is_collapsed, $name;
 
-    function __construct($name, $default_status = false)
+    public function __construct($name, $default_status = false)
     {
         global $app_user;
 
@@ -26,7 +28,7 @@ class portlets
         }
     }
 
-    function render_body()
+    public function render_body()
     {
         $html = ' data_portlet_id="' . $this->name . '"';
 
@@ -37,12 +39,12 @@ class portlets
         return $html;
     }
 
-    function button_css()
+    public function button_css()
     {
         return $this->is_collapsed ? 'expand' : 'collapse';
     }
 
-    static function set_status($name, $status)
+    public static function set_status($name, $status)
     {
         global $app_user;
 
@@ -66,9 +68,10 @@ class portlets
         }
     }
 
-    static function delete_by_user_id($user_id)
+    public static function delete_by_user_id($user_id)
     {
-        db_query("delete from app_portlets where users_id={$user_id}");
-    }
+        //db_query("delete from app_portlets where users_id={$user_id}");
 
+        \K::model()->db_delete_row('app_portlets', $user_id, 'users_id');
+    }
 }

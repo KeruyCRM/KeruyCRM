@@ -102,7 +102,8 @@ class Favorites
 
         $favorites_query = \K::model()->db_query_exec(
             'select f.*, e.name as entity_name from app_favorites f, app_entities e where e.id = f.entities_id and f.users_id = ? order by e.name, f.id limit 10',
-            [\K::$fw->app_user['id']]
+            [\K::$fw->app_user['id']],
+            'app_favorites,app_entities'
         );
 
         $count_favorites = count($favorites_query);
@@ -118,7 +119,7 @@ class Favorites
                     <a href="' . \Helpers\Urls::url_for(
                     'main/items/info',
                     'path=' . $favorites['entities_id'] . '-' . $favorites['items_id']
-                ) . '">' .  \Models\Main\Items\Items::get_heading_field(
+                ) . '">' . \Models\Main\Items\Items::get_heading_field(
                     $favorites['entities_id'],
                     $favorites['items_id']
                 ) . ' <span class="parent-name"><i class="fa fa-angle-left"></i> ' . $favorites['entity_name'] . '</span></a>

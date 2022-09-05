@@ -17,26 +17,43 @@ class Items
         return $item;
     }
 
-    public static function get_items_to_delete($entities_id, $itesm_list)
+    public static function get_items_to_delete($entities_id, $items_list)
     {
-        $entities_query = db_query("select id from app_entities where parent_id = '" . $entities_id . "'");
-        while ($entities = db_fetch_array($entities_query)) {
-            $items_query = db_query(
+        //$entities_query = db_query("select id from app_entities where parent_id = '" . $entities_id . "'");
+
+        $entities_query = \K::model()->db_fetch('app_entities', [
+            'parent_id = ?',
+            $entities_id
+        ], [], 'id', [], 0);
+
+        //while ($entities = db_fetch_array($entities_query)) {
+        foreach ($entities_query as $entities) {
+            $entities = $entities->cast();
+
+            /*$items_query = db_query(
                 "select id from app_entity_" . $entities['id'] . " where parent_item_id in (" . implode(
                     ',',
-                    $itesm_list[$entities_id]
+                    $items_list[$entities_id]
                 ) . ") "
-            );
-            while ($items = db_fetch_array($items_query)) {
-                $itesm_list[$entities['id']][] = $items['id'];
+            );*/
+
+            $items_query = \K::model()->db_fetch('app_entity_' . (int)$entities['id'], [
+                'parent_item_id in (' . \K::model()->quoteToString($items_list[$entities_id], \PDO::PARAM_INT) . ')'
+            ], [], 'id', [], 0);
+
+            //while ($items = db_fetch_array($items_query)) {
+            foreach ($items_query as $items){
+                $items = $items->cast();
+
+                $items_list[$entities['id']][] = $items['id'];
             }
 
-            if (isset($itesm_list[$entities['id']])) {
-                $itesm_list = self::get_items_to_delete($entities['id'], $itesm_list);
+            if (isset($items_list[$entities['id']])) {
+                $items_list = self::get_items_to_delete($entities['id'], $items_list);
             }
         }
 
-        return $itesm_list;
+        return $items_list;
     }
 
     public static function delete($entities_id, $items_id)
@@ -45,6 +62,8 @@ class Items
         if ($entities_id == 1 and $items_id == \K::$fw->app_user['id']) {
             return false;
         }
+
+        $forceCommit = \K::model()->forceCommit();
 
         //run process before delete
         if (\Helpers\App::is_ext_installed()) {
@@ -86,55 +105,86 @@ class Items
             $log->log_delete();
         }
 
-        db_delete_row('app_entity_' . $entities_id, $items_id);
+        \K::model()->db_delete_row('app_entity_' . (int)$entities_id, $items_id);
 
-        comments::delete_item_comments($entities_id, $items_id);
+        \Models\Main\Comments::delete_item_comments($entities_id, $items_id);
 
-        reports::delete_reports_by_item_id($entities_id, $items_id);
+        \Models\Main\Reports\Reports::delete_reports_by_item_id($entities_id, $items_id);
 
-        choices_values::delete_by_item_id($entities_id, $items_id);
+        \Models\Main\Choices_values::delete_by_item_id($entities_id, $items_id);
 
-        related_records::delete_related_by_item_id($entities_id, $items_id);
+        \Tools\Related_records::delete_related_by_item_id($entities_id, $items_id);
 
-        mind_map::delete($entities_id, $items_id);
+        \Tools\Maps\Mind_map::delete($entities_id, $items_id);
 
         //delete notifications
-        db_query(
+        /*db_query(
             "delete from app_users_notifications where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'"
-        );
+        );*/
+
+        \K::model()->db_delete('app_users_notifications', [
+            'entities_id = ? and items_id = ?',
+            $entities_id,
+            $items_id
+        ]);
 
         //delete roles
-        db_query(
+        /*db_query(
             "delete from app_user_roles_to_items where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'"
-        );
+        );*/
+
+        \K::model()->db_delete('app_user_roles_to_items', [
+            'entities_id = ? and items_id = ?',
+            $entities_id,
+            $items_id
+        ]);
 
         //delete approved records
-        db_query(
+        /*db_query(
             "delete from app_approved_items where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'"
-        );
+        );*/
 
-        image_map::delete_markers($entities_id, $items_id);
-        image_map_nested::delete_markers($entities_id, $items_id);
+        \K::model()->db_delete('app_approved_items', [
+            'entities_id = ? and items_id = ?',
+            $entities_id,
+            $items_id
+        ]);
 
-        favorites::delete_by_item_id($entities_id, $items_id);
+        \Tools\Maps\Image_map::delete_markers($entities_id, $items_id);
+        \Tools\Maps\Image_map_nested::delete_markers($entities_id, $items_id);
+
+        \Models\Main\Items\Favorites::delete_by_item_id($entities_id, $items_id);
 
         if ($parent_item_id) {
             //tree table recalculated count/sum
-            fieldtype_nested_calculations::update_items_fields($entities_id, $parent_item_id, 0);
+            \Tools\FieldsTypes\Fieldtype_nested_calculations::update_items_fields($entities_id, $parent_item_id, 0);
         }
 
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //delete timers
-            db_query(
+            /*db_query(
                 "delete from app_ext_timer where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'"
-            );
+            );*/
+
+            \K::model()->db_delete('app_ext_timer', [
+                'entities_id = ? and items_id = ?',
+                $entities_id,
+                $items_id
+            ]);
 
             //delete gantt
-            db_query(
+            /*db_query(
                 "delete from app_ext_ganttchart_depends where entities_id='" . $entities_id . "' and (item_id='" . db_input(
                     $items_id
                 ) . "' or depends_id='" . db_input($items_id) . "')"
-            );
+            );*/
+
+            \K::model()->db_delete('app_ext_ganttchart_depends', [
+                'entities_id = ? and (item_id = ? or depends_id = ?)',
+                $entities_id,
+                $items_id,
+                $items_id
+            ]);
 
             //delete log changes
             track_changes::delete_log($entities_id, $items_id);
@@ -146,21 +196,33 @@ class Items
             mind_map_reports::delete($entities_id, $items_id);
 
             //delete items to mail
-            db_query(
-                "delete from app_ext_mail_to_items where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'"
-            );
+            /*db_query(
+                 "delete from app_ext_mail_to_items where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'"
+             );*/
+
+            \K::model()->db_delete('app_ext_mail_to_items', [
+                'entities_id = ? and items_id = ?',
+                $entities_id,
+                $items_id
+            ]);
 
             //hande users delete
             if ($entities_id == 1) {
                 //delete cryptopro cert
-                db_query("delete from app_ext_cryptopro_certificates where users_id='" . $items_id . "'");
+                //db_query("delete from app_ext_cryptopro_certificates where users_id='" . $items_id . "'");
+
+                \K::model()->db_delete_row('app_ext_cryptopro_certificates', $items_id, 'users_id');
             }
         }
 
         //hande users delete
         if ($entities_id == 1) {
-            users_login_log::delete_by_user_id($items_id);
-            portlets::delete_by_user_id($items_id);
+            \Models\Main\Users\Users_login_log::delete_by_user_id($items_id);
+            \Tools\Portlets::delete_by_user_id($items_id);
+        }
+
+        if ($forceCommit) {
+            \K::model()->commit();
         }
     }
 

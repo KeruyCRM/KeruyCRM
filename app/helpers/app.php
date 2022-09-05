@@ -138,12 +138,12 @@ class App
     public static function app_path_get_parent_path($path)
     {
         $current_path_array = explode('/', $path);
-        $parent_patth_array = [];
+        $parent_path_array = [];
         for ($i = 0; $i < count($current_path_array) - 1; $i++) {
-            $parent_patth_array[] = $current_path_array[$i];
+            $parent_path_array[] = $current_path_array[$i];
         }
 
-        return implode('/', $parent_patth_array);
+        return implode('/', $parent_path_array);
     }
 
     public static function render_login_page_background()

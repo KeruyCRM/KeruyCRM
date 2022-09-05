@@ -7,7 +7,7 @@ class Image_map_nested
     public $map_filename;
     public $field_id;
 
-    function __construct($field_id)
+    public function __construct($field_id)
     {
         $this->field_id = $field_id;
         $this->data = [];
@@ -15,19 +15,19 @@ class Image_map_nested
         $this->background = false;
     }
 
-    function set_path($path)
+    public function set_path($path)
     {
         $this->path = $path;
         $path_info = items::parse_path($this->path);
         $this->item_id = $path_info['item_id'];
     }
 
-    function set_filename($filename)
+    public function set_filename($filename)
     {
         $this->map_filename = urldecode($filename);
     }
 
-    function get_data()
+    public function get_data()
     {
         $field_query = db_query(
             "select id, name, entities_id, configuration from app_fields where id='" . $this->field_id . "'"
@@ -47,7 +47,7 @@ class Image_map_nested
         return json_encode($this->data);
     }
 
-    function get_map($field)
+    public function get_map($field)
     {
         $cfg = $this->field_cfg = new fields_types_cfg($field['configuration']);
 
@@ -91,7 +91,7 @@ class Image_map_nested
         $this->data['data']['labels'] = null;
     }
 
-    function get_markers($field)
+    public function get_markers($field)
     {
         global $sql_query_having;
 
@@ -192,7 +192,7 @@ class Image_map_nested
         }
     }
 
-    function get_fields_in_popup($items)
+    public function get_fields_in_popup($items)
     {
         $html = '';
 
@@ -252,7 +252,7 @@ class Image_map_nested
         return $html;
     }
 
-    function get_html($field)
+    public function get_html($field)
     {
         $legend = '';
         $maps = '';
@@ -287,7 +287,7 @@ class Image_map_nested
         ];
     }
 
-    static function save_markers()
+    public static function save_markers()
     {
         global $app_path;
 
@@ -321,7 +321,7 @@ class Image_map_nested
         }
     }
 
-    static function delete_markers($entities_id, $items_id)
+    public static function delete_markers($entities_id, $items_id)
     {
         /*db_query(
             "delete from app_image_map_markers_nested where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'"
@@ -334,11 +334,10 @@ class Image_map_nested
         ]);
     }
 
-    static function delete_by_fields_id($fields_id)
+    public static function delete_by_fields_id($fields_id)
     {
         //db_query("delete from app_image_map_markers_nested where fields_id={$fields_id}");
 
         \K::model()->db_delete_row('app_image_map_markers_nested', $fields_id, 'fields_id');
     }
-
 }
