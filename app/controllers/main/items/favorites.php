@@ -23,19 +23,34 @@ class Favorites extends \Controller
 
     public function favorites_add()
     {
-        $sql_data = [
-            'users_id' => $app_user['id'],
-            'entities_id' => $current_entity_id,
-            'items_id' => $current_item_id,
-        ];
+        if (\K::$fw->VERB == 'POST') {
+            $sql_data = [
+                'users_id' => \K::$fw->app_user['id'],
+                'entities_id' => \K::$fw->current_entity_id,
+                'items_id' => \K::$fw->current_item_id,
+            ];
 
-        db_perform('app_favorites', $sql_data);
+            \K::model()->db_perform('app_favorites', $sql_data);
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 
     public function favorites_remove()
     {
-        db_query(
-            "delete from app_favorites where users_id={$app_user['id']} and entities_id='{$current_entity_id}' and items_id='{$current_item_id}'"
-        );
+        if (\K::$fw->VERB == 'POST') {
+            /*db_query(
+                "delete from app_favorites where users_id={\K::$fw->app_user['id']} and entities_id='{\K::$fw->current_entity_id}' and items_id='{\K::$fw->current_item_id}'"
+            );*/
+
+            \K::model()->db_delete('app_favorites', [
+                'users_id = ? and entities_id = ? and items_id = ?',
+                \K::$fw->app_user['id'],
+                \K::$fw->current_entity_id,
+                \K::$fw->current_item_id
+            ]);
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 }
