@@ -3,25 +3,18 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header(TEXT_HEADING_DELETE) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->TEXT_HEADING_DELETE) ?>
 
-<?php
-echo form_tag(
+<?= \Helpers\Html::form_tag(
     'login',
-    url_for(
-        'items/filters',
-        'action=delete&id=' . $_GET['id'] . '&reports_id=' . $_GET['reports_id'] . '&path=' . $_GET['path']
+    \Helpers\Urls::url_for(
+        'main/items/filters/delete',
+        'id=' . \K::$fw->GET['id'] . '&reports_id=' . \K::$fw->GET['reports_id'] . '&path=' . \K::$fw->GET['path']
     )
 ) ?>
 <div class="modal-body">
-    <?php
-    echo TEXT_ARE_YOU_SURE ?>
+    <?= \K::$fw->TEXT_ARE_YOU_SURE ?>
 </div>
-<?php
-echo ajax_modal_template_footer(TEXT_BUTTON_DELETE) ?>
+<?= \Helpers\App::ajax_modal_template_footer(\K::$fw->TEXT_BUTTON_DELETE) ?>
 
-</form>  
-     
-    
- 
+</form>
