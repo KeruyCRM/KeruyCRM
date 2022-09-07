@@ -15,21 +15,33 @@ class Filters extends \Controller
 
         \Controllers\Main\Items\_Module::top();
 
-        $reports_info_query = db_query("select * from app_reports where id='" . db_input($_GET['reports_id']) . "'");
-        if (!$reports_info = db_fetch_array($reports_info_query)) {
-            $alerts->add(TEXT_REPORT_NOT_FOUND, 'error');
-            redirect_to('items/', 'path=' . $_GET['path']);
+        //$reports_info_query = db_query("select * from app_reports where id='" . db_input(\K::$fw->GET['reports_id']) . "'");
+
+        \K::$fw->reports_info = \K::model()->db_fetch_one('app_reports', [
+            'id = ?',
+            \K::$fw->GET['reports_id']
+        ]);
+
+        if (!\K::$fw->reports_info) {
+            \K::flash()->addMessage(\K::$fw->TEXT_REPORT_NOT_FOUND, 'error');
+            \Helpers\Urls::redirect_to('main/items/items', 'path=' . \K::$fw->GET['path']);
         }
     }
 
     public function index()
     {
-        $entity_info = db_find('app_entities', $current_entity_id);
-        $entity_cfg = entities::get_cfg($current_entity_id);
+        $entity_info = \K::model()->db_find('app_entities', \K::$fw->current_entity_id);
+        $entity_cfg = \Models\Main\Entities::get_cfg(\K::$fw->current_entity_id);
 
-        $entity_listing_heading = (strlen(
+        \K::$fw->entity_listing_heading = (strlen(
             $entity_cfg['listing_heading']
         ) > 0 ? $entity_cfg['listing_heading'] : $entity_info['name']);
+
+        \K::$fw->filters_query = \K::model()->db_query_exec(
+            "select rf.*, f.name from app_reports_filters rf, app_fields f where rf.fields_id = f.id and rf.reports_id = ? order by rf.id",
+            \K::$fw->reports_info['id'],
+            'app_reports_filters,app_fields'
+        );
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'filters.php';
 
@@ -38,19 +50,32 @@ class Filters extends \Controller
 
     public function save()
     {
-        \Controllers\Main\Items\_Module::save();
+        if (\K::$fw->VERB == 'POST') {
+            $this->_saveReportsFilters();
 
-        redirect_to('items/filters', 'reports_id=' . $_GET['reports_id'] . '&path=' . $_GET['path']);
+            \Helpers\Urls::redirect_to(
+                'main/items/filters',
+                'reports_id=' . \K::$fw->GET['reports_id'] . '&path=' . \K::$fw->GET['path']
+            );
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
+        }
     }
 
     public function delete()
     {
-        if (isset($_GET['id'])) {
-            db_query("delete from app_reports_filters where id='" . db_input($_GET['id']) . "'");
+        if (\K::$fw->VERB == 'POST' and isset(\K::$fw->GET['id'])) {
+            //db_query("delete from app_reports_filters where id='" . db_input(\K::$fw->GET['id']) . "'");
+            \K::model()->db_delete_row('app_reports_filters', \K::$fw->GET['id']);
 
-            $alerts->add(TEXT_WARN_DELETE_FILTER_SUCCESS, 'success');
+            \K::flash()->addMessage(\K::$fw->TEXT_WARN_DELETE_FILTER_SUCCESS, 'success');
 
-            redirect_to('items/filters', 'reports_id=' . $_GET['reports_id'] . '&path=' . $_GET['path']);
+            \Helpers\Urls::redirect_to(
+                'main/items/filters',
+                'reports_id=' . \K::$fw->GET['reports_id'] . '&path=' . \K::$fw->GET['path']
+            );
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 }
