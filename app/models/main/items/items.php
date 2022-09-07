@@ -6,15 +6,13 @@ class Items
 {
     public static function get_info($entities_id, $items_id)
     {
-        $item_query = db_query(
-            "select e.* " . fieldtype_formula::prepare_query_select(
+        return \K::model()->db_query_exec_one(
+            "select e.* " . \Tools\FieldsTypes\Fieldtype_formula::prepare_query_select(
                 $entities_id,
                 ''
-            ) . " from app_entity_" . $entities_id . " e where id='" . $items_id . "'"
+            ) . " from app_entity_" . (int)$entities_id . " e where id = ?",
+            $items_id
         );
-        $item = db_fetch_array($item_query);
-
-        return $item;
     }
 
     public static function get_items_to_delete($entities_id, $items_list)
@@ -42,7 +40,7 @@ class Items
             ], [], 'id', [], 0);
 
             //while ($items = db_fetch_array($items_query)) {
-            foreach ($items_query as $items){
+            foreach ($items_query as $items) {
                 $items = $items->cast();
 
                 $items_list[$entities['id']][] = $items['id'];

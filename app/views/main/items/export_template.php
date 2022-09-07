@@ -3,33 +3,38 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<?php
-echo ajax_modal_template_header($template_info['name']) ?>
+<?= \Helpers\App::ajax_modal_template_header(\K::$fw->template_info['name']) ?>
 
-<?php
-echo form_tag(
-        'export-form',
-        url_for('items/export_template', 'path=' . $_GET['path'] . '&templates_id=' . $_GET['templates_id']),
-        ['class' => 'form-horizontal']
-    ) . input_hidden_tag('action', 'export');
+<?= \Helpers\Html::form_tag(
+    'export-form',
+    \Helpers\Urls::url_for(
+        'main/items/export_template',
+        'path=' . \K::$fw->GET['path'] . '&templates_id=' . \K::$fw->GET['templates_id']
+    ),
+    ['class' => 'form-horizontal']
+) . \Helpers\Html::input_hidden_tag('action', 'export');
 
-if (strlen($template_info['template_filename'])) {
-    $item = items::get_info($current_entity_id, $current_item_id);
+if (strlen(\K::$fw->template_info['template_filename'])) {
+    $item = \Models\Main\Items\Items::get_info(\K::$fw->current_entity_id, \K::$fw->current_item_id);
 
-    $pattern = new fieldtype_text_pattern;
-    $filename = $pattern->output_singe_text($template_info['template_filename'], $current_entity_id, $item);
+    $pattern = new \Tools\FieldsTypes\Fieldtype_text_pattern();
+    $filename = $pattern->output_singe_text(
+        \K::$fw->template_info['template_filename'],
+        \K::$fw->current_entity_id,
+        $item
+    );
 } else {
-    $filename = $template_info['name'] . '_' . $current_item_id;
+    $filename = \K::$fw->template_info['name'] . '_' . \K::$fw->current_item_id;
 }
 
-if ($template_info['type'] == 'docx') {
+if (\K::$fw->template_info['type'] == 'docx') {
     echo '
     <div class="modal-body ajax-modal-width-790">
         <div class="form-group">
-            <label class="col-md-3 control-label">' . TEXT_FILENAME . '</label>
+            <label class="col-md-3 control-label">' . \K::$fw->TEXT_FILENAME . '</label>
 			<div class="col-md-9">
                 <div class="input-group input-xlarge">
-            		' . input_tag('filename', $filename, ['class' => 'form-control required']) . '
+            		' . \Helpers\Html::input_tag('filename', $filename, ['class' => 'form-control required']) . '
             		<span class="input-group-addon">
             			.docx
             		</span>
@@ -41,74 +46,71 @@ if ($template_info['type'] == 'docx') {
     ';
 
     $buttons_html = '';
-    if (export_templates::has_button('pdf', $template_info)) {
+    if (\Models\Ext\Templates\Export_templates::has_button('pdf', \K::$fw->template_info)) {
         $buttons_html .= '<button type="button" class="btn btn-info btn-template-export-pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>';
     }
 
-    if (export_templates::has_button('print', $template_info)) {
+    if (\Models\Ext\Templates\Export_templates::has_button('print', \K::$fw->template_info)) {
         $buttons_html .= '<button type="button" class="btn btn-info btn-template-print"><i class="fa fa-print" aria-hidden="true"></i></button>';
     }
 
-    if (export_templates::has_button('zip', $template_info)) {
+    if (\Models\Ext\Templates\Export_templates::has_button('zip', \K::$fw->template_info)) {
         $buttons_html .= '<button type="button" class="btn btn-primary btn-template-export-zip"><i class="fa fa fa-file-archive-o" aria-hidden="true"></i></button> ';
     }
 
-    if (export_templates::has_button('docx', $template_info)) {
-        $buttons_html .= '<button type="button" class="btn btn-primary btn-template-export"><i class="fa fa-download" aria-hidden="true"></i> ' . TEXT_DOWNLOAD . '</button>';
+    if (\Models\Ext\Templates\Export_templates::has_button('docx', \K::$fw->template_info)) {
+        $buttons_html .= '<button type="button" class="btn btn-primary btn-template-export"><i class="fa fa-download" aria-hidden="true"></i> ' . \K::$fw->TEXT_DOWNLOAD . '</button>';
     }
 
-    echo ajax_modal_template_footer('hide-save-button', $buttons_html);
+    echo \Helpers\App::ajax_modal_template_footer('hide-save-button', $buttons_html);
 } else {
     ?>
-
-
     <div class="modal-body ajax-modal-width-790">
-
         <div id="export_templates_preview">
             <style>
-                <?php echo $template_info['template_css'] ?>
+                <?php echo \K::$fw->template_info['template_css'] ?>
             </style>
 
-            <?php
-            echo $template_info['template_header'] . export_templates::get_html(
-                    $current_entity_id,
-                    $current_item_id,
-                    $_GET['templates_id']
-                ) . $template_info['template_footer']; ?>
+            <?= \K::$fw->template_info['template_header'] . \Models\Ext\Templates\Export_templates::get_html(
+                \K::$fw->current_entity_id,
+                \K::$fw->current_item_id,
+                \K::$fw->GET['templates_id']
+            ) . \K::$fw->template_info['template_footer']; ?>
 
         </div>
 
         <p>
-            <?php
-            echo TEXT_FILENAME . '<br>' . input_tag('filename', $filename, ['class' => 'form-control input-xlarge']);
+            <?= \K::$fw->TEXT_FILENAME . '<br>' . \Helpers\Html::input_tag(
+                'filename',
+                $filename,
+                ['class' => 'form-control input-xlarge']
+            );
             ?>
         </p>
 
-        <div><?php
-            echo TEXT_EXT_PRINT_BUTTON_PDF_NOTE ?></div>
+        <div><?= \K::$fw->TEXT_EXT_PRINT_BUTTON_PDF_NOTE ?></div>
     </div>
 
     <?php
     $buttons_html = '';
 
-
-    if (export_templates::has_button('pdf', $template_info)) {
+    if (\Models\Ext\Templates\Export_templates::has_button('pdf', \K::$fw->template_info)) {
         $buttons_html .= '<button type="button" class="btn btn-primary btn-template-export"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></button> ';
     }
 
-    if (export_templates::has_button('docx', $template_info)) {
+    if (\Models\Ext\Templates\Export_templates::has_button('docx', \K::$fw->template_info)) {
         $buttons_html .= '<button type="button" class="btn btn-primary btn-template-export-word"><i class="fa fa-file-word-o" aria-hidden="true"></i></button> ';
     }
 
-    if (export_templates::has_button('zip', $template_info)) {
+    if (\Models\Ext\Templates\Export_templates::has_button('zip', \K::$fw->template_info)) {
         $buttons_html .= '<button type="button" class="btn btn-primary btn-template-export-zip"><i class="fa fa fa-file-archive-o" aria-hidden="true"></i></button> ';
     }
 
-    if (export_templates::has_button('print', $template_info)) {
-        $buttons_html .= '<button type="button" class="btn btn-primary btn-template-print"><i class="fa fa-print" aria-hidden="true"></i> ' . TEXT_PRINT . '</button>';
+    if (\Models\Ext\Templates\Export_templates::has_button('print', \K::$fw->template_info)) {
+        $buttons_html .= '<button type="button" class="btn btn-primary btn-template-print"><i class="fa fa-print" aria-hidden="true"></i> ' . \K::$fw->TEXT_PRINT . '</button>';
     }
 
-    echo ajax_modal_template_footer('hide-save-button', $buttons_html);
+    echo \Helpers\App::ajax_modal_template_footer('hide-save-button', $buttons_html);
 }
 ?>
 
