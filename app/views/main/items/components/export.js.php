@@ -11,9 +11,9 @@ if (!defined('KERUY_CRM')) {
 
     function load_items_export_templates()
     {
-        $('#items_export_templates').load('<?php echo url_for(
-            'items/export',
-            'action=get_templates&path=' . $_GET['path']
+        $('#items_export_templates').load('<?= \Helpers\Urls::url_for(
+            'main/items/export/get_templates',
+            'path=' . \K::$fw->GET['path']
         )?>', function () {
             $('[name=is_default_template]').change(function () {
                 id = $(this).attr('data-id');
@@ -25,9 +25,9 @@ if (!defined('KERUY_CRM')) {
 
     function load_items_export_templates_button()
     {
-        $('#items_export_templates_button').load('<?php echo url_for(
-            'items/export',
-            'action=get_templates_button&path=' . $_GET['path']
+        $('#items_export_templates_button').load('<?= \Helpers\Urls::url_for(
+            'main/items/export/get_templates_button',
+            'path=' . \K::$fw->GET['path']
         )?>')
     }
 
@@ -35,10 +35,12 @@ if (!defined('KERUY_CRM')) {
     {
         $.ajax({
             type: "POST",
-            url: '<?php echo url_for('items/export', 'action=set_default_templates&path=' . $_GET['path'])?>',
+            url: '<?= \Helpers\Urls::url_for(
+                'main/items/export/set_default_templates',
+                'path=' . \K::$fw->GET['path']
+            )?>',
             data: {id: id}
         }).done(function () {
-
         })
     }
 
@@ -46,7 +48,10 @@ if (!defined('KERUY_CRM')) {
     {
         $.ajax({
             type: "POST",
-            url: '<?php echo url_for('items/export', 'action=get_default_templates&path=' . $_GET['path'])?>',
+            url: '<?= \Helpers\Urls::url_for(
+                'main/items/export/get_default_templates',
+                'path=' . \K::$fw->GET['path']
+            )?>',
         }).done(function (msg) {
             if (msg.length > 0) {
                 data = JSON.parse(msg)
@@ -61,7 +66,7 @@ if (!defined('KERUY_CRM')) {
 
         $.ajax({
         type: "POST",
-        url: '<?php echo url_for('items/export', 'action=delete_templates&path=' . $_GET['path'])?>',
+        url: '<?= \Helpers\Urls::url_for('main/items/export/delete_templates', 'path=' . \K::$fw->GET['path'])?>',
         data: {id:id}
     }).done(function(){
         load_items_export_templates_button()
@@ -86,7 +91,10 @@ if (!defined('KERUY_CRM')) {
 
         $.ajax({
         type: "POST",
-        url: '<?php echo url_for('items/export', 'action=update_templates_fields&path=' . $_GET['path'])?>',
+        url: '<?= \Helpers\Urls::url_for(
+        'main/items/export/update_templates_fields',
+        'path=' . \K::$fw->GET['path']
+    )?>',
         data: {id:id,fields_list:fields_list.toString()}
     }).done(function(){
         load_items_export_templates_button()
@@ -98,7 +106,10 @@ if (!defined('KERUY_CRM')) {
     {
         $.ajax({
             type: "POST",
-            url: '<?php echo url_for('items/export', 'action=update_templates_name&path=' . $_GET['path'])?>',
+            url: '<?= \Helpers\Urls::url_for(
+                'main/items/export/update_templates_name',
+                'path=' . \K::$fw->GET['path']
+            )?>',
             data: {id: id, name: name}
         }).done(function () {
             load_items_export_templates_button()
@@ -190,7 +201,6 @@ if (!defined('KERUY_CRM')) {
 })
     return false;
 })
-
 
 })
 </script>

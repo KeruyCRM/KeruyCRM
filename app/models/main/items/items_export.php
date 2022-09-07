@@ -14,18 +14,16 @@ class Items_export
 
     public function __construct($filename)
     {
-        $this->filename = app_remove_special_characters($filename);
+        $this->filename = \Helpers\App::app_remove_special_characters($filename);
     }
 
     public function xlsx_from_array($export_data)
     {
-        global $app_user;
-
         //create Spreadsheet
         $spreadsheet = new Spreadsheet();
 
         // Set document properties
-        $spreadsheet->getProperties()->setCreator($app_user['name']);
+        $spreadsheet->getProperties()->setCreator(\K::$fw->app_user['name']);
 
         // Add some data
         $spreadsheet->getActiveSheet()->fromArray($export_data, null, 'A1');

@@ -218,6 +218,12 @@ class Fieldtype_formula
             }
 
             if (strlen($check_needed['fields_in_listing'])) {
+                //Security FIX
+                $check_needed['fields_in_listing'] = \K::model()->quoteToString(
+                    explode(',', $check_needed['fields_in_listing']),
+                    \PDO::PARAM_INT
+                );
+
                 $text_pattern_where_sql = " and id in (" . $check_needed['fields_in_listing'] . ")";
             }
         } //check reports settings
@@ -225,6 +231,12 @@ class Fieldtype_formula
             if (in_array($formula_fields_id, explode(',', $reports_info['fields_in_listing']))) {
                 $check_formula_needed = true;
             }
+
+            //Security FIX
+            $reports_info['fields_in_listing'] = \K::model()->quoteToString(
+                explode(',', $reports_info['fields_in_listing']),
+                \PDO::PARAM_INT
+            );
 
             $text_pattern_where_sql = " and id in (" . $reports_info['fields_in_listing'] . ")";
         } //check default listing settings

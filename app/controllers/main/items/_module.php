@@ -10,19 +10,19 @@ class _Module
 {
     public static function top()
     {
-        $current_path = false;
+        \K::$fw->current_path = false;
 
         if (isset(\K::$fw->GET['path'])) {
-            $current_path = \K::$fw->GET['path'];
+            \K::$fw->current_path = \K::$fw->GET['path'];
         } elseif (isset(\K::$fw->POST['path'])) {
-            $current_path = \K::$fw->POST['path'];
+            \K::$fw->current_path = \K::$fw->POST['path'];
         }
 
-        if (!$current_path) {
+        if (!\K::$fw->current_path) {
             \Helpers\Urls::redirect_to('main/dashboard');
         }
 
-        \K::$fw->current_path_array = explode('/', $current_path);
+        \K::$fw->current_path_array = explode('/', \K::$fw->current_path);
         $current_item_array = explode('-', \K::$fw->current_path_array[count(\K::$fw->current_path_array) - 1]);
 
         \K::$fw->current_entity_id = (int)$current_item_array[0];
@@ -64,7 +64,7 @@ class _Module
             //check path to item
             $path_info = \Models\Main\Items\Items::get_path_info(\K::$fw->current_entity_id, \K::$fw->current_item_id);
 
-            if (\K::$fw->app_module_path == 'items/info' and $current_path != $path_info['full_path']) {
+            if (\K::$fw->app_module_path == 'items/info' and \K::$fw->current_path != $path_info['full_path']) {
                 \Helpers\Urls::redirect_to('main/items/info', 'path=' . $path_info['full_path']);
             }
         }
@@ -78,14 +78,14 @@ class _Module
             if (\K::$fw->current_item_id == 0) {
                 $path_info = \Models\Main\Items\Items::get_path_info($v[0], $v[1]);
 
-                if ($current_path != $path_info['full_path'] . '/' . \K::$fw->current_entity_id) {
+                if (\K::$fw->current_path != $path_info['full_path'] . '/' . \K::$fw->current_entity_id) {
                     \Helpers\Urls::redirect_to(
                         'main/items/items',
                         'path=' . $path_info['full_path'] . '/' . \K::$fw->current_entity_id
                     );
                 }
 
-                //if path is corret then check access to parent item including check access to other parent items
+                //if path is correct then check access to parent item including check access to other parent items
                 $item_query = \K::model()->db_query_exec_one(
                     "select e.id from app_entity_" . $parent_entity_id . " e where e.id = ? " . \Models\Main\Items\Items::add_access_query(
                         $parent_entity_id,
