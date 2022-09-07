@@ -192,4 +192,52 @@ class _Module
             }
         }
     }
+
+    public static function save(){
+        $values = '';
+
+        if (isset($_POST['values'])) {
+            if (is_array($_POST['values'])) {
+                $values = implode(',', $_POST['values']);
+            } else {
+                $values = $_POST['values'];
+            }
+        }
+        $sql_data = [
+            'reports_id' => $_GET['reports_id'],
+            'fields_id' => $_POST['fields_id'],
+            'filters_condition' => $_POST['filters_condition'],
+            'filters_values' => $values,
+        ];
+
+        if (isset($_GET['id'])) {
+            db_perform('app_reports_filters', $sql_data, 'update', "id='" . db_input($_GET['id']) . "'");
+        } else {
+            db_perform('app_reports_filters', $sql_data);
+        }
+    }
+
+    public static function _save(){
+        $values = '';
+
+        if (isset($_POST['values'])) {
+            if (is_array($_POST['values'])) {
+                $values = implode(',', $_POST['values']);
+            } else {
+                $values = $_POST['values'];
+            }
+        }
+        $sql_data = [
+            'reports_id' => $_GET['reports_id'],
+            'fields_id' => $_POST['fields_id'],
+            'filters_condition' => $_POST['filters_condition'],
+            'filters_values' => $values,
+        ];
+
+        if (isset($_GET['id'])) {
+            db_perform('app_reports_filters', $sql_data, 'update', "id='" . db_input($_GET['id']) . "'");
+        } else {
+            db_perform('app_reports_filters', $sql_data);
+        }
+    }
 }
