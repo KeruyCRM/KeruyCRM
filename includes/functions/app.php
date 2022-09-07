@@ -426,7 +426,6 @@ function app_error_handler($errno, $errmsg, $filename, $linenum)
         8192 => "Deprecated"
     ];
 
-
     if (isset($errortype[$errno])) {
         $errlevel = $errortype[$errno];
     } else {
@@ -524,7 +523,6 @@ function image_resize($filename, $filename_small, $resize_image_widht = 150, $re
         } else {
             return false;
         }
-
 
         $tmp_img_small = imagecreatetruecolor($width_small, $height_small);
 
@@ -945,7 +943,6 @@ function i18n_js()
     $list['TEXT_TOGGLE_ON'] = TEXT_TOGGLE_ON;
     $list['TEXT_TOGGLE_OFF'] = TEXT_TOGGLE_OFF;
 
-
     $html = '
     <script>
      var i18n = new Array()
@@ -991,7 +988,6 @@ function app_parse_search_string($search_str = '', &$objects = [], $search_opera
       {
       $search_str = trim(strtolower($search_str));
       } */
-
 
     $search_str = trim(str_replace(['AND', 'OR'], ['and', 'or'], $search_str));
 
@@ -1151,12 +1147,13 @@ function app_parse_search_string($search_str = '', &$objects = [], $search_opera
 function app_json_encode($arr)
 {
     //convmap since 0x80 char codes so it takes all multibyte codes (above ASCII 127). So such characters are being "hidden" from normal json_encoding
-    array_walk_recursive($arr, function (&$item, $key) {
+    /*array_walk_recursive($arr, function (&$item, $key) {
         if (is_string($item)) {
             $item = (mb_encode_numericentity($item, [0x80, 0xffff, 0, 0xffff], 'UTF-8'));
         }
     });
-    return mb_decode_numericentity(json_encode($arr), [0x80, 0xffff, 0, 0xffff], 'UTF-8');
+    return mb_decode_numericentity(json_encode($arr), [0x80, 0xffff, 0, 0xffff], 'UTF-8');*/
+    return json_encode($arr, JSON_UNESCAPED_UNICODE);
 }
 
 function app_render_fields_popup_html($fields_in_popup, $reports_info = [])
