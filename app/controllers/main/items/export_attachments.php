@@ -23,67 +23,81 @@ class Export_attachments extends \Controller
 
     public function export()
     {
-        if (!isset($app_selected_items[$_POST['reports_id']])) {
-            $app_selected_items[$_POST['reports_id']] = [];
-        }
-
-        if (count($app_selected_items[$_POST['reports_id']]) > 0 and isset($_POST['fields'])) {
-            $zip = new ZipArchive();
-            $zip_filename = $app_user['id'] . time() . ".zip";
-            $zip_filepath = DIR_FS_TMP . $zip_filename;
-            $zip->open($zip_filepath, ZipArchive::CREATE);
-
-            $selected_items = implode(',', $app_selected_items[$_POST['reports_id']]);
-
-            $listing_sql = "select e.* from app_entity_" . $current_entity_id . " e where e.id in (" . $selected_items . ") order by field(id," . $selected_items . ")";
-            $items_query = db_query($listing_sql);
-            while ($item = db_fetch_array($items_query)) {
-                $attachments = [];
-                foreach ($_POST['fields'] as $field_id) {
-                    if (isset($item['field_' . $field_id])) {
-                        if (strlen($item['field_' . $field_id])) {
-                            $attachments = array_merge(explode(',', $item['field_' . $field_id]), $attachments);
-                        }
-                    }
-                }
-
-                if (count($attachments)) {
-                    foreach ($attachments as $filename) {
-                        $file = attachments::parse_filename($filename);
-
-                        if (is_file(DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
-                            $zip->addFile(
-                                DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'],
-                                '/' . $item['id'] . '/' . $file['name']
-                            );
-                        }
-                    }
-                }
-                //print_rr($attachments);
+        if (\K::$fw->VERB == 'POST') {
+            if (!isset(\K::$fw->app_selected_items[\K::$fw->POST['reports_id']])) {
+                \K::$fw->app_selected_items[\K::$fw->POST['reports_id']] = [];
             }
 
-            $zip->close();
+            if (count(
+                    \K::$fw->app_selected_items[\K::$fw->POST['reports_id']]
+                ) > 0 and isset(\K::$fw->POST['fields'])) {
+                $zip = new \ZipArchive();
+                $zip_filename = \K::$fw->app_user['id'] . time() . ".zip";
+                $zip_filepath = \K::$fw->DIR_FS_TMP . $zip_filename;
+                $zip->open($zip_filepath, \ZipArchive::CREATE);
 
-            $filename = preg_replace('/\W+/u', '_', trim($_POST['filename'])) . '.zip';
+                $selected_items = \K::model()->quoteToString(
+                    \K::$fw->app_selected_items[\K::$fw->POST['reports_id']],
+                    \PDO::PARAM_INT
+                );
 
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename=' . $filename);
-            header('Content-Transfer-Encoding: binary');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($zip_filepath));
+                /*$listing_sql = "select e.* from app_entity_" . \K::$fw->current_entity_id . " e where e.id in (" . $selected_items . ") order by field(id," . $selected_items . ")";
+                $items_query = db_query($listing_sql);*/
 
-            flush();
+                $items_query = \K::model()->db_fetch('app_entity_' . (int)\K::$fw->current_entity_id, [
+                    'id in (' . $selected_items . ')'
+                ], ['order' => 'field(id,' . $selected_items . ')']);
 
-            readfile($zip_filepath);
+                //while ($item = db_fetch_array($items_query)) {
+                foreach ($items_query as $item) {
+                    $item = $item->cast();
 
-            unlink($zip_filepath);
+                    $attachments = [];
+                    foreach (\K::$fw->POST['fields'] as $field_id) {
+                        if (isset($item['field_' . $field_id])) {
+                            if (strlen($item['field_' . $field_id])) {
+                                $attachments = array_merge(explode(',', $item['field_' . $field_id]), $attachments);
+                            }
+                        }
+                    }
 
-            exit();
+                    if (count($attachments)) {
+                        foreach ($attachments as $filename) {
+                            $file = \Tools\Attachments::parse_filename($filename);
+
+                            if (is_file(\K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'])) {
+                                $zip->addFile(
+                                    \K::$fw->DIR_WS_ATTACHMENTS . $file['folder'] . '/' . $file['file_sha1'],
+                                    '/' . $item['id'] . '/' . $file['name']
+                                );
+                            }
+                        }
+                    }
+                }
+
+                $zip->close();
+
+                $filename = preg_replace('/\W+/u', '_', trim(\K::$fw->POST['filename'])) . '.zip';
+
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename=' . $filename);
+                header('Content-Transfer-Encoding: binary');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: ' . filesize($zip_filepath));
+
+                flush();
+
+                readfile($zip_filepath);
+
+                unlink($zip_filepath);
+            } else {
+                \Helpers\Urls::redirect_to('main/items/items', 'path=' . \K::$fw->app_path);
+            }
         } else {
-            redirect_to('items/items', 'path=' . $app_path);
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 }
