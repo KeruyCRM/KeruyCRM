@@ -84,33 +84,7 @@ class Entityfield_filters extends \Controller
     public function save()
     {
         if (\K::$fw->VERB == 'POST' and isset(\K::$fw->GET['reports_id']) and isset(\K::$fw->GET['entities_id']) and isset(\K::$fw->GET['fields_id'])) {
-            $values = '';
-
-            if (isset(\K::$fw->POST['values'])) {
-                if (is_array(\K::$fw->POST['values'])) {
-                    $values = implode(',', \K::$fw->POST['values']);
-                } else {
-                    $values = \K::$fw->POST['values'];
-                }
-            }
-
-            $sql_data = [
-                'reports_id' => \K::$fw->GET['reports_id'],
-                'fields_id' => \K::$fw->POST['fields_id'],
-                'filters_condition' => \K::$fw->POST['filters_condition'],
-                'filters_values' => $values,
-            ];
-
-            \K::model()->db_perform('app_reports_filters', $sql_data, [
-                'id = ?',
-                \K::$fw->GET['id']
-            ]);
-
-            /*if (isset(\K::$fw->GET['id'])) {
-                db_perform('app_reports_filters', $sql_data, 'update', "id='" . db_input(\K::$fw->GET['id']) . "'");
-            } else {
-                db_perform('app_reports_filters', $sql_data);
-            }*/
+            $this->_saveReportsFilters();
 
             \Helpers\Urls::redirect_to(
                 'main/entities/entityfield_filters',
