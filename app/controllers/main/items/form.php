@@ -19,63 +19,67 @@ class Form extends \Controller
     public function index()
     {
         //checking access
-        if (isset($_GET['id']) and !users::has_access('update')) {
-            echo ajax_modal_template_header(
-                    TEXT_WARNING
-                ) . '<div class="modal-body">' . TEXT_NO_ACCESS . '</div>' . ajax_modal_template_footer_simple();
-            exit();
-        } elseif (!isset($_GET['id']) and (!users::has_access('create') or !access_rules::has_add_buttons_access(
-                    $current_entity_id,
-                    $parent_entity_item_id
+        if (isset(\K::$fw->GET['id']) and !\Models\Main\Users\Users::has_access('update')) {
+            echo \Helpers\App::ajax_modal_template(\K::$fw->TEXT_WARNING, \K::$fw->TEXT_NO_ACCESS);
+        } elseif (!isset(\K::$fw->GET['id']) and (!\Models\Main\Users\Users::has_access(
+                    'create'
+                ) or !\Models\Main\Access_rules::has_add_buttons_access(
+                    \K::$fw->current_entity_id,
+                    \K::$fw->parent_entity_item_id
                 ))) {
-            echo ajax_modal_template_header(
-                    TEXT_WARNING
-                ) . '<div class="modal-body">' . TEXT_NO_ACCESS . '</div>' . ajax_modal_template_footer_simple();
-            exit();
-        }
-
-        $obj = [];
-
-        if (isset($_GET['id'])) {
-            $obj = db_find('app_entity_' . $current_entity_id, $_GET['id']);
+            echo \Helpers\App::ajax_modal_template(\K::$fw->TEXT_WARNING, \K::$fw->TEXT_NO_ACCESS);
         } else {
-            $obj = db_show_columns('app_entity_' . $current_entity_id);
+            \K::$fw->obj = \K::model()->db_find('app_entity_' . (int)\K::$fw->current_entity_id, \K::$fw->GET['id']);
 
-//prepare start/end dates if add item from calendar report
-            if (strstr($app_redirect_to, 'calendarreport')) {
-                require(component_path('items/items_form_calendar_report_prepare'));
+            if (!isset(\K::$fw->GET['id'])) {
+                //prepare start/end dates if add item from calendar report
+                if (strstr(\K::$fw->app_redirect_to, 'calendarreport')) {
+                    //require(component_path('items/items_form_calendar_report_prepare'));
+                    echo \K::view()->render(
+                        \Helpers\Urls::components_path('main/items/items_form_calendar_report_prepare')
+                    );
+                }
+
+                //prepare start/end dates if add item from pivot calendar report
+                if (strstr(\K::$fw->app_redirect_to, 'pivot_calendars')) {
+                    //require(component_path('items/items_form_pivot_calendar_report_prepare'));
+                    echo \K::view()->render(
+                        \Helpers\Urls::components_path('main/items/items_form_pivot_calendar_report_prepare')
+                    );
+                }
+
+                //prepare start/end dates if add item from resource timeline report
+                if (strstr(\K::$fw->app_redirect_to, 'resource_timeline')) {
+                    //require(component_path('ext/resource_timeline/items_form_prepare'));
+                    echo \K::view()->render(\Helpers\Urls::components_path('ext/resource_timeline/items_form_prepare'));
+                }
+
+                //prepare start/end dates if add item from gantt report
+                if (strstr(\K::$fw->app_redirect_to, 'ganttreport')) {
+                    //require(component_path('items/items_form_gantt_report_prepare'));
+                    echo \K::view()->render(
+                        \Helpers\Urls::components_path('main/items/items_form_gantt_report_prepare')
+                    );
+                }
+
+                //autofill related fields to mail
+                if (isset(\K::$fw->GET['mail_groups_id'])) {
+                    //require(component_path('ext/mail/auto_fill_fields'));
+                    echo \K::view()->render(\Helpers\Urls::components_path('ext/mail/auto_fill_fields'));
+                }
+
+                //prepare subentity form
+                if (strstr(\K::$fw->app_redirect_to, 'subentity_form')) { //TODO Not exist file?
+                    //require(component_path('items/subentity_form_prepare'));
+                    echo \K::view()->render(\Helpers\Urls::components_path('main/items/subentity_form_prepare'));
+                }
             }
 
-//prepare start/end dates if add item from pivot calendar report
-            if (strstr($app_redirect_to, 'pivot_calendars')) {
-                require(component_path('items/items_form_pivot_calendar_report_prepare'));
-            }
+            \K::$fw->entity_cfg = new \Models\Main\Entities_cfg(\K::$fw->current_entity_id);
 
-            //prepare start/end dates if add item from resource timeline report
-            if (strstr($app_redirect_to, 'resource_timeline')) {
-                require(component_path('ext/resource_timeline/items_form_prepare'));
-            }
+            \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'form.php';
 
-//prepare start/end dates if add item from gantt report
-            if (strstr($app_redirect_to, 'ganttreport')) {
-                require(component_path('items/items_form_gantt_report_prepare'));
-            }
-
-//auto fill related fields to mail
-            if (isset($_GET['mail_groups_id'])) {
-                require(component_path('ext/mail/auto_fill_fields'));
-            }
-
-            //prepare subentity form
-            if (strstr($app_redirect_to, 'subentity_form')) {
-                require(component_path('items/subentity_form_prepare'));
-            }
+            echo \K::view()->render(\K::$fw->app_layout);
         }
-
-        $entity_cfg = new entities_cfg($current_entity_id);
-
-        \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'form.php';
-
-        echo \K::view()->render(\K::$fw->app_layout);
     }
 }
