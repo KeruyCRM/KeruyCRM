@@ -3,7 +3,7 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-    <div class="items-form-conteiner">
+    <div class="items-form-container">
         <?php
 
         $header_menu_button = '';

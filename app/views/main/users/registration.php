@@ -28,7 +28,7 @@ $fields_where_sql = (strlen(
 
 ?>
 
-<div class="items-form-conteiner">
+<div class="items-form-container">
 
     <?php
     echo form_tag(

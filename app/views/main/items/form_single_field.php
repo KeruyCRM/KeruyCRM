@@ -3,31 +3,21 @@
 if (!defined('KERUY_CRM')) {
     exit;
 } ?>
-<div class="items-form-conteiner">
+<div class="items-form-container">
+    <?= ajax_modal_template_header(items::get_heading_field($current_entity_id, $current_item_id)); ?>
 
-    <?php
-
-    echo ajax_modal_template_header(items::get_heading_field($current_entity_id, $current_item_id));
-
-    echo form_tag(
+    <?= form_tag(
         'form_single_field',
         url_for('items/form_single_field', 'action=save&field_id=' . $field_info['id'] . '&path=' . $app_path),
         ['enctype' => 'multipart/form-data', 'class' => 'form-horizontal']
-    );
+    ); ?>
 
-    ?>
-
-    <?php
-    echo input_hidden_tag('parent_item_id', $obj['parent_item_id']) ?>
-    <?php
-    echo input_hidden_tag('parent_id', $obj['parent_id']) ?>
+    <?= input_hidden_tag('parent_item_id', $obj['parent_item_id']) ?>
+    <?= input_hidden_tag('parent_id', $obj['parent_id']) ?>
 
     <div class="modal-body">
         <div class="form-body">
-
             <?php
-            // print_rr($_GET);
-
             $v = $field_info;
 
             $html = '
@@ -48,11 +38,8 @@ if (!defined('KERUY_CRM')) {
             </div>			
           </div> 
         ';
-
             echo $html;
-
             ?>
-
         </div>
     </div>
 
