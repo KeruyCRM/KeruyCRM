@@ -1,4 +1,4 @@
-<div class="items-form-conteiner">
+<div class="items-form-container">
 
     <?php
     echo ajax_modal_template_header(sprintf(TEXT_EXT_PROCESS_HEADING, $app_process_info['name'])) ?>

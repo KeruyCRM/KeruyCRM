@@ -15,7 +15,7 @@ echo(strlen(
     $public_form['description']
 ) > 0 ? '<p class="public-form-text">' . $public_form['description'] . '</p>' : '') ?>
 
-<div class="items-form-conteiner">
+<div class="items-form-container">
     <?php
     $is_new_item = true;
     $app_items_form_name = 'public_form';

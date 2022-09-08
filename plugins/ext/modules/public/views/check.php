@@ -6,7 +6,7 @@ echo(strlen(
     $public_form['check_page_description']
 ) > 0 ? '<p>' . $public_form['check_page_description'] . '</p>' : '') ?>
 
-<div class="items-form-conteiner">
+<div class="items-form-container">
 
     <?php
     echo form_tag(

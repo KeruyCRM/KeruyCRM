@@ -1483,7 +1483,7 @@ function fc_calendar_button(calendar_id)
 
 function is_dialog()
 {
-   if($('.items-form-conteiner').length) 
+   if($('.items-form-container').length) 
    {
        return true
    }
@@ -1520,9 +1520,9 @@ function is_public_layout()
 function open_sub_dialog(url)
 {
     //set paretn container
-    if(!$('.items-form-conteiner').hasClass('paretn-items-form'))
+    if(!$('.items-form-container').hasClass('paretn-items-form'))
     {
-        $('.items-form-conteiner').addClass('paretn-items-form').hide()
+        $('.items-form-container').addClass('paretn-items-form').hide()
     }
     
     //set sub containter
@@ -1540,7 +1540,7 @@ function open_sub_dialog(url)
 
 function close_sub_dialog()
 {
-    $('.items-form-conteiner').removeClass('paretn-items-form').show()
+    $('.items-form-container').removeClass('paretn-items-form').show()
     $('#sub-items-form').remove()
     $('.btn-sub-dialog-back').hide()
 }
@@ -1555,9 +1555,9 @@ function app_handle_submodal_open_btn(items_form_name)
                 $(this).attr("disabled","disabled");
                 
 		//set paretn container
-		if(!$('.items-form-conteiner').hasClass('paretn-items-form'))
+		if(!$('.items-form-container').hasClass('paretn-items-form'))
 		{
-			$('.items-form-conteiner').addClass('paretn-items-form')
+			$('.items-form-container').addClass('paretn-items-form')
 		}	
 
 		//set sub containter
