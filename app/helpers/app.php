@@ -575,26 +575,21 @@ class App
 
     public static function ajax_modal_template($title, $content)
     {
-        return '  		
-			<div class="modal-header">  				
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-  			<button type="button" class="close modal-collapse" aria-hidden="true"></button>
-				<h4 class="modal-title">' . $title . '</h4>
-			</div>
-			<div >
+        return self::ajax_modal_template_header($title) . '
+			<div class="modal-body">
 				 ' . $content . '
-			</div>				
-  ';
+			</div>
+' . self::ajax_modal_template_footer_simple();
     }
 
     public static function ajax_modal_template_header($title)
     {
-        return '  		
-			<div class="modal-header">  			
+        return '
+			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
   			<button type="button" class="close modal-collapse" aria-hidden="true"></button>
 				<h4 class="modal-title">' . $title . '</h4>
-			</div>							
+			</div>
   ';
     }
 
