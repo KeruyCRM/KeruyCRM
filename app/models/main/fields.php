@@ -319,6 +319,7 @@ class Fields
         //while ($v = db_fetch_array($fields_query)) {
         foreach ($fields_query as $v) {
             $v = $v->cast();
+
             $cfg = new \Models\Main\Fields_types_cfg($v['configuration']);
 
             $attributes = [];

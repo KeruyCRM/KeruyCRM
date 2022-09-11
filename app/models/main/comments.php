@@ -44,8 +44,6 @@ class Comments
 
     public static function get_last_comment_info($entities_id, $items_id, $path, $fields_access_schema)
     {
-        global $app_users_cache;
-
         $comments_query_sql = "select * from app_comments where entities_id='" . $entities_id . "' and items_id='" . $items_id . "'  order by date_added desc limit 1";
         $items_query = db_query($comments_query_sql);
         if ($item = db_fetch_array($items_query)) {
@@ -276,22 +274,22 @@ class Comments
 
     static function add_comment_notify_when_fields_changed($entities_id, $items_id, $changed_fields = [])
     {
-        global $app_user;
-
         if (count($changed_fields)) {
             $sql_data = [
                 'entities_id' => $entities_id,
                 'items_id' => $items_id,
                 'date_added' => time(),
-                'created_by' => $app_user['id'],
+                'created_by' => \K::$fw->app_user['id'],
             ];
 
-            db_perform('app_comments', $sql_data);
+            $forceCommit = \K::model()->forceCommit();
 
-            $comments_id = db_insert_id();
+            $mapper = \K::model()->db_perform('app_comments', $sql_data);
+
+            $comments_id = \K::model()->db_insert_id($mapper);
 
             foreach ($changed_fields as $fields) {
-                db_perform(
+                \K::model()->db_perform(
                     'app_comments_history',
                     [
                         'comments_id' => $comments_id,
@@ -299,6 +297,10 @@ class Comments
                         'fields_value' => $fields['fields_value']
                     ]
                 );
+            }
+
+            if ($forceCommit) {
+                \K::model()->commit();
             }
         }
     }
