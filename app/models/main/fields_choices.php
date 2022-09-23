@@ -365,11 +365,19 @@ class Fields_choices
 
     public static function get_parent_ids($id, $parents = [])
     {
-        $choices_query = db_query(
+        /*$choices_query = db_query(
             "select * from app_fields_choices where id = '" . db_input($id) . "' order by sort_order, name"
-        );
+        );*/
 
-        while ($v = db_fetch_array($choices_query)) {
+        $choices_query = \K::model()->db_fetch('app_fields_choices', [
+            'id = ?',
+            $id
+        ], ['order' => 'sort_order,name']);
+
+        //while ($v = db_fetch_array($choices_query)) {
+        foreach ($choices_query as $v) {
+            $v = $v->cast();
+
             $parents[] = $v['id'];
 
             if ($v['parent_id'] > 0) {

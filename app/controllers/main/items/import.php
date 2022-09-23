@@ -15,13 +15,13 @@ class Import extends \Controller
 
         \Controllers\Main\Items\_Module::top();
 
-        if (!users::has_access('import') or !strlen($app_path)) {
-            redirect_to('dashboard/access_forbidden');
+        if (!\Models\Main\Users\Users::has_access('import') or !strlen(\K::$fw->app_path)) {
+            \Helpers\Urls::redirect_to('main/dashboard/access_forbidden');
         }
 
-        if (!app_session_is_registered('import_fields')) {
-            $import_fields = [];
-            app_session_register('import_fields');
+        if (!\K::app_session_is_registered('import_fields')) {
+            \K::$fw->import_fields = [];
+            \K::app_session_register('import_fields');
         }
     }
 
@@ -34,168 +34,189 @@ class Import extends \Controller
 
     public function import()
     {
-        $worksheet = json_decode(stripslashes($_POST['worksheet']), true);
-        $entities_id = $current_entity_id;
-        $parent_item_id = $parent_entity_item_id;
+        if (\K::$fw->VERB == 'POST') {
+            \K::$fw->worksheet = json_decode(stripslashes(\K::$fw->POST['worksheet']), true);
+            $entities_id = \K::$fw->current_entity_id;
+            $parent_item_id = \K::$fw->parent_entity_item_id;
 
-        $entity_info = db_find('app_entities', $entities_id);
+            $entity_info = \K::model()->db_find('app_entities', $entities_id);
 
-        if ($entity_info['parent_id'] > 0) {
-            $parent_item_query = db_query(
-                "select * from app_entity_" . $entity_info['parent_id'] . " where id='" . db_input(
-                    $parent_item_id
-                ) . "'"
-            );
-
-            if ($parent_item = db_fetch_array($parent_item_query)) {
-                $path_info = items::get_path_info($entity_info['parent_id'], $parent_item['id']);
-
-                $redirect_path = $path_info['full_path'] . '/' . $entities_id;
-            }
-        } else {
             $redirect_path = $entities_id;
-        }
 
-        //check if any fields are binded
-        if (count($import_fields) == 0) {
-            $alerts->add(TEXT_IMPORT_BIND_FIELDS_ERROR, 'error');
-            redirect_to('items/items', 'path=' . $redirect_path);
-        }
+            if ($entity_info['parent_id'] > 0) {
+                /*$parent_item_query = db_query(
+                    "select * from app_entity_" . $entity_info['parent_id'] . " where id='" . db_input(
+                        $parent_item_id
+                    ) . "'"
+                );*/
 
-        //check required fields for users entity
-        if ($entities_id == 1) {
-            if (!in_array(7, $import_fields) or !in_array(8, $import_fields) or !in_array(9, $import_fields)) {
-                $alerts->add(TEXT_IMPORT_BIND_USERS_FIELDS_ERROR, 'error');
-                redirect_to('items/items', 'path=' . $redirect_path);
-            }
+                $parent_item = \K::model()->db_fetch_one('app_entity_' . (int)$entity_info['parent_id'], [
+                    'id = ?',
+                    $parent_item_id
+                ]);
 
-            $hasher = new PasswordHash(11, false);
-        }
+                if ($parent_item) {
+                    $path_info = \Models\Main\Items\Items::get_path_info($entity_info['parent_id'], $parent_item['id']);
 
-        //multilevel import
-        $multilevel_import = _get::int('multilevel_import');
-
-        $import_entities_list = [];
-        $import_entities_list[] = $current_entity_id;
-
-        if ($multilevel_import > 0) {
-            $import_entities_list = [];
-            $import_entities_list[] = $multilevel_import;
-
-            foreach (entities::get_parents($multilevel_import) as $entity_id) {
-                $import_entities_list[] = $entity_id;
-
-                if ($entity_id == $current_entity_id) {
-                    break;
+                    $redirect_path = $path_info['full_path'] . '/' . $entities_id;
                 }
             }
 
-            $import_entities_list = array_reverse($import_entities_list);
+            //check if any fields are binded
+            if (count(\K::$fw->import_fields) == 0) {
+                \K::flash()->addMessage(\K::$fw->TEXT_IMPORT_BIND_FIELDS_ERROR, 'error');
+                \Helpers\Urls::redirect_to('main/items/items', 'path=' . $redirect_path);
+            }
 
-            //print_rr($import_entities_list);
-            //exit();
+            //check required fields for users entity
+            if ($entities_id == 1) {
+                if (!in_array(7, \K::$fw->import_fields) or !in_array(8, \K::$fw->import_fields) or !in_array(
+                        9,
+                        \K::$fw->import_fields
+                    )) {
+                    \K::flash()->addMessage(\K::$fw->TEXT_IMPORT_BIND_USERS_FIELDS_ERROR, 'error');
+                    \Helpers\Urls::redirect_to('main/items/items', 'path=' . $redirect_path);
+                }
+            }
 
-            //check heading
-            foreach ($import_entities_list as $id) {
-                $check = false;
-                $heading_field_id = fields::get_heading_id($id);
-                foreach ($import_fields as $c => $v) {
-                    if ($v == $heading_field_id) {
-                        $check = true;
+            //multilevel import
+            \K::$fw->multilevel_import = (int)\K::$fw->GET['multilevel_import'];
+
+            $import_entities_list = [];
+            $import_entities_list[] = \K::$fw->current_entity_id;
+
+            if (\K::$fw->multilevel_import > 0) {
+                $import_entities_list = [];
+                $import_entities_list[] = \K::$fw->multilevel_import;
+
+                foreach (\Models\Main\Entities::get_parents(\K::$fw->multilevel_import) as $entity_id) {
+                    $import_entities_list[] = $entity_id;
+
+                    if ($entity_id == \K::$fw->current_entity_id) {
+                        break;
                     }
                 }
 
-                if (!$check) {
-                    $alerts->add(
-                        sprintf(TEXT_MULTI_LEVEL_IMPORT_HEADING_ERROR, entities::get_name_by_id($id)),
-                        'error'
-                    );
-                    redirect_to('items/items', 'path=' . $app_path);
+                $import_entities_list = array_reverse($import_entities_list);
+
+                //check heading
+                foreach ($import_entities_list as $id) {
+                    $check = false;
+                    $heading_field_id = \Models\Main\Fields::get_heading_id($id);
+                    foreach (\K::$fw->import_fields as $c => $v) {
+                        if ($v == $heading_field_id) {
+                            $check = true;
+                        }
+                    }
+
+                    if (!$check) {
+                        \K::flash()->addMessage(
+                            sprintf(
+                                \K::$fw->TEXT_MULTI_LEVEL_IMPORT_HEADING_ERROR,
+                                \Models\Main\Entities::get_name_by_id($id)
+                            ),
+                            'error'
+                        );
+                        \Helpers\Urls::redirect_to('main/items/items', 'path=' . \K::$fw->app_path);
+                    }
                 }
             }
-        }
 
-        //check if import first row
-        $first_row = (isset($_POST['import_first_row']) ? 0 : 1);
+            //check if import first row
+            $first_row = (isset(\K::$fw->POST['import_first_row']) ? 0 : 1);
 
-        //use when import users
-        $already_exist_username = [];
+            //use when import users
+            \K::$fw->already_exist_username = [];
 
-        $count_items_added = 0;
-        $count_items_updated = 0;
+            \K::$fw->count_items_added = 0;
+            \K::$fw->count_items_updated = 0;
 
-        //create chocies cahce to reduce sql queries
-        $choices_names_to_id = [];
-        $global_choices_names_to_id = [];
-        $choices_parents_to_id = [];
-        $global_choices_parents_to_id = [];
+            //create choices cache to reduce sql queries
+            \K::$fw->choices_names_to_id = [];
+            \K::$fw->global_choices_names_to_id = [];
+            \K::$fw->choices_parents_to_id = [];
+            \K::$fw->global_choices_parents_to_id = [];
 
-        $unique_fields = fields::get_unique_fields_list($entities_id);
+            \K::$fw->unique_fields = \Models\Main\Fields::get_unique_fields_list($entities_id);
 
-        //start import
-        for ($row = $first_row; $row < count($worksheet); ++$row) {
-            $import_entity_parent_item_id = $parent_item_id;
+            //start import
+            for (\K::$fw->row = $first_row; \K::$fw->row < count(\K::$fw->worksheet); ++\K::$fw->row) {
+                \K::$fw->import_entity_parent_item_id = $parent_item_id;
 
-            if ($multilevel_import > 0) {
-                foreach ($import_entities_list as $import_entity_level => $import_entity_id) {
-                    $entities_id = $import_entity_id;
-                    require(component_path('items/_import.process.inc'));
+                if (\K::$fw->multilevel_import > 0) {
+                    foreach ($import_entities_list as $import_entity_level => $import_entity_id) {
+                        \K::$fw->entities_id = $import_entity_id;
+                        require(\Helpers\Urls::components_path('main/items/_import.process.inc'));
+                    }
+                } else {
+                    \K::$fw->entities_id = \K::$fw->current_entity_id;
+                    require(\Helpers\Urls::components_path('main/items/_import.process.inc'));
                 }
-            } else {
-                $entities_id = $current_entity_id;
-                require(component_path('items/_import.process.inc'));
             }
-        }
 
-        //exit();
-
-        if (count($already_exist_username) > 0) {
-            $alerts->add(TEXT_USERS_IMPORT_ERROR . ' ' . implode(', ', $already_exist_username), 'warning');
-        }
-
-        switch ($_POST['import_action']) {
-            case 'import':
-                $alerts->add(TEXT_COUNT_ITEMS_ADDED . ' ' . $count_items_added, 'success');
-                break;
-            case 'update':
-                $alerts->add(TEXT_COUNT_ITEMS_UPDATED . ' ' . $count_items_updated, 'success');
-                break;
-            case 'update_import':
-                $alerts->add(
-                    TEXT_COUNT_ITEMS_UPDATED . ' ' . $count_items_updated . '. ' . TEXT_COUNT_ITEMS_ADDED . ' ' . $count_items_added,
-                    'success'
+            if (count(\K::$fw->already_exist_username) > 0) {
+                \K::flash()->addMessage(
+                    \K::$fw->TEXT_USERS_IMPORT_ERROR . ' ' . implode(', ', \K::$fw->already_exist_username),
+                    'warning'
                 );
-                break;
+            }
+
+            switch (\K::$fw->POST['import_action']) {
+                case 'import':
+                    \K::flash()->addMessage(
+                        \K::$fw->TEXT_COUNT_ITEMS_ADDED . ' ' . \K::$fw->count_items_added,
+                        'success'
+                    );
+                    break;
+                case 'update':
+                    \K::flash()->addMessage(
+                        \K::$fw->TEXT_COUNT_ITEMS_UPDATED . ' ' . \K::$fw->count_items_updated,
+                        'success'
+                    );
+                    break;
+                case 'update_import':
+                    \K::flash()->addMessage(
+                        \K::$fw->TEXT_COUNT_ITEMS_UPDATED . ' ' . \K::$fw->count_items_updated . '. ' . \K::$fw->TEXT_COUNT_ITEMS_ADDED . ' ' . \K::$fw->count_items_added,
+                        'success'
+                    );
+                    break;
+            }
+
+            //reset import fields session
+            \K::$fw->import_fields = [];
+
+            \Helpers\Urls::redirect_to('main/items/items', 'path=' . $redirect_path);
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
-
-        //reset import fields session
-        $import_fields = [];
-
-        redirect_to('items/items', 'path=' . $redirect_path);
     }
 
     public function bind_field()
     {
-        $col = $_POST['col'];
-        $filed_id = $_POST['filed_id'];
+        if (\K::$fw->VERB == 'POST') {
+            $col = \K::$fw->POST['col'];
+            $filed_id = \K::$fw->POST['filed_id'];
 
-        $multilevel_import = _get::int('multilevel_import');
+            \K::$fw->multilevel_import = (int)\K::$fw->GET['multilevel_import'];
 
-        if ($filed_id > 0) {
-            $import_fields[$col] = $filed_id;
+            if ($filed_id > 0) {
+                \K::$fw->import_fields[$col] = $filed_id;
 
-            $v = db_find('app_fields', $filed_id);
+                $v = \K::model()->db_find('app_fields', $filed_id);
 
-            if ($multilevel_import > 0) {
-                echo '<small style="font-weight: normal">' . entities::get_name_by_id(
-                        $v['entities_id']
-                    ) . ':</small><br>';
+                if (\K::$fw->multilevel_import > 0) {
+                    echo '<small style="font-weight: normal">' . \Models\Main\Entities::get_name_by_id(
+                            $v['entities_id']
+                        ) . ':</small><br>';
+                }
+
+                echo \Models\Main\Fields_types::get_option($v['type'], 'name', $v['name']);
+            } elseif (isset(\K::$fw->import_fields[$col])) {
+                unset(\K::$fw->import_fields[$col]);
+                echo '';
             }
-
-            echo fields_types::get_option($v['type'], 'name', $v['name']);
-        } elseif (isset($import_fields[$col])) {
-            unset($import_fields[$col]);
-            echo '';
+        } else {
+            \Helpers\Urls::redirect_to('main/dashboard');
         }
     }
 }

@@ -14,44 +14,52 @@ $import_username = '';
 
 $is_unique_item = true;
 
-for ($col = 1; $col <= count($worksheet[$row]); ++$col) {
-    if (isset($import_fields[$col]) and strlen($worksheet[$row][$col]) > 0) {
-        $field_id = $import_fields[$col];
+$forceCommit = \K::model()->forceCommit();
+
+for ($col = 1; $col <= count(\K::$fw->worksheet[\K::$fw->row]); ++$col) {
+    if (isset(\K::$fw->import_fields[$col]) and strlen(\K::$fw->worksheet[\K::$fw->row][$col]) > 0) {
+        $field_id = \K::$fw->import_fields[$col];
 
         //skip field import if field ID not the uses Entity
-        if (!isset($app_fields_cache[$entities_id][$field_id])) {
+        if (!isset(\K::$fw->app_fields_cache[\K::$fw->entities_id][$field_id])) {
             continue;
         }
 
-        $filed_info_query = db_query("select * from app_fields where id='" . db_input($field_id) . "'");
-        if ($filed_info = db_fetch_array($filed_info_query)) {
-            $cfg = new fields_types_cfg($filed_info['configuration']);
+        //$filed_info_query = db_query("select * from app_fields where id='" . db_input($field_id) . "'");
+
+        $filed_info = \K::model()->db_fetch_one('app_fields', [
+            'id = ?',
+            $field_id
+        ]);
+
+        if ($filed_info) {
+            $cfg = new \Models\Main\Fields_types_cfg($filed_info['configuration']);
 
             switch ($filed_info['type']) {
                 case 'fieldtype_input_ip':
-                    $value = ip2long(trim($worksheet[$row][$col]));
-                    $sql_data['field_' . $field_id] = $value;
+                    $value = ip2long(trim(\K::$fw->worksheet[\K::$fw->row][$col]));
+                    $sql_data['field_' . (int)$field_id] = $value;
                     break;
                 case 'fieldtype_user_email':
-                    $value = trim($worksheet[$row][$col]);
+                    $value = trim(\K::$fw->worksheet[\K::$fw->row][$col]);
                     $email_username = substr($value, 0, strpos($value, '@'));
 
-                    $sql_data['field_' . $field_id] = $value;
+                    $sql_data['field_' . (int)$field_id] = $value;
                     break;
                 case 'fieldtype_user_username':
-                    $value = trim($worksheet[$row][$col]);
+                    $value = trim(\K::$fw->worksheet[\K::$fw->row][$col]);
                     $import_username = $value;
 
-                    $sql_data['field_' . $field_id] = $value;
+                    $sql_data['field_' . (int)$field_id] = $value;
                     break;
                 case 'fieldtype_entity':
                 case 'fieldtype_entity_ajax':
                 case 'fieldtype_entity_multilevel':
                     $values_list = [];
-                    $value = trim($worksheet[$row][$col]);
+                    $value = trim(\K::$fw->worksheet[\K::$fw->row][$col]);
 
-                    if ($heading_id = fields::get_heading_id($cfg->get('entity_id'))) {
-                        $heading_field_info = db_find('app_fields', $heading_id);
+                    if ($heading_id = \Models\Main\Fields::get_heading_id($cfg->get('entity_id'))) {
+                        $heading_field_info = \K::model()->db_find('app_fields', $heading_id);
                         if (in_array(
                             $heading_field_info['type'],
                             [
@@ -71,34 +79,51 @@ for ($col = 1; $col <= count($worksheet[$row]); ++$col) {
                             }
 
                             foreach ($value_array as $value_name) {
-                                $item_query = db_query(
+                                /*$item_query = db_query(
                                     "select id from app_entity_" . $cfg->get(
                                         'entity_id'
                                     ) . " where field_" . $heading_id . "='" . db_input($value_name) . "'"
-                                );
-                                if ($item = db_fetch_array($item_query)) {
+                                );*/
+
+                                $item = \K::model()->db_fetch_one('app_entity_' . (int)$cfg->get('entity_id'), [
+                                    'field_' . (int)$heading_id . ' = ?',
+                                    $value_name
+                                ], [], 'id');
+
+                                if ($item) {
                                     $values_list[] = $item['id'];
                                 } else {
-                                    if (($parent_entities_id = $app_entities_cache[$cfg->get(
+                                    $parent_entities_item_id = 0;
+
+                                    if (($parent_entities_id = \K::$fw->app_entities_cache[$cfg->get(
                                             'entity_id'
                                         )]['parent_id']) > 0) {
-                                        $check_query = db_query("select id from app_entity_" . $cfg->get('entity_id'));
-                                        if ($check = db_fetch_array($check_query)) {
+                                        //$check_query = db_query("select id from app_entity_" . $cfg->get('entity_id'));
+
+                                        $check = \K::model()->db_fetch_one(
+                                            'app_entity_' . (int)$cfg->get('entity_id'),
+                                            [],
+                                            [],
+                                            'id'
+                                        );
+
+                                        if ($check) {
                                             $parent_entities_item_id = $check['id'];
                                         }
-                                    } else {
-                                        $parent_entities_item_id = 0;
                                     }
 
                                     $item_sql_data = [];
-                                    $item_sql_data['field_' . $heading_id] = trim($value_name);
+                                    $item_sql_data['field_' . (int)$heading_id] = trim($value_name);
                                     $item_sql_data['date_added'] = time();
-                                    $item_sql_data['created_by'] = $app_logged_users_id;
+                                    $item_sql_data['created_by'] = \K::$fw->app_logged_users_id;
                                     $item_sql_data['parent_item_id'] = $parent_entities_item_id;
 
-                                    db_perform('app_entity_' . $cfg->get('entity_id'), $item_sql_data);
+                                    $mapper = \K::model()->db_perform(
+                                        'app_entity_' . (int)$cfg->get('entity_id'),
+                                        $item_sql_data
+                                    );
 
-                                    $item_id = db_insert_id();
+                                    $item_id = \K::model()->db_insert_id($mapper);
 
                                     $values_list[] = $item_id;
                                 }
@@ -107,30 +132,37 @@ for ($col = 1; $col <= count($worksheet[$row]); ++$col) {
                             //prepare choices values
                             $choices_values[$field_id] = $values_list;
 
-                            $sql_data['field_' . $field_id] = implode(',', $values_list);
+                            $sql_data['field_' . (int)$field_id] = implode(',', $values_list);
                         }
                     }
                     break;
                 case 'fieldtype_dropdown':
                 case 'fieldtype_radioboxes':
                 case 'fieldtype_stages':
-                    $value = trim($worksheet[$row][$col]);
+                    $value = trim(\K::$fw->worksheet[\K::$fw->row][$col]);
 
                     if ($cfg->get('use_global_list') > 0) {
-                        if (isset($global_choices_names_to_id[$cfg->get('use_global_list')][$value])) {
-                            $sql_data['field_' . $field_id] = $global_choices_names_to_id[$cfg->get(
+                        if (isset(\K::$fw->global_choices_names_to_id[$cfg->get('use_global_list')][$value])) {
+                            $sql_data['field_' . (int)$field_id] = \K::$fw->global_choices_names_to_id[$cfg->get(
                                 'use_global_list'
                             )][$value];
                         } else {
-                            $fields_choices_info_query = db_query(
+                            /*$fields_choices_info_query = db_query(
                                 "select * from app_global_lists_choices where name='" . db_input(
                                     $value
                                 ) . "' and lists_id='" . db_input($cfg->get('use_global_list')) . "'"
-                            );
-                            if ($fields_choices_info = db_fetch_array($fields_choices_info_query)) {
-                                $sql_data['field_' . $field_id] = $fields_choices_info['id'];
+                            );*/
 
-                                $global_choices_names_to_id[$cfg->get(
+                            $fields_choices_info = \K::model()->db_fetch_one('app_global_lists_choices', [
+                                'name = ? and lists_id = ?',
+                                $value,
+                                $cfg->get('use_global_list')
+                            ]);
+
+                            if ($fields_choices_info) {
+                                $sql_data['field_' . (int)$field_id] = $fields_choices_info['id'];
+
+                                \K::$fw->global_choices_names_to_id[$cfg->get(
                                     'use_global_list'
                                 )][$value] = $fields_choices_info['id'];
                             } else {
@@ -139,103 +171,122 @@ for ($col = 1; $col <= count($worksheet[$row]); ++$col) {
                                     'parent_id' => 0,
                                     'name' => $value
                                 ];
-                                db_perform('app_global_lists_choices', $field_sql_data);
 
-                                $item_id = db_insert_id();
+                                $mapper = \K::model()->db_perform('app_global_lists_choices', $field_sql_data);
 
-                                $sql_data['field_' . $field_id] = $item_id;
+                                $item_id = \K::model()->db_insert_id($mapper);
 
-                                $global_choices_names_to_id[$cfg->get('use_global_list')][$value] = $item_id;
+                                $sql_data['field_' . (int)$field_id] = $item_id;
+
+                                \K::$fw->global_choices_names_to_id[$cfg->get('use_global_list')][$value] = $item_id;
                             }
                         }
+                    } elseif (isset(\K::$fw->choices_names_to_id[$field_id][$value])) {
+                        $sql_data['field_' . (int)$field_id] = \K::$fw->choices_names_to_id[$field_id][$value];
                     } else {
-                        if (isset($choices_names_to_id[$field_id][$value])) {
-                            $sql_data['field_' . $field_id] = $choices_names_to_id[$field_id][$value];
+                        /*$fields_choices_info_query = db_query(
+                            "select * from app_fields_choices where name='" . db_input(
+                                $value
+                            ) . "' and fields_id='" . db_input($field_id) . "'"
+                        );*/
+
+                        $fields_choices_info = \K::model()->db_fetch_one('app_fields_choices', [
+                            'name = ? and fields_id = ?',
+                            $value,
+                            $field_id
+                        ]);
+
+                        if ($fields_choices_info) {
+                            $sql_data['field_' . (int)$field_id] = $fields_choices_info['id'];
+
+                            \K::$fw->choices_names_to_id[$field_id][$value] = $fields_choices_info['id'];
                         } else {
-                            $fields_choices_info_query = db_query(
-                                "select * from app_fields_choices where name='" . db_input(
-                                    $value
-                                ) . "' and fields_id='" . db_input($field_id) . "'"
-                            );
-                            if ($fields_choices_info = db_fetch_array($fields_choices_info_query)) {
-                                $sql_data['field_' . $field_id] = $fields_choices_info['id'];
+                            $field_sql_data = [
+                                'fields_id' => $field_id,
+                                'parent_id' => 0,
+                                'name' => $value
+                            ];
 
-                                $choices_names_to_id[$field_id][$value] = $fields_choices_info['id'];
-                            } else {
-                                $field_sql_data = [
-                                    'fields_id' => $field_id,
-                                    'parent_id' => 0,
-                                    'name' => $value
-                                ];
-                                db_perform('app_fields_choices', $field_sql_data);
+                            $mapper = \K::model()->db_perform('app_fields_choices', $field_sql_data);
 
-                                $item_id = db_insert_id();
+                            $item_id = \K::model()->db_insert_id($mapper);
 
-                                $sql_data['field_' . $field_id] = $item_id;
+                            $sql_data['field_' . (int)$field_id] = $item_id;
 
-                                $choices_names_to_id[$field_id][$value] = $item_id;
-                            }
+                            \K::$fw->choices_names_to_id[$field_id][$value] = $item_id;
                         }
                     }
 
                     //prepare choices values
-                    $choices_values[$field_id][] = $sql_data['field_' . $field_id];
+                    $choices_values[$field_id][] = $sql_data['field_' . (int)$field_id];
 
                     break;
                 case 'fieldtype_dropdown_multilevel':
                     $values_list = [];
-                    $value = trim($worksheet[$row][$col]);
+                    $value = trim(\K::$fw->worksheet[\K::$fw->row][$col]);
 
                     if (strlen($value)) {
                         $value_id = 0;
 
                         if ($cfg->get('use_global_list') > 0) {
-                            if (isset($global_choices_names_to_id[$cfg->get('use_global_list')][$value])) {
-                                $value_id = $global_choices_names_to_id[$cfg->get('use_global_list')][$value];
+                            if (isset(\K::$fw->global_choices_names_to_id[$cfg->get('use_global_list')][$value])) {
+                                $value_id = \K::$fw->global_choices_names_to_id[$cfg->get('use_global_list')][$value];
                             } else {
-                                $fields_choices_info_query = db_query(
+                                /*$fields_choices_info_query = db_query(
                                     "select * from app_global_lists_choices where name='" . db_input(
                                         trim($value)
                                     ) . "' and lists_id='" . db_input($cfg->get('use_global_list')) . "'"
-                                );
-                                if ($fields_choices_info = db_fetch_array($fields_choices_info_query)) {
+                                );*/
+
+                                $fields_choices_info = \K::model()->db_fetch_one('app_global_lists_choices', [
+                                    'name = ? and lists_id = ?',
+                                    $value,
+                                    $cfg->get('use_global_list')
+                                ]);
+
+                                if ($fields_choices_info) {
                                     $value_id = $fields_choices_info['id'];
-                                    $global_choices_names_to_id[$cfg->get('use_global_list')][$value] = $value_id;
+                                    \K::$fw->global_choices_names_to_id[$cfg->get(
+                                        'use_global_list'
+                                    )][$value] = $value_id;
                                 }
                             }
+                        } elseif (isset(\K::$fw->choices_names_to_id[$field_id][$value])) {
+                            $value_id = \K::$fw->choices_names_to_id[$field_id][$value];
                         } else {
-                            if (isset($choices_names_to_id[$field_id][$value])) {
-                                $value_id = $choices_names_to_id[$field_id][$value];
-                            } else {
-                                $fields_choices_info_query = db_query(
-                                    "select * from app_fields_choices where name='" . db_input(
-                                        trim($value)
-                                    ) . "' and fields_id='" . db_input($field_id) . "'"
-                                );
-                                if ($fields_choices_info = db_fetch_array($fields_choices_info_query)) {
-                                    $value_id = $fields_choices_info['id'];
-                                    $choices_names_to_id[$field_id][$value] = $value_id;
-                                }
+                            /*$fields_choices_info_query = db_query(
+                                "select * from app_fields_choices where name='" . db_input(
+                                    trim($value)
+                                ) . "' and fields_id='" . db_input($field_id) . "'"
+                            );*/
+
+                            $fields_choices_info = \K::model()->db_fetch_one('app_fields_choices', [
+                                'name = ? and fields_id = ?',
+                                $value,
+                                $field_id
+                            ]);
+
+                            if ($fields_choices_info) {
+                                $value_id = $fields_choices_info['id'];
+                                \K::$fw->choices_names_to_id[$field_id][$value] = $value_id;
                             }
                         }
 
                         if ($value_id > 0) {
                             if ($cfg->get('use_global_list')) {
-                                if (isset($global_choices_parents_to_id[$value_id])) {
-                                    $value_array = $global_choices_parents_to_id[$value_id];
+                                if (isset(\K::$fw->global_choices_parents_to_idd[$value_id])) {
+                                    $value_array = \K::$fw->global_choices_parents_to_idd[$value_id];
                                 } else {
-                                    $value_array = global_lists::get_parent_ids($value_id);
+                                    $value_array = \Models\Main\Global_lists::get_parent_ids($value_id);
 
-                                    $global_choices_parents_to_id[$value_id] = $value_array;
+                                    \K::$fw->global_choices_parents_to_idd[$value_id] = $value_array;
                                 }
+                            } elseif (isset(\K::$fw->choices_parents_to_id[$field_id][$value_id])) {
+                                $value_array = \K::$fw->choices_parents_to_id[$field_id][$value_id];
                             } else {
-                                if (isset($choices_parents_to_id[$field_id][$value_id])) {
-                                    $value_array = $choices_parents_to_id[$field_id][$value_id];
-                                } else {
-                                    $value_array = fields_choices::get_parent_ids($value_id);
+                                $value_array = \Models\Main\Fields_choices::get_parent_ids($value_id);
 
-                                    $choices_parents_to_id[$field_id][$value_id] = $value_array;
-                                }
+                                \K::$fw->choices_parents_to_id[$field_id][$value_id] = $value_array;
                             }
 
                             $values_list = array_reverse($value_array);
@@ -243,7 +294,7 @@ for ($col = 1; $col <= count($worksheet[$row]); ++$col) {
                             //prepare choices values
                             $choices_values[$field_id] = $values_list;
 
-                            $sql_data['field_' . $field_id] = implode(',', $values_list);
+                            $sql_data['field_' . (int)$field_id] = implode(',', $values_list);
                         }
                     }
 
@@ -253,16 +304,25 @@ for ($col = 1; $col <= count($worksheet[$row]); ++$col) {
                 case 'fieldtype_checkboxes':
                 case 'fieldtype_tags':
                     $values_list = [];
-                    $value = trim($worksheet[$row][$col]);
+                    $value = trim(\K::$fw->worksheet[\K::$fw->row][$col]);
 
                     if ($cfg->get('use_global_list') > 0) {
-                        foreach (explode(',', $value) as $value_name) {
-                            $fields_choices_info_query = db_query(
+                        $exp = explode(',', $value);
+
+                        foreach ($exp as $value_name) {
+                            /*$fields_choices_info_query = db_query(
                                 "select * from app_global_lists_choices where name='" . db_input(
                                     trim($value_name)
                                 ) . "' and lists_id='" . db_input($cfg->get('use_global_list')) . "'"
-                            );
-                            if ($fields_choices_info = db_fetch_array($fields_choices_info_query)) {
+                            );*/
+
+                            $fields_choices_info = \K::model()->db_fetch_one('app_global_lists_choices', [
+                                'name = ? and lists_id = ?',
+                                trim($value_name),
+                                $cfg->get('use_global_list')
+                            ]);
+
+                            if ($fields_choices_info) {
                                 $values_list[] = $fields_choices_info['id'];
                             } else {
                                 $field_sql_data = [
@@ -270,21 +330,31 @@ for ($col = 1; $col <= count($worksheet[$row]); ++$col) {
                                     'parent_id' => 0,
                                     'name' => trim($value_name)
                                 ];
-                                db_perform('app_global_lists_choices', $field_sql_data);
 
-                                $item_id = db_insert_id();
+                                $mapper = \K::model()->db_perform('app_global_lists_choices', $field_sql_data);
+
+                                $item_id = \K::model()->db_insert_id($mapper);
 
                                 $values_list[] = $item_id;
                             }
                         }
                     } else {
-                        foreach (explode(',', $value) as $value_name) {
-                            $fields_choices_info_query = db_query(
+                        $exp = explode(',', $value);
+
+                        foreach ($exp as $value_name) {
+                            /*$fields_choices_info_query = db_query(
                                 "select * from app_fields_choices where name='" . db_input(
                                     trim($value_name)
                                 ) . "' and fields_id='" . db_input($field_id) . "'"
-                            );
-                            if ($fields_choices_info = db_fetch_array($fields_choices_info_query)) {
+                            );*/
+
+                            $fields_choices_info = \K::model()->db_fetch_one('app_fields_choices', [
+                                'name = ? and fields_id = ?',
+                                trim($value_name),
+                                $field_id
+                            ]);
+
+                            if ($fields_choices_info) {
                                 $values_list[] = $fields_choices_info['id'];
                             } else {
                                 $field_sql_data = [
@@ -292,9 +362,10 @@ for ($col = 1; $col <= count($worksheet[$row]); ++$col) {
                                     'parent_id' => 0,
                                     'name' => trim($value_name)
                                 ];
-                                db_perform('app_fields_choices', $field_sql_data);
 
-                                $item_id = db_insert_id();
+                                $mapper = \K::model()->db_perform('app_fields_choices', $field_sql_data);
+
+                                $item_id = \K::model()->db_insert_id($mapper);
 
                                 $values_list[] = $item_id;
                             }
@@ -304,26 +375,32 @@ for ($col = 1; $col <= count($worksheet[$row]); ++$col) {
                     //prepare choices values
                     $choices_values[$field_id] = $values_list;
 
-                    $sql_data['field_' . $field_id] = implode(',', $values_list);
+                    $sql_data['field_' . (int)$field_id] = implode(',', $values_list);
 
                     break;
                 case 'fieldtype_input_date':
                 case 'fieldtype_input_datetime':
-                    $sql_data['field_' . $field_id] = strtotime($worksheet[$row][$col]);
+                    $sql_data['field_' . (int)$field_id] = strtotime(\K::$fw->worksheet[\K::$fw->row][$col]);
                     break;
                 default:
-                    $sql_data['field_' . $field_id] = $worksheet[$row][$col];
+                    $sql_data['field_' . (int)$field_id] = \K::$fw->worksheet[\K::$fw->row][$col];
                     break;
             }
 
             //check uniques
-            if (in_array($filed_info['id'], $unique_fields)) {
-                $check_query = db_query(
-                    "select id from app_entity_{$entities_id} where field_{$field_id}='" . db_input(
-                        $sql_data['field_' . $field_id]
+            if (in_array($filed_info['id'], \K::$fw->unique_fields)) {
+                /*$check_query = db_query(
+                    "select id from app_entity_{\K::$fw->entities_id} where field_{$field_id}='" . db_input(
+                        $sql_data['field_' . (int)$field_id]
                     ) . "' limit 1"
-                );
-                if ($check = db_fetch_array($check_query)) {
+                );*/
+
+                $check = \K::model()->db_fetch_one('app_entity_' . (int)\K::$fw->entities_id, [
+                    'field_' . (int)$field_id . ' = ?',
+                    $sql_data['field_' . (int)$field_id]
+                ], [], 'id');
+
+                if ($check) {
                     $is_unique_item = false;
                 }
             }
@@ -332,56 +409,62 @@ for ($col = 1; $col <= count($worksheet[$row]); ++$col) {
 }
 
 //if import users then set required fields for users entity
-if ($entities_id == 1 and $_POST['import_action'] == 'import') {
-    $sql_data['field_6'] = $_POST['users_group_id'];
+if (\K::$fw->entities_id == 1 and \K::$fw->POST['import_action'] == 'import') {
+    $sql_data['field_6'] = \K::$fw->POST['users_group_id'];
     $sql_data['field_5'] = 1;
-    $sql_data['field_13'] = CFG_APP_LANGUAGE;
+    $sql_data['field_13'] = \K::$fw->CFG_APP_LANGUAGE;
     $sql_data['field_14'] = 'default';
 
     if (strlen($import_username) == 0) {
         $sql_data['field_12'] = $email_username;
     }
 
-    if (isset($_POST['set_pwd_as_username'])) {
+    if (isset(\K::$fw->POST['set_pwd_as_username'])) {
         $password = (strlen($import_username) > 0 ? $import_username : $email_username);
     } else {
-        $password = users::get_random_password();
+        $password = \Models\Main\Users\Users::get_random_password();
     }
 
-    $sql_data['password'] = $hasher->HashPassword($password);
+    $sql_data['password'] = \K::security()->password_hash($password);
 
-    $check_query = db_query(
+    /*$check_query = db_query(
         "select count(*) as total from app_entity_1 where field_12='" . db_input($sql_data['field_12']) . "'"
     );
-    $check = db_fetch_array($check_query);
-    if ($check['total'] > 0) {
-        $already_exist_username[] = $sql_data['field_12'];
+    $check = db_fetch_array($check_query);*/
+
+    $check = \K::model()->db_fetch_count('app_entity_1', [
+        'field_12 = ?',
+        $sql_data['field_12']
+    ]);
+
+    if ($check > 0) {
+        \K::$fw->already_exist_username[] = $sql_data['field_12'];
 
         $is_unique_item = false;
     }
-} elseif ($entities_id == 1 and isset($_POST['set_pwd_as_username'])) {
+} elseif (\K::$fw->entities_id == 1 and isset(\K::$fw->POST['set_pwd_as_username'])) {
     $password = (strlen($import_username) > 0 ? $import_username : $email_username);
-    $sql_data['password'] = $hasher->HashPassword($password);
+    $sql_data['password'] = \K::security()->password_hash($password);
 }
 
 //prepare multilevel import
-if ($multilevel_import > 0) {
-    if ($_POST['import_action'] == 'import') {
-        $_POST['import_action'] = 'update_import';
+if (\K::$fw->multilevel_import > 0) {
+    if (\K::$fw->POST['import_action'] == 'import') {
+        \K::$fw->POST['import_action'] = 'update_import';
     }
 
-    $heading_field_id = fields::get_heading_id($entities_id);
-    $_POST['update_by_field'] = $heading_field_id;
+    $heading_field_id = \Models\Main\Fields::get_heading_id(\K::$fw->entities_id);
+    \K::$fw->POST['update_by_field'] = $heading_field_id;
 
-    foreach ($import_fields as $c => $v) {
+    foreach (\K::$fw->import_fields as $c => $v) {
         if ($v == $heading_field_id) {
             if (in_array(
-                    $app_fields_cache[$entities_id][$heading_field_id]['type'],
+                    \K::$fw->app_fields_cache[\K::$fw->entities_id][$heading_field_id]['type'],
                     ['fieldtype_entity', 'fieldtype_entity_ajax', 'fieldtype_entity_multilevel']
                 ) and isset($sql_data['field_' . $heading_field_id])) {
-                $_POST['update_use_column'] = 'data:' . $sql_data['field_' . $heading_field_id];
+                \K::$fw->POST['update_use_column'] = 'data:' . $sql_data['field_' . $heading_field_id];
             } else {
-                $_POST['update_use_column'] = $c;
+                \K::$fw->POST['update_use_column'] = $c;
             }
         }
     }
@@ -390,86 +473,117 @@ if ($multilevel_import > 0) {
 //do update
 $item_id = false;
 $item_has_updated = false;
-if ($_POST['import_action'] == 'update' or $_POST['import_action'] == 'update_import') {
-    $field_info = db_find('app_fields', $_POST['update_by_field']);
+if (\K::$fw->POST['import_action'] == 'update' or \K::$fw->POST['import_action'] == 'update_import') {
+    $field_info = \K::model()->db_find('app_fields', \K::$fw->POST['update_by_field']);
 
-    $use_column_value = (substr($_POST['update_use_column'], 0, 5) == 'data:' ? substr(
-        $_POST['update_use_column'],
+    $use_column_value = (substr(\K::$fw->POST['update_use_column'], 0, 5) == 'data:' ? substr(
+        \K::$fw->POST['update_use_column'],
         5
-    ) : $worksheet[$row][$_POST['update_use_column']]);
+    ) : \K::$fw->worksheet[\K::$fw->row][\K::$fw->POST['update_use_column']]);
 
+    $where_sql = '';
+    $where_value = [];
     if ($field_info['type'] == 'fieldtype_id') {
-        $where_sql = " where id='" . db_input($use_column_value) . "'";
+        // $where_sql = " where id='" . db_input($use_column_value) . "'";
+        $where_sql = 'id = :id';
+        $where_value[':id'] = $use_column_value;
     } else {
-        $where_sql = " where field_" . $field_info['id'] . "='" . db_input($use_column_value) . "'";
+        //$where_sql = " where field_" . $field_info['id'] . "='" . db_input($use_column_value) . "'";
+        $where_sql = 'field_' . (int)$field_info['id'] . ' = :field';
+        $where_value[':field'] = $use_column_value;
     }
 
-    $where_sql .= " and parent_item_id = '" . $import_entity_parent_item_id . "'";
+    //$where_sql .= " and parent_item_id = '" . \K::$fw->import_entity_parent_item_id . "'";
+    $where_sql .= ' and parent_item_id = :parent_item_id';
+    $where_value[':parent_item_id'] = \K::$fw->import_entity_parent_item_id;
 
-    $item_query = db_query("select id from app_entity_" . $entities_id . $where_sql);
-    if ($item = db_fetch_array($item_query) and count($sql_data)) {
-        db_perform('app_entity_' . $entities_id, $sql_data, 'update', "id=" . $item['id']);
+    //$item_query = db_query("select id from app_entity_" . \K::$fw->entities_id . $where_sql);
+
+    $item = \K::model()->db_fetch_one(
+        'app_entity_' . (int)\K::$fw->entities_id,
+        [
+            $where_sql
+        ] + $where_value,
+        [],
+        'id'
+    );
+
+    if ($item and count($sql_data)) {
+        \K::model()->db_update('app_entity_' . (int)\K::$fw->entities_id, $sql_data, [
+            'id = ?',
+            $item['id']
+        ]);
         $item_has_updated = true;
 
-        $count_items_updated++;
+        \K::$fw->count_items_updated++;
 
         $item_id = $item['id'];
 
-        $import_entity_parent_item_id = $item_id;
+        \K::$fw->import_entity_parent_item_id = $item_id;
     }
 }
 
 //do insert
-if (!$item_has_updated and ($_POST['import_action'] == 'import' or $_POST['import_action'] == 'update_import')) {
+if (!$item_has_updated and (\K::$fw->POST['import_action'] == 'import' or \K::$fw->POST['import_action'] == 'update_import')) {
     //skip not unique items
     if ($is_unique_item) {
         //set other values
         $sql_data['date_added'] = time();
-        $sql_data['created_by'] = $app_logged_users_id;
-        $sql_data['parent_item_id'] = (int)$import_entity_parent_item_id;
+        $sql_data['created_by'] = \K::$fw->app_logged_users_id;
+        $sql_data['parent_item_id'] = (int)\K::$fw->import_entity_parent_item_id;
 
-        //print_rr($sql_data);
-        //exit();
+        $mapper = \K::model()->db_perform('app_entity_' . (int)\K::$fw->entities_id, $sql_data);
 
-        db_perform('app_entity_' . $entities_id, $sql_data);
+        $item_id = \K::model()->db_insert_id($mapper);
 
-        $item_id = db_insert_id();
+        \K::$fw->import_entity_parent_item_id = $item_id;
 
-        $import_entity_parent_item_id = $item_id;
+        \K::$fw->count_items_added++;
 
-        $count_items_added++;
-
-        if (is_ext_installed()) {
+        if (\Helpers\App::is_ext_installed()) {
             //run actions after item insert
-            $processes = new processes($entities_id);
+            $processes = new processes(\K::$fw->entities_id);
             $processes->run_after_insert($item_id);
         }
     }
 }
 
-//print_rr($choices_values);
-//exit();
-
 //insert choices values if exist
 if (count($choices_values) > 0 and $item_id) {
     //reset current choices values if action is "update"
-    if ($_POST['import_action'] != 'import') {
-        db_query(
-            "delete from app_entity_" . $entities_id . "_values where items_id = '" . $item_id . "' and fields_id='" . $field_id . "'"
-        );
+    if (\K::$fw->POST['import_action'] != 'import') {
+        /*db_query(
+            "delete from app_entity_" . \K::$fw->entities_id . "_values where items_id = '" . $item_id . "' and fields_id='" . $field_id . "'"
+        );*/
+
+        //TODO Only last value delete OR foreach?
+        \K::model()->db_delete('app_entity_' . (int)\K::$fw->entities_id . '_values', [
+            'items_id = ? and fields_id = ?',
+            $item_id,
+            $field_id
+        ]);
     }
 
     foreach ($choices_values as $field_id => $values) {
         foreach ($values as $value) {
-            db_query(
-                "INSERT INTO app_entity_" . $entities_id . "_values (items_id, fields_id, value) VALUES ('" . $item_id . "', '" . $field_id . "', '" . $value . "');"
-            );
+            /*db_query(
+                 "INSERT INTO app_entity_" . \K::$fw->entities_id . "_values (items_id, fields_id, value) VALUES ('" . $item_id . "', '" . $field_id . "', '" . $value . "');"
+             );*/
+
+            \K::model()->db_perform('app_entity_' . (int)\K::$fw->entities_id . '_values', [
+                'items_id' => $item_id,
+                'fields_id' => $field_id,
+                'value' => $value,
+            ]);
         }
     }
 }
 
 if ($item_id) {
     //autoupdate all field types
-    fields_types::update_items_fields($entities_id, $item_id);
+    \Models\Main\Fields_types::update_items_fields(\K::$fw->entities_id, $item_id);
 }
 
+if ($forceCommit) {
+    \K::model()->commit();
+}
