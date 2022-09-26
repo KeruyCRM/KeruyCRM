@@ -20,6 +20,6 @@ class Import_bind extends \Controller
     {
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'import_bind.php';
 
-        echo \K::view()->render(\K::$fw->app_layout);
+        echo \K::view()->render(\K::$fw->subTemplate);
     }
 }
