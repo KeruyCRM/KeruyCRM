@@ -24,20 +24,20 @@ class Import_preview extends \Controller
 
     public function index()
     {
-        if (!users::has_access('import') or !strlen(\K::$fw->app_path)) {
-            redirect_to('dashboard/access_forbidden');
+        if (!\Models\Main\Users\Users::has_access('import') or !strlen(\K::$fw->app_path)) {
+            \Helpers\Urls::redirect_to('main/dashboard/access_forbidden');
         }
 
-        $multilevel_import = (isset($_POST['multilevel_import']) ? _post::int('multilevel_import') : 0);
+        \K::$fw->multilevel_import = (\K::$fw->POST['multilevel_import'] ?? 0);
 
         //check heading fields
-        if ($multilevel_import > 0) {
+        if (\K::$fw->multilevel_import > 0) {
             $choices = [];
-            $choices[] = $multilevel_import;
-            foreach (entities::get_parents($multilevel_import) as $entity_id) {
+            $choices[] = \K::$fw->multilevel_import;
+            foreach (\Models\Main\Entities::get_parents(\K::$fw->multilevel_import) as $entity_id) {
                 $choices[] = $entity_id;
 
-                if ($entity_id == $current_entity_id) {
+                if ($entity_id == \K::$fw->current_entity_id) {
                     break;
                 }
             }
@@ -45,26 +45,29 @@ class Import_preview extends \Controller
             $choices = array_reverse($choices);
 
             foreach ($choices as $entity_id) {
-                if (!fields::get_heading_id($entity_id)) {
-                    $alerts->add(
-                        sprintf(TEXT_MULTI_LEVEL_IMPORT_HEADING_ERROR, entities::get_name_by_id($entity_id)),
+                if (!\Models\Main\Fields::get_heading_id($entity_id)) {
+                    \K::flash()->addMessage(
+                        sprintf(
+                            \K::$fw->TEXT_MULTI_LEVEL_IMPORT_HEADING_ERROR,
+                            \Models\Main\Entities::get_name_by_id($entity_id)
+                        ),
                         'error'
                     );
-                    redirect_to('items/items', 'path=' . \K::$fw->app_path);
+                    \Helpers\Urls::redirect_to('main/items/items', 'path=' . \K::$fw->app_path);
                 }
             }
         }
 
-        $worksheet = [];
+        \K::$fw->worksheet = [];
 
-        if (strlen($filename = $_FILES['filename']['name']) > 0) {
+        if (strlen($filename = \K::$fw->FILES['filename']['name']) > 0) {
             //rename file (issue with HTML.php:495 if file have UTF symbols)
             $filename = 'import_data.' . (strstr($filename, '.xls') ? 'xls' : 'xlsx');
 
-            if (move_uploaded_file($_FILES['filename']['tmp_name'], DIR_WS_UPLOADS . $filename)) {
-                $objPHPExcel = IOFactory::load(DIR_WS_UPLOADS . $filename);
+            if (move_uploaded_file(\K::$fw->FILES['filename']['tmp_name'], \K::$fw->DIR_WS_UPLOADS . $filename)) {
+                $objPHPExcel = IOFactory::load(\K::$fw->DIR_WS_UPLOADS . $filename);
 
-                unlink(DIR_WS_UPLOADS . $filename);
+                unlink(\K::$fw->DIR_WS_UPLOADS . $filename);
 
                 $objWorksheet = $objPHPExcel->getActiveSheet();
 
@@ -74,8 +77,6 @@ class Import_preview extends \Controller
                 $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString(
                     $highestColumn
                 ); // e.g. 5
-
-                //echo $highestRow . ' - ' . $highestColumnIndex;
 
                 for ($row = 0; $row <= $highestRow; ++$row) {
                     $is_empty_row = true;
@@ -91,36 +92,44 @@ class Import_preview extends \Controller
                     }
 
                     if (!$is_empty_row) {
-                        $worksheet[] = $worksheet_cols;
+                        \K::$fw->worksheet[] = $worksheet_cols;
                     }
                 }
-
-                //print_rr($worksheet);
-                //exit();
             } else {
-                $alerts->add(TEXT_FILE_NOT_LOADED, 'warning');
-                redirect_to('items/items', 'path=' . \K::$fw->app_path);
+                \K::flash()->addMessage(\K::$fw->TEXT_FILE_NOT_LOADED, 'warning');
+                \Helpers\Urls::redirect_to('main/items/items', 'path=' . \K::$fw->app_path);
             }
         }
 
-        if (isset($_POST['import_template'])) {
-            if ($_POST['import_template'] > 0) {
-                $templates_query = db_query(
-                    "select * from app_ext_import_templates where id='" . (int)$_POST['import_template'] . "'"
-                );
-                if ($templates = db_fetch_array($templates_query)) {
+        if (isset(\K::$fw->POST['import_template'])) {
+            if (\K::$fw->POST['import_template'] > 0) {
+                /*$templates_query = db_query(
+                    "select * from app_ext_import_templates where id='" . (int)\K::$fw->POST['import_template'] . "'"
+                );*/
+
+                $templates = \K::model()->db_fetch_one('app_ext_import_templates', [
+                    'id = ?',
+                    \K::$fw->POST['import_template']
+                ]);
+
+                if ($templates) {
                     $import_fields_list = (strlen($templates['import_fields']) ? json_decode(
                         $templates['import_fields'],
                         true
                     ) : []);
+
+                    \K::$fw->import_fields = [];
+
                     foreach ($import_fields_list as $k => $v) {
                         if ($v > 0) {
-                            $import_fields[$k + 1] = $v;
+                            \K::$fw->import_fields[$k + 1] = $v;
                         }
                     }
                 }
             }
         }
+
+        \K::$fw->app_breadcrumb[] = ['title' => \K::$fw->TEXT_IMPORT];
 
         \K::$fw->subTemplate = \K::$fw->pathSubTemplate . 'import_preview.php';
 
