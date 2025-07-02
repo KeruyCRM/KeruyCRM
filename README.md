@@ -1,16 +1,14 @@
-## Hi there 👋
+# No Laravel. No React. No Bootstrap. Full freedom from dictators.
 
-<!--
-**KeruyCRM/KeruyCRM** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+It's not another framework with a thousand dependencies and a rigid architecture.
+It's a flexible and simple CMF built for developers who don't need anyone to tell them how to do things right.
 
-Here are some ideas to get you started:
+Build your CRM, ERP, WMS and any back-end system the way you want.
+Based on the time-tested Fat-Free Framework (F3) and concise EasyUI - a lightweight SPA interface suite.
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+* No builds, webpacks and npm
+* Minimum code - maximum control
+* Transparent architecture without magic
+* Only what you need - and nothing extra
+
+## You don't adapt to KeruyCRM. KeruyCRM adapts to you.
